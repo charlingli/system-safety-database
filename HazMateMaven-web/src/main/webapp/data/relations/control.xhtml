@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+
+                    <br/>
+
+                    <h:form>
+                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                        <br></br>
+                        <br></br>
+
+                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
+                        <div class="filteredTable">
+                        <p:dataTable id="viewTable" value="#{control_MB.listDbControl}" var="item"  
+                                     widgetVar="controlTable" emptyMessage="No controls found with given criteria" 
+                                     filteredValue="#{control_MB.filteredControls}" paginator="true" rows="25" paginatorPosition="bottom" 
+                                     rendered="#{not (control_MB.addFlag or control_MB.editFlag)}">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <p:outputLabel value="Search all fields:"/>
+                                    <p:inputText id="globalFilter" onkeyup="PF('controlTable').filter()" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:column headerText="Control Id" filterBy="#{item.controlId}" filterMatchMode="exact" styleClass="idColumn">
+                                <p:outputLabel value="#{item.controlId}"/>
+                            </p:column>
+                            <p:column headerText="Control Hierarchy" filterBy="#{item.controlHierarchyId.controlHierarchyName}" filterMatchMode="in" styleClass="filteredColumn">
+                                <f:facet name="filter">
+                                    <p:selectCheckboxMenu label="Hierarchies" onchange="PF('controlTable').filter()" scrollHeight="150"  >
+                                        <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="searchHierarchy" itemLabel="#{searchHierarchy.controlHierarchyName}" itemValue="#{searchHierarchy.controlHierarchyName}"  />
+                                    </p:selectCheckboxMenu>
+                                </f:facet>
+                                <p:outputLabel value="#{item.controlHierarchyId.controlHierarchyName}"/>
+                            </p:column>
+                            <p:column headerText="Owner" filterBy="#{item.ownerId.ownerName}" filterMatchMode="contains" styleClass="centerColumn">
+                                <p:outputLabel value="#{item.ownerId.ownerName}"/>
+                            </p:column>
+                            <p:column headerText="Control Description" filterBy="#{item.controlDescription}" filterMatchMode="contains">
+                                <p:outputLabel value="#{item.controlDescription}"/>
+                            </p:column>
+                            <p:column styleClass="idColumn">
+                                <f:facet name="header">
+                                    <p:outputLabel value="Options"/>
+                                </f:facet>
+                                <h:commandLink value="Edit">
+                                    <f:ajax listener="#{control_MB.showEdit(item)}" execute="@form" render="@form"/>
+                                </h:commandLink> |
+                                <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()" onclick="if(!confirm('This action may also disassociate hazards from their control. Do you wish to proceed?')){ return; };"/> 
+
+                            </p:column>
+                        </p:dataTable>
+                        </div>
+                        
+                        <br/>
+                        <br/>
+
+                        <p:commandButton value="Add Controls" rendered="#{not (control_MB.addFlag or control_MB.editFlag)}"> 
+                            <f:ajax listener="#{control_MB.showAdd()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                        <br/>
+                        <br/>
+
+
+                        <c:choose>
+                            <c:when test="#{control_MB.addFlag}">
+                                <pp><p:outputLabel value="Add"/></pp>
+                            </c:when>
+                            <c:when test="#{control_MB.editFlag}">
+                                <pp><p:outputLabel value="Edit"/></pp>
+                            </c:when>
+                        </c:choose>
+                        <br/>
+
+
+
+
+
+                        <p:panelGrid id="modifyTable" columns="2" rendered="#{control_MB.addFlag or control_MB.editFlag}">
+                            <c:if test="#{control_MB.editFlag}">
+                                <p:outputLabel value="Control Id:" for="controlId" />
+                                <p:inputText id="controlId" value="#{control_MB.controlObject.controlId}" disabled="true" title="ControlId" required="true" requiredMessage="The ControlId field is required."/>
+                            </c:if>
+                            <p:outputLabel value="Control Description:" for="controlDescription" />
+                            <p:inputTextarea rows="4" cols="30" id="controlDescription" value="#{control_MB.controlObject.controlDescription}" title="ControlDescription" required="true" requiredMessage="The ControlDescription field is required."/>
+                            <p:outputLabel value="Control Hierarchy Id:" for="controlHierarchyId" />
+                            <p:selectOneMenu id="controlHierarchyId" value="#{control_MB.controlHierarchyId}" title="ControlHierarchyId" required="true" requiredMessage="The ControlHierarchyId field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="controlHierarchyItem" itemLabel="#{controlHierarchyItem.controlHierarchyName}" itemValue="#{controlHierarchyItem.controlHierarchyId}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Owner Id:" for="ownerId" />
+                            <p:selectOneMenu id="ownerId" value="#{control_MB.ownerId}" title="OwnerId" required="true" requiredMessage="The OwnerId field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItems value="#{control_MB.listDbOwners}" var="ownersItem" itemLabel="#{ownersItem.ownerName}" itemValue="#{ownersItem.ownerId}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+                        <br/>
+
+                        <c:choose>
+                            <c:when test="#{control_MB.addFlag}">
+                                <p:commandButton value="Save" oncomplete="PF('controlTable').filter()">   
+                                    <f:ajax listener="#{control_MB.addControl()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{control_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{control_MB.editFlag}">
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{control_MB.editControl()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{control_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+
+                            </c:when>
+                        </c:choose>
+
+
+
+
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

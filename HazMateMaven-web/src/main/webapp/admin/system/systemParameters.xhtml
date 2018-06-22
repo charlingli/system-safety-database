@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <br/>
+                <h:form id="viewForm">
+                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <br></br>
+                    <br></br>
+                    <p:panelGrid columns="2" styleClass="hazardInfo" rendered="#{systemParams_MB.infoBox}" columnClasses="hazardInfoFieldName"> 
+                        <p:outputLabel value="Email Manager: " styleClass="hazardInfoFieldName"/>
+                        <p:outputLabel value="#{systemParams_MB.managerEmail}" />
+                        <p:outputLabel value="HazMate License: " />
+                        <p:inputTextarea value="#{systemParams_MB.licenseText}" readonly="true" styleClass="resultBox"/>
+                        <br/>
+                    </p:panelGrid>
+                    <div class="linkDiv">
+                        <p:commandButton value="Edit Parameters" rendered="#{systemParams_MB.infoBox}">
+                            <f:ajax listener="#{systemParams_MB.editParameters}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                    </div>
+                    <p:panel rendered="#{systemParams_MB.editBox}" styleClass="manyResultBox">
+                        <h:panelGrid columns="2" rendered="#{systemParams_MB.editBox}">
+                            <p:outputLabel value="Email Manager: " for="email" />
+                            <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="emailField"/>
+                            <p:outputLabel value="License Text: " for="license" />
+                            <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="systemLicense"/>
+                            <p:commandButton value="Save">
+                                <f:ajax listener="#{systemParams_MB.saveParameters()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                            <p:commandButton value="Cancel">
+                                <f:ajax listener="#{systemParams_MB.cancel}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </h:panelGrid>
+                    </p:panel>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

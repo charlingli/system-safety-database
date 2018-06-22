@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/recssLayout.css"/>
+        <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
+        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon" />
+        <title>HazMate Main Menu</title>
+        <f:event type="preRenderView" listener="#{login_MB.validateSession()}" />
+    </h:head>
+
+    <h:body>
+        <div id="top">
+            <ui:insert name="top">
+                <h:form>
+                    <p:menubar model="#{menuDynamic_MB.menuContent}">
+                        <f:facet name="options">
+                            <p:commandButton icon="ui-icon-home" action="/admin/masterMenu" id="home"/>
+                            <p:tooltip id="toolTipHome" for="home" value="Home" trackMouse="true"/>
+                            <p:spacer width="20" height="20"/>
+                            <p:commandButton icon="ui-icon-person" action="/admin/users/activeUserProfile" id="profile"/> 
+                            <p:tooltip id="toolTipProfile" for="profile" value="Profile" trackMouse="true" />
+                            <p:spacer width="20" height="20"/>
+                            <p:commandButton icon="ui-icon-power" id="power" actionListener="#{login_MB.closeSession()}" action="/login?faces-redirect=true"/>
+                            <p:tooltip id="toolTipPower" for="power" value="Logout" trackMouse="true"/>
+                            <p:spacer width="20" height="20"/>
+
+                        </f:facet>
+                    </p:menubar>
+                </h:form>
+            </ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content"></ui:insert>
+        </div>
+
+        
+                <footer class="licenseFooter">
+                    <p:separator />
+                    <h:form>
+                        <p:outputLabel value="HazMate is under MIT licence, you can find the complete file here: "/>
+                        <h:commandLink value="HazMate.License" action="/license/hazMateLicense" />
+                    </h:form>
+                </footer>
+            
+    </h:body>
+</html>

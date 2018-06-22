@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <br/>
+                <h:form>
+                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                    <br></br>
+                    <br></br>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:commandButton value="Add Role" action="addRole"></p:commandButton>
+                    <br></br>
+                    <br></br>
+                    <p:dataTable var="item" value="#{roles_MB.listDbRole}" styleClass="tableTwo">
+                        
+                        <p:column headerText="Role Name">
+                            <p:outputLabel value="#{item.roleName}" />
+                        </p:column>
+
+                        <p:column headerText="Status">
+                            <p:outputLabel value="#{roles_MB.printStatus(item.roleStatus)}" />
+                        </p:column>
+
+                        <p:column headerText="Option" >
+                            <p:commandLink value="Edit" action="#{roles_MB.edit(item)}"/> 
+                            | 
+                            <h:commandLink value="Delete" action="#{roles_MB.delete(item)}" onclick="return confirm('Are you sure?')"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+                
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+    
+</html>

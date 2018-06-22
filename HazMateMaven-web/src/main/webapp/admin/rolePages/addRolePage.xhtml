@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+
+
+                    <h:form>
+                        <br/>
+                        <pp><p:outputLabel value="Assign Permissions"/></pp>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <br/>
+                        <h:panelGrid columns="2">
+                            <p:outputLabel value="Role Id:" for="dbRole" />
+                            <p:selectOneMenu id="dbRole" value="#{role_page_MB.roleInt}" required="true" requiredMessage="The role field is required.">
+                                <f:selectItem itemLabel="--Select role id--" noSelectionOption="true"/>
+                                <f:selectItems value="#{role_page_MB.listDbRole}" var="roleItem" itemLabel="#{roleItem.roleName}" itemValue="#{roleItem.roleId}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Page Id:" for="dbPage" />
+                            <p:selectOneMenu id="dbPage" value="#{role_page_MB.pageInt}" required="true" requiredMessage="The page field is required.">
+                                <f:selectItem itemLabel="--Select page id--" noSelectionOption="true"/>
+                                <f:selectItems value="#{role_page_MB.listDbPage}" var="pageItem" itemLabel="#{pageItem.pageName}" itemValue="#{pageItem.pageId}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Add permission:" for="addPermission" />
+                            <p:selectOneMenu id="addPermission" value="#{role_page_MB.rolePageObject.addPermission}" required="true" requiredMessage="The add permission field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Yes" itemValue="Y"/>
+                                <f:selectItem itemLabel="No" itemValue="N"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Update permission:" for="updatePermission" />
+                            <p:selectOneMenu id="updatePermission" value="#{role_page_MB.rolePageObject.updatePermission}" required="true" requiredMessage="The update permission field is required." >
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Yes" itemValue="Y"/>
+                                <f:selectItem itemLabel="No" itemValue="N"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Delete permission:" for="deletePermission" />
+                            <p:selectOneMenu id="deletePermission" value="#{role_page_MB.rolePageObject.deletePermission}" required="true" requiredMessage="The delete permission field is required." >
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Yes" itemValue="Y"/>
+                                <f:selectItem itemLabel="No" itemValue="N"/>
+                            </p:selectOneMenu>
+
+
+                        </h:panelGrid>
+                        <p:commandButton value="Save" action="#{role_page_MB.add()}"/>&nbsp;&nbsp;<p:commandButton value="Cancel" action="#{role_page_MB.cancel()}" immediate="true"/>
+                        <!--'Immediate' bypasses the validation phase implemented by the 'required' fields-->  
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

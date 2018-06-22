@@ -1,0 +1,546 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <f:view>
+                    <h:form id="hazardsForm">
+                        <br/>
+                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                        <br></br>
+                        <br></br>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <div class="ui-g">
+                            <div class="ui-g-12" >
+                                <p:fieldset id="hazardsSearch" legend="Search Parameters" toggleable="true" toggleSpeed="500" >
+                                    <div class="ui-g">
+                                        <div class="ui-g-6">
+                                            <p class="instructionText">Start by clicking on a heading to enter search options using the fields below.</p>
+                                            <p:accordionPanel id="searchPanel" multiple="true" activeIndex="null">
+                                                <p:tab title="Hazard Fields">
+                                                    <h:panelGrid columns="2" cellpadding="4">
+                                                        <p:outputLabel>Hazard Description</p:outputLabel>
+                                                        <p:inputText id="HDInput" value="#{hazardTable_MB.selectedHazardDescription}"></p:inputText>
+                                                        <p:outputLabel>Hazard Causes</p:outputLabel>
+                                                        <p:inputText id="CAInput" value="#{hazardTable_MB.searchedCauses}"></p:inputText>
+                                                        <p:outputLabel>Hazard Consequences</p:outputLabel>
+                                                        <p:inputText id="CQInput" value="#{hazardTable_MB.searchedConsequences}"></p:inputText>
+                                                        <p:outputLabel>Hazard Location</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HLInput" value="#{hazardTable_MB.selectedLocations}" label="Hazard Locations" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listLocations}" var="location" itemLabel="#{location.locationName}" itemValue="#{location.locationId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Project</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HPInput" value="#{hazardTable_MB.selectedProjects}" label="Hazard Projects" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listProjects}" var="project" itemLabel="#{project.projectName}" itemValue="#{project.projectId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Grade Separation</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="GSInput" value="#{hazardTable_MB.selectedGradeSeparations}" label="Grade Separations" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listGradeSeparations}" var="gradeSeparation" itemLabel="#{gradeSeparation.gradeSeparationName}" itemValue="#{gradeSeparation.gradeSeparationId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Construction Type</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="CNInput" value="#{hazardTable_MB.selectedConstructionTypes}" label="Construction Types" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listConstructionTypes}" var="constructionType" itemLabel="#{constructionType.constructionTypeName}" itemValue="#{constructionType.constructionTypeId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Change Type</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="CHInput" value="#{hazardTable_MB.selectedChangeTypes}" label="Change Types" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listChangeTypes}" var="changeType" itemLabel="#{changeType.changeTypeName}" itemValue="#{changeType.changeTypeId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Activity</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HAInput" value="#{hazardTable_MB.selectedHazardActivities}" label="Hazard Activities" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listHazardActivities}" var="hazardActivity" itemLabel="#{hazardActivity.activityName}" itemValue="#{hazardActivity.activityId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Context</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HCInput" value="#{hazardTable_MB.selectedHazardContexts}" label="Hazard Contexts" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listHazardContexts}" var="hazardContext" itemLabel="#{hazardContext.hazardContextName}" itemValue="#{hazardContext.hazardContextId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Type</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HTInput" value="#{hazardTable_MB.selectedHazardTypes}" label="Hazard Types" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listHazardTypes}" var="hazardType" itemLabel="#{hazardType.hazardTypeName}" itemValue="#{hazardType.hazardTypeId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Status</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HSInput" value="#{hazardTable_MB.selectedHazardStatuses}" label="Hazard Statuses" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listHazardStatuses}" var="hazardStatus" itemLabel="#{hazardStatus.hazardStatusName}" itemValue="#{hazardStatus.hazardStatusId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Owner</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="HOInput" value="#{hazardTable_MB.selectedHazardOwners}" label="Hazard Owners" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listHazardOwners}" var="hazardOwner" itemLabel="#{hazardOwner.ownerName}" itemValue="#{hazardOwner.ownerId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Hazard Comments</p:outputLabel>
+                                                        <p:inputText value="#{hazardTable_MB.selectedHazardComments}"></p:inputText>
+                                                    </h:panelGrid>
+                                                </p:tab>
+                                                <p:tab title="System Breakdown Structure Codes">
+                                                    <h:panelGrid>
+                                                        <p:tree value="#{hazardTable_MB.TNRoot}" var="doc"
+                                                                selectionMode="checkbox"
+                                                                selection="#{hazardTable_MB.TNSelectedNodes}">
+                                                            <p:treeNode>
+                                                                <h:outputText value="#{doc}" />
+                                                            </p:treeNode>
+                                                        </p:tree>
+                                                    </h:panelGrid>
+                                                </p:tab>
+                                                <p:tab title="Control Fields">
+                                                    <h:panelGrid columns="2" cellpadding="4">
+                                                        <p:outputLabel>Control Description</p:outputLabel>
+                                                        <p:inputText value="#{hazardTable_MB.selectedControlDescription}"></p:inputText>
+                                                        <p:outputLabel>Control Hierarchy</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="CTMenu" value="#{hazardTable_MB.selectedControlTypes}" label="Control Hierarchys" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listControlTypes}" var="controlType" itemLabel="#{controlType.controlHierarchyName}" itemValue="#{controlType.controlHierarchyId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Control Owner</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="COMenu" value="#{hazardTable_MB.selectedControlOwners}" label="Control Owners" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listHazardOwners}" var="controlOwner" itemLabel="#{controlOwner.ownerName}" itemValue="#{controlOwner.ownerId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Control Recommendation</p:outputLabel>
+                                                        <p:selectCheckboxMenu id="CRMenu" value="#{hazardTable_MB.selectedControlRecommendations}" label="Control Recommendations" filter="true" filterMatchMode="contains" >
+                                                            <f:selectItems value="#{hazardTable_MB.listControlRecommendations}" var="controlRecommendation" itemLabel="#{controlRecommendation.controlRecommendName}" itemValue="#{controlRecommendation.controlRecommendId}"/>
+                                                        </p:selectCheckboxMenu>
+                                                        <p:outputLabel>Control Justification</p:outputLabel>
+                                                        <p:inputText value="#{hazardTable_MB.selectedControlJustification}"></p:inputText>
+                                                    </h:panelGrid>
+                                                </p:tab>
+                                            </p:accordionPanel>
+                                            <br/>
+                                            <p:commandButton value="Search Hazards" action="#{hazardTable_MB.constructSearchObject()}" update="hazardsForm" />
+                                            <p:commandButton value="Reset Fields" update="hazardsForm" process="@this" action="#{hazardTable_MB.resetFields()}" >
+                                                <p:resetInput target="hazardsForm" />
+                                            </p:commandButton>
+                                        </div>
+                                        <div class="ui-g-6">
+                                            <p class="instructionText">Current search fields:</p>
+                                            <p:dashboard id="SBoard" model="#{hazardTable_MB.currentSearchModel}">
+                                                <p:panel id="HDPanel" header="Hazard Description" >
+                                                    <h:outputText value="#{hazardTable_MB.selectedHazardDescription}" />
+                                                </p:panel>
+                                                <p:panel id="CAPanel" header="Causes" >
+                                                    <h:outputText value="#{hazardTable_MB.searchedCauses}" />
+                                                </p:panel>
+                                                <p:panel id="CQPanel" header="Consequences" >
+                                                    <h:outputText value="#{hazardTable_MB.searchedConsequences}" />
+                                                </p:panel>
+                                                <p:panel id="HLPanel" header="Hazard Location" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedLocations}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listLocations.get(hazardTable_MB.listLocationIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="HPPanel" header="Hazard Project" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedProjects}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listProjects.get(hazardTable_MB.listProjectIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="GSPanel" header="Grade Separation" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedGradeSeparations}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listGradeSeparations.get(hazardTable_MB.listGradeSeparationIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="CNPanel" header="Construction Type" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedConstructionTypes}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listConstructionTypes.get(hazardTable_MB.listConstructionTypeIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="CHPanel" header="Change Type" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedChangeTypes}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listChangeTypes.get(hazardTable_MB.listChangeTypeIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="HAPanel" header="Hazard Activity" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedHazardActivities}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listHazardActivities.get(hazardTable_MB.listHazardActivityIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="HCPanel" header="Hazard Context" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedHazardContexts}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listHazardContexts.get(hazardTable_MB.listHazardContextIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="HTPanel" header="Hazard Hierarchy" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedHazardTypes}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listHazardTypes.get(hazardTable_MB.listHazardTypeIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="HSPanel" header="Hazard Status" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedHazardStatuses}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listHazardStatuses.get(hazardTable_MB.listHazardStatusIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="HOPanel" header="Hazard Owner" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedHazardOwners}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listHazardOwners.get(hazardTable_MB.listHazardOwnerIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="CMPanel" header="Hazard Comments" >
+                                                    <h:outputText value="#{hazardTable_MB.selectedHazardComments}" />
+                                                </p:panel>
+                                                <p:panel id="CDPanel" header="Control Description" >
+                                                    <h:outputText value="#{hazardTable_MB.selectedControlDescription}" />
+                                                </p:panel>
+                                                <p:panel id="CTPanel" header="Control Hierarchy" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedControlTypes}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listControlTypes.get(hazardTable_MB.listControlTypeIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="COPanel" header="Control Owner" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedControlOwners}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listHazardOwners.get(hazardTable_MB.listHazardOwnerIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="CRPanel" header="Control Recommendations" >
+                                                    <ui:repeat value="#{hazardTable_MB.selectedControlRecommendations}" var="subentity">
+                                                        <h:outputText value="#{hazardTable_MB.listControlRecommendations.get(hazardTable_MB.listControlRecommendationIds.indexOf(subentity))}" /> <br />
+                                                    </ui:repeat>
+                                                </p:panel>
+                                                <p:panel id="CJPanel" header="Control Justification" >
+                                                    <h:outputText value="#{hazardTable_MB.selectedControlJustification}" />
+                                                </p:panel>
+                                                <p:panel id="SCPanel" header="SBS Code(s)" >
+                                                    <h:outputText value="#{hazardTable_MB.showTreeToString(hazardTable_MB.treeCheckedNodesList)}" />
+                                                </p:panel>
+
+                                            </p:dashboard>
+                                        </div>
+                                    </div>
+                                </p:fieldset>
+                            </div>
+                            <div class="ui-g-12">
+                                <p:dataTable id="hazardTable" value="#{hazardTable_MB.searchDbHazard}" var="item" tableStyle="width:auto;" resizableColumns="true" widgetVar="hazardsTable" emptyMessage="No hazard entries found with given criteria" filteredValue="#{hazardTable_MB.filterDbHazard}" selectionMode="single" selection="#{hazardTable_MB.selectedHazard}" rowKey="#{item.hazardId}">
+                                    <f:facet name="header">
+                                        <p:outputPanel>
+                                            <h:outputText value="Search all hazard entries: " />
+                                            <p:inputText id="globalFilter" onkeyup="PF('hazardsTable').filter()" placeholder="Enter keyword"/>
+                                            <p:commandButton id="columnToggle" type="button" value="Show/Hide Columns" icon="ui-icon-calculator" />
+                                            <p:columnToggler datasource="hazardTable" trigger="columnToggle">
+                                                <p:ajax event="toggle" listener="#{hazardTable_MB.onToggle}" />
+                                            </p:columnToggler>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[0]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard ID" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardId}" styleClass="rotateText"/>
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardDescription}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[1]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Description"/>
+                                        </f:facet>
+                                        <h:outputText id="HDEntry" value="#{item.hazardDescription}"/>
+                                        <p:tooltip for="HDEntry" trackMouse="true" value="#{item.hazardDescription}"/>
+                                    </p:column>
+                                    <p:column filterBy="#{hazardTable_MB.getNodeLastById(subentity)}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[2]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="SBS Codes"/>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.viewSbsCondensed(item.hazardId)}" var="subentity">
+                                            <h:outputLink id="SCEntry" value="#">
+                                                <h:outputText value="#{hazardTable_MB.getNodeLastById(subentity)}"/>
+                                            </h:outputLink>
+                                            <p:tooltip id="SCTooltip" for="SCEntry" value="#{hazardTable_MB.getNodeNameById(subentity)}"/>
+                                            <hr class="tableSeparator" width="200%" />
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[3]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Source Location"/>
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Locations" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listLocations}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardLocation.locationName}"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[4]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Source Project"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardLocation.projectId.projectName}"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[5]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Drawing Package" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardLocation}" styleClass="rotateText"/>
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardLocation.locationGradeSeparation.gradeSeparationName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[6]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Grade Separation" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Types" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listGradeSeparations}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardLocation.locationGradeSeparation.gradeSeparationName}" />
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardLocation.locationConstructionType.constructionTypeName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[7]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Construction Type" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Types" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listConstructionTypes}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardLocation.locationConstructionType.constructionTypeName}" />
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardLocation.locationChangeType.changeTypeName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[8]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Change Type" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Types" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listChangeTypes}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardLocation.locationChangeType.changeTypeName}" />
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardContextId.hazardContextName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[9]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Context" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Contexts" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listHazardContexts}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardContextId.hazardContextName}" />
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardActivity.activityName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[10]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Activity" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Activities" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listHazardActivities}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardActivity.activityName}" />
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardTypeId.hazardTypeName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[11]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Hierarchy" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Types" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listHazardTypes}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardTypeId.hazardTypeName}" />
+                                    </p:column>
+                                    <p:column filterBy="#{item.ownerId.ownerName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[12]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Owner" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Owners" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listHazardOwners}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <ui:repeat value="#{item.ownerId.ownerName}" var="subentity">
+                                            <h:outputText value="#{subentity}" />
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[13]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Causes"/>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.viewHazardCause(item.hazardId)}" var="subentity">
+                                            <h:outputText id="CAEntry" value="#{subentity}"/> <hr class="tableSeparator" width="200%" />
+                                            <p:tooltip for="CAEntry" trackMouse="true" value="#{subentity}"/>
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[14]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Consequences"/>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.viewHazardConsequence(item.hazardId)}" var="subentity">
+                                            <h:outputText id="CQEntry" value="#{subentity}"/> <hr class="tableSeparator" width="200%" />
+                                            <p:tooltip for="CQEntry" trackMouse="true" value="#{subentity}"/>
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column filterBy="#{item.riskClassId.riskClassName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[15]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Risk Class"/>
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Classes" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listRiskClasses}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.riskClassId.riskClassName}"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[16]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Risk Frequency" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.riskFrequencyId.frequencyScore}" styleClass="rotateText"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[17]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Risk Severity" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.riskSeverityId.severityScore}" styleClass="rotateText"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[18]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Risk Score" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.riskScore}" styleClass="rotateText"/>
+                                    </p:column>
+                                    <p:column filterBy="#{hazardTable_MB.viewControlHazard(item.hazardId)}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[19]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Control Description"/>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.viewControlHazard(item.hazardId)}" var="subentity">
+                                            <h:outputText id="CDEntry" value="#{subentity}"/> <hr class="tableSeparator" width="200%" />
+                                            <p:tooltip for="CDEntry" trackMouse="true" value="#{subentity}"/>
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column filterBy="#{hazardTable_MB.controlType}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[20]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Control Hierarchy" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Types" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listControlTypes}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.controlType}" var="subentity">
+                                            <h:outputText value="#{subentity}" /> <hr class="tableSeparator" width="200%" />
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column filterBy="#{hazardTable_MB.controlOwner}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[22]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Control Owner" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Owners" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listHazardOwners}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.controlOwner}" var="subentity">
+                                            <h:outputText value="#{subentity}" /> <hr class="tableSeparator" width="200%" />
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column filterBy="#{hazardTable_MB.controlRecommend}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[23]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Control Recommendation" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Recommendations" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listControlRecommendations}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.controlRecommend}" var="subentity">
+                                            <h:outputText value="#{subentity}" /> <hr class="tableSeparator" width="200%" />
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column filterBy="#{hazardTable_MB.controlJustify}" filterMatchMode="contains" visible="#{hazardTable_MB.toggleColumns[24]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Control Justification" />
+                                        </f:facet>
+                                        <hr class="tableSeparator" width="200%" />
+                                        <ui:repeat value="#{hazardTable_MB.controlJustify}" var="subentity">
+                                            <h:outputText id="CJEntry" value="#{subentity}"/> <hr class="tableSeparator" width="200%" />
+                                            <p:tooltip for="CJEntry" trackMouse="true" value="#{subentity}"/>
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column filterBy="#{item.hazardStatusId.hazardStatusName}" filterMatchMode="exact" visible="#{hazardTable_MB.toggleColumns[25]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Status" />
+                                        </f:facet>
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu onchange="PF('hazardsTable').filter()" >
+                                                <f:selectItem itemLabel="All Statuses" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{hazardTable_MB.listHazardStatuses}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardStatusId.hazardStatusName}" />
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[26]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Date of Entry" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardDate}" styleClass="rotateText">
+                                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                                        </h:outputText>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[27]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Source Workshop" />
+                                        </f:facet>
+                                        <h:outputText id="HWEntry" value="#{item.hazardWorkshop}" />
+                                        <p:tooltip for="HWEntry" trackMouse="true" value="#{item.hazardComment}"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[28]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Review Due?" styleClass="rotateText"/>
+                                        </f:facet>
+                                        <h:outputText value="#{item.hazardReview}"/>
+                                    </p:column>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[29]}" styleClass="truncate">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard Comments"/>
+                                        </f:facet>
+                                        <h:outputText id="CMEntry" value="#{item.hazardComment}"/>
+                                        <p:tooltip for="CMEntry" trackMouse="true" value="#{item.hazardComment}"/>
+                                    </p:column>
+                                    <f:facet name="footer">
+                                        <h:outputText id="hazardCount" value="Number of hazards: #{hazardTable_MB.searchDbHazard.size()} of #{hazardTable_MB.listDbHazard.size()} total" />
+                                        <p:commandButton value="Visualise Hazard as a Mind Map" action="#{hazardTable_MB.constructVisualisation(hazardTable_MB.selectedHazard)}" update=":hazardsAux:hazardMap" icon="ui-icon-search" />
+                                    </f:facet>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="hazardsAux">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <p:fieldset legend="Export Options" toggleSpeed="500">
+                                    <p class="instructionText">Export and download hazards in .xls format.</p>
+                                    <p:commandButton value="Export all hazards" action="#{hazardTable_MB.exportAllToFile(hazardTable_MB.listDbHazard)}" ajax="false"/>
+                                    <p:commandButton value="Export only shown hazards" action="#{hazardTable_MB.exportAllToFile(hazardTable_MB.searchDbHazard)}" ajax="false" disabled="#{hazardTable_MB.isTableEmpty}"/>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <p:fieldset legend="Hazard Visualisation" toggleSpeed="500">
+                                    <p class="instructionText">View selected hazard as a mind map.</p>
+                                    <p:mindmap id="hazardMap" value="#{hazardTable_MB.MMRoot}" styleClass="hazardMap">
+                                        <p:ajax event="select" listener="#{hazardTable_MB.onNodeSelect}" />
+                                    </p:mindmap>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                    </h:form>
+                </f:view>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

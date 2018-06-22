@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <div class="ui-g">
+                        <div class="ui-g-4">
+                            <h3 class="instructionHeader"><h:outputText value="My Profile"/></h3>
+                            <p:panelGrid columns="2">
+                                <p:outputLabel value="Name:" />
+                                <h:outputText value="#{activeUser_MB.activeUserName}" />
+                                <p:outputLabel value="Company:" />
+                                <h:outputText value="#{activeUser_MB.activeUserCompany}" />
+                                <p:outputLabel value="Position:" />
+                                <h:outputText value="#{activeUser_MB.activeUserPosition}" />
+                                <p:outputLabel value="Confirm Current Password:" for="currentPassword"/>
+                                <h:inputSecret id="currentPassword" value="#{activeUser_MB.currentPassword}" title="First Name" required="true" requiredMessage="The Current Password field is required."/>
+                                <p:outputLabel value="Set New Password: " for="activePassword"/>
+                                <h:inputSecret id="activePassword" value="#{activeUser_MB.activeUserPassword}" title="Password" required="true" requiredMessage="The Password field is required.">
+                                    <f:validator validatorId="passwordValidator" />
+                                    <f:attribute name="confirmPassword" value="#{confirmPassword}" />
+                                </h:inputSecret>
+                                <p:outputLabel value="Confirm Password:" for="confirmPassword"/>
+                                <h:inputSecret id="confirmPassword" binding="#{confirmPassword}" title="Confirm Password" required="true" requiredMessage="The Confirm Password field is required." />
+                                <p:commandButton value="Update" action="#{activeUser_MB.activeChange()}"/>
+                            </p:panelGrid>
+                        </div>
+                        <div class="ui-g-8">
+                            <h3 class="instructionHeader">My Permissions</h3>
+                            <p class="instructionText">
+                                To request permissions to access restricted pages, please contact: <a href="mailto:">administrator</a>.
+                            </p>
+                            <div class="permissionsTable">
+                                <p:dataTable id="availablePermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.availablePageList}" emptyMessage="No available pages.">
+                                    <p:column headerText ="Available Pages: ">
+                                        <h:outputText value="#{permission}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="permissionsTable">
+                                <p:dataTable id="restrictedPermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.restrictedPageList}" emptyMessage="No restricted pages.">
+                                    <p:column headerText ="Restricted Pages: ">
+                                        <h:outputText value="#{permission}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

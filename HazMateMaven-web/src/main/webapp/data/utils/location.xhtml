@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+
+                    <br/>
+                    <h:form>
+                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                        <br></br>
+                        <br></br>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <p:dataTable id="viewTable" value="#{location_MB.listDbLocation}" var="item" tableStyle="width:auto;" rendered="#{not (location_MB.addFlag or location_MB.editFlag)}">
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Id"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationId}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Name"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationName}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Abbreviation"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationAbbrev}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Description"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationDescription}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Change Type"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationChangeType.changeTypeName}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Construction Type"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationConstructionType.constructionTypeName}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Location Grade Separation"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.locationGradeSeparation.gradeSeparationName}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Project"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.projectId.projectName}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Options"/>
+                                </f:facet>
+                                <h:commandLink value="Edit">
+                                    <f:ajax listener="#{location_MB.showEdit(item)}" execute="@form" render="@form"/>
+                                </h:commandLink> |
+                                <h:commandLink value="Delete" action="#{location_MB.deleteLocation(item)}" immediate="true" onclick="return confirm('Are you sure?')"/> 
+
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <br/>
+                        <br/>
+                        
+                        <p:commandButton value="Add Locations" rendered="#{not (location_MB.addFlag or location_MB.editFlag)}"> 
+                            <f:ajax listener="#{location_MB.showAdd()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+
+                        <br/>
+                        <br/>
+
+                        <c:choose>
+                            <c:when test="#{location_MB.addFlag}">
+                                <pp><p:outputLabel value="Add"/></pp>
+                            </c:when>
+                            <c:when test="#{location_MB.editFlag}">
+                                <pp><p:outputLabel value="Edit"/></pp>
+                            </c:when>
+                        </c:choose>
+                        <br/>
+
+
+                        <p:tooltip for="locationAbbrev" showEvent="focus" hideEvent="blur"/>
+                        <p:panelGrid id="modifyTable" columns="2" rendered="#{location_MB.addFlag or location_MB.editFlag}">
+                            <c:if test="#{location_MB.editFlag}">
+                                <p:outputLabel value="Location Id:" for="locationId" />
+                                <p:inputText id="locationId" value="#{location_MB.locationObject.locationId}" disabled="true" title="LocationId" required="true" requiredMessage="The LocationId field is required."/>
+                            </c:if>
+                            <p:outputLabel value="Location Name:" for="locationName" />
+                            <p:inputText id="locationName" value="#{location_MB.locationObject.locationName}" title="LocationName" required="true" requiredMessage="The LocationName field is required."/>
+                            <p:outputLabel value="Location Abbreviation:" for="locationAbbrev"/>
+                            <p:inputText id="locationAbbrev" value="#{location_MB.locationObject.locationAbbrev}" disabled="#{location_MB.editFlag}"  maxlength="3" title="This code will be used to uniquely identify hazards belonging to this location" required="true" requiredMessage="The location abbreviation field is required."/>
+                            <p:outputLabel value="Location Description:" for="locationDescription" />
+                            <p:inputTextarea rows="4" cols="30" id="locationDescription" value="#{location_MB.locationObject.locationDescription}" title="LocationDescription" required="true" requiredMessage="The LocationDescription field is required."/>
+                            <p:outputLabel value="Location Change Type:" for="locationChangeType" />
+                            <p:selectOneMenu id="locationChangeType" value="#{location_MB.changeTypeId}" required="true" requiredMessage="The LocationChangeType field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItems value="#{location_MB.listDbChangeType}" var="changeTypeItem" itemLabel="#{changeTypeItem.changeTypeName}" itemValue="#{changeTypeItem.changeTypeId}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Location Construction Type:" for="locationConstructionType" />
+                            <p:selectOneMenu id="locationConstructionType" value="#{location_MB.constructionTypeId}" required="true" requiredMessage="The LocationConstructionType field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItems value="#{location_MB.listDbConstructionType}" var="constructTypeItem" itemLabel="#{constructTypeItem.constructionTypeName}" itemValue="#{constructTypeItem.constructionTypeId}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Location Grade Separation:" for="locationGradeSeparation" />
+                            <p:selectOneMenu id="locationGradeSeparation" value="#{location_MB.gradeSeparationId}" required="true" requiredMessage="The LocationGradeSeparation field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItems value="#{location_MB.listDbGradeSeparation}" var="gradeSepItem" itemLabel="#{gradeSepItem.gradeSeparationName}" itemValue="#{gradeSepItem.gradeSeparationId}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Project" for="project"/>
+                            <p:selectOneMenu id="project" value="#{location_MB.projectId}" required="true" requiredMessage="The project field is required.">
+                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                <f:selectItems value="#{location_MB.listDbProject}" var="projectItem" itemLabel="#{projectItem.projectName}" itemValue="#{projectItem.projectId}"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+
+
+
+                        <br/>
+
+                        <c:choose>
+                            <c:when test="#{location_MB.addFlag}">
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{location_MB.addLocation()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{location_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{location_MB.editFlag}">
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{location_MB.editLocation()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{location_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+
+                            </c:when>
+                        </c:choose>
+                    </h:form>
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

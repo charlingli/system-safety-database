@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <h:form>
+                    <br/>
+                    <pp><p:outputLabel value="Change User"/></pp>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <br/>
+                    <p:panelGrid columns="2">
+                        <p:outputLabel value="Confirm/Set Email:"/>
+                        <p:inputText id="EMInput" value="#{users_MB.checkEmail}" title="Email" required="true" requiredMessage="An email is required." validatorMessage="The email is invalid.">
+                            <f:validateLength minimum="1" maximum="60" />
+                            <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                        </p:inputText>
+                        <p:outputLabel value="Set New Password: " for="password"/>
+                        <p:password id="password" value="#{users_MB.rawPassword}" title="Password" required="true" requiredMessage="The Password field is required.">
+                            <f:validator validatorId="passwordValidator" />
+                            <f:attribute name="confirmPassword" value="#{confirmPassword}" />
+                        </p:password>
+                        <p:outputLabel value="Confirm Password:" for="confirmPassword"/>
+                        <p:password id="confirmPassword" binding="#{confirmPassword}" title="Confirm Password" required="true" requiredMessage="The Confirm Password field is required." />
+                        <p:commandButton value="Update" action="#{users_MB.change()}"/>
+                        <p:commandButton value="Cancel" immediate="true" action="viewUsers"/>
+                    </p:panelGrid>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

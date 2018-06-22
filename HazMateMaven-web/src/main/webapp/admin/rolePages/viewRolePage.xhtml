@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <br/>
+                <h:form>
+                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                    <br></br>
+                    <br></br>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:commandButton value="Assign Permissions" onclick="#{role_page_MB.init()}" action="addRolePage"/>
+                    <br></br>
+                    <br></br>
+                    <p:dataTable value="#{role_page_MB.listDbRolePage}" var="item" styleClass="tableOne">
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Role Name"/>
+                            </f:facet>
+                            <p:outputLabel value="#{item.dbRole.roleName}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Page Name"/>
+                            </f:facet>
+                            <p:outputLabel value="#{item.dbPage.pageName}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Add Permission"/>
+                            </f:facet>
+                            <p:outputLabel value="#{role_page_MB.printPermission(item.addPermission)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Update Permission"/>
+                            </f:facet>
+                            <p:outputLabel value="#{role_page_MB.printPermission(item.updatePermission)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Delete Permission"/>
+                            </f:facet>
+                            <p:outputLabel value="#{role_page_MB.printPermission(item.deletePermission)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Options"/>
+                            </f:facet>
+                            <p:commandLink value="Edit" action="#{role_page_MB.edit(item)}" /> 
+                            | 
+                            <h:commandLink value="Delete" action="#{role_page_MB.delete(item)}" onclick="return confirm('Are you sure?')"/>
+                        </p:column>
+
+                    </p:dataTable>
+                    <br></br>
+                    
+                </h:form>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

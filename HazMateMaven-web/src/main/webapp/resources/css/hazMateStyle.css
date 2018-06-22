@@ -1,0 +1,281 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 13/02/2018, 1:33:32 PM
+    Author     : Juan David
+*/
+.searchBox
+{
+    width: 600px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.resultBox
+{
+    width: 95%;
+}
+.infoText
+{
+    width: 260px;
+    background-color: #053677;
+    font-size: 14px;
+    margin-top: 35px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+}
+.infoTextBig
+{
+    width: 300px;
+    background-color: #053677;
+    font-size: 14px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+}
+.hazardInfo
+{
+    width: 75%;
+}
+.hazardInfoFieldName
+{
+    width: 15%;
+    font-size: 14px;
+    font-weight: bold;
+    color: #053677;
+}
+.manyResultBox
+{
+    width: 80%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.idColumn
+{
+    width: 12%;
+    text-align: center;
+}
+.actionsColumn
+{
+    width: 10%;
+    text-align: center;
+}
+.actionsBigColumn
+{
+    width: 12%;
+    text-align: center;
+}
+.addManyResultBox
+{
+    margin-top: 10px;
+}
+.idAutocompleteColumn
+{
+    width: 10%;     
+}
+.linkDiv
+{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.emailField
+{
+    width: 350px;
+}
+.systemLicense
+{
+    width: 500px;
+}
+.licenseFooter
+{  
+    flex-shrink: 0; 
+    padding: 15px;
+    text-align: center;
+}
+pp 
+{
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-size:  14px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #333333;
+}
+.tableOne
+{
+    width: 75%;
+    text-align: center;
+}
+.tableTwo
+{
+    width: 50%;
+    text-align: center;
+}
+.dropDown
+{
+    width:150px;
+}
+.specialColumn
+{
+    width:200px;
+}
+.editUser
+{
+    display: none;
+}
+.controlWidth
+{
+    width:250px;
+}
+.treeWidth
+{
+    width:600px;
+}
+.controlCancelBtn{
+    margin-left: 5px;
+}
+/* Charling's stuff */
+.tableSeparator
+{
+    position:relative; 
+    left:-50%; 
+    border: 0; 
+    border-bottom: 1px solid rgb(238, 238, 238);
+}
+
+.rotateText 
+{
+    writing-mode: vertical-lr;
+    transform: rotate(-180deg);
+}
+.truncate 
+{
+    max-width: 120px;
+    width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.truncate > span:nth-child(2) 
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.instructionText 
+{
+    color: #036fab;
+}
+
+.instructionHeader
+{
+    color: #045491;
+}
+.hazardMap 
+{
+    width: 100%; 
+    height: 480px; 
+    border: 0px;
+}
+
+#hazardsForm\:hazardTable
+{
+    font-size: 10px;
+}
+
+#hazardsForm\:hazardTable\:globalFilter
+{
+    width: 240px;
+}
+
+#hazardsForm\:hazardTable\:columnToggle
+{
+    float: right;
+}
+
+#hazardsForm\:hazardTable\:hazardCount
+{
+    float: left;
+}
+
+.permissionsTable
+{
+    float: left;
+}
+.usersTable
+{
+    width: auto;
+}
+.filteredTable
+{
+    width: 60%;
+}
+
+.filteredColumn
+{
+    width: 15%;
+    text-align: center; 
+}
+
+.centerColumn
+{
+    text-align: center; 
+}
+
+.accordionWidth
+{
+    width: 60%; 
+}
+html 
+{
+  height: 100%;
+}
+body 
+{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.center_content 
+{
+  flex: 1 0 auto;
+  padding: 15px;
+}
+.ui-widget-header
+{
+    border:1px solid #008080;
+    color: #ffffff;
+    background:#008080;
+}
+a:link, a:visited 
+{
+  color: #333333;
+}
+a:link:hover, a:visited:hover  
+{
+  color: #333333;
+} 
+.pagePath
+{
+    background-color:#008080;
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-size:  14px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #ffffff;
+    width: fit-content;
+}

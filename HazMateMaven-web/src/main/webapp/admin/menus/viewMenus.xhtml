@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <br/>
+                <h:form>
+                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                    <br></br>
+                    <br></br>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:commandButton value="Add Menu" action="addMenus" />
+                    <br></br>
+                    <br></br>
+                    <p:dataTable var="menu" value="#{menus_MB.listMenus}" styleClass="tableOne" sortBy="#{menu.indexMenu}" sortOrder="ascending">                                            
+                        <p:column headerText="Menu Name">
+                            <p:outputLabel value="#{menu.menuName}"/>
+                        </p:column> 
+                        <p:column headerText="Menu Type">
+                            <p:outputLabel value="#{menus_MB.menuType(menu.menuType)}"/>
+                        </p:column> 
+                        <p:column headerText="Parent Menu">
+                            <p:outputLabel value="#{menus_MB.parentMenu(menu.parentMenu)}"/>
+                        </p:column> 
+                        <p:column headerText="Menu Icon">
+                            <p:outputLabel value="#{menu.menuIcon}"/>
+                        </p:column> 
+                        <p:column headerText="Menu Index">
+                            <p:outputLabel value="#{menu.indexMenu}"/>
+                        </p:column>
+                        <p:column headerText="Options">
+                            <p:commandLink value="Edit" action="#{menus_MB.editMenu(menu)}"/>
+                            |
+                            <h:commandLink value="Delete" action="#{menus_MB.deleteMenu(menu)}" onclick="return confirm('Are you sure?')"/>
+                        </p:column>                        
+                    </p:dataTable>
+                </h:form>
+                
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <body>
+
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+
+            <ui:define name="content">
+                <f:view>
+
+                    <br/>
+                    <h:form>
+                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                        <br></br>
+                        <br></br>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <p:dataTable id="viewTable" value="#{hazardActivity_MB.listDbHazardActivity}" var="item" tableStyle="width:auto;">
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Activity Id"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.activityId}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Activity Name"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.activityName}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Options"/>
+                                </f:facet>
+                                <h:commandLink value="Edit" disabled="#{hazardActivity_MB.editButton}">
+                                    <f:ajax listener="#{hazardActivity_MB.showEdit(item)}" execute="@form" render="@form"/>
+                                </h:commandLink> | <h:commandLink value="Delete" action="#{hazardActivity_MB.deleteHazardActivity(item)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{hazardActivity_MB.deleteButton}"/> 
+
+
+                            </p:column>
+                        </p:dataTable>
+
+                        <br/>
+                        <br/>
+
+                        <p:commandButton value="Add Hazard Activity" disabled="#{hazardActivity_MB.addButton}"> 
+                            <f:ajax listener="#{hazardActivity_MB.showAdd()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+
+                        <br/>
+                        <br/>
+
+                        <c:choose>
+                            <c:when test="#{hazardActivity_MB.addFlag}">
+                                <pp><p:outputLabel value="Add"/></pp>
+                            </c:when>
+                            <c:when test="#{hazardActivity_MB.editFlag}">
+                                <pp><p:outputLabel value="Edit"/></pp>
+                            </c:when>
+                        </c:choose>
+
+                        <br/>
+                        <p:panelGrid id="modifyTable" columns="2" rendered="#{hazardActivity_MB.addFlag or hazardActivity_MB.editFlag}">
+                            <c:if test="#{hazardActivity_MB.editFlag}">
+                                <p:outputLabel value="Activity Id:" for="activityId" />
+                                <p:inputText id="activityId" value="#{hazardActivity_MB.hazardActivityObject.activityId}" disabled="true" title="ActivityId" required="true" requiredMessage="The ActivityId field is required."/>
+                            </c:if>
+                            <p:outputLabel value="Activity Name:" for="activityName" />
+                            <p:inputText id="activityName" value="#{hazardActivity_MB.hazardActivityObject.activityName}" title="ActivityName" required="true" requiredMessage="The ActivityName field is required."/>
+                        </p:panelGrid>
+
+                        <br/>
+
+                        <c:choose>
+                            <c:when test="#{hazardActivity_MB.addFlag}">
+                                <p:commandButton value="Save" action="#{hazardActivity_MB.addHazardActivity()}" update="viewTable modifyTable"/>   
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{hazardActivity_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{hazardActivity_MB.editFlag}">
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{hazardActivity_MB.editHazardActivity()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{hazardActivity_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+
+                            </c:when>
+                        </c:choose>
+
+
+                    </h:form>
+
+                </f:view>
+
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
