@@ -69,40 +69,28 @@ public class addHazard_MB implements Serializable {
 
     @EJB
     private DbglobalIdFacadeLocal dbglobalIdFacade;
-
     @EJB
     private DbHazardSbsFacadeLocal dbHazardSbsFacade;
-
     @EJB
     private DbHazardFacadeLocal dbHazardFacade;
-
     @EJB
     private DbriskClassFacadeLocal dbriskClassFacade;
-
     @EJB
     private DbhazardContextFacadeLocal dbhazardContextFacade;
-
     @EJB
     private DbriskSeverityFacadeLocal dbriskSeverityFacade;
-
     @EJB
     private DbriskFrequencyFacadeLocal dbriskFrequencyFacade;
-
     @EJB
     private DbOwnersFacadeLocal dbOwnersFacade;
-
     @EJB
     private DbhazardTypeFacadeLocal dbhazardTypeFacade;
-
     @EJB
     private DbhazardStatusFacadeLocal dbhazardStatusFacade;
-
     @EJB
     private DbLocationFacadeLocal dbLocationFacade;
-
     @EJB
     private DbhazardActivityFacadeLocal dbhazardActivityFacade;
-
     @EJB
     private DbtreeLevel6FacadeLocal dbtreeLevel6Facade;
     @EJB
