@@ -46,9 +46,9 @@ public class DbglobalIdFacade extends AbstractFacade<DbglobalId> implements Dbgl
         }
         return tmpValidate;
     }
-    
+
     @Override
-        public validateIdObject nextConsecutive(String key1, String key2, String separator, int zeroPositions) {
+    public validateIdObject nextConsecutive(String key1, String key2, String separator, int zeroPositions) {
         validateIdObject tmpValidate = validateFields(2, separator, key1, key2, "");
         if (tmpValidate.isValidationFlag()) {
             DbglobalId bridgeGlobalId = this.findByKey(key1, key2);
