@@ -58,6 +58,7 @@
     </dependencies>
 
     <build>
+        <finalName>ssd</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
