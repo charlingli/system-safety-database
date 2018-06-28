@@ -7,6 +7,10 @@ and open the template in the editor.
     Created on : 13/02/2018, 1:33:32 PM
     Author     : Juan David
 */
+.ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
+}
+
 .searchBox
 {
     width: 600px;
@@ -104,7 +108,7 @@ and open the template in the editor.
 }
 pp 
 {
-    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
     font-size:  14px;
     font-weight: bold;
     margin: 0px;
@@ -271,11 +275,68 @@ a:link:hover, a:visited:hover
 .pagePath
 {
     background-color:#008080;
-    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
     font-size:  14px;
     font-weight: bold;
     margin: 0px;
     padding: 0px;
     color: #ffffff;
     width: fit-content;
+}
+
+.ui-diagram-hazard {
+    max-width:20%; 
+    height:auto;     
+    padding:1em;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    background-color: #0095a8;
+    color: #ffffff;
+}
+
+.ui-diagram-cause {
+    max-width:10%; 
+    height:auto;     
+    padding:1em;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    background-color: #47b9c7;
+    color: #ffffff;
+}
+
+.ui-diagram-consequence {
+    max-width:10%; 
+    height:auto;     
+    padding:1em;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    background-color: #4d858d;
+    color: #ffffff;
+}
+
+.ui-diagram-prevent {
+    max-width:5%; 
+    height:auto;     
+    padding:1em;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    background-color: #f2bb47;
+    color: #000000;
+    z-level: 1;
+}
+
+.ui-diagram-mitigate {
+    max-width:5%; 
+    height:auto;     
+    padding:1em;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    border-radius: 4px;
+    background-color: #af1e64;
+    color: #000000;
+    z-level: 1;
 }
