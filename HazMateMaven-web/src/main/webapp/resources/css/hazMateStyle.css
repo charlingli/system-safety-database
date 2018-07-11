@@ -7,7 +7,7 @@ and open the template in the editor.
     Created on : 13/02/2018, 1:33:32 PM
     Author     : Juan David
 */
-.ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+.ui-widget, .ui-dialog-title, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, .ui-diagram-element {
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
 }
 
@@ -188,11 +188,9 @@ pp
 {
     color: #045491;
 }
-.hazardMap 
+.ui-datatable-footer 
 {
-    width: 100%; 
-    height: 480px; 
-    border: 0px;
+    min-height: 1em;
 }
 
 #hazardsForm\:hazardTable
@@ -279,64 +277,173 @@ a:link:hover, a:visited:hover
     font-size:  14px;
     font-weight: bold;
     margin: 0px;
-    padding: 0px;
+    padding: 2px;
     color: #ffffff;
     width: fit-content;
+    border-radius: 4px;
+}
+
+.ui-dialog-title {
+    color: black;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.ui-content {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+.ui-dialog {
+    height: 720px;
+    width: 960px;
+}
+
+.ui-diagram {
+    flex: 1 0 auto;
 }
 
 .ui-diagram-hazard {
-    max-width:20%; 
-    height:auto;     
+    width:180px; 
+    min-height:4em;
     padding:1em;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     border-radius: 4px;
-    background-color: #0095a8;
-    color: #ffffff;
+    border: #e26b2a 4px solid;
+    color: #000000;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 100%), repeating-linear-gradient(
+        45deg,
+        #e26b2a,
+        #e26b2a 4px,
+        #ffffff 4px,
+        #ffffff 8px
+    );
+    background-clip: content-box, padding-box;
 }
 
 .ui-diagram-cause {
-    max-width:10%; 
-    height:auto;     
+    width:180px;
+    min-height:4em;
     padding:1em;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    text-align: right;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     border-radius: 4px;
-    background-color: #47b9c7;
-    color: #ffffff;
+    border-right: #f2bb47 8px solid;
 }
 
 .ui-diagram-consequence {
-    max-width:10%; 
-    height:auto;     
+    width:180px; 
+    min-height:4em;   
     padding:1em;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+    text-align: left;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
     border-radius: 4px;
-    background-color: #4d858d;
-    color: #ffffff;
+    border-left: #d61d3c 8px solid;
 }
 
 .ui-diagram-prevent {
-    max-width:5%; 
+    max-width:120px; 
     height:auto;     
     padding:1em;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
     border-radius: 4px;
-    background-color: #f2bb47;
-    color: #000000;
-    z-level: 1;
+    border: #47b9c7 2px solid;
+    background: #ffffff;
+    color: #ffffff;
 }
 
 .ui-diagram-mitigate {
-    max-width:5%; 
+    max-width:120px; 
     height:auto;     
     padding:1em;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
     border-radius: 4px;
-    background-color: #af1e64;
+    border: #47b9c7 2px solid;
+    background: #ffffff;
+    color: #ffffff;
+}
+
+.ui-diagram-text {
+    position: absolute;
+    width: 8em;
+    text-align: center;
     color: #000000;
-    z-level: 1;
+    border-radius: 4px;
+    border: solid #47b9c7 2px;
+    height: 6em;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.ui-diagram-text:before {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.ui-diagram-text:after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    margin-top: 0.2em;
+    background: white;
+}
+
+.ui-diagram-text:hover {
+    overflow: visible;
+    color: #ffffff;
+}
+
+.ui-diagram-text:hover .ui-diagram-tooltip {
+    visibility: visible;
+    opacity: 100;
+}
+
+.ui-diagram-text .ui-diagram-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    transition:visibility 0.3s linear,opacity 0.3s linear;
+    max-width: auto;
+    background-color: #ffffff;
+    text-align: center;
+ 
+    margin: 0em;
+    color: #000000;
+    
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    top: 0px;
+    left: 0px; 
+    z-index: 2;
+}
+
+.ui-diagram-recommend-Ado {
+    display:flex;
+    justify-content: center;
+    color: #ffffff;
+    background: #6ebe49;
+}
+
+.ui-diagram-recommend-Rej {
+    display:flex;
+    justify-content: center;
+    color: #ffffff;
+    background: #d61d3c;
+}
+
+.ui-diagram-recommend-Ref {
+    display:flex;
+    justify-content: center;
+    color: #000000;
+    background: #f2bb47;
 }
