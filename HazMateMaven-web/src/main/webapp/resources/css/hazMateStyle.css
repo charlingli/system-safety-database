@@ -320,6 +320,18 @@ a:link:hover, a:visited:hover
     width: fit-content;
 }
 
+.pagePath1
+{
+    background-color:#0084C6;
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-size:  13px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #ffffff;
+    width: fit-content;
+}
+
 .hazardsFieldset{
     width: 70%;
 }
