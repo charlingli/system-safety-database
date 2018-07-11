@@ -6,6 +6,7 @@
 package entities;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,6 +32,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DbControlHazard.findByHazardId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.hazardId = :hazardId")
     , @NamedQuery(name = "DbControlHazard.findByControlId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.controlId = :controlId")})
 public class DbControlHazard implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 20)
+    @Column(name = "controlType")
+    private String controlType;
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -80,6 +88,15 @@ public class DbControlHazard implements Serializable {
         this.controlJustify = controlJustify;
     }
 
+    public String getControlType() {
+        return controlType;
+    }
+
+    public void setControlType(String controlType) {
+        this.controlType = controlType;
+    }
+    
+
     public DbControl getDbControl() {
         return dbControl;
     }
@@ -128,5 +145,4 @@ public class DbControlHazard implements Serializable {
     public String toString() {
         return "entities.DbControlHazard[ dbControlHazardPK=" + dbControlHazardPK + " ]";
     }
-    
 }

@@ -10,6 +10,7 @@ package customObjects;
  * @author Charling
  */
 public class searchObject {
+
     private String fieldName;
     private String userInput;
     private String fieldType;
@@ -18,6 +19,22 @@ public class searchObject {
     private String entity3Name;
     private String tableAlias;
     private String relationType;
+    private String FieldDescription;
+
+    public searchObject(String fieldName, String userInput, String fieldType, String entity1Name, String entity2Name, String entity3Name, String tableAlias, String relationType, String FieldDescription) {
+        this.fieldName = fieldName;
+        this.userInput = userInput;
+        this.fieldType = fieldType;
+        this.entity1Name = entity1Name;
+        this.entity2Name = entity2Name;
+        this.entity3Name = entity3Name;
+        this.tableAlias = tableAlias;
+        this.relationType = relationType;
+        this.FieldDescription = FieldDescription;
+    }
+    
+    public searchObject() {
+    }
 
     public String getFieldName() {
         return fieldName;
@@ -82,5 +99,13 @@ public class searchObject {
     public void setRelationType(String relationType) {
         this.relationType = relationType;
     }
-    
+
+    public String getFieldDescription() {
+        return FieldDescription;
+    }
+
+    public void setFieldDescription(String FieldDescription) {
+        this.FieldDescription = FieldDescription;
+    }
+
 }

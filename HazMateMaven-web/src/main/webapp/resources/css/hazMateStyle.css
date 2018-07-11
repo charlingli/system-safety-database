@@ -7,7 +7,11 @@ and open the template in the editor.
     Created on : 13/02/2018, 1:33:32 PM
     Author     : Juan David
 */
-.ui-widget, .ui-dialog-title, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button, .ui-diagram-element {
+.ui-accordion .ui-accordion-header .ui-icon { 
+    display: block;    
+}
+
+.ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
 }
 
@@ -243,18 +247,18 @@ pp
 }
 html 
 {
-  height: 100%;
+    height: 100%;
 }
 body 
 {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 .center_content 
 {
-  flex: 1 0 auto;
-  padding: 15px;
+    flex: 1 0 auto;
+    padding: 15px;
 }
 .ui-widget-header
 {
@@ -264,11 +268,11 @@ body
 }
 a:link, a:visited 
 {
-  color: #333333;
+    color: #333333;
 }
 a:link:hover, a:visited:hover  
 {
-  color: #333333;
+    color: #333333;
 } 
 .pagePath
 {
@@ -304,6 +308,84 @@ a:link:hover, a:visited:hover
     flex: 1 0 auto;
 }
 
+.pagePath1
+{
+    background-color:#0084C6;
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-size:  13px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #ffffff;
+    width: fit-content;
+}
+
+.hazardsFieldset{
+    width: 70%;
+}
+
+.searchGridRight {
+    border-style: hidden !important; /* or none */
+    width: 40%;
+}
+
+.searchGridLeft {
+    border-style: hidden !important; /* or none */
+    width: 60%;
+}
+
+.searchButtonsGrid {
+    padding: 2px;
+    padding-bottom: 10px;
+}
+
+.searchFields{
+    vertical-align: top;
+}
+
+.searchExplanation{
+    vertical-align: top;
+    padding-left: 10px;   
+}
+
+.queryDescr  {
+    width: 700px;
+}
+
+.queryDescr h3 {
+    color: #000000;
+    margin: 0;
+    padding-bottom: 3px;
+}
+
+.queryDescr h4 {
+    padding-left: 10px; 
+    margin: 0;
+    padding-bottom: 1px; 
+    padding-top: 1px;
+}
+
+.queryDescr h4 span {
+    color: #3366ff;
+    padding-bottom: 1px; 
+    padding-top: 1px;
+}
+
+.queryDescr_field {
+    padding-left: 20px; 
+    margin: 0;
+    padding-bottom: 1px; 
+    padding-top: 1px;
+}
+
+.queryDescr_and {
+    color: #ff0000; 
+    margin: 0;
+    padding-bottom: 1px; 
+    padding-top: 1px;
+    font-size: 12px;
+    font-weight: bold;
+}
 .ui-diagram-hazard {
     width:180px; 
     min-height:4em;
