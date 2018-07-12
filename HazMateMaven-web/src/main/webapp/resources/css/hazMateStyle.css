@@ -7,6 +7,18 @@ and open the template in the editor.
     Created on : 13/02/2018, 1:33:32 PM
     Author     : Juan David
 */
+html 
+{
+    height: 100%;
+}
+
+body 
+{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
 .ui-accordion .ui-accordion-header .ui-icon { 
     display: block;    
 }
@@ -30,13 +42,12 @@ and open the template in the editor.
     width: 260px;
     background-color: #053677;
     font-size: 14px;
-    margin-top: 35px;
     margin-bottom: 5px;
     margin-left: 10px;
     font-weight: bold;
     color: white;
     text-align: center;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 .infoTextBig
 {
@@ -89,7 +100,7 @@ and open the template in the editor.
 }
 .idAutocompleteColumn
 {
-    width: 10%;     
+    width: 10%;
 }
 .linkDiv
 {
@@ -217,6 +228,11 @@ pp
     float: left;
 }
 
+.searchGridMiddle .searchInput
+{
+    width: 100%;
+}
+
 .permissionsTable
 {
     float: left;
@@ -244,16 +260,6 @@ pp
 .accordionWidth
 {
     width: 60%; 
-}
-html 
-{
-    height: 100%;
-}
-body 
-{
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
 }
 .center_content 
 {
@@ -338,12 +344,17 @@ a:link:hover, a:visited:hover
 
 .searchGridRight {
     border-style: hidden !important; /* or none */
+    width: 5%;
+}
+
+.searchGridMiddle {
+    border-style: hidden !important; /* or none */
     width: 40%;
 }
 
 .searchGridLeft {
     border-style: hidden !important; /* or none */
-    width: 60%;
+    width: 55%;
 }
 
 .searchButtonsGrid {
@@ -540,4 +551,41 @@ a:link:hover, a:visited:hover
     justify-content: center;
     color: #000000;
     background: #f2bb47;
+}
+
+.detailTable {
+    margin:auto;
+    width: 100%;
+    border: #dddddd 1px solid;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 20px;
+}
+
+.detailTable .detailText {
+    margin-top: 35px;
+    margin-bottom: 5px;
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.detailTable .hazardDetail {
+    width: 100%;
+}
+
+.detailTable .detailThin {
+    width: 12%;
+}
+
+.detailTable .controlDetail .detailMed {
+    width: 16%;
+}
+
+.fa-remove {
+    color: red;
+}
+
+.removePanel {
+    width: 10px;
+    display: block;
 }

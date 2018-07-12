@@ -67,11 +67,11 @@
                     </p:panelGrid>
                     <p:panel id="causesPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="manyResultBox">
                         <pp>
-                            <h:outputText value="The following causes are associated to the current hazard." rendered="#{hazardsRelation_MB.infoBox}"/>
+                            <h:outputText value="The following causes are associated with the current hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
                         </pp>
                         <br/>
                         <br/>
-                        <p:dataTable value="#{hazardsRelation_MB.listHazardCauses}" var="cause" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No causes are associated to this hazard.">
+                        <p:dataTable value="#{hazardsRelation_MB.listHazardCauses}" var="cause" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No causes are associated with this hazard.">
                             <p:column headerText="Cause Id" styleClass="idColumn">
                                 <p:outputLabel value="#{cause.dbCause.causeId}"/>
                             </p:column>
@@ -111,11 +111,11 @@
                     </p:panel>
                     <p:panel id="consqsPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="manyResultBox">
                         <pp>
-                            <h:outputText value="The following consequences are associated to the current hazard." rendered="#{hazardsRelation_MB.infoBox}"/>
+                            <h:outputText value="The following consequences are associated with the current hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
                         </pp>
                         <br/>
                         <br/>
-                        <p:dataTable value="#{hazardsRelation_MB.listHazardConsqs}" var="consequence" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No consequences are associated to this hazard.">
+                        <p:dataTable value="#{hazardsRelation_MB.listHazardConsqs}" var="consequence" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No consequences are associated with this hazard.">
                             <p:column headerText="Consequence Id" styleClass="idColumn">
                                 <p:outputLabel value="#{consequence.dbConsequence.consequenceId}"/>
                             </p:column>
@@ -155,11 +155,11 @@
                     </p:panel>
                     <p:panel id="controlsGroup" rendered="#{hazardsRelation_MB.infoBox}" styleClass="manyResultBox">
                         <pp>
-                            <h:outputText value="The following controls are associated to the current hazard." rendered="#{hazardsRelation_MB.infoBox}"/>
+                            <h:outputText value="The following controls are associated with the current hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
                         </pp>
                         <br/>
                         <br/>
-                        <p:dataTable value="#{hazardsRelation_MB.listHazardControls}" var="control" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No controls are associated to this hazard.">
+                        <p:dataTable value="#{hazardsRelation_MB.listHazardControls}" var="control" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No controls are associated with this hazard.">
                             <p:column headerText="Control Id" styleClass="idColumn">
                                 <p:outputLabel value="#{control.dbControl.controlId}"/>
                             </p:column>
@@ -195,7 +195,6 @@
                                 <p:column styleClass="idAutocompleteColumn">
                                     <h:outputText value="#{control1.controlId}" />
                                 </p:column>
-
                                 <p:column>
                                     <h:outputText value="#{control1.controlDescription}" />
                                 </p:column>

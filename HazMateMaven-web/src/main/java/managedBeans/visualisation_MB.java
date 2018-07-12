@@ -25,9 +25,10 @@ import org.primefaces.model.diagram.overlay.LabelOverlay;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.EJB;
+import javax.faces.bean.RequestScoped;
  
 @ManagedBean(name = "visualisation_MB")
-@ViewScoped
+@RequestScoped
 public class visualisation_MB {
      
     private DefaultDiagramModel model;
