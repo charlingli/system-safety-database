@@ -39,6 +39,7 @@ import javax.faces.view.ViewScoped;
 /**
  *
  * @author Juan David
+ * 
  */
 @Named(value = "hazardsRelation_MB")
 @ViewScoped
@@ -88,6 +89,7 @@ public class hazardsRelation_MB implements Serializable {
     private String hazardComment;
     private String hazardWorkshop;
     private String controlRecommendId;
+    private String controlType;
     private String controlJustify;
     private String controlSaveAction;
 
@@ -318,6 +320,14 @@ public class hazardsRelation_MB implements Serializable {
         this.controlJustify = controlJustify;
     }
 
+    public String getControlType() {
+        return controlType;
+    }
+
+    public void setControlType(String controlType) {
+        this.controlType = controlType;
+    }
+    
     @PostConstruct
     public void init() {
         searchBox = true;
@@ -475,6 +485,7 @@ public class hazardsRelation_MB implements Serializable {
         controlSaveAction = "Edit";
         setControlHazardObject(dbControlHazardIn);
         setControlRecommendId(controlHazardObject.getControlRecommendId().getControlRecommendId().toString());
+        setControlType(controlHazardObject.getControlType());
         setControlJustify(controlHazardObject.getControlJustify());
         if (controlHazardObject.getControlJustify() != null){
             addControlJustify = true;
@@ -505,6 +516,7 @@ public class hazardsRelation_MB implements Serializable {
     public void addHazardControls() {
         DbcontrolRecommend tmpCtlRecommend = dbcontrolRecommendFacade.find(Integer.parseInt(controlRecommendId));
         controlHazardObject.setDbHazard(hazardObject);
+        controlHazardObject.setControlType(controlType);
         controlHazardObject.setDbControlHazardPK(
                 new DbControlHazardPK(hazardObject.getHazardId(), controlHazardObject.getDbControl().getControlId()));
         controlHazardObject.setControlRecommendId(new DbcontrolRecommend(Integer.parseInt(controlRecommendId)));

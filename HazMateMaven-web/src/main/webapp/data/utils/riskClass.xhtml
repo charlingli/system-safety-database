@@ -13,14 +13,8 @@
 
             <ui:define name="content">
                 <f:view>
-
-                    <br></br>
-
                     <h:form>
-                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                        <br></br>
-                        <br></br>
-
+                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <p:dataTable id="viewTable" value="#{riskClass_MB.listDbRiskClass}" var="item" tableStyle="width:auto;"> 
                             <p:column>

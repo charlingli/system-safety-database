@@ -10,9 +10,7 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="hazardsForm">
-                    <div class="pagePath1"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                    <br></br>
-                    <br></br>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="hazardsFieldset" collapsed="true">
                         <h:panelGrid columns="2" columnClasses="searchFields,searchExplanation">

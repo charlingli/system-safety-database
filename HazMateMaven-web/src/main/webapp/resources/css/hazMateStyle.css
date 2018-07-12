@@ -32,7 +32,6 @@ and open the template in the editor.
     font-size: 14px;
     margin-top: 35px;
     margin-bottom: 5px;
-    margin-left: 10px;
     font-weight: bold;
     color: white;
     text-align: center;
@@ -54,6 +53,7 @@ and open the template in the editor.
 .hazardInfo
 {
     width: 75%;
+    margin-bottom: 15px;
 }
 .hazardInfoFieldName
 {
@@ -68,6 +68,10 @@ and open the template in the editor.
     margin-top: 5px;
     margin-bottom: 5px;
 }
+.linkActions {
+    color: #2200CC !important; 
+}
+
 .idColumn
 {
     width: 12%;
@@ -288,6 +292,12 @@ a:link:hover, a:visited:hover
     width: fit-content;
 }
 
+.pagePathNew {
+    font-size:  14px;
+    margin-left: 0px;
+    padding-bottom: 10px;
+}
+
 .pagePath1
 {
     background-color:#0084C6;
@@ -421,4 +431,21 @@ a:link:hover, a:visited:hover
     background-color: #af1e64;
     color: #000000;
     z-level: 1;
+}
+
+.ui-menu.ui-widget li > .ui-menuitem-link.ui-state-hover {
+
+color:#ffffff;
+text-decoration:none;
+background-color:#008080;
+background-color:#008080;
+background-position:0px;
+background-image:-moz-linear-gradient(top, #008080, #0077b3);
+background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#008080), to(#008080));
+background-image:-webkit-linear-gradient(top, #008080, #008080);
+background-image:-o-linear-gradient(top, #008080, #008080);
+background-image:linear-gradient(to bottom, #008080, #008080);
+background-repeat:repeat-x;
+filter:progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+
 }

@@ -6,6 +6,7 @@
 package entities;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -47,6 +49,11 @@ public class DbControlHazard implements Serializable {
     @JoinColumn(name = "hazardId", referencedColumnName = "hazardId", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DbHazard dbHazard;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1)
+    @Column(name = "controlType")
+    private String controlType;
 
     public DbControlHazard() {
     }
@@ -103,6 +110,14 @@ public class DbControlHazard implements Serializable {
     public void setDbHazard(DbHazard dbHazard) {
         this.dbHazard = dbHazard;
     }
+    
+      public String getControlType() {
+        return controlType;
+    }
+
+    public void setControlType(String controlType) {
+        this.controlType = controlType;
+    }  
 
     @Override
     public int hashCode() {
