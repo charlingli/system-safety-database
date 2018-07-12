@@ -32,13 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "DbControlHazard.findByHazardId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.hazardId = :hazardId")
     , @NamedQuery(name = "DbControlHazard.findByControlId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.controlId = :controlId")})
 public class DbControlHazard implements Serializable {
-
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "controlType")
-    private String controlType;
-
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DbControlHazardPK dbControlHazardPK;
@@ -55,6 +48,11 @@ public class DbControlHazard implements Serializable {
     @JoinColumn(name = "hazardId", referencedColumnName = "hazardId", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DbHazard dbHazard;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1)
+    @Column(name = "controlType")
+    private String controlType;
 
     public DbControlHazard() {
     }

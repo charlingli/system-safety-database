@@ -18,6 +18,7 @@ import javax.faces.context.FacesContext;
 /**
  *
  * @author Admin
+ * 
  */
 @Named(value = "pagePath_MB")
 @RequestScoped
@@ -59,6 +60,33 @@ public class pagePath_MB {
         } else if (tempMenu.getMenuType().equals("S")) {
             DbMenu parMenu = dbMenuFacade.find(tempMenu.getParentMenu());
             pagePath = parMenu.getMenuName() + " > " + tempMenu.getMenuName() + " > " + pageName;
+        }
+
+        return pagePath;
+    }
+    
+    public String getPageHtmlPath() {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        String viewId = ctx.getViewRoot().getViewId();
+        String viewTitle = "";
+        int iend = viewId.indexOf(".");
+        if (iend != -1) {
+            viewTitle = viewId.substring(0, iend);
+        }
+
+        DbPage tempPage = dbPageFacade.retrievePageName(viewTitle);
+        String pageName = tempPage.getPageName();
+        DbMenu tempMenu = dbMenuFacade.find(tempPage.getMenuId().getMenuId());
+        String pagePath = "";
+
+        if (tempMenu.getMenuType().equals("M")) {
+            //pagePath = tempMenu.getMenuName() + " > " + pageName;
+            pagePath = "<p><h3><strong> " + tempMenu.getMenuName() + " > " + "<span style=\"color: #008080; text-decoration: underline;\"> " + pageName + " </span></strong></h3></p>";
+        } else if (tempMenu.getMenuType().equals("S")) {
+            DbMenu parMenu = dbMenuFacade.find(tempMenu.getParentMenu());
+            //pagePath = parMenu.getMenuName() + " > " + tempMenu.getMenuName() + " > " + pageName;
+            pagePath = "<p><h3><strong> " + parMenu.getMenuName() + " > " + tempMenu.getMenuName() + " > " + 
+                    "<span style=\"color: #008080; text-decoration: underline;\"> " + pageName + " </span></strong></h3></p>";
         }
 
         return pagePath;
