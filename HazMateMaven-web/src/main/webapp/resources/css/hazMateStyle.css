@@ -336,6 +336,12 @@ a:link:hover, a:visited:hover
     padding-bottom: 10px;
 }
 
+.pagePathNew {
+    font-size:  14px;
+    margin-left: 0px;
+    padding-bottom: 10px;
+}
+
 .pagePath1
 {
     background-color:#0084C6;
@@ -612,4 +618,18 @@ a:link:hover, a:visited:hover
 .removePanel {
     width: 10px;
     display: block;
+
+color:#ffffff;
+text-decoration:none;
+background-color:#008080;
+background-color:#008080;
+background-position:0px;
+background-image:-moz-linear-gradient(top, #008080, #0077b3);
+background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#008080), to(#008080));
+background-image:-webkit-linear-gradient(top, #008080, #008080);
+background-image:-o-linear-gradient(top, #008080, #008080);
+background-image:linear-gradient(to bottom, #008080, #008080);
+background-repeat:repeat-x;
+filter:progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+
 }

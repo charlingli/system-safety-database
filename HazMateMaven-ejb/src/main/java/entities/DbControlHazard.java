@@ -118,6 +118,14 @@ public class DbControlHazard implements Serializable {
     public void setDbHazard(DbHazard dbHazard) {
         this.dbHazard = dbHazard;
     }
+    
+      public String getControlType() {
+        return controlType;
+    }
+
+    public void setControlType(String controlType) {
+        this.controlType = controlType;
+    }  
 
     @Override
     public int hashCode() {
