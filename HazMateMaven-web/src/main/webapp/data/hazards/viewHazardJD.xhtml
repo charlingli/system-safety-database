@@ -278,11 +278,11 @@
                             <p:resetInput target="hazardsForm" />
                         </p:commandButton>
                     </div>
-                    <p:dataTable id="hazardsTable" value="#{hazardView_MB.hazardSearchedlist}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
+                    <p:dataTable id="hazardsTable" class="defaultTable" value="#{hazardView_MB.hazardSearchedlist}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
                                  scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" style="padding-left: 2px">
                         <f:facet name="header">
                             <p:outputPanel>
-                                <p:commandButton id="columnToggle" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.popUpWindow()}" onclick="this.form.target='_blank'" ajax="false">
+                                <p:commandButton id="columnToggle" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.showExtended()}" onclick="this.form.target='_blank'" ajax="false">
                                     <f:param name="hazard.list" value="#{hazardView_MB.hazardSearchedlist}" />
                                 </p:commandButton>
                             </p:outputPanel>

@@ -218,7 +218,7 @@
                                 </p:fieldset>
                             </div>
                             <div class="ui-g-12">
-                                <p:dataTable id="hazardTable" value="#{hazardTable_MB.searchDbHazard}" var="item" tableStyle="width:auto;" resizableColumns="true" widgetVar="hazardsTable" emptyMessage="No hazard entries found with given criteria" filteredValue="#{hazardTable_MB.filterDbHazard}" selectionMode="single" selection="#{hazardTable_MB.selectedHazard}" rowKey="#{item.hazardId}">
+                                <p:dataTable id="hazardTable" value="#{hazardTable_MB.searchDbHazard}" var="item" resizableColumns="true" widgetVar="hazardsTable" emptyMessage="No hazard entries found with given criteria" filteredValue="#{hazardTable_MB.filterDbHazard}" selectionMode="single" selection="#{hazardTable_MB.selectedHazard}" rowKey="#{item.hazardId}">
                                     <f:facet name="header">
                                         <p:outputPanel>
                                             <h:outputText value="Search all hazard entries: " />
@@ -229,7 +229,7 @@
                                             </p:columnToggler>
                                         </p:outputPanel>
                                     </f:facet>
-                                    <p:column visible="#{hazardTable_MB.toggleColumns[0]}">
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[0]}" style="width: 80px;">
                                         <f:facet name="header">
                                             <h:outputText value="Options"/>
                                         </f:facet>

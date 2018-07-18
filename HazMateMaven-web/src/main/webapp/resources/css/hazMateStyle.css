@@ -212,11 +212,6 @@ pp
     min-height: 1em;
 }
 
-#hazardsForm\:hazardTable
-{
-    font-size: 10px;
-}
-
 #hazardsForm\:hazardTable\:globalFilter
 {
     width: 240px;
@@ -225,11 +220,6 @@ pp
 #hazardsForm\:hazardTable\:columnToggle
 {
     float: right;
-}
-
-#hazardsForm\:hazardTable\:hazardCount
-{
-    float: left;
 }
 
 .searchGridMiddle .searchInput
@@ -618,4 +608,186 @@ a:link:hover, a:visited:hover
 .removePanel {
     width: 10px;
     display: block;
+}
+
+.extendTable {
+    font-size: 12.5px;
+    white-space: nowrap;
+    border-collapse: collapse;
+    border-spacing: -0px;
+}
+
+.extendTable .utilityHeader {
+    background: #008080;
+    height: 65px;
+    border-radius: 4px 4px 0 0;
+    position: sticky;
+    top: 0;
+}
+
+.extendTable .utilityDiv {
+    text-align: left;
+    width: 98vw;
+    position: fixed;
+    top: 0px;
+    left: 1%;
+}
+
+.extendTable .utilityDiv .globalColumnsDiv {
+    text-align: right;
+}
+
+.extendTable .utilityDiv p {
+    font-size: 18px;
+    color: white;
+    margin-bottom: 0px;
+}
+
+.extendTable >thead >tr:nth-child(2) {
+    background: #008080;
+}
+
+.extendTable >thead >tr:nth-child(2) >th {
+    background: linear-gradient(#ffffff, #e7e7e7);
+    border-radius: 4px;
+    background-clip: border-box;
+    font-weight: bold;
+    padding-left: .5px;
+    padding-right: .5px;
+    position: sticky;
+    top: 0;
+    min-width: 12em;
+}
+
+.extendTable >tbody >tr >td {
+    border: #b7b7b7 1px solid;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.extendTable >tbody >tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+.extendTable >tbody >tr .HDData, .HWData, .HMData {
+    white-space: normal;
+}
+
+.extendTable thead tr:nth-child(2) input,select {
+    width: 90%;
+    margin-bottom: 4px;
+}
+
+.progress-back {
+    display: block;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.progress-front {
+    margin: 20% auto;
+    width: 80%;
+}
+
+.loader,
+.loader:before,
+.loader:after {
+  background: #ffffff;
+  -webkit-animation: load1 1s infinite ease-in-out;
+  animation: load1 1s infinite ease-in-out;
+  width: 1em;
+  height: 4em;
+}
+.loader {
+  color: #ffffff;
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  font-size: 11px;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  position: absolute;
+  top: 0;
+  content: '';
+}
+.loader:before {
+  left: -1.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 1.5em;
+}
+@-webkit-keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+@keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+
+.extendTable >tbody >tr >td >table {
+    border-collapse: collapse;
+}
+
+.extendTable >tbody >tr >td >table >tbody >tr {
+    border-top: 1px #b7b7b7 solid;
+    border-bottom: 1px #b7b7b7 solid;
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+    table {
+        page-break-after:auto; 
+    }
+    tr { 
+        page-break-inside:auto; 
+        page-break-after:auto; 
+    }
+    td { 
+        page-break-inside:auto; 
+        page-break-after:auto; 
+    }
+    .extendTable {
+        left: 0px;
+        top: 0px;
+        position: absolute;
+        overflow: visible;
+        display: block;
+    }
+    input, select, .utilityHeader {
+        display: none;
+    }
 }
