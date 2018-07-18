@@ -257,6 +257,11 @@ pp
     width: 100%;
 }
 
+.searchGridMiddle .searchInput
+{
+    width: 100%;
+}
+
 .permissionsTable
 {
     float: left;
