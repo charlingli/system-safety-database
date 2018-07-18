@@ -13,6 +13,17 @@
                     <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <div class="ui-g">
+                            <p:dialog id="modelDialog" header="Bowtie Diagram" widgetVar="modelOverlay" height="80vh" width="90vw">
+                                <p:diagram value="#{visualisation_MB.model}" styleClass="ui-content"  /> 
+                            </p:dialog>
+                            <p:dialog id="detailDialog" header="Hazard Detail (#{hazardView_MB.detailHazardId})" widgetVar="detailOverlay" height="80vh" width="90vw">
+                                <div class="ui-g">
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12">Hazard Description</div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">Cause Information</div>
+                                    <div class="ui-g-12 ui-md-6 ui-lg-6">Consequence Information</div>
+                                    <div class="ui-g-12 ui-md-12 ui-lg-12">Control Information</div>
+                                </div>
+                            </p:dialog>
                             <div class="ui-g-12" >
                                 <p:fieldset id="hazardsSearch" legend="Search Parameters" toggleable="true" toggleSpeed="500" >
                                     <div class="ui-g">
@@ -198,7 +209,6 @@
                                                 <p:panel id="SCPanel" header="SBS Code(s)" >
                                                     <h:outputText value="#{hazardTable_MB.showTreeToString(hazardTable_MB.treeCheckedNodesList)}" />
                                                 </p:panel>
-
                                             </p:dashboard>
                                         </div>
                                     </div>
@@ -216,6 +226,15 @@
                                             </p:columnToggler>
                                         </p:outputPanel>
                                     </f:facet>
+                                    <p:column visible="#{hazardTable_MB.toggleColumns[0]}">
+                                        <f:facet name="header">
+                                            <h:outputText value="Options"/>
+                                        </f:facet>
+                                        <p:commandButton action="#{visualisation_MB.constructModelObject(item.hazardId)}" update="hazardsForm" oncomplete="PF('modelOverlay').show()" value="Visualise" />
+                                        <p:commandButton update="hazardsForm" oncomplete="PF('detailOverlay').show()" value="Show Detail" >
+                                            <f:setPropertyActionListener value="#{item}" target="#{dtSelectionView.selectedCar}" />
+                                        </p:commandButton>>
+                                    </p:column>
                                     <p:column visible="#{hazardTable_MB.toggleColumns[0]}">
                                         <f:facet name="header">
                                             <h:outputText value="Hazard ID" styleClass="rotateText"/>
@@ -509,7 +528,6 @@
                                     </p:column>
                                     <f:facet name="footer">
                                         <h:outputText id="hazardCount" value="Number of hazards: #{hazardTable_MB.searchDbHazard.size()} of #{hazardTable_MB.listDbHazard.size()} total" />
-                                        <p:commandButton value="Visualise Hazard as a Mind Map" action="#{hazardTable_MB.constructVisualisation(hazardTable_MB.selectedHazard)}" update=":hazardsAux:hazardMap" icon="ui-icon-search" />
                                     </f:facet>
                                 </p:dataTable>
                             </div>
@@ -522,16 +540,6 @@
                                     <p class="instructionText">Export and download hazards in .xls format.</p>
                                     <p:commandButton value="Export all hazards" action="#{hazardTable_MB.exportAllToFile(hazardTable_MB.listDbHazard)}" ajax="false"/>
                                     <p:commandButton value="Export only shown hazards" action="#{hazardTable_MB.exportAllToFile(hazardTable_MB.searchDbHazard)}" ajax="false" disabled="#{hazardTable_MB.isTableEmpty}"/>
-                                </p:fieldset>
-                            </div>
-                        </div>
-                        <div class="ui-g">
-                            <div class="ui-g-12">
-                                <p:fieldset legend="Hazard Visualisation" toggleSpeed="500">
-                                    <p class="instructionText">View selected hazard as a mind map.</p>
-                                    <p:mindmap id="hazardMap" value="#{hazardTable_MB.MMRoot}" styleClass="hazardMap">
-                                        <p:ajax event="select" listener="#{hazardTable_MB.onNodeSelect}" />
-                                    </p:mindmap>
                                 </p:fieldset>
                             </div>
                         </div>

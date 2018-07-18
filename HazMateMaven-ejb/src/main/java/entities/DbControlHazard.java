@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DbControlHazard.findAll", query = "SELECT d FROM DbControlHazard d")
     , @NamedQuery(name = "DbControlHazard.findByHazardId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.hazardId = :hazardId")
     , @NamedQuery(name = "DbControlHazard.findByControlId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.controlId = :controlId")})
-public class DbControlHazard implements Serializable {
 
+public class DbControlHazard implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DbControlHazardPK dbControlHazardPK;
@@ -87,6 +87,14 @@ public class DbControlHazard implements Serializable {
         this.controlJustify = controlJustify;
     }
 
+    public String getControlType() {
+        return controlType;
+    }
+
+    public void setControlType(String controlType) {
+        this.controlType = controlType;
+    }
+    
     public DbControl getDbControl() {
         return dbControl;
     }
@@ -110,14 +118,6 @@ public class DbControlHazard implements Serializable {
     public void setDbHazard(DbHazard dbHazard) {
         this.dbHazard = dbHazard;
     }
-    
-      public String getControlType() {
-        return controlType;
-    }
-
-    public void setControlType(String controlType) {
-        this.controlType = controlType;
-    }  
 
     @Override
     public int hashCode() {
@@ -143,5 +143,4 @@ public class DbControlHazard implements Serializable {
     public String toString() {
         return "entities.DbControlHazard[ dbControlHazardPK=" + dbControlHazardPK + " ]";
     }
-    
 }

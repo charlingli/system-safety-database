@@ -12,14 +12,22 @@
                 <f:view>
                     <br></br>
                     <h:form>
-                        <br /><br />
+                        <br />
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="true"/>
                         <br/>
-                        <p:diagram value="#{visualisation_MB.model}" style="height:600px" styleClass="ui-widget-content" />
+                        <p:commandButton oncomplete="PF('modelOverlay').show()" value="Create Model" />
+                                    
+                        <p:dialog id="modelDialog" header="Bowtie Diagram" widgetVar="modelOverlay" height="80vh" width="90vw">
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-12 ui-lg-12">Hazard Description</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">Cause Information</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-6">Consequence Information</div>
+                                <div class="ui-g-12 ui-md-12 ui-lg-12">Control Information</div>
+                            </div>
+                        </p:dialog>
                     </h:form>
                 </f:view>
             </ui:define>
         </ui:composition>
-        <!--<h:outputScript name="js/ui3.js" target="head" />-->  
     </body>
 </html>

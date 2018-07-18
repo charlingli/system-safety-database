@@ -73,6 +73,11 @@ public class hazardView_MB implements Serializable {
     private String searchedHazardComments;
     private String searchedControlDescription;
     private String searchedControlJustification;
+    private String detailHazardId;
+    private String detailHazardDescription;
+    private List<DbHazardCause> detailCauses;
+    private List<DbHazardConsequence> detailConsequences;
+    private List<DbControlHazard> detailControls;
     private List<DbLocation> listLocations;
     private List<DbProject> listProjects;
     private List<DbgradeSeparation> listGradeSeparations;
@@ -86,6 +91,7 @@ public class hazardView_MB implements Serializable {
     private List<DbcontrolHierarchy> listControlHierarchies;
     private List<DbcontrolRecommend> listControlRecommendations;
     private List<DbHazard> hazardSearchedlist;
+    private List<DbHazard> hazardDetailList;
     private String[] selectedLocations;
     private String[] selectedProjects;
     private String[] selectedGradeSeparations;
@@ -169,6 +175,46 @@ public class hazardView_MB implements Serializable {
 
     public void setSearchedControlJustification(String searchedControlJustification) {
         this.searchedControlJustification = searchedControlJustification;
+    }
+
+    public String getDetailHazardId() {
+        return detailHazardId;
+    }
+
+    public void setDetailHazardId(String detailHazardId) {
+        this.detailHazardId = detailHazardId;
+    }
+
+    public String getDetailHazardDescription() {
+        return detailHazardDescription;
+    }
+
+    public void setDetailHazardDescription(String detailHazardDescription) {
+        this.detailHazardDescription = detailHazardDescription;
+    }
+
+    public List<DbHazardCause> getDetailCauses() {
+        return detailCauses;
+    }
+
+    public void setDetailCauses(List<DbHazardCause> detailCauses) {
+        this.detailCauses = detailCauses;
+    }
+
+    public List<DbHazardConsequence> getDetailConsequences() {
+        return detailConsequences;
+    }
+
+    public void setDetailConsequences(List<DbHazardConsequence> detailConsequences) {
+        this.detailConsequences = detailConsequences;
+    }
+
+    public List<DbControlHazard> getDetailControls() {
+        return detailControls;
+    }
+
+    public void setDetailControls(List<DbControlHazard> detailControls) {
+        this.detailControls = detailControls;
     }
 
     public List<DbLocation> getListLocations() {
@@ -395,6 +441,14 @@ public class hazardView_MB implements Serializable {
         this.hazardSearchedlist = hazardSearchedlist;
     }
 
+    public List<DbHazard> getHazardDetailList() {
+        return hazardDetailList;
+    }
+
+    public void setHazardDetailList(List<DbHazard> hazardDetailList) {
+        this.hazardDetailList = hazardDetailList;
+    }
+
     public boolean isEnableQueryDescr() {
         return enableQueryDescr;
     }
@@ -403,7 +457,7 @@ public class hazardView_MB implements Serializable {
         this.enableQueryDescr = enableQueryDescr;
     }
 
-    //This method creates the search object, based on the selected parameters.
+    // This method creates the search object, based on the selected parameters.
     public void constructSearchObject() {
         // Initialising a couple of variables
         List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
@@ -781,5 +835,87 @@ public class hazardView_MB implements Serializable {
             }
         }
         return nodeName;
+    }
+    
+    public void showDetail(String hazardId) {
+        setDetailHazardId(hazardId);
+        setHazardDetailList(dbHazardFacade.findByName("hazardId", getDetailHazardId()));
+        DbHazard detailHazard = getHazardDetailList().get(0);
+        setDetailHazardDescription(detailHazard.getHazardDescription());
+        detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
+        detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
+        detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
+    }
+    
+    public String getControlTypeString(String controlType) {
+        if (controlType.equals("P")) {
+            return "Preventive";
+        } else {
+            return "Mitigative";
+        }
+    }
+    
+    public void clearField(String id) {
+        switch(id){
+            case "HDClear":
+                setSearchedHazardDescription(null);
+                break;
+            case "CAClear":
+                setSearchedCauses(null);
+                break;
+            case "CQClear":
+                setSearchedConsequences(null);
+                break;
+            case "HMClear":
+                setSearchedHazardComments(null);
+                break;
+            case "HLClear":
+                setSelectedLocations(null);
+                break;
+            case "HPClear":
+                setSelectedProjects(null);
+                break;
+            case "GSClear":
+                setSelectedGradeSeparations(null);
+                break;
+            case "CNClear":
+                setSelectedConstructionTypes(null);
+                break;
+            case "CHClear":
+                setSelectedChangeTypes(null);
+                break;
+            case "HAClear":
+                setSelectedHazardActivities(null);
+                break;
+            case "HCClear":
+                setSelectedHazardContexts(null);
+                break;
+            case "HTClear":
+                setSelectedHazardTypes(null);
+                break;
+            case "HSClear":
+                setSelectedHazardStatuses(null);
+                break;
+            case "HOClear":
+                setSelectedHazardOwners(null);
+                break;
+            case "CDClear":
+                setSearchedControlDescription(null);
+                break;
+            case "CJClear":
+                setSearchedControlJustification(null);
+                break;
+            case "CTClear":
+                setSelectedControlHierachies(null);
+                break;
+            case "COClear":
+                setSelectedControlOwners(null);
+                break;
+            case "CRClear":
+                setSelectedControlRecommendations(null);
+                break;
+        }
+        constructHtml(new ArrayList<>(), new ArrayList<>());
+        enableQueryDescr = false;
     }
 }
