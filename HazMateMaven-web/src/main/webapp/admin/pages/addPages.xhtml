@@ -5,50 +5,39 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-
     <body>
-
         <ui:composition template="./../../templates/masterTemplate.xhtml">
-
             <ui:define name="content">
-
                 <f:view>
-
                     <h:form>
-                        <br/>
-                        <pp><p:outputLabel value="Add Page"/></pp>
-                        <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false"/>
-                        <br/>
-                        <h:panelGrid columns="2">
-
-                            <p:outputLabel value="Page Name:" for="pageName" />
-                            <p:inputText id="pageName" value="#{pages_MB.pageObject.pageName}" title="PageName" required="true" requiredMessage="The Page Name field is required."/>
-                            <p:outputLabel value="Page Location:" for="pageLocation" />
-                            <p:inputText id="pageLocation" value="#{pages_MB.pageObject.pageLocation}" title="PageLocation" required="true" requiredMessage="The Page Location field is required."/>
-                            <p:outputLabel value="Page Index:" for="indexPage" />
-                            <p:inputText id="indexPage" value="#{pages_MB.pageIndex}" title="IndexPage" required="true" requiredMessage="The Page Index field is required." validator="pageIndexValidator">
-                                <f:ajax event="keyup" execute="@this"/>                             
-                            </p:inputText>
-                            <p:outputLabel value="Page Icon:" for="pageIcon" />
-                            <p:inputText id="pageIcon" value="#{pages_MB.pageObject.pageIcon}" title="PageIcon" />
-                            <p:outputLabel value="Parent Menu:" for="menuId" />
-                            <p:selectOneMenu id="menuId" value="#{pages_MB.menuObject.menuId}" required="true" requiredMessage="The Parent Menu field is required.">
-                                <f:selectItem itemLabel="--Select One--" itemValue=""/>
-                                <f:selectItems noSelectionValue="--Select One--" value="#{pages_MB.getListDbMenu()}" var="p" itemLabel="#{p.menuName}" itemValue="#{p.menuId}"/>                               
-                            </p:selectOneMenu>
-                        </h:panelGrid>
-                        <br></br>
-                        <br></br>
-                        <p:commandButton value="Save" action="#{pages_MB.add()}"></p:commandButton>
-                        <p:commandButton value="Cancel" action="#{pages_MB.cancel()}" immediate="true"></p:commandButton>
-                        
+                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Pages Definition,Add Page')}" escape="false"/></div>
+                        <p:panel class="addInfoPanel">
+                            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false"/>
+                            <h:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                                <p:outputLabel value="Page Name:" for="pageName" />
+                                <p:inputText id="pageName" value="#{pages_MB.pageObject.pageName}" title="PageName" required="true" requiredMessage="The Page Name field is required."/>
+                                <p:outputLabel value="Page Location:" for="pageLocation" />
+                                <p:inputText id="pageLocation" value="#{pages_MB.pageObject.pageLocation}" title="PageLocation" required="true" requiredMessage="The Page Location field is required."/>
+                                <p:outputLabel value="Page Index:" for="indexPage" />
+                                <p:inputText id="indexPage" value="#{pages_MB.pageIndex}" title="IndexPage" required="true" requiredMessage="The Page Index field is required." validator="pageIndexValidator">
+                                    <f:ajax event="keyup" execute="@this"/>                             
+                                </p:inputText>
+                                <p:outputLabel value="Page Icon:" for="pageIcon" />
+                                <p:inputText id="pageIcon" value="#{pages_MB.pageObject.pageIcon}" title="PageIcon" />
+                                <p:outputLabel value="Parent Menu:" for="menuId" />
+                                <p:selectOneMenu id="menuId" value="#{pages_MB.menuObject.menuId}" required="true" styleClass="addSelectOne" requiredMessage="The Parent Menu field is required.">
+                                    <f:selectItem itemLabel="--Select One--" itemValue=""/>
+                                    <f:selectItems noSelectionValue="--Select One--" value="#{pages_MB.getListDbMenu()}" var="p" itemLabel="#{p.menuName}" itemValue="#{p.menuId}"/>                               
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                        </p:panel>
+                        <div class="actionButtonsDiv">
+                            <p:commandButton value="Save" action="#{pages_MB.add()}" />
+                            <p:commandButton value="Cancel" action="#{pages_MB.cancel()}" immediate="true" />
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
-
 </html>

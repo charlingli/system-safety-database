@@ -5,30 +5,29 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-
     <body>
-
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <br/>
-                        <pp><p:outputLabel value="Add Role"/></pp>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <br/>
-                        <p:panelGrid columns="2">
-                            
-                            <p:outputLabel value="Role name:" for="roleName" />
-                            <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="*Please specify the name of the role" />
-                            <p:outputLabel value="Role status" for="roleStatus"/>
-                            <p:selectOneMenu id="roleStatus" value="#{roles_MB.strStatus}" required="true" requiredMessage="*Please specify role status">
-                                <f:selectItem itemLabel="--Select role status--" noSelectionOption="true"/>
-                                <f:selectItem itemLabel="Active" itemValue="1"/>
-                                <f:selectItem itemLabel="Inactive" itemValue="0"/>
-                            </p:selectOneMenu>
-                        </p:panelGrid>
-                        <br></br>
-                        <p:commandButton value="Save" action="#{roles_MB.add()}"></p:commandButton>&nbsp;&nbsp;<p:commandButton value="Cancel" action="#{roles_MB.cancel()}" immediate="true" ></p:commandButton>
+                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Roles Definition,Add Role')}" escape="false"/></div>
+                        <p:panel class="addInfoPanel">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                                <p:outputLabel value="Role name:" for="roleName" />
+                                <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="*Please specify the name of the role" />
+                                <p:outputLabel value="Role status" for="roleStatus"/>
+                                <p:selectOneMenu id="roleStatus" value="#{roles_MB.strStatus}" required="true" styleClass="addSelectOne" requiredMessage="*Please specify role status">
+                                    <f:selectItem itemLabel="--Select role status--" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Active" itemValue="1"/>
+                                    <f:selectItem itemLabel="Inactive" itemValue="0"/>
+                                </p:selectOneMenu>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="actionButtonsDiv">
+                            <p:commandButton value="Save" action="#{roles_MB.add()}" />
+                            <p:commandButton value="Cancel" action="#{roles_MB.cancel()}" immediate="true" />
+                        </div>
                     </h:form>
                 </f:view>
             </ui:define>

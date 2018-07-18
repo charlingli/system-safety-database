@@ -5,16 +5,12 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
                     <p:messages autoUpdate="true" showSummary="true" />
-                    <br/>
-                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                    <br></br>
-                    <br></br>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:panel rendered="#{hazardsRelation_MB.searchBox}" styleClass="searchBox">
                         <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.searchBox}">
                             <p:outputLabel value="Hazard Id: " />
@@ -25,12 +21,13 @@
                             <p:inputText value="#{hazardsRelation_MB.hazardComment}" />
                             <p:outputLabel value="Hazard Workshop: " />
                             <p:inputText value="#{hazardsRelation_MB.hazardWorkshop}" />
-                            <p:commandButton value="Search">
-                                <f:ajax listener="#{hazardsRelation_MB.searchHazards()}" execute="@form" render="@form"/>
-                            </p:commandButton>
-                            <p:column/>
                         </h:panelGrid>
                     </p:panel>
+                    <div class="actionButtonsDiv" style="display:#{(hazardsRelation_MB.searchBox)?'block':'none'}">
+                        <p:commandButton value="Search" rendered="#{hazardsRelation_MB.searchBox}">
+                            <f:ajax listener="#{hazardsRelation_MB.searchHazards()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                    </div>
                     <p:dataTable value="#{hazardsRelation_MB.listHazards}" var="hazard" rendered="#{hazardsRelation_MB.dataTable}" emptyMessage="No hazard entries found with given criteria."
                                  styleClass="resultBox">
                         <p:column headerText="Hazard Id" styleClass="idColumn">
@@ -78,7 +75,7 @@
                                 <p:outputLabel value="#{cause.dbCause.causeDescription}"/>
                             </p:column>
                             <p:column headerText="Actions" styleClass="actionsColumn"> 
-                                <h:commandLink value="delete" styleClass="linkActions">
+                                <h:commandLink value="Delete" styleClass="linkActions">
                                     <f:ajax listener="#{hazardsRelation_MB.deleteHazardCauses(cause)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                             </p:column>
@@ -122,7 +119,7 @@
                                 <p:outputLabel value="#{consequence.dbConsequence.consequenceDescription}"/>
                             </p:column>
                             <p:column headerText="Actions" styleClass="actionsColumn"> 
-                                <h:commandLink value="delete" styleClass="linkActions">
+                                <h:commandLink value="Delete" styleClass="linkActions">
                                     <f:ajax listener="#{hazardsRelation_MB.deleteHazardConsqs(consequence)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                             </p:column>
@@ -175,11 +172,11 @@
                                 <p:outputLabel value="#{control.controlJustify}"/>
                             </p:column>
                             <p:column headerText="Actions" styleClass="actionsColumn"> 
-                                <h:commandLink value="edit" styleClass="linkActions">
+                                <h:commandLink value="Edit" styleClass="linkActions">
                                     <f:ajax listener="#{hazardsRelation_MB.editControlVisible(control)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                                 |
-                                <h:commandLink value="delete" styleClass="linkActions">
+                                <h:commandLink value="Delete" styleClass="linkActions">
                                     <f:ajax listener="#{hazardsRelation_MB.deleteHazardControls(control)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                             </p:column>

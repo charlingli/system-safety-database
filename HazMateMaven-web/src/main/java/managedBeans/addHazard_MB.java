@@ -379,7 +379,7 @@ public class addHazard_MB implements Serializable {
         
         riskScore = riskFrequency * riskSeverity;
         hazardObject.setRiskScore(riskScore);
-
+        
         dbHazardFacade.create(hazardObject);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
     }

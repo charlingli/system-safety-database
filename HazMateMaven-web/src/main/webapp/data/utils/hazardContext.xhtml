@@ -6,48 +6,40 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-
     <body>
-
         <ui:composition template="./../../templates/masterTemplate.xhtml">
-
             <ui:define name="content">
                 <f:view>
-
-
                     <h:form>
-                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                        <br></br>
-                        <br></br>
-
+                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
                         <div class="filteredTable">
-                        <p:dataTable id="viewTable" value="#{hazardContext_MB.listDbHazardContext}" var="item"
-                                     widgetVar="contextTable" emptyMessage="No contexts found with given criteria"
-                                     filteredValue="#{hazardContext_MB.filteredContexts}"  paginator="true" rows="25" paginatorPosition="bottom" 
-                                     rendered="#{not (hazardContext_MB.addFlag or hazardContext_MB.editFlag)}">
-                            <f:facet name="header">
-                                <p:outputPanel>
-                                    <p:outputLabel value="Search all fields:"/>
-                                    <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
-                                </p:outputPanel>
-                            </f:facet>
-                            <p:column headerText="Hazard Context Id" filterBy="#{item.hazardContextId}" filterMatchMode="exact" styleClass="idColumn">
-                                <p:outputLabel value="#{item.hazardContextId}"/>
-                            </p:column>
-                            <p:column headerText="Hazard Context Name" filterBy="#{item.hazardContextName}" filterMatchMode="contains">
-                                <p:outputLabel value="#{item.hazardContextName}"/>
-                            </p:column>
-                            <p:column styleClass="idColumn">
+                            <p:dataTable id="viewTable" value="#{hazardContext_MB.listDbHazardContext}" var="item"
+                                         widgetVar="contextTable" emptyMessage="No contexts found with given criteria"
+                                         filteredValue="#{hazardContext_MB.filteredContexts}"  paginator="true" rows="20" paginatorPosition="bottom">
                                 <f:facet name="header">
-                                    <p:outputLabel value="Options"/>
+                                    <p:outputPanel>
+                                        <p:outputLabel value="Search all fields: "/>
+                                        <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
+                                    </p:outputPanel>
                                 </f:facet>
-                                <h:commandLink value="Edit">
-                                    <f:ajax listener="#{hazardContext_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <p:commandLink value="Delete" action="#{hazardContext_MB.deleteHazardContext(item)}" immediate="true" oncomplete="PF('contextTable').filter()" onclick="if(!confirm('Are you sure?')){ return; };"/> 
-                            </p:column>
-                        </p:dataTable>
+                                <p:column headerText="Hazard Context Id" filterBy="#{item.hazardContextId}" filterMatchMode="exact" styleClass="idHugeColumn">
+                                    <p:outputLabel value="#{item.hazardContextId}"/>
+                                </p:column>
+                                <p:column headerText="Hazard Context Name" filterBy="#{item.hazardContextName}" filterMatchMode="contains" >
+                                    <p:outputLabel value="#{item.hazardContextName}"/>
+                                </p:column>
+                                <p:column styleClass="idHugeColumn">
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Options"/>
+                                    </f:facet>
+                                    <h:commandLink value="Edit" styleClass="linkActions">
+                                        <f:ajax listener="#{hazardContext_MB.showEdit(item)}" execute="@form" render="@form"/>
+                                    </h:commandLink> |
+                                    <p:commandLink value="Delete" action="#{hazardContext_MB.deleteHazardContext(item)}" immediate="true" oncomplete="PF('contextTable').filter()" 
+                                                   onclick="if (!confirm('Are you sure?')) { return; } ;" styleClass="linkActions"/> 
+                                </p:column>
+                            </p:dataTable>
                         </div>
                         <br></br>
                         <br></br>
@@ -83,7 +75,7 @@
 
                         <c:choose>
                             <c:when test="#{hazardContext_MB.addFlag}">
-                                <p:commandButton value="Save" oncomplete="PF('contextTable').filter()">
+                                <p:commandButton value="Save" >
                                     <f:ajax listener="#{hazardContext_MB.addHazardContext()}" execute="@form" render="@form"/>
                                 </p:commandButton>
                                 <p:commandButton value="Cancel" immediate="true">
@@ -97,21 +89,11 @@
                                 <p:commandButton value="Cancel" immediate="true">
                                     <f:ajax listener="#{hazardContext_MB.cancel()}" execute="@form" render="@form"/>
                                 </p:commandButton>
-
                             </c:when>
                         </c:choose>
-
-
-
-
                     </h:form>
-
-
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

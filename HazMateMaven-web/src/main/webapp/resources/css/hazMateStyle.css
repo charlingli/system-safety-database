@@ -13,6 +13,7 @@ and open the template in the editor.
 
 .ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
+    font-size: 14px;
 }
 
 .searchBox
@@ -27,10 +28,10 @@ and open the template in the editor.
 }
 .infoText
 {
-    width: 260px;
-    background-color: #053677;
+    width: 75%;
+    background-color: #008080;
     font-size: 14px;
-    margin-top: 35px;
+    margin-top: 5px;
     margin-bottom: 5px;
     font-weight: bold;
     color: white;
@@ -39,12 +40,12 @@ and open the template in the editor.
 }
 .infoTextBig
 {
-    width: 300px;
-    background-color: #053677;
+    width: 95%;
+    background-color: #008080;
     font-size: 14px;
     margin-top: 15px;
     margin-bottom: 5px;
-    margin-left: 5px;
+    margin-left: 3px;
     font-weight: bold;
     color: white;
     text-align: center;
@@ -60,7 +61,7 @@ and open the template in the editor.
     width: 15%;
     font-size: 14px;
     font-weight: bold;
-    color: #053677;
+    color: #005354;
 }
 .manyResultBox
 {
@@ -69,7 +70,8 @@ and open the template in the editor.
     margin-bottom: 5px;
 }
 .linkActions {
-    color: #2200CC !important; 
+    color: #008080 !important; 
+    text-decoration: underline !important;
 }
 
 .idColumn
@@ -77,6 +79,13 @@ and open the template in the editor.
     width: 12%;
     text-align: center;
 }
+
+.idHugeColumn
+{
+    width: 20%;
+    text-align: center;
+}
+
 .actionsColumn
 {
     width: 10%;
@@ -87,6 +96,13 @@ and open the template in the editor.
     width: 12%;
     text-align: center;
 }
+
+.actionsHugeColumn
+{
+    width: 20%;
+    text-align: center;
+}
+
 .addManyResultBox
 {
     margin-top: 10px;
@@ -111,7 +127,6 @@ and open the template in the editor.
 .licenseFooter
 {  
     flex-shrink: 0; 
-    padding: 15px;
     text-align: center;
 }
 pp 
@@ -130,7 +145,12 @@ pp
 }
 .tableTwo
 {
-    width: 50%;
+    width: 30%;
+    text-align: center;
+}
+.tableThree
+{
+    width: 80%;
     text-align: center;
 }
 .dropDown
@@ -233,7 +253,12 @@ pp
 }
 .filteredTable
 {
-    width: 60%;
+    width: 40%;
+}
+
+.filteredBigTable
+{
+    width: 1000px;
 }
 
 .filteredColumn
@@ -259,12 +284,12 @@ body
 {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 98vh;
 }
 .center_content 
 {
     flex: 1 0 auto;
-    padding: 15px;
+    padding: 5px;
 }
 .ui-widget-header
 {
@@ -316,17 +341,26 @@ a:link:hover, a:visited:hover
 
 .searchGridRight {
     border-style: hidden !important; /* or none */
-    width: 40%;
+    width: 50%;
 }
 
 .searchGridLeft {
     border-style: hidden !important; /* or none */
-    width: 60%;
+    width: 50%;
 }
 
 .searchButtonsGrid {
     padding: 2px;
     padding-bottom: 10px;
+}
+
+.actionButtonsDiv{
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.actionButtonsDiv > * {
+    margin-right: 5px;
 }
 
 .searchFields{
@@ -336,6 +370,15 @@ a:link:hover, a:visited:hover
 .searchExplanation{
     vertical-align: top;
     padding-left: 10px;   
+}
+
+.tableList{
+    width: 1000px;
+}
+
+.tableActions{
+    width: 500px;
+    vertical-align: top;
 }
 
 .queryDescr  {
@@ -435,17 +478,132 @@ a:link:hover, a:visited:hover
 
 .ui-menu.ui-widget li > .ui-menuitem-link.ui-state-hover {
 
-color:#ffffff;
-text-decoration:none;
-background-color:#008080;
-background-color:#008080;
-background-position:0px;
-background-image:-moz-linear-gradient(top, #008080, #0077b3);
-background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#008080), to(#008080));
-background-image:-webkit-linear-gradient(top, #008080, #008080);
-background-image:-o-linear-gradient(top, #008080, #008080);
-background-image:linear-gradient(to bottom, #008080, #008080);
-background-repeat:repeat-x;
-filter:progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
+    color:#ffffff;
+    text-decoration:none;
+    background-color:#008080;
+    background-color:#008080;
+    background-position:0px;
+    background-image:-moz-linear-gradient(top, #008080, #0077b3);
+    background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#008080), to(#008080));
+    background-image:-webkit-linear-gradient(top, #008080, #008080);
+    background-image:-o-linear-gradient(top, #008080, #008080);
+    background-image:linear-gradient(to bottom, #008080, #008080);
+    background-repeat:repeat-x;
+    filter:progid:dximagetransform.microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0);
 
+}
+
+.navigationPath {
+    color: #008080;
+}
+
+.addInfoPanel{
+    width: 700px;
+}
+
+.addInfoBigPanel{
+    width: 600px;
+}
+
+.addInfoPanelRight{
+    width: 500px;
+}
+
+.addInfoBigPanelRight{
+    width: 600px;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background-color: #008080;
+    background-image: linear-gradient(to bottom, #008080, #008080);
+}
+
+.viewTableContent{
+    width: 1200px;
+}
+
+.viewBigTableContent{
+    width: 1700px;
+}
+
+.addSelectOne {
+     width: 82%;
+}
+
+.tableColumn10 {
+    width: 10%;
+}
+
+.tableColumn10ct {
+    width: 10%;
+    text-align: center;
+}
+
+.tableColumn15 {
+   width: 15%; 
+}
+
+.tableColumn15ct {
+    width: 15%;
+    text-align: center;
+}
+
+.tableColumn20 {
+    width: 20%;
+}
+
+.tableColumn30 {
+    width: 30%;
+}
+
+.tableColumn40 {
+    width: 40%;
+}
+
+.tableColumn50 {
+    width: 50%;
+}
+
+.tableColumn60 {
+    width: 60%;
+}
+
+.tableColumn70 {
+    width: 70%;
+}
+
+.tableColumn10p {
+    width: 10px;
+}
+
+.tableColumn50p {
+    width: 50px;
+}
+
+.tableColumn80p {
+    width: 80px;
+}
+
+.tableColumn100p {
+    width: 100px;
+}
+
+.tableColumn150p {
+    width: 150px;
+}
+
+.tableColumn200p {
+    width: 200px;
+}
+
+.tableColumn200p {
+    width: 250px;
+}
+
+.tableColumn300p {
+    width: 300px;
+}
+
+.inputField200px{
+    width: 200px;
 }

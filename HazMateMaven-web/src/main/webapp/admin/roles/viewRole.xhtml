@@ -5,43 +5,35 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-
-
     <body>
-
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <br/>
                 <h:form>
-                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                    <br></br>
-                    <br></br>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:commandButton value="Add Role" action="addRole"></p:commandButton>
-                    <br></br>
-                    <br></br>
                     <p:dataTable var="item" value="#{roles_MB.listDbRole}" styleClass="tableTwo">
-                        
-                        <p:column headerText="Role Name">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="The current system roles are: " />
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column headerText="Role Name" class="tableColumn80p">
                             <p:outputLabel value="#{item.roleName}" />
                         </p:column>
-
-                        <p:column headerText="Status">
+                        <p:column headerText="Status" class="tableColumn80p">
                             <p:outputLabel value="#{roles_MB.printStatus(item.roleStatus)}" />
                         </p:column>
-
-                        <p:column headerText="Option" >
-                            <p:commandLink value="Edit" action="#{roles_MB.edit(item)}"/> 
+                        <p:column headerText="Option" class="tableColumn80p">
+                            <p:commandLink value="Edit" action="#{roles_MB.edit(item)}" class="linkActions"/> 
                             | 
-                            <h:commandLink value="Delete" action="#{roles_MB.delete(item)}" onclick="return confirm('Are you sure?')"/>
+                            <h:commandLink value="Delete" action="#{roles_MB.delete(item)}" onclick="return confirm('Are you sure?')" class="linkActions"/>
                         </p:column>
                     </p:dataTable>
+                    <div class="actionButtonsDiv">
+                        <p:commandButton value="Add Role" action="addRole"></p:commandButton>
+                    </div>
                 </h:form>
-                
             </ui:define>
-
         </ui:composition>
-
     </body>
-    
 </html>

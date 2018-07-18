@@ -6,133 +6,111 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-
     <body>
-
         <ui:composition template="./../../templates/masterTemplate.xhtml">
-
             <ui:define name="content">
                 <f:view>
-
-                    <br/>
                     <h:form>
-                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                        <br></br>
-                        <br></br>
+                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
-
-                        <div class="filteredTable">
-                            <p:dataTable id="viewTable" value="#{cause_MB.listDbCause}" var="item" 
-                                         widgetVar="causeTable" emptyMessage="No causes found with given criteria" filteredValue="#{cause_MB.filteredCauses}" 
-                                         paginator="true" rows="25" paginatorPosition="bottom" 
-                                         rendered="#{not (cause_MB.addFlag or cause_MB.editFlag)}">
+                        <h:panelGrid columns="2" columnClasses="tableList,tableActions">
+                            <p:dataTable id="viewTable" value="#{cause_MB.listDbCause}" var="item" widgetVar="causeTable" emptyMessage="No causes found with given criteria" 
+                                         filteredValue="#{cause_MB.filteredCauses}" paginator="true" rows="20" paginatorPosition="bottom">
                                 <f:facet name="header">
                                     <p:outputPanel>
-                                        <p:outputLabel value="Search all fields:"/>
+                                        <p:outputLabel value="Search all fields: "/>
                                         <p:inputText id="globalFilter" onkeyup="PF('causeTable').filter()" placeholder="Enter keyword"/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="Cause Id" filterBy="#{item.causeId}" filterMatchMode="exact" styleClass="idColumn">
+                                <p:column headerText="Cause Id" filterBy="#{item.causeId}" filterMatchMode="exact" styleClass="tableColumn15ct">
                                     <p:outputLabel value="#{item.causeId}"/>
                                 </p:column>
-                                <p:column headerText="Hazard Id" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="idColumn">
+                                <p:column headerText="Hazard Id" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="tableColumn15ct">
                                     <p:outputLabel value="#{item.hazardId}"/>
                                 </p:column>
-                                <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains">
+                                <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60" >
                                     <p:outputLabel value="#{item.causeDescription}"/>
                                 </p:column>
-                                <p:column styleClass="idColumn">
+                                <p:column styleClass="tableColumn10ct">
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit">
+                                    <h:commandLink value="Edit" class="linkActions">
                                         <f:ajax listener="#{cause_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
                                     <p:commandLink value="Delete" action="#{cause_MB.deleteCause(item)}" immediate="true" oncomplete="PF('causeTable').filter()" 
                                                    onclick="if (!confirm('This action may also disassociate hazards from their cause. Do you wish to proceed?')) {
                                                                return;
                                                            }
-                                                           ;"/>
-
+                                                           ;" class="linkActions"/>
                                 </p:column>
                             </p:dataTable>
+                            <p:panel style="border: none">
+                                <p:tooltip for="hazardId" showEvent="focus" hideEvent="blur"/>
+                                <p:panel class="addInfoPanelRight" rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="searchGridLeft,searchGridRight" rendered="#{cause_MB.addFlag or cause_MB.editFlag}" >
+                                        <f:facet name="header">
+                                            <p:outputPanel>
+                                                <c:choose>
+                                                    <c:when test="#{cause_MB.addFlag}">
+                                                        <h:outputText value="Adding cause " />
+                                                    </c:when>
+                                                    <c:when test="#{cause_MB.editFlag}">
+                                                        <h:outputText value="Edditing cause " />
+                                                    </c:when>
+                                                </c:choose> 
+                                            </p:outputPanel>
+                                        </f:facet>
+                                        <c:if test="#{cause_MB.editFlag}">
+                                            <p:outputLabel value="Cause Id:" for="causeId" />
+                                            <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The CauseId field is required."/>
+                                        </c:if>
+                                        <p:outputLabel id="hazardId" value="Hazard Id:" for="addHazard" />
+                                        <p:autoComplete id="addHazard" value="#{cause_MB.hazardObject}" completeMethod="#{cause_MB.showHazards}"
+                                                        var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
+                                                        title="If this cause is also a hazard in another context, please enter the hazard Id">
+                                            <p:column styleClass="idAutocompleteColumn">
+                                                <h:outputText value="#{hazard.hazardId}" />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{hazard.hazardDescription}" />
+                                            </p:column>
+                                        </p:autoComplete>
+                                        <p:outputLabel value="Cause Description:" for="causeDescription" />
+                                        <p:inputTextarea rows="4" cols="30" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The CauseDescription field is required."/>
+                                    </p:panelGrid>
+                                </p:panel>
+                                <div class="actionButtonsDiv">
+                                    <c:choose>
+                                        <c:when test="#{cause_MB.addFlag}">
+                                            <p:commandButton value="Save">
+                                                <f:ajax listener="#{cause_MB.addCause()}" execute="@form" render="@form"/>
+                                            </p:commandButton>
+                                            <p:commandButton value="Cancel" immediate="true">
+                                                <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
+                                            </p:commandButton>
+                                        </c:when>
+                                        <c:when test="#{cause_MB.editFlag}">
+                                            <p:commandButton value="Save">
+                                                <f:ajax listener="#{cause_MB.editCause()}" execute="@form" render="@form"/>
+                                            </p:commandButton>
+                                            <p:commandButton value="Cancel" immediate="true">
+                                                <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
+                                            </p:commandButton>
+
+                                        </c:when>
+                                    </c:choose>
+                                </div>
+                            </p:panel>
+                        </h:panelGrid>
+                        <div class="actionButtonsDiv">
+                            <p:commandButton value="Add Causes" rendered="#{!(cause_MB.addFlag or cause_MB.editFlag)}"> 
+                                <f:ajax listener="#{cause_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
                         </div>
-
-                        <br/>
-                        <br/>
-
-                        <p:commandButton value="Add Causes" rendered="#{!(cause_MB.addFlag or cause_MB.editFlag)}"> 
-                            <f:ajax listener="#{cause_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-                        <br/>
-                        <br/>
-
-
-                        <c:choose>
-                            <c:when test="#{cause_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
-                            </c:when>
-                            <c:when test="#{cause_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
-                            </c:when>
-                        </c:choose>
-                        <br/>
-
-                        <p:tooltip for="hazardId" showEvent="focus" hideEvent="blur"/>
-                        <p:panelGrid id="modifyTable" columns="2"  rendered="#{cause_MB.addFlag or cause_MB.editFlag}" >
-                            <c:if test="#{cause_MB.editFlag}">
-                                <p:outputLabel value="Cause Id:" for="causeId" />
-                                <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The CauseId field is required."/>
-                            </c:if>
-                                                      
-                            <p:outputLabel id="hazardId" value="Hazard Id:" for="addHazard" />
-                            <p:autoComplete id="addHazard" value="#{cause_MB.hazardObject}" completeMethod="#{cause_MB.showHazards}"
-                                            var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
-                                            style="width: 100px;" title="If this consequence is also a hazard in another context, please enter the hazard Id">
-                                
-                                <p:column styleClass="idAutocompleteColumn">
-                                    <h:outputText value="#{hazard.hazardId}" />
-                                </p:column>
-
-                                <p:column>
-                                    <h:outputText value="#{hazard.hazardDescription}" />
-                                </p:column>
-                            </p:autoComplete>
-
-                            <p:outputLabel value="Cause Description:" for="causeDescription" />
-                            <p:inputTextarea rows="4" cols="30" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The CauseDescription field is required."/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{cause_MB.addFlag}">
-                                <p:commandButton value="Save" oncomplete="PF('causeTable').filter()">
-                                    <f:ajax listener="#{cause_MB.addCause()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{cause_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{cause_MB.editCause()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
-
-
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

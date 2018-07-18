@@ -10,7 +10,7 @@ import ejb.DbRoleFacadeLocal;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.List;
+import java.util.*;
 import entities.*;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -34,6 +34,7 @@ public class role_page_MB implements Serializable {
     private DbRoleFacadeLocal dbRoleFacade;
 
     private List<DbRolePage> listDbRolePage;
+    private List<DbRolePage> filteredDbRolePage;
     private List<DbPage> listDbPage;
     private List<DbRole> listDbRole;
     private DbRolePage rolePageObject = new DbRolePage();
@@ -119,6 +120,14 @@ public class role_page_MB implements Serializable {
         this.pageInt = pageInt;
     }
 
+    public List<DbRolePage> getFilteredDbRolePage() {
+        return filteredDbRolePage;
+    }
+
+    public void setFilteredDbRolePage(List<DbRolePage> filteredDbRolePage) {
+        this.filteredDbRolePage = filteredDbRolePage;
+    }
+
     @PostConstruct
     public void init() {
         listDbRolePage = dbRolePageFacade.findAll();
@@ -160,7 +169,6 @@ public class role_page_MB implements Serializable {
     }
 
     public String edit() {
-
         dbRolePageFacade.edit(rolePageObject);
         rolePageObject = new DbRolePage();
         init();

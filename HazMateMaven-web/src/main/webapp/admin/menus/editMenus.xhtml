@@ -5,50 +5,39 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <br/>
                 <h:form id="addMenus">
-                    <br/>
-                    <pp><p:outputLabel value="Edit Menu"/></pp>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false" />
-                    <br/>
-                    <h:panelGrid columns="3">
-                        <p:outputLabel value="Menu Name:" for="menuName"/>
-                        <p:inputText id="menuName" value="#{menus_MB.menuObjectVariable.menuName}" required="true" requiredMessage="Menu name is required."/>
-                        <p:column />
-
-                        <p:outputLabel value="Menu Type:" for="menuType"/>
-                        <p:selectOneMenu id="menuType" value="#{menus_MB.menuObjectVariable.menuType}" styleClass="dropDown" validatorMessage="Menu type is required.">
-                            <f:selectItem itemLabel="Select.." itemValue="#{null}" noSelectionOption="true"/>
-                            <f:selectItem itemLabel="Main Menu" itemValue="M" />
-                            <f:selectItem itemLabel="Submenu" itemValue="S" />
-                            <p:ajax listener="#{menus_MB.loadParents()}" update="menuParent" />
-                        </p:selectOneMenu>
-                        <p:column />
-
-                        <p:outputLabel value="Parent Menu:"/>
-                        <p:selectOneMenu id="menuParent" value="#{menus_MB.menuParent}" disabled="#{menus_MB.menuParentDisabled}" styleClass="dropDown">
-                            <f:selectItems value="#{menus_MB.listParents}" var="parents" itemValue="#{parents.menuId}" itemLabel="#{parents.menuName}" />
-                        </p:selectOneMenu>
-                        <p:column />
-
-                        <p:outputLabel value="Menu Icon:" />
-                        <p:inputText id="menuIcon" value="#{menus_MB.menuObjectVariable.menuIcon}"/>
-                        <p:message  for="menuIcon"/>
-
-                        <p:outputLabel value="Menu Index:" for="menuIndex"/>
-                        <p:inputText id="menuIndex" value="#{menus_MB.menuIndex}" required="true" requiredMessage="Menu index is required." validator="menuIndexValidator">
-                            <f:ajax event="keyup" execute="@this" render="menuIndexError"/> 
-                        </p:inputText>
-                        <p:column/>
-                                  
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Menus Structure,Edit Menu')}" escape="false"/></div>
+                    <p:panel class="addInfoPanel">
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" />
+                        <h:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                            <p:outputLabel value="Menu Name:" for="menuName"/>
+                            <p:inputText id="menuName" value="#{menus_MB.menuObjectVariable.menuName}" required="true" requiredMessage="Menu name is required."/>
+                            <p:outputLabel value="Menu Type:" for="menuType"/>
+                            <p:selectOneMenu id="menuType" value="#{menus_MB.menuObjectVariable.menuType}" styleClass="addSelectOne" validatorMessage="Menu type is required.">
+                                <f:selectItem itemLabel="Select.." itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="Main Menu" itemValue="M" />
+                                <f:selectItem itemLabel="Submenu" itemValue="S" />
+                                <p:ajax listener="#{menus_MB.loadParents()}" update="menuParent" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Parent Menu:"/>
+                            <p:selectOneMenu id="menuParent" value="#{menus_MB.menuParent}" disabled="#{menus_MB.menuParentDisabled}" styleClass="addSelectOne">
+                                <f:selectItems value="#{menus_MB.listParents}" var="parents" itemValue="#{parents.menuId}" itemLabel="#{parents.menuName}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Menu Icon:" />
+                            <p:inputText id="menuIcon" value="#{menus_MB.menuObjectVariable.menuIcon}"/>
+                            <p:outputLabel value="Menu Index:" for="menuIndex"/>
+                            <p:inputText id="menuIndex" value="#{menus_MB.menuIndex}" required="true" requiredMessage="Menu index is required." validator="menuIndexValidator">
+                                <f:ajax event="keyup" execute="@this" render="menuIndexError"/> 
+                            </p:inputText>
+                        </h:panelGrid>
+                    </p:panel>
+                    <div class="actionButtonsDiv">
                         <p:commandButton value="Save" action="#{menus_MB.editMenu()}"></p:commandButton>
                         <p:commandButton value="Cancel" action="#{menus_MB.cancel()}" immediate="true"></p:commandButton>
-                        <p:column />
-                    </h:panelGrid>
+                    </div>
                 </h:form>
             </ui:define>
         </ui:composition>

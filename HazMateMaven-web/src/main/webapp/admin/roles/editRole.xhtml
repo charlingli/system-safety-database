@@ -5,21 +5,14 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
-
     <body>
-
         <ui:composition template="./../../templates/masterTemplate.xhtml">
-
             <ui:define name="content">
-
-                <f:view>
-
-                    <h:form>
-                        <br/>
-                        <pp><p:outputLabel value="Edit Role"/></pp>
+                <h:form>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Roles Definition,Edit Role')}" escape="false"/></div>
+                    <p:panel class="addInfoPanel">
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <br/>
-                        <p:panelGrid columns="2">
+                        <p:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
                             <p:outputLabel value="Role name:" for="roleName" />
                             <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="Please specify name of role"/>
                             <p:outputLabel value="Role status" for="status"/>
@@ -29,18 +22,13 @@
                                 <f:selectItem itemLabel="Inactive" itemValue="0"/>
                             </p:selectOneMenu>
                         </p:panelGrid>
-                        <br></br>
-                        <br></br>
-                        <p:commandButton value="Save" action="#{roles_MB.edit()}"></p:commandButton> &nbsp;&nbsp;
-                        <p:commandButton value="Cancel" action="#{roles_MB.cancel()}" immediate="true"></p:commandButton>
-                        
-                    </h:form>
-                </f:view>
-
+                    </p:panel>
+                    <div class="actionButtonsDiv">
+                        <p:commandButton value="Save" action="#{roles_MB.edit()}"/>
+                        <p:commandButton value="Cancel" action="#{roles_MB.cancel()}" immediate="true"/>
+                    </div>
+                </h:form>
             </ui:define>
-
         </ui:composition>
-
     </body>
-
 </html>

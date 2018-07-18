@@ -8,87 +8,82 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <br/>
                 <h:form>
-                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                    <br></br>
-                    <br></br>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:commandButton value = "Add User" action="#{users_MB.addUser()}"/>
-                    <br></br>
-                    <br></br>
-                    <br></br>
-                    <div class="ui-g">
-                        <div class="ui-g-12 usersTable">
-                            <p:dataTable id="userTable" value="#{users_MB.listUsers}" var="user" tableStyle="width:auto;" resizableColumns="true" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}" >
+                    <div class="viewBigTableContent">
+                        <p:dataTable id="userTable" value="#{users_MB.listUsers}" var="user" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}" >
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Search all user entries: " />
+                                    <p:inputText id="globalFilter" onkeyup="PF('usersTable').filter()" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:column filterBy="#{user.firstName}" filterMatchMode="contains" class="tableColumn150p">
                                 <f:facet name="header">
-                                    <p:outputPanel>
-                                        <h:outputText value="Search all user entries: " />
-                                        <p:inputText id="globalFilter" onkeyup="PF('usersTable').filter()" placeholder="Enter keyword"/>
-                                    </p:outputPanel>
+                                    <h:outputText value="First Name"/>
                                 </f:facet>
-                                <p:column filterBy="#{user.firstName}" filterMatchMode="contains" >
-                                    <f:facet name="header">
-                                        <h:outputText value="First Name"/>
-                                    </f:facet>
-                                    <h:outputText id="FNEntry" value="#{user.firstName}"/>
-                                </p:column>
-                                <p:column filterBy="#{user.lastName}" filterMatchMode="contains" >
-                                    <f:facet name="header">
-                                        <h:outputText value="Last Name"/>
-                                    </f:facet>
-                                    <h:outputText id="LNEntry" value="#{user.lastName}"/>
-                                </p:column>
-                                <p:column filterBy="#{user.userEmail}" filterMatchMode="contains" >
-                                    <f:facet name="header">
-                                        <h:outputText value="Email Address"/>
-                                    </f:facet>
-                                    <h:outputText id="EMEntry" value="#{user.userEmail}"/>
-                                </p:column>
-                                <p:column filterBy="#{user.mobileNumber}" filterMatchMode="contains" >
-                                    <f:facet name="header">
-                                        <h:outputText value="Mobile Number"/>
-                                    </f:facet>
-                                    <h:outputText id="MNEntry" value="#{user.mobileNumber}"/>
-                                </p:column>
-                                <p:column filterBy="#{user.company}" filterMatchMode="contains" >
-                                    <f:facet name="header">
-                                        <h:outputText value="Company"/>
-                                    </f:facet>
-                                    <h:outputText id="CPEntry" value="#{user.company}"/>
-                                </p:column>
-                                <p:column filterBy="#{user.roleId.roleName}" filterMatchMode="exact" >
-                                    <f:facet name="header">
-                                        <h:outputText value="Role" />
-                                    </f:facet>
-                                    <f:facet name="filter">
-                                        <p:selectOneMenu onchange="PF('usersTable').filter()" >
-                                            <f:selectItem itemLabel="All Roles" itemValue="#{null}" noSelectionOption="true" />
-                                            <f:selectItems value="#{users_MB.listRoles}" />
-                                        </p:selectOneMenu>
-                                    </f:facet>
-                                    <h:outputText id="RLEntry" value="#{user.roleId.roleName}" />
-                                </p:column>
-                                <p:column filterBy="#{users_MB.getStatusString(user.userStatus)}" filterMatchMode="exact" >
-                                    <f:facet name="header">
-                                        <h:outputText value="Status" />
-                                    </f:facet>
-                                    <f:facet name="filter">
-                                        <p:selectOneMenu onchange="PF('usersTable').filter()" >
-                                            <f:selectItem itemLabel="All Statuses" itemValue="#{null}" noSelectionOption="true" />
-                                            <f:selectItem itemLabel="Active" itemValue="Active" />
-                                            <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
-                                        </p:selectOneMenu>
-                                    </f:facet>
-                                    <h:outputText id="STEntry" value="#{users_MB.getStatusString(user.userStatus)}" />
-                                </p:column>
-                                <p:column headerText="Options">                            
-                                    <p:commandLink value="Edit Details" action="#{users_MB.editUser(user)}" /> | 
-                                    <p:commandLink value="Change Account" action="#{users_MB.changeUser(user)}" /> |
-                                    <p:commandLink value="Delete" action="#{users_MB.deleteUser(user)}" onclick="return confirm('Are you sure? #{user.firstName} #{user.lastName} will be deleted!')"/>
-                                </p:column>
-                            </p:dataTable>
-                        </div>
+                                <h:outputText id="FNEntry" value="#{user.firstName}"/>
+                            </p:column>
+                            <p:column filterBy="#{user.lastName}" filterMatchMode="contains" class="tableColumn150p">
+                                <f:facet name="header">
+                                    <h:outputText value="Last Name"/>
+                                </f:facet>
+                                <h:outputText id="LNEntry" value="#{user.lastName}"/>
+                            </p:column>
+                            <p:column filterBy="#{user.userEmail}" filterMatchMode="contains" class="tableColumn300p">
+                                <f:facet name="header">
+                                    <h:outputText value="Email Address"/>
+                                </f:facet>
+                                <h:outputText id="EMEntry" value="#{user.userEmail}"/>
+                            </p:column>
+                            <p:column filterBy="#{user.mobileNumber}" filterMatchMode="contains" class="tableColumn150p">
+                                <f:facet name="header">
+                                    <h:outputText value="Mobile Number"/>
+                                </f:facet>
+                                <h:outputText id="MNEntry" value="#{user.mobileNumber}"/>
+                            </p:column>
+                            <p:column filterBy="#{user.company}" filterMatchMode="contains" class="tableColumn200p">
+                                <f:facet name="header">
+                                    <h:outputText value="Company"/>
+                                </f:facet>
+                                <h:outputText id="CPEntry" value="#{user.company}"/>
+                            </p:column>
+                            <p:column filterBy="#{user.roleId.roleName}" filterMatchMode="exact" class="tableColumn150p">
+                                <f:facet name="header">
+                                    <h:outputText value="Role" />
+                                </f:facet>
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('usersTable').filter()" >
+                                        <f:selectItem itemLabel="All Roles" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{users_MB.listRoles}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText id="RLEntry" value="#{user.roleId.roleName}" />
+                            </p:column>
+                            <p:column filterBy="#{users_MB.getStatusString(user.userStatus)}" filterMatchMode="exact" class="tableColumn150p">
+                                <f:facet name="header">
+                                    <h:outputText value="Status" />
+                                </f:facet>
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('usersTable').filter()" >
+                                        <f:selectItem itemLabel="All Statuses" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItem itemLabel="Active" itemValue="Active" />
+                                        <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText id="STEntry" value="#{users_MB.getStatusString(user.userStatus)}" class="tableColumn300p"/>
+                            </p:column>
+                            <p:column headerText="Options">                            
+                                <p:commandLink value="Edit" action="#{users_MB.editUser(user)}" class="linkActions"/> | 
+                                <p:commandLink value="Change Password" action="#{users_MB.changeUser(user)}" class="linkActions"/> |
+                                <p:commandLink value="Delete" action="#{users_MB.deleteUser(user)}" onstart="if (!confirm('Are you sure?')) { return; } ;" 
+                                               oncomplete="PF('usersTable').filter()" class="linkActions"/>
+                            </p:column>
+                        </p:dataTable>
+                    </div>
+                    <div class="actionButtonsDiv">
+                        <p:commandButton value = "Add User" action="#{users_MB.addUser()}"/>
                     </div>
                 </h:form>
             </ui:define>

@@ -149,12 +149,12 @@ public class cause_MB implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage("Added", "The cause has been successfully edited"));
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, 
+                FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The hazardId does not exist"));
                 return;
             }
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, 
+            FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
         }
         causeObject = new DbCause();
@@ -179,9 +179,9 @@ public class cause_MB implements Serializable {
     }
 
     public void showEdit(DbCause causeObject) {
-        editFlag = true;
-        this.causeObject = causeObject;
-        hazardObject = new DbHazard(causeObject.getHazardId());
+            editFlag = true;
+            this.causeObject = causeObject;
+            hazardObject = new DbHazard(causeObject.getHazardId());
     }
 
     public void cancel() {

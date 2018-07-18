@@ -9,18 +9,14 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <br/>
                 <h:form id="viewForm">
-                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <br></br>
-                    <br></br>
                     <p:panelGrid columns="2" styleClass="hazardInfo" rendered="#{systemParams_MB.infoBox}" columnClasses="hazardInfoFieldName"> 
                         <p:outputLabel value="Email Manager: " styleClass="hazardInfoFieldName"/>
                         <p:outputLabel value="#{systemParams_MB.managerEmail}" />
                         <p:outputLabel value="HazMate License: " />
-                        <p:inputTextarea value="#{systemParams_MB.licenseText}" readonly="true" styleClass="resultBox"/>
-                        <br/>
+                        <h:outputText value="#{systemParams_MB.licenseText}" styleClass="resultBox"/>
                     </p:panelGrid>
                     <div class="linkDiv">
                         <p:commandButton value="Edit Parameters" rendered="#{systemParams_MB.infoBox}">
@@ -33,14 +29,16 @@
                             <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="emailField"/>
                             <p:outputLabel value="License Text: " for="license" />
                             <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="systemLicense"/>
-                            <p:commandButton value="Save">
-                                <f:ajax listener="#{systemParams_MB.saveParameters()}" execute="@form" render="@form"/>
-                            </p:commandButton>
-                            <p:commandButton value="Cancel">
-                                <f:ajax listener="#{systemParams_MB.cancel}" execute="@form" render="@form"/>
-                            </p:commandButton>
                         </h:panelGrid>
                     </p:panel>
+                    <div class="actionButtonsDiv" style="display:#{systemParams_MB.editBox}?'block':'none'}">
+                        <p:commandButton rendered="#{systemParams_MB.editBox}" value="Save">
+                            <f:ajax listener="#{systemParams_MB.saveParameters()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                        <p:commandButton rendered="#{systemParams_MB.editBox}" value="Cancel">
+                            <f:ajax listener="#{systemParams_MB.cancel}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                    </div>
                 </h:form>
             </ui:define>
         </ui:composition>

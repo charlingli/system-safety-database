@@ -10,10 +10,7 @@
             <ui:define name="content">
                 <f:view>
                     <h:form id="hazardsForm">
-                        <br/>
-                        <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                        <br></br>
-                        <br></br>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <div class="ui-g">
                             <div class="ui-g-12" >
