@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DbControlHazard.findAll", query = "SELECT d FROM DbControlHazard d")
     , @NamedQuery(name = "DbControlHazard.findByHazardId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.hazardId = :hazardId")
     , @NamedQuery(name = "DbControlHazard.findByControlId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.controlId = :controlId")})
+
 public class DbControlHazard implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId

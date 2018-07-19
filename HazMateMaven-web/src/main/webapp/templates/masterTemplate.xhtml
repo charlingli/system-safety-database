@@ -9,7 +9,6 @@
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
-        <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/recssLayout.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
         <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon" />
         <title>HazMate Main Menu</title>
@@ -37,19 +36,15 @@
                 </h:form>
             </ui:insert>
         </div>
-
         <div id="content" class="center_content">
             <ui:insert name="content"></ui:insert>
         </div>
-
-        
-                <footer class="licenseFooter">
-                    <p:separator />
-                    <h:form>
-                        <p:outputLabel value="HazMate is under MIT licence, you can find the complete file here: "/>
-                        <h:commandLink value="HazMate.License" action="/license/hazMateLicense" />
-                    </h:form>
-                </footer>
-            
+        <footer class="licenseFooter">
+            <p:separator />
+            <h:form>
+                <p:outputLabel value="HazMate is under MIT licence, you can find the complete file here: "/>
+                <h:commandLink class="linkActions" value="HazMate.License" action="/license/hazMateLicense" />
+            </h:form>
+        </footer>
     </h:body>
 </html>

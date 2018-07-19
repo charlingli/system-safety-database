@@ -10,33 +10,38 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <br/>
-                    <pp><p:outputLabel value="Edit User"/></pp>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <br/>
-                    <p:panelGrid columns="2">
-                        <p:outputLabel value="First Name:"/>
-                        <p:inputText id="FNInput" value="#{users_MB.user.firstName}" title="First Name" required="true" validatorMessage="The first name must be 60 characters or less." requiredMessage="A first name is required."/>
-                        <p:outputLabel value="Last Name:"/>
-                        <p:inputText id="LNInput" value="#{users_MB.user.lastName}" title="Last Name" required="true" validatorMessage="The last name must be 60 characters or less." requiredMessage="A last name is required."/>
-                        <p:outputLabel value="Email (read-only):"/>
-                        <p:inputText id="EMInput" value="#{users_MB.checkEmail}" title="Email" required="true" requiredMessage="An email is required." validatorMessage="The email is invalid." readonly="true" />
-                        <p:outputLabel value="Mobile Number:" />
-                        <p:inputText id="MNInput" value="#{users_MB.user.mobileNumber}" title="Contact Number" required="true" validatorMessage="The contact number must be 10 characters or less." requiredMessage="A contact number is required."/>
-                        <p:outputLabel value="Company:" />
-                        <p:inputText id="CPInput" value="#{users_MB.user.company}" title="Company" required="true" validatorMessage="The company name must be 45 characters or less." requiredMessage="A company is required."/>
-                        <p:outputLabel value="Role:" />
-                        <p:selectOneMenu id="RLInput" value="#{users_MB.submitRole}" required="true" requiredMessage="A role is required.">
-                            <f:selectItems value="#{users_MB.getListRoles()}" />
-                        </p:selectOneMenu>
-                        <p:outputLabel value="Status: " />
-                        <p:selectOneMenu id="STInput" value="#{users_MB.userStatus}" required="true" requiredMessage="A status is required.">
-                            <f:selectItem itemLabel="Active" itemValue="Active" />
-                            <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
-                        </p:selectOneMenu>
+                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Edit User')}" escape="false"/></div>
+                    <p:panel class="addInfoPanel" >
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <p:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                            <p:outputLabel value="First Name:"/>
+                            <p:inputText id="FNInput" value="#{users_MB.user.firstName}" title="First Name" styleClass="inputField200px" required="true" validatorMessage="The first name must be 60 characters or less." requiredMessage="A first name is required."/>
+                            <p:outputLabel value="Last Name:"/>
+                            <p:inputText id="LNInput" value="#{users_MB.user.lastName}" title="Last Name" styleClass="inputField200px" required="true" validatorMessage="The last name must be 60 characters or less." requiredMessage="A last name is required."/>
+                            <p:outputLabel value="Email:"/>
+                            <p:inputText id="EMInput" value="#{users_MB.user.userEmail}" title="Email" styleClass="inputField200px" required="true" requiredMessage="An email is required." validatorMessage="The email is invalid." >
+                                <f:validateLength minimum="1" maximum="60" />
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            </p:inputText>
+                            <p:outputLabel value="Mobile Number:" />
+                            <p:inputText id="MNInput" value="#{users_MB.user.mobileNumber}" title="Contact Number" styleClass="inputField200px" required="true" validatorMessage="The contact number must be 10 characters or less." requiredMessage="A contact number is required."/>
+                            <p:outputLabel value="Company:" />
+                            <p:inputText id="CPInput" value="#{users_MB.user.company}" title="Company" styleClass="inputField200px" required="true" validatorMessage="The company name must be 45 characters or less." requiredMessage="A company is required."/>
+                            <p:outputLabel value="Role:" />
+                            <p:selectOneMenu id="RLInput" value="#{users_MB.submitRole}" required="true" requiredMessage="A role is required." style="width: 82%">
+                                <f:selectItems value="#{users_MB.getListRoles()}" />
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Status: " />
+                            <p:selectOneMenu id="STInput" value="#{users_MB.userStatus}" required="true" requiredMessage="A status is required." style="width: 82%">
+                                <f:selectItem itemLabel="Active" itemValue="Active" />
+                                <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                    </p:panel>
+                    <div class="actionButtonsDiv">
                         <p:commandButton value="Update" action="#{users_MB.edit()}"/>
                         <p:commandButton value="Cancel" immediate="true" action="viewUsers"/>
-                    </p:panelGrid>
+                    </div>
                     <p:inputText id="password" value="#{users_MB.user.password}" title="Password" a:readonly="readonly" required="true" requiredMessage="The Password field is required." styleClass="editUser"></p:inputText>
                 </h:form>
             </ui:define>

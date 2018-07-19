@@ -50,6 +50,7 @@ public class pages_MB implements Serializable {
     @EJB
     private DbPageFacadeLocal dbPageFacade;
     private List<DbPage> listDbPage;
+    private List<DbPage> fileteredDbPage;
     private DbPage pageObject = new DbPage();
     private String pageIndex;
 
@@ -77,6 +78,14 @@ public class pages_MB implements Serializable {
         this.listDbPage = listDbPage;
     }
 
+    public List<DbPage> getFileteredDbPage() {
+        return fileteredDbPage;
+    }
+
+    public void setFileteredDbPage(List<DbPage> fileteredDbPage) {
+        this.fileteredDbPage = fileteredDbPage;
+    }
+    
     public pages_MB() {
     }
 
