@@ -47,6 +47,10 @@ public class DbriskFrequency implements Serializable {
     @Size(min = 1, max = 2)
     @Column(name = "frequencyScore")
     private String frequencyScore;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "frequencyValue")
+    private int frequencyValue;
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskFrequencyId")
     private List<DbHazard> dbHazardList;
 
@@ -77,6 +81,14 @@ public class DbriskFrequency implements Serializable {
     public void setFrequencyScore(String frequencyScore) {
         this.frequencyScore = frequencyScore;
     }
+    
+    public int getFrequencyValue() {
+        return frequencyValue;
+    }
+
+    public void setFrequencyValue(int frequencyValue) {
+        this.frequencyValue = frequencyValue;
+    }
 
     @XmlTransient
     public List<DbHazard> getDbHazardList() {
@@ -86,6 +98,7 @@ public class DbriskFrequency implements Serializable {
     public void setDbHazardList(List<DbHazard> dbHazardList) {
         this.dbHazardList = dbHazardList;
     }
+    
 
     @Override
     public int hashCode() {
@@ -93,7 +106,7 @@ public class DbriskFrequency implements Serializable {
         hash += (riskFrequencyId != null ? riskFrequencyId.hashCode() : 0);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -111,5 +124,5 @@ public class DbriskFrequency implements Serializable {
     public String toString() {
         return frequencyScore;
     }
-    
+
 }

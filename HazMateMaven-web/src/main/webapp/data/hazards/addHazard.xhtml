@@ -18,7 +18,9 @@
                                      <p:outputPanel>
                                          <h:outputText value="New Hazard Information " />
                                      </p:outputPanel>
-                                 </f:facet>       
+                                 </f:facet>
+                                <p:outputLabel for="hazardId" value="Hazard Id:" />
+                                <p:inputText id="hazardId" value="#{addHazard_MB.hazardObject.hazardId == null ? '(Auto)' : addHazard_MB.hazardObject.hazardId}" disabled="true"/>
                                 <p:outputLabel for="hazardDate" value="Hazard Date:" />
                                 <p:calendar id="hazardDate" value="#{addHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{addHazard_MB.todaysDate()}" />
                                 <p:outputLabel value="Description:" for="hazardDescription" />
@@ -92,7 +94,10 @@
                         </p:panel>
                         <div class="actionButtonsDiv">
                             <p:commandButton value="Save Hazard">
-                                <f:ajax listener="#{addHazard_MB.addHazardSBS(addHazard_MB.selectedNodes)}" execute="@form" render="@form"/>
+                                <f:ajax listener="#{addHazard_MB.processPage()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                            <p:commandButton value="Create a new Hazard" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}">
+                                <f:ajax listener="#{addHazard_MB.processPage()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
                     </h:form>

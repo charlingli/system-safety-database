@@ -47,6 +47,10 @@ public class DbriskSeverity implements Serializable {
     @Size(min = 1, max = 2)
     @Column(name = "severityScore")
     private String severityScore;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "severityValue")
+    private int severityValue;
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskSeverityId")
     private List<DbHazard> dbHazardList;
 
@@ -86,6 +90,14 @@ public class DbriskSeverity implements Serializable {
     public void setDbHazardList(List<DbHazard> dbHazardList) {
         this.dbHazardList = dbHazardList;
     }
+    
+    public int getSeverityValue() {
+        return severityValue;
+    }
+
+    public void setSeverityValue(int severityValue) {
+        this.severityValue = severityValue;
+    }
 
     @Override
     public int hashCode() {
@@ -111,5 +123,5 @@ public class DbriskSeverity implements Serializable {
     public String toString() {
         return severityScore;
     }
-    
+
 }

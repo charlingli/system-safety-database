@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -42,10 +41,6 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "DbHazard.findByHazardWorkshop", query = "SELECT d FROM DbHazard d WHERE d.hazardWorkshop = :hazardWorkshop")
     , @NamedQuery(name = "DbHazard.findByHazardReview", query = "SELECT d FROM DbHazard d WHERE d.hazardReview = :hazardReview")})
 public class DbHazard implements Serializable {
-
-    @Size(max = 20)
-    @Column(name = "legacyId")
-    private String legacyId;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -83,7 +78,20 @@ public class DbHazard implements Serializable {
     @Size(min = 1, max = 1)
     @Column(name = "hazardReview")
     private String hazardReview;
-    @OneToMany( mappedBy = "dbHazard", orphanRemoval = true)
+    @Size(max = 20)
+    @Column(name = "legacyId")
+    private String legacyId;
+    @Column(name = "addedDateTime")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date addedDateTime;
+    @Column(name = "updatedDateTime")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDateTime;
+    @Column(name = "userIdAdd")
+    private Integer userIdAdd;
+    @Column(name = "userIdUpdate")
+    private Integer userIdUpdate;
+    @OneToMany(mappedBy = "dbHazard", orphanRemoval = true)
     private List<DbHazardConsequence> dbHazardConsequenceList;
     @OneToMany(mappedBy = "dbHazard", orphanRemoval = true)
     private List<DbControlHazard> dbControlHazardList;
@@ -298,7 +306,47 @@ public class DbHazard implements Serializable {
     public void setDbHazardCauseList(List<DbHazardCause> dbHazardCauseList) {
         this.dbHazardCauseList = dbHazardCauseList;
     }
+    
+        public String getLegacyId() {
+        return legacyId;
+    }
 
+    public void setLegacyId(String legacyId) {
+        this.legacyId = legacyId;
+    }
+
+    public Date getAddedDateTime() {
+        return addedDateTime;
+    }
+
+    public void setAddedDateTime(Date addedDateTime) {
+        this.addedDateTime = addedDateTime;
+    }
+
+    public Date getUpdatedDateTime() {
+        return updatedDateTime;
+    }
+
+    public void setUpdatedDateTime(Date updatedDateTime) {
+        this.updatedDateTime = updatedDateTime;
+    }
+
+    public Integer getUserIdAdd() {
+        return userIdAdd;
+    }
+
+    public void setUserIdAdd(Integer userIdAdd) {
+        this.userIdAdd = userIdAdd;
+    }
+
+    public Integer getUserIdUpdate() {
+        return userIdUpdate;
+    }
+
+    public void setUserIdUpdate(Integer userIdUpdate) {
+        this.userIdUpdate = userIdUpdate;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -318,18 +366,12 @@ public class DbHazard implements Serializable {
         }
         return true;
     }
-
+    
     @Override
     public String toString() {
         return "entities.DbHazard[ hazardId=" + hazardId + " ]";
     }
 
-    public String getLegacyId() {
-        return legacyId;
-    }
 
-    public void setLegacyId(String legacyId) {
-        this.legacyId = legacyId;
-    }
-    
+
 }
