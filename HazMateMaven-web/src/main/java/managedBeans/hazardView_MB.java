@@ -90,7 +90,7 @@ public class hazardView_MB implements Serializable {
     private List<DbOwners> listHazardOwners;
     private List<DbcontrolHierarchy> listControlHierarchies;
     private List<DbcontrolRecommend> listControlRecommendations;
-    private List<DbHazard> hazardSearchedlist;
+    private List<DbHazard> hazardSearchedList;
     private List<DbHazard> hazardDetailList;
     private String[] selectedLocations;
     private String[] selectedProjects;
@@ -434,11 +434,11 @@ public class hazardView_MB implements Serializable {
     }
 
     public List<DbHazard> getHazardSearchedlist() {
-        return hazardSearchedlist;
+        return hazardSearchedList;
     }
 
-    public void setHazardSearchedlist(List<DbHazard> hazardSearchedlist) {
-        this.hazardSearchedlist = hazardSearchedlist;
+    public void setHazardSearchedlist(List<DbHazard> hazardSearchedList) {
+        this.hazardSearchedList = hazardSearchedList;
     }
 
     public List<DbHazard> getHazardDetailList() {
@@ -560,23 +560,23 @@ public class hazardView_MB implements Serializable {
         constructHtml(searchCompositeList, treeCheckedNodesList);
 
         if (!searchCompositeList.isEmpty() && !treeCheckedNodesList.isEmpty()) {
-            hazardSearchedlist = dbHazardFacade.findHazardsByFieldsAndSbs(searchCompositeList, treeCheckedNodesList);
+            hazardSearchedList = dbHazardFacade.findHazardsByFieldsAndSbs(searchCompositeList, treeCheckedNodesList);
         } else if (!searchCompositeList.isEmpty() && treeCheckedNodesList.isEmpty()) {
-            hazardSearchedlist = dbHazardFacade.findHazardsByFields(searchCompositeList);
+            hazardSearchedList = dbHazardFacade.findHazardsByFields(searchCompositeList);
         } else if (searchCompositeList.isEmpty() && !treeCheckedNodesList.isEmpty()) {
-            hazardSearchedlist = dbHazardFacade.findHazardsBySbs(treeCheckedNodesList);
+            hazardSearchedList = dbHazardFacade.findHazardsBySbs(treeCheckedNodesList);
         } else {
-            hazardSearchedlist = dbHazardFacade.findAllHazards();
+            hazardSearchedList = dbHazardFacade.findAllHazards();
         }
 
-        if (!hazardSearchedlist.isEmpty()) {
+        if (!hazardSearchedList.isEmpty()) {
             RequestContext.getCurrentInstance().execute("PF('widget_hazardsForm_fieldset').toggle()");
         }
     }
     
-    public String popUpWindow(){
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", hazardSearchedlist);
-        return "viewHazardDetail";
+    public String showExtended(){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", hazardSearchedList);
+        return "viewHazardExtend";
     }
 
     public void resetFields() {
