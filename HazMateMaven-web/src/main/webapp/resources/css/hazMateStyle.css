@@ -391,7 +391,6 @@ a:link:hover, a:visited:hover
 .searchGridRight {
     border-style: hidden !important; /* or none */
     width: 50%;
-    width: 5%;
 }
 
 .searchGridMiddle {
@@ -402,7 +401,6 @@ a:link:hover, a:visited:hover
 .searchGridLeft {
     border-style: hidden !important; /* or none */
     width: 50%;
-    width: 55%;
 }
 
 .searchButtonsGrid {
@@ -580,7 +578,7 @@ a:link:hover, a:visited:hover
 }
 
 .addInfoPanel{
-    width: 700px;
+    width: 500px;
 }
 
 .addInfoBigPanel{
