@@ -4,19 +4,19 @@
  * and open the template in the editor.
  */
 
-var oReq = new XMLHttpRequest();
-oReq.addEventListener("progress", updateProgress, false);
-
-oReq.open();
-
-function updateProgress (oEvent) {
-  if (oEvent.lengthComputable) {
-    var percentComplete = oEvent.loaded / oEvent.total;
-    console.log(percentComplete);
-  } else {
-    // Unable to compute progress information since the total size is unknown
-  }
-}
+//var oReq = new XMLHttpRequest();
+//oReq.addEventListener("progress", updateProgress, false);
+//
+//oReq.open();
+//
+//function updateProgress (oEvent) {
+//  if (oEvent.lengthComputable) {
+//    var percentComplete = oEvent.loaded / oEvent.total;
+//    console.log(percentComplete);
+//  } else {
+//    // Unable to compute progress information since the total size is unknown
+//  }
+//}
 
 var inputIds = ['HD', 'SP', 'SL', 'SG', 'SN', 'SH', 'HC', 'HA', 'HT', 
     'HO', 'CA', 'CQ', 'RC', 'CD', 'CH', 'CT', 'CO', 'CR', 'CJ', 'CM'];
