@@ -15,6 +15,7 @@ import entities.DbHazard;
 import entities.DbHazardCause;
 import entities.DbHazardConsequence;
 import entities.DbHazardSbs;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -582,6 +583,11 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                                 } else {
                                     flagParameters = false;
                                 }
+                            }
+                            break;
+                        case "date":
+                            if ("=".equals(hazardList.get(x).getRelationType())) {
+                                query.setParameter(paramNo, Date.valueOf(hazardList.get(x).getUserInput()));
                             }
                             break;
                         default:

@@ -30,6 +30,8 @@ public interface DbPageFacadeLocal {
 
     int count();
     
+    List<DbPage> findAllSortedByInx();
+    
     List<DbPage> findByName(String fieldName, String fieldValue);
     
     DbPage retrievePageMatch(int pageIndex);

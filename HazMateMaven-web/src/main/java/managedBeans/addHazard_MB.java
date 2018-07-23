@@ -33,6 +33,7 @@ import entities.DbHazardSbs;
 import entities.DbHazardSbsPK;
 import entities.DbLocation;
 import entities.DbOwners;
+import entities.DbUser;
 import entities.DbhazardActivity;
 import entities.DbhazardContext;
 import entities.DbhazardStatus;
@@ -114,6 +115,7 @@ public class addHazard_MB implements Serializable {
     private List<DbriskClass> listDbRiskClass;
 
     private DbHazard hazardObject;
+    private DbHazard savedHazardObject;
 
     private int activityId;
     private int locationId;
@@ -129,9 +131,7 @@ public class addHazard_MB implements Serializable {
     private TreeNode root;
     private TreeNode[] selectedNodes;
     private List<treeNodeObject> treeCheckedNodesList;
-    private DbHazardSbsPK hazardSbsPKObject = new DbHazardSbsPK();
-    private DbHazardSbs hazardSbsObject = new DbHazardSbs();
-    private DbHazard hazardFKObject = new DbHazard();
+    private List<treeNodeObject> savedCheckedNodesList;
 
     public addHazard_MB() {
     }
@@ -308,6 +308,7 @@ public class addHazard_MB implements Serializable {
     public void init() {
         createTree();
         hazardObject = new DbHazard();
+        savedHazardObject = new DbHazard();
         listDbHazardActivity = dbhazardActivityFacade.findAll();
         listDbLocation = dbLocationFacade.findAll();
         listDbHazardStatus = dbhazardStatusFacade.findAll();
@@ -319,43 +320,46 @@ public class addHazard_MB implements Serializable {
         listDbRiskClass = dbriskClassFacade.findAll();
     }
 
-    public void processPage(){
-        if (hazardObject.getHazardId() == null ) {
-            addHazardAndSbs();
-        } else {
-            
-        }
-    }
-    
-    public void addHazardAndSbs() {
-        try {
-            if (selectedNodes != null && selectedNodes.length > 0) {
-                addHazard();
-                addSBS();
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The associated SBS has been successfully added!"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node"));
+    //Processing the complete page, when the hazard is new it will be created otherwise it will be edited.
+    public void processPage() {
+        if (selectedNodes != null && selectedNodes.length > 0) {
+            try {
+                if (hazardObject.getHazardId() == null) {
+                    addHazard();
+                    addSBS();
+                } else {
+                    fillHazardObject();
+                    displaySelectedMultiple1(selectedNodes);
+                    if (hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
+                        //System.out.println("The content of both is the SAME");
+                    } else if (!hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
+                        //System.out.println("The content of the object CHANGED but the tree is still the SAME.");
+                        dbHazardFacade.edit(hazardObject);
+                        saveHazardObject(hazardObject);
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard was edited succesufully!"));
+                    } else if (hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
+                        //System.out.println("The content of the object is the SAME but the tree CHANGED.");
+                        dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
+                        addSBS();
+                        savedCheckedNodesList = treeCheckedNodesList;
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard was edited succesufully!"));
+                    } else if (!hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
+                        //System.out.println("Both Changed.");
+                        dbHazardFacade.edit(hazardObject);
+                        dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
+                        addSBS();
+                        saveHazardObject(hazardObject);
+                        savedCheckedNodesList = treeCheckedNodesList;
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard was edited succesufully!"));
+                    }
+                }
+            } catch (Exception e) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
             }
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node"));
         }
     }
-
-//    public void addHazardSBS(TreeNode[] nodes) {
-//        try {
-//            if (nodes != null && nodes.length > 0) {
-//                addHazard();
-//                addSBS();
-//                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The associated SBS has been successfully added!"));
-//                clearTree();
-//                reinitialize();
-//            } else {
-//                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node"));
-//            }
-//        } catch (Exception e) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
-//        }
-//    }
 
     //This method populates the Hazrd object, creates the consecutive Id and persist the object in the database.
     public void addHazard() {
@@ -367,10 +371,19 @@ public class addHazard_MB implements Serializable {
         String key1 = returnedLocationList.get(0).getProjectId().getProjectAbbrev();
         String key2 = returnedLocationList.get(0).getLocationAbbrev();
         hazardObject.setHazardId(dbglobalIdFacade.nextConsecutive(key1, key2, "-", 4).getAnswerString());
-        
+
         //Calculating the risk score and persisting the object in the database.
-        hazardObject.setRiskScore(hazardObject.getRiskFrequencyId().getFrequencyValue() * hazardObject.getRiskSeverityId().getSeverityValue());
+        hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
+
+        //Setting the audit fields
+        DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        hazardObject.setAddedDateTime(new Date());
+        hazardObject.setUpdatedDateTime(new Date());
+        hazardObject.setUserIdAdd(activeUser.getUserId());
+        hazardObject.setUserIdUpdate(activeUser.getUserId());
+
         dbHazardFacade.create(hazardObject);
+        saveHazardObject(hazardObject);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
     }
 
@@ -387,34 +400,13 @@ public class addHazard_MB implements Serializable {
         hazardObject.setRiskClassId(new DbriskClass(riskClassId));
     }
 
-    public void reinitialize() {
-
-        hazardObject = new DbHazard();
-
-        listDbHazardActivity = dbhazardActivityFacade.findAll();
-        listDbLocation = dbLocationFacade.findAll();
-        listDbHazardStatus = dbhazardStatusFacade.findAll();
-        listDbhazardType = dbhazardTypeFacade.findAll();
-        listDbOwners = dbOwnersFacade.findAll();
-        listDbHazardContext = dbhazardContextFacade.findAll();
-        listDbRiskFrequency = dbriskFrequencyFacade.findAll();
-        listDbRiskSeverity = dbriskSeverityFacade.findAll();
-        listDbRiskClass = dbriskClassFacade.findAll();
-
-        activityId = -1;
-        locationId = -1;
-        statusId = -1;
-        typeId = -1;
-        ownerId = -1;
-        hazardContextId = -1;
-        freqId = -1;
-        severityId = -1;
-        riskClassId = -1;
-    }
-
     //Creating the relations between the hazard and the Sbs nodes.
     public void addSBS() {
         displaySelectedMultiple1(selectedNodes);
+        DbHazardSbsPK hazardSbsPKObject = new DbHazardSbsPK();
+        DbHazardSbs hazardSbsObject = new DbHazardSbs();
+        DbHazard hazardFKObject = new DbHazard();
+
         hazardSbsPKObject.setHazardId(hazardObject.getHazardId());
         hazardFKObject.setHazardId(hazardObject.getHazardId());
         hazardSbsObject.setDbHazard(hazardFKObject);
@@ -423,15 +415,8 @@ public class addHazard_MB implements Serializable {
             hazardSbsPKObject.setSbsId(treeCheckedNodesList.get(i).getNodeId());
             hazardSbsObject.setDbHazardSbsPK(hazardSbsPKObject);
             dbHazardSbsFacade.create(hazardSbsObject);
-
         }
-
-        //re-initialize variables
-        hazardSbsPKObject = new DbHazardSbsPK();
-        hazardFKObject = new DbHazard();
-        hazardSbsObject = new DbHazardSbs();
-        //selectedTreeNodeObject = new treeNodeObject();
-
+        savedCheckedNodesList = treeCheckedNodesList;
     }
 
     public void displaySelectedMultiple1(TreeNode[] nodes) {
@@ -447,16 +432,35 @@ public class addHazard_MB implements Serializable {
                     treeNodeObject tmpNode = new treeNodeObject();
                     tmpNode.setNodeId(rootId.toString() + ".");
                     tmpNode.setNodeName(node.getData().toString());
+                    tmpNode.setRowKey(node.getRowKey());
                     treeCheckedNodesList.add(tmpNode);
                 } else {
                     String parts[] = node.getData().toString().split(" ", 2);
                     treeNodeObject tmpNode = new treeNodeObject();
                     tmpNode.setNodeId(rootId.toString() + "." + parts[0]);
                     tmpNode.setNodeName(parts[1]);
+                    tmpNode.setRowKey(node.getRowKey());
                     treeCheckedNodesList.add(tmpNode);
                 }
             }
         }
+    }
+
+    public void reinitialize() {
+        hazardObject = new DbHazard();
+
+        activityId = -1;
+        locationId = -1;
+        statusId = -1;
+        typeId = -1;
+        ownerId = -1;
+        hazardContextId = -1;
+        freqId = -1;
+        severityId = -1;
+        riskClassId = -1;
+
+        clearTree();
+        collapsingOrExpanding(root, false);
     }
 
     public void clearTree() {
@@ -582,5 +586,56 @@ public class addHazard_MB implements Serializable {
     public Date todaysDate() {
         Calendar c = Calendar.getInstance();
         return c.getTime();
+    }
+
+    private void saveHazardObject(DbHazard inputObj) {
+        savedHazardObject.setHazardId(inputObj.getHazardId());
+        savedHazardObject.setHazardContextId(inputObj.getHazardContextId());
+        savedHazardObject.setHazardDescription(inputObj.getHazardDescription());
+        savedHazardObject.setHazardLocation(inputObj.getHazardLocation());
+        savedHazardObject.setHazardActivity(inputObj.getHazardActivity());
+        savedHazardObject.setOwnerId(inputObj.getOwnerId());
+        savedHazardObject.setHazardTypeId(inputObj.getHazardTypeId());
+        savedHazardObject.setHazardStatusId(inputObj.getHazardStatusId());
+        savedHazardObject.setRiskClassId(inputObj.getRiskClassId());
+        savedHazardObject.setRiskFrequencyId(inputObj.getRiskFrequencyId());
+        savedHazardObject.setRiskSeverityId(inputObj.getRiskSeverityId());
+        savedHazardObject.setRiskScore(inputObj.getRiskScore());
+        savedHazardObject.setHazardComment(inputObj.getHazardComment());
+        savedHazardObject.setHazardDate(inputObj.getHazardDate());
+        savedHazardObject.setHazardWorkshop(inputObj.getHazardWorkshop());
+        savedHazardObject.setHazardReview(inputObj.getHazardReview());
+        savedHazardObject.setLegacyId(inputObj.getLegacyId());
+        savedHazardObject.setAddedDateTime(inputObj.getAddedDateTime());
+        savedHazardObject.setUpdatedDateTime(inputObj.getUpdatedDateTime());
+        savedHazardObject.setUserIdAdd(inputObj.getUserIdAdd());
+        savedHazardObject.setUserIdUpdate(inputObj.getUserIdUpdate());
+    }
+
+    public boolean compareLists(List<treeNodeObject> leftList, List<treeNodeObject> rightList) {
+        leftList.sort(Comparator.comparing(treeNodeObject::getRowKey));
+        rightList.sort(Comparator.comparing(treeNodeObject::getRowKey));
+        if (leftList.size() != rightList.size()) {
+            return false;
+        } else {
+            for (int i = 0; i < leftList.size(); i++) {
+                if (!leftList.get(i).getNodeId().equals(rightList.get(i).getNodeId())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void collapsingOrExpanding(TreeNode n, boolean option) {
+        if (n.getChildren().size() == 0) {
+            n.setSelected(false);
+        } else {
+            for (TreeNode s : n.getChildren()) {
+                collapsingOrExpanding(s, option);
+            }
+            n.setExpanded(option);
+            n.setSelected(false);
+        }
     }
 }

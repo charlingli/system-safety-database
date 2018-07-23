@@ -46,6 +46,8 @@ import entities.DbtreeLevel3;
 import entities.DbtreeLevel4;
 import entities.DbtreeLevel5;
 import entities.DbtreeLevel6;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -68,37 +70,26 @@ public class editHazard_MB implements Serializable {
 
     @EJB
     private DbHazardSbsFacadeLocal dbHazardSbsFacade;
-
     @EJB
     private DbHazardFacadeLocal dbHazardFacade;
-
     @EJB
     private DbriskClassFacadeLocal dbriskClassFacade;
-
     @EJB
     private DbhazardContextFacadeLocal dbhazardContextFacade;
-
     @EJB
     private DbriskSeverityFacadeLocal dbriskSeverityFacade;
-
     @EJB
     private DbriskFrequencyFacadeLocal dbriskFrequencyFacade;
-
     @EJB
     private DbOwnersFacadeLocal dbOwnersFacade;
-
     @EJB
     private DbhazardTypeFacadeLocal dbhazardTypeFacade;
-
     @EJB
     private DbhazardStatusFacadeLocal dbhazardStatusFacade;
-
     @EJB
     private DbLocationFacadeLocal dbLocationFacade;
-
     @EJB
     private DbhazardActivityFacadeLocal dbhazardActivityFacade;
-
     @EJB
     private DbtreeLevel6FacadeLocal dbtreeLevel6Facade;
     @EJB
@@ -164,6 +155,7 @@ public class editHazard_MB implements Serializable {
     private searchObject legacyIdObject; 
     
     private String selectedHazardId;
+    private Date selectedHazardDate;
     private String selectedHazardContext;
     private String selectedHazardDescription;
     private String selectedHazardLocation;
@@ -550,9 +542,16 @@ public class editHazard_MB implements Serializable {
         this.selectedLegacyId = selectedLegacyId;
     }
 
+    public Date getSelectedHazardDate() {
+        return selectedHazardDate;
+    }
+
+    public void setSelectedHazardDate(Date selectedHazardDate) {
+        this.selectedHazardDate = selectedHazardDate;
+    }
+    
     @PostConstruct
     public void init() {
-
         listDbHazardActivity = dbhazardActivityFacade.findAll();
         listDbLocation = dbLocationFacade.findAll();
         listDbHazardStatus = dbhazardStatusFacade.findAll();
@@ -562,141 +561,49 @@ public class editHazard_MB implements Serializable {
         listDbRiskFrequency = dbriskFrequencyFacade.findAll();
         listDbRiskSeverity = dbriskSeverityFacade.findAll();
         listDbRiskClass = dbriskClassFacade.findAll();
-
     }
 
     public void constructSearchObject() {
 
         listSearchObject = new ArrayList<>();
         listDbHazard = new ArrayList<>();
-
-        if (!getSelectedHazardId().isEmpty()) {
-            hazardIdObject = new searchObject();
-
-            hazardIdObject.setFieldName("hazardId");
-            hazardIdObject.setUserInput(getSelectedHazardId());
-            hazardIdObject.setFieldType("string");
-            hazardIdObject.setEntity1Name("DbHazard");
-            hazardIdObject.setRelationType("like");
-
-            listSearchObject.add(hazardIdObject);
-
-        }
-
-        if (getSelectedHazardContext() != null) {
-            hazardContextIdObject = new searchObject();
-
-            hazardContextIdObject.setFieldName("hazardContextId");
-            hazardContextIdObject.setUserInput(getSelectedHazardContext());
-            hazardContextIdObject.setFieldType("int");
-            hazardContextIdObject.setEntity1Name("DbHazard");
-            hazardContextIdObject.setEntity2Name("hazardContextId");
-            hazardContextIdObject.setRelationType("=");
-
-            listSearchObject.add(hazardContextIdObject);
-        }
-
-        if (!getSelectedHazardDescription().isEmpty()) {
-            hazardDescriptionObject = new searchObject();
-
-            hazardDescriptionObject.setFieldName("hazardDescription");
-            hazardDescriptionObject.setUserInput(getSelectedHazardDescription());
-            hazardDescriptionObject.setFieldType("string");
-            hazardDescriptionObject.setEntity1Name("DbHazard");
-            hazardDescriptionObject.setRelationType("like");
-
-            listSearchObject.add(hazardDescriptionObject);
-        }
-
-        if (getSelectedHazardLocation() != null) {
-            hazardLocationObject = new searchObject();
-
-            hazardLocationObject.setFieldName("locationId");
-            hazardLocationObject.setUserInput(getSelectedHazardLocation());
-            hazardLocationObject.setFieldType("int");
-            hazardLocationObject.setEntity1Name("DbHazard");
-            hazardLocationObject.setEntity2Name("hazardLocation");
-            hazardLocationObject.setRelationType("=");
-
-            listSearchObject.add(hazardLocationObject);
-        }
-
-        if (getSelectedHazardActivity() != null) {
-            hazardActivityObject = new searchObject();
-
-            hazardActivityObject.setFieldName("activityId");
-            hazardActivityObject.setUserInput(getSelectedHazardActivity());
-            hazardActivityObject.setFieldType("int");
-            hazardActivityObject.setEntity1Name("DbHazard");
-            hazardActivityObject.setEntity2Name("hazardActivity");
-            hazardActivityObject.setRelationType("=");
-
-            listSearchObject.add(hazardActivityObject);
-        }
-
-        if (getSelectedOwner() != null) {
-            ownerIdObject = new searchObject();
-
-            ownerIdObject.setFieldName("ownerId");
-            ownerIdObject.setUserInput(getSelectedOwner());
-            ownerIdObject.setFieldType("int");
-            ownerIdObject.setEntity1Name("DbHazard");
-            ownerIdObject.setEntity2Name("ownerId");
-            ownerIdObject.setRelationType("=");
-
-            listSearchObject.add(ownerIdObject);
-        }
-
-        if (getSelectedHazardType() != null) {
-            hazardTypeIdObject = new searchObject();
-
-            hazardTypeIdObject.setFieldName("hazardTypeId");
-            hazardTypeIdObject.setUserInput(getSelectedHazardType());
-            hazardTypeIdObject.setFieldType("int");
-            hazardTypeIdObject.setEntity1Name("DbHazard");
-            hazardTypeIdObject.setEntity2Name("hazardTypeId");
-            hazardTypeIdObject.setRelationType("=");
-
-            listSearchObject.add(hazardTypeIdObject);
-        }
-
-        if (getSelectedHazardStatus() != null) {
-            hazardStatusIdObject = new searchObject();
-
-            hazardStatusIdObject.setFieldName("hazardStatusId");
-            hazardStatusIdObject.setUserInput(getSelectedHazardStatus());
-            hazardStatusIdObject.setFieldType("int");
-            hazardStatusIdObject.setEntity1Name("DbHazard");
-            hazardStatusIdObject.setEntity2Name("hazardStatusId");
-            hazardStatusIdObject.setRelationType("=");
-
-            listSearchObject.add(hazardStatusIdObject);
-        }
-
-        if (getSelectedRiskClass() != null) {
-            riskClassIdObject = new searchObject();
-
-            riskClassIdObject.setFieldName("riskClassId");
-            riskClassIdObject.setUserInput(getSelectedRiskClass());
-            riskClassIdObject.setFieldType("int");
-            riskClassIdObject.setEntity1Name("DbHazard");
-            riskClassIdObject.setEntity2Name("riskClassId");
-            riskClassIdObject.setRelationType("=");
-
-            listSearchObject.add(riskClassIdObject);
-        }
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         
-        if (!getSelectedLegacyId().isEmpty()) {
-            legacyIdObject = new searchObject(); 
-            
-            legacyIdObject.setFieldName("legacyId");
-            legacyIdObject.setUserInput(getSelectedLegacyId());
-            legacyIdObject.setFieldType("string");
-            legacyIdObject.setEntity1Name("DbHazard");
-            legacyIdObject.setRelationType("like");
-            
-            listSearchObject.add(legacyIdObject);
+        if (!getSelectedHazardId().isEmpty()) {
+            listSearchObject.add(new searchObject("hazardId", getSelectedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard Id"));
         }
+        if (getSelectedHazardDate() != null) {
+            listSearchObject.add(new searchObject("hazardDate", df.format(getSelectedHazardDate()), "date", "DbHazard", null, null, null, "=", "Hazard Date"));
+        }
+        if (getSelectedHazardContext() != null) {
+            listSearchObject.add(new searchObject("hazardContextId", getSelectedHazardContext(), "int", "DbHazard", "hazardContextId", null, null, "=", "Hazard Context"));
+        }
+        if (!getSelectedHazardDescription().isEmpty()) {
+            listSearchObject.add(new searchObject("hazardDescription", getSelectedHazardDescription(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
+        }
+        if (getSelectedHazardLocation() != null) {
+           listSearchObject.add(new searchObject("locationId", getSelectedHazardLocation(), "int", "DbHazard", "hazardLocation", null, null, "=", "Hazard Location"));
+        }
+        if (getSelectedHazardActivity() != null) {
+           listSearchObject.add(new searchObject("activityId", getSelectedHazardActivity(), "int", "DbHazard", "hazardActivity", null, null, "=", "Hazard Activity"));
+        }
+        if (getSelectedOwner() != null) {
+           listSearchObject.add(new searchObject("ownerId", getSelectedOwner(), "int", "DbHazard", "ownerId", null, null, "=", "Hazard Owner"));
+        }
+        if (getSelectedHazardType() != null) {
+            listSearchObject.add(new searchObject("hazardTypeId", getSelectedHazardType(), "int", "DbHazard", "hazardTypeId", null, null, "=", "Hazard Type"));
+        }
+        if (getSelectedHazardStatus() != null) {
+            listSearchObject.add(new searchObject("hazardStatusId", getSelectedHazardStatus(), "int", "DbHazard", "hazardStatusId", null, null, "=", "Hazard Staus"));
+        }
+        if (getSelectedRiskClass() != null) {
+            listSearchObject.add(new searchObject("riskClassId", getSelectedRiskClass(), "int", "DbHazard", "riskClassId", null, null, "=", "Hazard Risk"));
+        }
+        if (!getSelectedLegacyId().isEmpty()) {
+            listSearchObject.add(new searchObject("legacyId", getSelectedLegacyId(), "string", "DbHazard", "riskClassId", null, null, "like", "Legacy Id"));
+        }
+
+
 
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
 
@@ -743,28 +650,15 @@ public class editHazard_MB implements Serializable {
     }
 
     public void editHazard() {
-        
-        int riskScore;
-        int riskFrequency;
-        int riskSeverity; 
         List<DbriskFrequency> returnedFrequencyList; 
         List<DbriskSeverity> returnedSeverityList; 
         
         fillHazardObject();
         
-        returnedFrequencyList = dbriskFrequencyFacade.getRiskFrequency(hazardObject.getRiskFrequencyId().getRiskFrequencyId());
-        returnedSeverityList = dbriskSeverityFacade.getRiskSeverity(hazardObject.getRiskSeverityId().getRiskSeverityId()); 
-        
-        riskFrequency = Character.getNumericValue(returnedFrequencyList.get(0).getFrequencyScore().charAt(1));
-        riskSeverity = Character.getNumericValue(returnedSeverityList.get(0).getSeverityScore().charAt(1)); 
-        
-        riskScore = riskFrequency * riskSeverity; 
-        hazardObject.setRiskScore(riskScore);
-        
+        hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
         dbHazardFacade.edit(hazardObject);
 
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully edited!"));
-
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again
 
         editFlag = false;

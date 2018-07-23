@@ -24,11 +24,11 @@
                                 <p:outputLabel for="hazardDate" value="Hazard Date:" />
                                 <p:calendar id="hazardDate" value="#{addHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{addHazard_MB.todaysDate()}" />
                                 <p:outputLabel value="Description:" for="hazardDescription" />
-                                <p:inputTextarea rows="4" cols="60" id="hazardDescription" value="#{addHazard_MB.hazardObject.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
+                                <p:inputTextarea rows="3" cols="60" id="hazardDescription" value="#{addHazard_MB.hazardObject.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
                                 <p:outputLabel value="Comment:" for="hazardComment" />
-                                <p:inputTextarea rows="4" cols="60" id="hazardComment" value="#{addHazard_MB.hazardObject.hazardComment}" title="HazardComment" />
+                                <p:inputTextarea rows="3" cols="60" id="hazardComment" value="#{addHazard_MB.hazardObject.hazardComment}" title="HazardComment" />
                                 <p:outputLabel value="Workshop:" for="hazardWorkshop" />
-                                <p:inputTextarea rows="4" cols="60" id="hazardWorkshop" value="#{addHazard_MB.hazardObject.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
+                                <p:inputTextarea rows="2" cols="60" id="hazardWorkshop" value="#{addHazard_MB.hazardObject.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
                                 <p:outputLabel value="Hazard Review:" for="hazardReview" />
                                 <p:selectOneMenu id="hazardReview" value="#{addHazard_MB.hazardObject.hazardReview}" required="true" requiredMessage="The HazardReview field is required." class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
@@ -82,9 +82,9 @@
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Legacy Id:" for="legacyId"/>
                                 <p:inputText id="legacyId" value="#{addHazard_MB.hazardObject.legacyId}" title="Legacy Id"/>
-                                <p:outputLabel value="System Breakdown: *"/>
-                                <p:tree value="#{addHazard_MB.root}" var="doc"
-                                        selectionMode="checkbox"
+                                <p:outputLabel value="System Breakdown: *" for="treeSbs" />
+                                <p:tree id="treeSbs" value="#{addHazard_MB.root}" var="doc"
+                                        selectionMode="checkbox" widgetVar="tree"
                                         selection="#{addHazard_MB.selectedNodes}" dynamic="true">
                                     <p:treeNode>
                                         <p:outputLabel value="#{doc}" />
@@ -97,7 +97,7 @@
                                 <f:ajax listener="#{addHazard_MB.processPage()}" execute="@form" render="@form"/>
                             </p:commandButton>
                             <p:commandButton value="Create a new Hazard" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}">
-                                <f:ajax listener="#{addHazard_MB.processPage()}" execute="@form" render="@form"/>
+                                <f:ajax listener="#{addHazard_MB.reinitialize()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
                     </h:form>

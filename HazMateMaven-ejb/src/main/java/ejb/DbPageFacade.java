@@ -33,6 +33,20 @@ public class DbPageFacade extends AbstractFacade<DbPage> implements DbPageFacade
     }
 
     @Override
+    public List<DbPage> findAllSortedByInx() {
+        String queryStr;
+        List<DbPage> resultList = new ArrayList<>();
+        try {
+            queryStr = "SELECT p FROM DbPage p ORDER BY p.indexPage";
+            Query query = em.createQuery(queryStr);
+            resultList = query.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return resultList;
+    }
+
+    @Override
     public DbPage retrievePageMatch(int pageIndex) {
         String queryStr;
         List<DbPage> resultList = new ArrayList<>();

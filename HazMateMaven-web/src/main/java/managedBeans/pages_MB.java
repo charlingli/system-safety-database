@@ -91,7 +91,7 @@ public class pages_MB implements Serializable {
 
     @PostConstruct
     public void init() {
-        listDbPage = dbPageFacade.findAll();
+        listDbPage = dbPageFacade.findAllSortedByInx();
         listDbMenu = dbMenuFacade.findAll();
     }
 

@@ -91,9 +91,9 @@ public class DbHazard implements Serializable {
     private Integer userIdAdd;
     @Column(name = "userIdUpdate")
     private Integer userIdUpdate;
-    @OneToMany(mappedBy = "dbHazard", orphanRemoval = true)
+    @OneToMany(mappedBy = "dbHazard")
     private List<DbHazardConsequence> dbHazardConsequenceList;
-    @OneToMany(mappedBy = "dbHazard", orphanRemoval = true)
+    @OneToMany(mappedBy = "dbHazard")
     private List<DbControlHazard> dbControlHazardList;
     @JoinColumn(name = "hazardActivity", referencedColumnName = "activityId")
     @ManyToOne(optional = false)
@@ -122,9 +122,9 @@ public class DbHazard implements Serializable {
     @JoinColumn(name = "riskSeverityId", referencedColumnName = "riskSeverityId")
     @ManyToOne(optional = false)
     private DbriskSeverity riskSeverityId;
-    @OneToMany(mappedBy = "dbHazard", orphanRemoval = true)
+    @OneToMany(mappedBy = "dbHazard")
     private List<DbHazardSbs> dbHazardSbsList;
-    @OneToMany(mappedBy = "dbHazard", orphanRemoval = true)
+    @OneToMany(mappedBy = "dbHazard")
     private List<DbHazardCause> dbHazardCauseList;
 
     public DbHazard() {
@@ -306,8 +306,8 @@ public class DbHazard implements Serializable {
     public void setDbHazardCauseList(List<DbHazardCause> dbHazardCauseList) {
         this.dbHazardCauseList = dbHazardCauseList;
     }
-    
-        public String getLegacyId() {
+
+    public String getLegacyId() {
         return legacyId;
     }
 
@@ -346,7 +346,7 @@ public class DbHazard implements Serializable {
     public void setUserIdUpdate(Integer userIdUpdate) {
         this.userIdUpdate = userIdUpdate;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -366,12 +366,23 @@ public class DbHazard implements Serializable {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return "entities.DbHazard[ hazardId=" + hazardId + " ]";
     }
 
-
+    public boolean equalsContent(Object object) {
+        DbHazard other = (DbHazard) object;
+        if ((this.hazardId != null && other.hazardId != null) && this.hazardId.equals(other.hazardId) && this.hazardContextId.equals(other.hazardContextId)
+                && this.hazardDescription.equals(other.hazardDescription) && this.hazardLocation.equals(other.hazardLocation) && this.hazardActivity.equals(other.hazardActivity)
+                && this.ownerId.equals(other.ownerId) && this.hazardTypeId.equals(other.hazardTypeId) && this.hazardStatusId.equals(other.hazardStatusId)
+                && this.riskClassId.equals(other.riskClassId) && this.riskFrequencyId.equals(other.riskFrequencyId) && this.riskSeverityId.equals(other.riskSeverityId)
+                && this.riskScore == other.riskScore && this.hazardComment.equals(other.hazardComment) && this.hazardDate.equals(other.hazardDate)
+                && this.hazardWorkshop.equals(other.hazardWorkshop) && this.hazardReview.equals(other.hazardReview) && this.legacyId.equals(other.legacyId)) {
+            return true;
+        }
+        return false;
+    }
 
 }
