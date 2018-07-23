@@ -33,6 +33,7 @@ import entities.DbHazardSbs;
 import entities.DbHazardSbsPK;
 import entities.DbLocation;
 import entities.DbOwners;
+import entities.DbUser;
 import entities.DbhazardActivity;
 import entities.DbhazardContext;
 import entities.DbhazardStatus;
@@ -656,11 +657,15 @@ public class editHazard_MB implements Serializable {
         fillHazardObject();
         
         hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
-        dbHazardFacade.edit(hazardObject);
 
+        //Setting the audit fields
+        DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        hazardObject.setUpdatedDateTime(new Date());
+        hazardObject.setUserIdUpdate(activeUser.getUserId());
+        
+        dbHazardFacade.edit(hazardObject);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully edited!"));
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again
-
         editFlag = false;
         deleteButton = false;
     }
