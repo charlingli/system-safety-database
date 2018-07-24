@@ -26,7 +26,7 @@
                                 <p:outputLabel value="#{hazardView_MB.detailHazardDescription}" />
                             </p:panelGrid>
                         </p:panel>
-                        <p:panel id="causePanel" styleClass="detailHazardPanel">
+                        <p:panel id="causePanel" class="detailHazardPanel">
                             <div class="p-emphasis-spacer">
                                 <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
                             </div>
@@ -60,13 +60,16 @@
                                 <p:column headerText="Control Description">
                                     <p:outputLabel value="#{control.dbControl.controlDescription}"/>
                                 </p:column>
-                                <p:column headerText="Hierarchy" styleClass="medium">
+                                <p:column headerText="Control Owner" styleClass="small">
+                                    <p:outputLabel value="#{control.dbControl.ownerId.ownerName}"/>
+                                </p:column>
+                                <p:column headerText="Control Hierarchy" styleClass="small">
                                     <p:outputLabel value="#{control.dbControl.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
-                                <p:column headerText="Type" styleClass="medium">
+                                <p:column headerText="Control Type" styleClass="small">
                                     <p:outputLabel value="#{hazardView_MB.getControlTypeString(control.controlType)}"/>
                                 </p:column>
-                                <p:column headerText="Recommendation" styleClass="medium">
+                                <p:column headerText="Control Recommendation" styleClass="small">
                                     <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
                                 </p:column>
                                 <p:column headerText="Justification">

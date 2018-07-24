@@ -103,12 +103,14 @@
                                     </p:column>
                                 </p:autoComplete>
                             </h:panelGrid>
-                            <p:commandButton value="Save Causes">
-                                <f:ajax listener="#{hazardsRelation_MB.addHazardCauses()}" execute="@form" render="@form"/>
-                            </p:commandButton>
-                            <p:commandButton value="Cancel">
-                                <f:ajax listener="#{hazardsRelation_MB.addCauseCancel()}" execute="@form" render="@form"/>
-                            </p:commandButton>
+                            <div class="panelButtons">
+                                <p:commandButton rendered="#{hazardsRelation_MB.addCause}" value="Save Causes">
+                                    <f:ajax listener="#{hazardsRelation_MB.addHazardCauses()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                                <p:commandButton rendered="#{hazardsRelation_MB.addCause}" value="Cancel">
+                                    <f:ajax listener="#{hazardsRelation_MB.addCauseCancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </div>
                         </div>
                     </p:panel>
                     <p:panel id="consqsPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="detailHazardPanel">
@@ -145,12 +147,14 @@
                                 </p:column>
                             </p:autoComplete>
                         </h:panelGrid>
-                        <p:commandButton value="Save Consequences">
-                            <f:ajax listener="#{hazardsRelation_MB.addHazardConsequences()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-                        <p:commandButton value="Cancel">
-                            <f:ajax listener="#{hazardsRelation_MB.addConquenceCancel()}" execute="@form" render="@form"/>
-                        </p:commandButton>
+                        <div class="panelButtons">
+                            <p:commandButton rendered="#{hazardsRelation_MB.addConq}" value="Save Consequences">
+                                <f:ajax listener="#{hazardsRelation_MB.addHazardConsequences()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                            <p:commandButton rendered="#{hazardsRelation_MB.addConq}" value="Cancel">
+                                <f:ajax listener="#{hazardsRelation_MB.addConquenceCancel()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                     </p:panel>
                     <p:panel id="controlsGroup" rendered="#{hazardsRelation_MB.infoBox}" styleClass="detailHazardPanel">
                         <div class="p-emphasis-spacer">
@@ -163,14 +167,17 @@
                             <p:column headerText="Control Description">
                                 <p:outputLabel value="#{control.dbControl.controlDescription}"/>
                             </p:column>
-                            <p:column headerText="Recommendation" styleClass="small">
-                                <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
+                            <p:column headerText="Control Owner" styleClass="small">
+                                <p:outputLabel value="#{control.dbControl.ownerId.ownerName}"/>
                             </p:column>
                             <p:column headerText="Control Hierarchy" styleClass="small">
                                 <p:outputLabel value="#{control.dbControl.controlHierarchyId.controlHierarchyName}"/>
                             </p:column>
                             <p:column headerText="Control Type" styleClass="small">
                                 <p:outputLabel value="#{control.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
+                            </p:column>
+                            <p:column headerText="Recommendation" styleClass="small">
+                                <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
                             </p:column>
                             <p:column headerText="Justification">
                                 <p:outputLabel value="#{control.controlJustify}"/>
@@ -215,12 +222,14 @@
                             <p:outputLabel value="Justification: *" for="controlJustify" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                             <p:inputTextarea id="controlJustify" value="#{hazardsRelation_MB.controlJustify}" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                         </h:panelGrid>
-                        <p:commandButton value="Save Control" rendered="#{hazardsRelation_MB.addControl}">
-                            <f:ajax listener="#{hazardsRelation_MB.addHazardControls()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-                        <p:commandButton value="Cancel" rendered="#{hazardsRelation_MB.addControl}" immediate="true">
-                            <f:ajax listener="#{hazardsRelation_MB.addControlCancel()}" execute="@form" render="@form"/>
-                        </p:commandButton>
+                        <div class="panelButtons">
+                            <p:commandButton value="Save Control" rendered="#{hazardsRelation_MB.addControl}">
+                                <f:ajax listener="#{hazardsRelation_MB.addHazardControls()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                            <p:commandButton value="Cancel" rendered="#{hazardsRelation_MB.addControl}" immediate="true">
+                                <f:ajax listener="#{hazardsRelation_MB.addControlCancel()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                     </p:panel>
                     <div class="panelButtons" style="display:#{(hazardsRelation_MB.cancelBtn)?'block':'none'}">
                         <p:commandButton value="Back">

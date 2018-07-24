@@ -160,7 +160,7 @@ span.commandLink {
 /**
  * Information Set (for detailed hazard/system information)
 **/
-.detailHazardPanel .systemInformationPanel {
+.detailHazardPanel, .systemInformationPanel {
     width: 100% - 5px;
     margin-top: 8px;
     margin-bottom: 8px
@@ -175,8 +175,7 @@ span.commandLink {
     width: 70%
 }
 .detailTable {
-    margin:auto;
-    width: 100%;
+    width: 60%;
     border: #dddddd 1px solid;
     border-radius: 4px;
     padding: 8px;
@@ -185,7 +184,7 @@ span.commandLink {
 .detailHazardPanel .small,
 .relationPanel .small,
 .detailTable .small {
-    width: 12%;
+    width: 8%;
     text-align: center
 }
 .detailTable .medium {
@@ -198,11 +197,11 @@ span.commandLink {
     color: #004040;
 }
 .parameterTable, .managementTable {
-    width: 600px;
+    width: 800px;
     text-align: center;
 }
 .parameterTableLarge, .managementTableLarge {
-    width: 100% - 5px;
+    width: 1600px;
     text-align: center;
 }
 .profilePanel {
@@ -241,34 +240,35 @@ span.commandLink {
 .searchFieldset .fields {
     vertical-align: top;
 }
-.searchFieldset .fields .searchAccordion {
+.searchAccordion {
     min-width: 480px;
 }
-.searchFieldset .fields .searchAccordion .searchPanel {
-    width: intrinsic;
-    width: -moz-max-content;
-    width: -webkit-max-content;
+.searchPanel {
+    width: 100%;
     margin-top: 5px;
     margin-bottom: 5px;
 }
-.searchFieldset .fields .searchAccordion .searchPanel .right {
-    border-style: hidden !important;
-    width: 50%;
+.searchPanel textarea {
+    max-width: 60%;
 }
-.searchFieldset .fields .searchAccordion .searchPanel .right .remove {
+.searchPanel .right {
+    border-style: hidden !important;
+    width: 5%;
+}
+.searchPanel .right .remove {
     width: 10px;
     display: block;
 }
-.searchFieldset .fields .searchAccordion .searchPanel .middle, .profilePanel .middle {
+.searchPanel .middle, .profilePanel .middle {
+    border-style: hidden !important;
+    width: 55%;
+}
+.searchPanel .middle .searchInput, .searchPanel .middle textarea, .managementModifyPanel .middle .searchInput {
+    width: 70%;
+}
+.searchPanel .left, .profilePanel .left {
     border-style: hidden !important;
     width: 40%;
-}
-.searchFieldset .fields .searchAccordion .searchPanel .middle .searchInput, .managementModifyPanel .middle .searchInput {
-    width: 82%;
-}
-.searchFieldset .fields .searchAccordion .searchPanel .left, .profilePanel .left {
-    border-style: hidden !important;
-    width: 50%;
     padding-right: 40px;
 }
 .searchFieldset .explanation {
@@ -315,22 +315,26 @@ span.commandLink {
 .panelButtons {
     padding: 8px 4px 8px 4px;
 }
-.hazardModifyPanel .left,
+.panelButtons >button {
+    margin-right: 4px;
+}
+
 .relationModifyPanel .left, 
 .parameterModifyPanel .left {
     border-style: hidden !important;
     min-width: 20%;
 }
+.hazardModifyPanel .left,
 .managementModifyPanel .left {
     border-style: hidden !important;
     width: 40%;
 }
-.hazardModifyPanel .middle,
 .relationModifyPanel .middle, 
 .parameterModifyPanel .middle {
     border-style: hidden !important;
     min-width: 80%;
 }
+.hazardModifyPanel .middle,
 .managementModifyPanel .middle {
     border-style: hidden !important;
     min-width: 50%;
@@ -344,9 +348,12 @@ span.commandLink {
 .relationModifyPanel {
     border-style: none;
 }
-.addHazardPanel {
+.hazardModifyPanel {
+    border-style: none;
     width: 600px;
 }
+.hazardModifyPanel .middle input, .hazardModifyPanel .middle textarea,
+.hazardModifyPanel .middle .editInput,
 .parameterModifyPanel .middle input, .parameterModifyPanel .middle textarea, 
 .parameterModifyPanel .middle .editInput, .managementModifyPanel .middle input, 
 .managementModifyPanel .middle textarea, .managementModifyPanel .middle .editInput,

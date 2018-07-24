@@ -14,7 +14,7 @@
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="true"/>
                         <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" style="width: 500px;" collapsed="true" rendered="#{!editHazard_MB.editFlag}">
-                            <p:panelGrid id="searchTable" columns="2" columnClasses="searchGridLeft,searchGridRight" rendered="#{!editHazard_MB.editFlag}">
+                            <p:panelGrid id="searchTable" columns="2" class="searchPanel" columnClasses="left,middle" rendered="#{!editHazard_MB.editFlag}">
                                 <p:outputLabel value="Hazard Id:" for="hazardId"/>
                                 <p:inputText id="hazardId" value="#{editHazard_MB.selectedHazardId}" title="HazardId" readonly="false"/>
                                 <p:outputLabel for="hazardDate" value="Hazard Date:" />
@@ -60,7 +60,7 @@
                                 <p:inputText id="legacyId" value="#{editHazard_MB.selectedLegacyId}" title="Legacy Id"/>
                             </p:panelGrid>
                         </p:fieldset>
-                        <div class="actionButtonsDiv" style="display:#{(!editHazard_MB.editFlag)?'block':'none'}">
+                        <div class="panelButtons" style="display:#{(!editHazard_MB.editFlag)?'block':'none'}">
                             <p:commandButton value="Search" rendered="#{!editHazard_MB.editFlag}" >
                                 <f:ajax listener="#{editHazard_MB.constructSearchObject()}" execute="@form" render="@form"/>
                             </p:commandButton>
@@ -145,15 +145,15 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" class="linkActions">
+                                <h:commandLink value="Edit" class="commandLink">
                                     <f:ajax listener="#{editHazard_MB.showEdit(item)}" execute="@form" render="@form"/>
                                 </h:commandLink> |
                                 <h:commandLink value="Delete" action="#{editHazard_MB.deleteHazard(item)}" immediate="true"
-                                               class="linkActions" onclick="return confirm('Are you sure?')" disabled="#{editHazard_MB.deleteButton}"/>
+                                               class="commandLink" onclick="return confirm('Are you sure?')" disabled="#{editHazard_MB.deleteButton}"/>
                             </p:column>
                         </p:dataTable>
-                        <p:panel style="width: 620px">
-                            <p:panelGrid id="modifyTable" columns="2" rendered="#{editHazard_MB.editFlag}" styleClass="addInfoBigPanel" columnClasses="searchGridLeft,searchGridRight">
+                        <p:panel class="hazardModifyPanel">
+                            <p:panelGrid id="modifyTable" columns="2" rendered="#{editHazard_MB.editFlag}" columnClasses="left,middle">
                                 <f:facet name="header">
                                     <p:outputPanel>
                                         <h:outputText value="Editing Hazard Information " />
@@ -224,11 +224,11 @@
                                 <p:inputText value="#{editHazard_MB.hazardObject.legacyId}" title="Legacy Id"/>
                             </p:panelGrid>
                         </p:panel>
-                        <div class="actionButtonsDiv">
-                            <p:commandLink value="Edit SBS" action="#{editHazard_MB.populateTree()}" rendered="#{editHazard_MB.editFlag and editHazard_MB.popFlag}" class="linkActions">
+                        <div class="panelButtons">
+                            <p:commandLink value="Edit SBS" action="#{editHazard_MB.populateTree()}" rendered="#{editHazard_MB.editFlag and editHazard_MB.popFlag}" class="commandLink">
                                 <f:ajax listener="#{editHazard_MB.populateTree()}" execute="@form" render="@form"/>
                             </p:commandLink>
-                            <p:commandLink value="Edit SBS" rendered="#{editHazard_MB.editFlag and not editHazard_MB.popFlag}" class="linkActions">
+                            <p:commandLink value="Edit SBS" rendered="#{editHazard_MB.editFlag and not editHazard_MB.popFlag}" class="commandLink">
                                 <f:ajax listener="#{editHazard_MB.closeTree()}" execute="@form" render="@form"/>
                             </p:commandLink>
                         </div>
@@ -239,7 +239,7 @@
                                 <p:outputLabel value="#{doc}" />
                             </p:treeNode>
                         </p:tree>
-                        <div class="actionButtonsDiv" >
+                        <div class="panelButtons" >
                             <c:choose>
                                 <c:when test="#{editHazard_MB.editFlag and not editHazard_MB.treeFlag}">
                                     <p:commandButton value="Save hazard without SBS" >

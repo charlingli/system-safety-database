@@ -104,6 +104,7 @@ public class riskFrequency_MB implements Serializable {
     @PostConstruct
     public void init() {
         listDbRiskFrequency = dbriskFrequencyFacade.findAll();
+//        System.out.println(listDbRiskFrequency.get(0).getFrequencyValue());
     }
 
     public void addRiskFrequency() {

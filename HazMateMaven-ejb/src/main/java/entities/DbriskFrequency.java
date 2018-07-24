@@ -61,9 +61,10 @@ public class DbriskFrequency implements Serializable {
         this.riskFrequencyId = riskFrequencyId;
     }
 
-    public DbriskFrequency(Integer riskFrequencyId, String frequencyScore) {
+    public DbriskFrequency(Integer riskFrequencyId, String frequencyScore, int frequencyValue) {
         this.riskFrequencyId = riskFrequencyId;
         this.frequencyScore = frequencyScore;
+        this.frequencyValue = frequencyValue;
     }
 
     public Integer getRiskFrequencyId() {

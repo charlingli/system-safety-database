@@ -28,7 +28,7 @@ import javax.ejb.EJB;
 import javax.faces.bean.RequestScoped;
  
 @ManagedBean(name = "visualisation_MB")
-@RequestScoped
+@ViewScoped
 public class visualisation_MB {
      
     private DefaultDiagramModel model;
@@ -104,6 +104,11 @@ public class visualisation_MB {
         List<String> mRecommend = new ArrayList<String>();
         
         model = new DefaultDiagramModel();
+        
+        for (Element element : model.getElements()) {
+            model.removeElement(element);
+        }
+        
         model.setMaxConnections(-1);
         
         FlowChartConnector connector = new FlowChartConnector();

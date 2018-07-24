@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author alan8
+ * @author lxra
  */
 @Stateless
 public class DbriskSeverityFacade extends AbstractFacade<DbriskSeverity> implements DbriskSeverityFacadeLocal {

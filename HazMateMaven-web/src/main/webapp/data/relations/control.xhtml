@@ -45,20 +45,19 @@
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" class="commandLink">
+                                    <h:commandLink value="Edit" disabled="#{control_MB.editButton}" class="commandLink">
                                         <f:ajax listener="#{control_MB.showEdit(item)}" execute="@form" render="@form" />
                                     </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()" class="commandLink"
+                                    <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()"
                                                    onclick="if (!confirm('This action may also disassociate hazards from their control. Do you wish to proceed?')) {
                                                                return;
                                                            }
-                                                           ;"/> 
-
+                                                           ;" disabled="#{control_MB.deleteButton}" class="commandLink"/> 
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
                                 <p:panel rendered="#{control_MB.addFlag or control_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{control_MB.addFlag or control_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" columns="2" class="editPanel" columnClasses="left,middle" rendered="#{control_MB.addFlag or control_MB.editFlag}">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
@@ -113,7 +112,7 @@
                             </p:panel>
                         </h:panelGrid>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Controls" rendered="#{not (control_MB.addFlag or control_MB.editFlag)}"> 
+                            <p:commandButton value="Add Controls" disabled="#{control_MB.addButton}"> 
                                 <f:ajax listener="#{control_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>

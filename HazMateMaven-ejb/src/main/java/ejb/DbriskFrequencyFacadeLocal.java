@@ -12,7 +12,7 @@ import javax.ejb.Local;
 
 /**
  *
- * @author alan8
+ * @author lxra
  */
 @Local
 public interface DbriskFrequencyFacadeLocal {
@@ -36,5 +36,4 @@ public interface DbriskFrequencyFacadeLocal {
     List<DbHazard> checkRiskFrequency(int riskFrequencyId);
     
     List<DbriskFrequency> getRiskFrequency(int riskFrequencyId);
-    
 }

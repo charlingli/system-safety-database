@@ -32,6 +32,12 @@
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
+                                    <p:outputLabel value="Severity Value"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.severityValue}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
                                 <h:commandLink value="Edit" disabled="#{riskSeverity_MB.editButton}" class="commandLink">
@@ -63,6 +69,8 @@
                                 </c:if>
                                 <p:outputLabel value="Severity Name:" for="riskSeverityName" />
                                 <p:inputText id="riskSeverityName" value="#{riskSeverity_MB.riskSeverityObject.severityScore}" title="SeverityName" required="true" requiredMessage="The SeverityName field is required."/>
+                                <p:outputLabel value="Severity Value:" for="riskSeverityValue" />
+                                <p:inputNumber id="riskSeverityValue" value="#{riskSeverity_MB.riskSeverityObject.severityValue}" converter="javax.faces.Integer" decimalPlaces="0" title="SeverityValue" required="true" requiredMessage="The SeverityValue field is required."/>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">

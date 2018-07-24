@@ -14,7 +14,7 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author alan8
+ * @author lxra
  */
 @Stateless
 public class DbriskFrequencyFacade extends AbstractFacade<DbriskFrequency> implements DbriskFrequencyFacadeLocal {

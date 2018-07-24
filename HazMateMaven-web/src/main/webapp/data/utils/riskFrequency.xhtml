@@ -32,6 +32,12 @@
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
+                                    <p:outputLabel value="Frequency Value"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.frequencyValue}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
                                 <h:commandLink value="Edit" disabled="#{riskFrequency_MB.editButton}" class="commandLink">
@@ -63,6 +69,8 @@
                                 </c:if>
                                 <p:outputLabel value="Frequency Name:" for="riskFrequencyName" />
                                 <p:inputText id="riskFrequencyName" value="#{riskFrequency_MB.riskFrequencyObject.frequencyScore}" title="FrequencyName" required="true" requiredMessage="The FrequencyName field is required."/>
+                                <p:outputLabel value="Frequency Value:" for="riskFrequencyValue" />
+                                <p:inputNumber id="riskFrequencyValue" value="#{riskFrequency_MB.riskFrequencyObject.frequencyValue}" converter="javax.faces.Integer" decimalPlaces="0" title="FrequencyValue" required="true" requiredMessage="The FrequencyValue field is required."/>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">

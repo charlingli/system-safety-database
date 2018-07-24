@@ -51,6 +51,9 @@ public class control_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
+    private boolean addButton = false;
+    private boolean editButton = false;
+    private boolean deleteButton = false;
 
     public control_MB() {
     }
@@ -119,6 +122,30 @@ public class control_MB implements Serializable {
         this.editFlag = editFlag;
     }
 
+    public boolean isAddButton() {
+        return addButton;
+    }
+
+    public void setAddButton(boolean addButton) {
+        this.addButton = addButton;
+    }
+
+    public boolean isEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(boolean editButton) {
+        this.editButton = editButton;
+    }
+
+    public boolean isDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(boolean deleteButton) {
+        this.deleteButton = deleteButton;
+    }
+
     public List<DbControl> getFilteredControls() {
         return filteredControls;
     }
@@ -135,7 +162,6 @@ public class control_MB implements Serializable {
     }
 
     public void addControl() {
-
         try {
             fillControlObject();
             dbControlFacade.create(controlObject);
@@ -144,13 +170,11 @@ public class control_MB implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
         } finally {
             reinitialize();
-            
             addFlag = false; 
         }
     }
 
     public void editControl() {
-
         try {
             fillControlObject();
             dbControlFacade.edit(controlObject);
@@ -159,15 +183,14 @@ public class control_MB implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
         } finally {
             reinitialize();
-
             editFlag = false;
-          
+            addButton = false;
+            deleteButton = false;
         }
 
     }
 
     public void deleteControl(DbControl controlObject) {
-
         try {
             dbControlFacade.remove(controlObject);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Removed", "The control has been successfully removed"));
@@ -180,14 +203,15 @@ public class control_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
-
+        addButton = true;
+        editButton = true;
     }
 
     public void showEdit(DbControl controlObject) {
         editFlag = true;
-
+        addButton = true;
+        deleteButton = true;
         this.controlObject = controlObject;
-
         controlHierarchyId = controlObject.getControlHierarchyId().getControlHierarchyId();
         ownerId = controlObject.getOwnerId().getOwnerId();
     }
@@ -195,6 +219,10 @@ public class control_MB implements Serializable {
     public void cancel() {
         addFlag = false;
         editFlag = false;
+
+        addButton = false;
+        editButton = false;
+        deleteButton = false;
 
         reinitialize();
     }

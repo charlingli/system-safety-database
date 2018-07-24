@@ -41,6 +41,9 @@ public class consequence_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
+    private boolean addButton = false;
+    private boolean editButton = false;
+    private boolean deleteButton = false;
 
     public consequence_MB() {
     }
@@ -75,6 +78,30 @@ public class consequence_MB implements Serializable {
 
     public void setEditFlag(boolean editFlag) {
         this.editFlag = editFlag;
+    }
+
+    public boolean isAddButton() {
+        return addButton;
+    }
+
+    public void setAddButton(boolean addButton) {
+        this.addButton = addButton;
+    }
+
+    public boolean isEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(boolean editButton) {
+        this.editButton = editButton;
+    }
+
+    public boolean isDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(boolean deleteButton) {
+        this.deleteButton = deleteButton;
     }
 
     public List<DbConsequence> getFilteredConsequences() {
@@ -130,12 +157,10 @@ public class consequence_MB implements Serializable {
         }
         consequenceObject = new DbConsequence();
         init();
-        addFlag = false;
 
     }
 
     public void editConsequence() {
-
         try {
             if (hazardObject.getHazardId().equals("null")) {
                 consequenceObject.setHazardId(null);
@@ -157,6 +182,8 @@ public class consequence_MB implements Serializable {
         consequenceObject = new DbConsequence();
         init();
         editFlag = false;
+        addButton = false;
+        deleteButton = false;
 
     }
 
@@ -173,17 +200,25 @@ public class consequence_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
+        addButton = true;
+        editButton = true;
     }
 
     public void showEdit(DbConsequence consequenceObject) {
         editFlag = true;
         this.consequenceObject = consequenceObject;
         hazardObject = new DbHazard(consequenceObject.getHazardId());
+        addButton = true;
+        deleteButton = true;
     }
 
     public void cancel() {
         addFlag = false;
         editFlag = false;
+
+        addButton = false;
+        editButton = false;
+        deleteButton = false;
 
         consequenceObject = new DbConsequence();
         hazardObject = new DbHazard();

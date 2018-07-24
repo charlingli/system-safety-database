@@ -37,15 +37,14 @@
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" class="commandLink">
+                                    <h:commandLink value="Edit" disabled="#{consequence_MB.editButton}" class="commandLink">
                                         <f:ajax listener="#{consequence_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{consequence_MB.deleteConsequence(item)}" immediate="true" class="commandLink" 
-                                                   oncomplete="PF('consequenceTable').filter()" 
+                                    <p:commandLink value="Delete" action="#{consequence_MB.deleteConsequence(item)}" immediate="true" oncomplete="PF('consequenceTable').filter()" 
                                                    onclick="if (!confirm('This action may also disassociate hazards from their consequence. Do you wish to proceed?')) {
                                                 return;
                                             }
-                                            ;"/>
+                                            ;" disabled="#{consequence_MB.deleteButton}" class="commandLink"/>
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
@@ -107,7 +106,7 @@
                             </p:panel>
                         </h:panelGrid>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Consequences" rendered="#{not (consequence_MB.addFlag or consequence_MB.editFlag)}"> 
+                            <p:commandButton value="Add Consequences" disabled="#{consequence_MB.addButton}"> 
                                 <f:ajax listener="#{consequence_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>

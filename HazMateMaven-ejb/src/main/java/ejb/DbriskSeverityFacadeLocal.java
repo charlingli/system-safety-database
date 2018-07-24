@@ -12,7 +12,7 @@ import javax.ejb.Local;
 
 /**
  *
- * @author alan8
+ * @author lxra
  */
 @Local
 public interface DbriskSeverityFacadeLocal {
