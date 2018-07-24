@@ -1,477 +1,377 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
 /* 
     Created on : 13/02/2018, 1:33:32 PM
     Author     : Juan David
 */
-html 
-{
-    height: 100%;
-}
 
-body 
-{
+/** 
+ * Global Layout
+**/
+html {
+    font-size: 14px;
+    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
+    height: 100%;
+    box-sizing: border-box;
+}
+body {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 98vh;
+}
+.content {
+    flex: 1 0 auto;
+    padding: 5px;
+}
+.ui-content {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+footer {  
+    flex-shrink: 0; 
+    text-align: center;
+}
+.pagePath {
+    font-size:  14px;
+    margin-left: 0px;
+    padding-bottom: 10px;
+}
+.navigationPath {
+    color: #008080;
+}
+.tableColumn10 {
+    width: 10%;
+}
+.tableColumn10ct {
+    width: 10%;
+    text-align: center;
+}
+.tableColumn15 {
+    width: 15%; 
+}
+.tableColumn15ct {
+    width: 15%;
+    text-align: center;
+}
+.tableColumn20 {
+    width: 20%;
+}
+.tableColumn30 {
+    width: 30%;
+}
+.tableColumn40 {
+    width: 40%;
+}
+.tableColumn50 {
+    width: 50%;
+}
+.tableColumn60 {
+    width: 60%;
+}
+.tableColumn70 {
+    width: 70%;
+}
+.tableColumn10p {
+    width: 10px;
+}
+.tableColumn50p {
+    width: 50px;
+}
+.tableColumn80p {
+    width: 80px;
+}
+.tableColumn100p {
+    width: 100px;
+}
+.tableColumn150p {
+    width: 150px;
+}
+.tableColumn200p, .inputField200px {
+    width: 200px;
+}
+.tableColumn200p {
+    width: 250px;
+}
+.tableColumn300p {
+    width: 300px;
 }
 
-.ui-accordion .ui-accordion-header .ui-icon { 
-    display: block;    
-}
-
+/**
+ * Theme Tweaks
+**/
 .ui-widget, .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
     font-size: 14px;
 }
-
-.searchBox
-{
-    width: 600px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-.resultBox
-{
-    width: 95%;
-}
-.infoText
-{
-    width: 75%;
-    background-color: #008080;
-    font-size: 14px;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    border-radius: 2px;
-}
-.infoTextBig
-{
-    width: 95%;
-    background-color: #008080;
-    font-size: 14px;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    margin-left: 3px;
-    font-weight: bold;
-    color: white;
-    text-align: center;
-    border-radius: 3px;
-}
-.hazardInfo
-{
-    width: 75%;
-    margin-bottom: 15px;
-}
-.hazardInfoFieldName
-{
-    width: 15%;
-    font-size: 14px;
-    font-weight: bold;
-    color: #005354;
-}
-.manyResultBox
-{
-    width: 80%;
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-.linkActions {
-    color: #008080 !important; 
-    text-decoration: underline !important;
-}
-
-.idColumn
-{
-    width: 12%;
-    text-align: center;
-}
-
-.idHugeColumn
-{
-    width: 20%;
-    text-align: center;
-}
-
-.actionsColumn
-{
-    width: 10%;
-    text-align: center;
-}
-.actionsBigColumn
-{
-    width: 12%;
-    text-align: center;
-}
-
-.actionsHugeColumn
-{
-    width: 20%;
-    text-align: center;
-}
-
-.addManyResultBox
-{
-    margin-top: 10px;
-}
-.idAutocompleteColumn
-{
-    width: 10%;
-}
-.linkDiv
-{
-    margin-top: 5px;
-    margin-bottom: 5px;
-}
-.emailField
-{
-    width: 350px;
-}
-.systemLicense
-{
-    width: 500px;
-}
-.licenseFooter
-{  
-    flex-shrink: 0; 
-    text-align: center;
-}
-pp 
-{
-    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
-    font-size:  14px;
-    font-weight: bold;
-    margin: 0px;
-    padding: 0px;
-    color: #333333;
-}
-.tableOne
-{
-    width: 75%;
-    text-align: center;
-}
-.tableTwo
-{
-    width: 30%;
-    text-align: center;
-}
-.tableThree
-{
-    width: 80%;
-    text-align: center;
-}
-.dropDown
-{
-    width:150px;
-}
-.specialColumn
-{
-    width:200px;
-}
-.editUser
-{
-    display: none;
-}
-.controlWidth
-{
-    width:250px;
-}
-.treeWidth
-{
-    width:600px;
-}
-.controlCancelBtn{
-    margin-left: 5px;
-}
-/* Charling's stuff */
-.tableSeparator
-{
-    position:relative; 
-    left:-50%; 
-    border: 0; 
-    border-bottom: 1px solid rgb(238, 238, 238);
-}
-
-.rotateText 
-{
-    writing-mode: vertical-lr;
-    transform: rotate(-180deg);
-}
-.truncate 
-{
-    max-width: 120px;
-    width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.truncate > span:nth-child(2) 
-{
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.ui-accordion .ui-accordion-header .ui-icon { 
     display: block;
 }
-
-.instructionText 
-{
-    color: #036fab;
-}
-
-.instructionHeader
-{
-    color: #045491;
-}
-.ui-datatable-footer 
-{
-    min-height: 1em;
-}
-
-#hazardsForm\:hazardTable\:globalFilter
-{
-    width: 240px;
-}
-
-#hazardsForm\:hazardTable\:columnToggle
-{
-    float: right;
-}
-
-.searchGridMiddle .searchInput
-{
-    width: 100%;
-}
-
-.searchGridMiddle .searchInput
-{
-    width: 100%;
-}
-
-.permissionsTable
-{
-    float: left;
-}
-.usersTable
-{
-    width: auto;
-}
-.filteredTable
-{
-    width: 40%;
-}
-
-.filteredBigTable
-{
-    width: 1000px;
-}
-
-.filteredColumn
-{
-    width: 15%;
-    text-align: center; 
-}
-
-.centerColumn
-{
-    text-align: center; 
-}
-
-.accordionWidth
-{
-    width: 60%; 
-}
-html 
-{
-    height: 100%;
-}
-body 
-{
-    display: flex;
-    flex-direction: column;
-    height: 98vh;
-}
-.center_content 
-{
-    flex: 1 0 auto;
-    padding: 5px;
-}
-.ui-widget-header
-{
+.ui-widget-header {
     border:1px solid #008080;
     color: #ffffff;
     background:#008080;
 }
-a:link, a:visited 
-{
-    color: #333333;
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background-color: #008080;
+    background-image: linear-gradient(to bottom, #008080, #008080);
 }
-a:link:hover, a:visited:hover  
-{
-    color: #333333;
-} 
-.pagePath
-{
-    background-color:#008080;
-    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
-    font-size:  14px;
-    font-weight: bold;
-    margin: 0px;
-    padding: 2px;
-    color: #ffffff;
-    width: fit-content;
-    border-radius: 4px;
-}
-
 .ui-dialog-title {
     color: black;
     border-radius: 4px;
     padding: 2px;
 }
 
-.ui-content {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-}
-
-.ui-dialog {
-    height: 720px;
-    width: 960px;
-}
-
-.ui-diagram {
-    flex: 1 0 auto;
-}
-
-.pagePath1
-{
-    background-color:#0084C6;
-    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-    font-size:  13px;
+/**
+ * Text
+**/
+.p-heading {
+    background-color: #008080;
+    font-size: 14px;
     font-weight: bold;
-    margin: 0px;
-    padding: 0px;
-    color: #ffffff;
-    width: fit-content;
+    color: white;
+    padding: 2px;
+    width: intrinsic;
+    width: -moz-max-content;
+    width: -webkit-max-content;
+    border-radius: 2px;
 }
-
-.pagePathNew {
-    font-size:  14px;
-    margin-left: 0px;
-    padding-bottom: 10px;
+.p-heading-spacer {
+    margin: 8px 0 8px 0;
 }
-
-.pagePathNew {
-    font-size:  14px;
-    margin-left: 0px;
-    padding-bottom: 10px;
-}
-
-.pagePath1
-{
-    background-color:#0084C6;
-    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
-    font-size:  13px;
+.p-emphasis {
     font-weight: bold;
-    margin: 0px;
-    padding: 0px;
-    color: #ffffff;
-    width: fit-content;
+    color: #004040;
+    padding: 2px;
+}
+.p-emphasis-spacer {
+    margin: 4px 0 2px 0;
+}
+a.commandLink, .ui-widget-content a {
+    color: #008080;
+    text-decoration: underline;
+    font-weight: bold;
+}
+a.commandLink:hover, .ui-widget-content a:hover {
+    color: #00d0d0;
+}
+span.commandLink {
+    color: #008080;
 }
 
-.hazardsFieldset{
-    width: 70%;
+/**
+ * Information Set (for detailed hazard/system information)
+**/
+.detailHazardPanel .systemInformationPanel {
+    width: 100% - 5px;
+    margin-top: 8px;
+    margin-bottom: 8px
+}
+.systemInformationPanel .input {
+    width: 600px;
+}
+.detailHazardPanel .left {
+    width: 30%
+}
+.detailHazardPanel .middle {
+    width: 70%
+}
+.detailTable {
+    margin:auto;
+    width: 100%;
+    border: #dddddd 1px solid;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 20px;
+}
+.detailHazardPanel .small,
+.relationPanel .small,
+.detailTable .small {
+    width: 12%;
+    text-align: center
+}
+.detailTable .medium {
+    width: 16%;
+}
+.detailTable .label {
+    width: 12%;
+    font-size: 14px;
+    font-weight: bold;
+    color: #004040;
+}
+.parameterTable, .managementTable {
+    width: 600px;
+    text-align: center;
+}
+.parameterTableLarge, .managementTableLarge {
+    width: 100% - 5px;
+    text-align: center;
+}
+.profilePanel {
+    width: 600px;
+    margin-top: 8px;
+    margin-bottom: 8px
 }
 
-.searchGridRight {
-    border-style: hidden !important; /* or none */
-    width: 50%;
+/**
+ * Searching & Results Set
+**/
+.resultPanel .small {
+    width: 12%;
+    text-align: center;
 }
-
-.searchGridMiddle {
-    border-style: hidden !important; /* or none */
+.resultPanel .small input {
+    width: 80px;
+}
+.relationPanel .medium {
+    width: 18%;
+}
+.relationPanel .small input {
+    width: 80px;
+}
+.relationPanel .results {
+    vertical-align: top;
+    width: 60%;
+}
+.relationPanel .actions {
+    vertical-align: top;
     width: 40%;
 }
-
-.searchGridLeft {
-    border-style: hidden !important; /* or none */
-    width: 50%;
+.searchFieldset, resultPanel {
+    width: 100% - 5px;
 }
-
-.searchButtonsGrid {
-    padding: 2px;
-    padding-bottom: 10px;
-}
-
-.actionButtonsDiv{
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-.actionButtonsDiv > * {
-    margin-right: 5px;
-}
-
-.searchFields{
+.searchFieldset .fields {
     vertical-align: top;
 }
-
-.searchExplanation{
+.searchFieldset .fields .searchAccordion {
+    min-width: 480px;
+}
+.searchFieldset .fields .searchAccordion .searchPanel {
+    width: intrinsic;
+    width: -moz-max-content;
+    width: -webkit-max-content;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.searchFieldset .fields .searchAccordion .searchPanel .right {
+    border-style: hidden !important;
+    width: 50%;
+}
+.searchFieldset .fields .searchAccordion .searchPanel .right .remove {
+    width: 10px;
+    display: block;
+}
+.searchFieldset .fields .searchAccordion .searchPanel .middle, .profilePanel .middle {
+    border-style: hidden !important;
+    width: 40%;
+}
+.searchFieldset .fields .searchAccordion .searchPanel .middle .searchInput, .managementModifyPanel .middle .searchInput {
+    width: 82%;
+}
+.searchFieldset .fields .searchAccordion .searchPanel .left, .profilePanel .left {
+    border-style: hidden !important;
+    width: 50%;
+    padding-right: 40px;
+}
+.searchFieldset .explanation {
     vertical-align: top;
     padding-left: 10px;   
 }
-
-.tableList{
-    width: 1000px;
+.searchFieldset .explanation .queryDescr  {
+    width: auto;
 }
-
-.tableActions{
-    width: 500px;
-    vertical-align: top;
-}
-
-.queryDescr  {
-    width: 700px;
-}
-
-.queryDescr h3 {
+.searchFieldset .explanation .queryDescr h3 {
     color: #000000;
     margin: 0;
     padding-bottom: 3px;
 }
-
-.queryDescr h4 {
+.searchFieldset .explanation .queryDescr h4 {
     padding-left: 10px; 
     margin: 0;
     padding-bottom: 1px; 
     padding-top: 1px;
 }
-
-.queryDescr h4 span {
+.searchFieldset .explanation .queryDescr h4 span {
     color: #3366ff;
     padding-bottom: 1px; 
     padding-top: 1px;
 }
-
-.queryDescr_field {
+.searchFieldset .explanation .queryDescr_field {
     padding-left: 20px; 
     margin: 0;
     padding-bottom: 1px; 
     padding-top: 1px;
 }
-
-.queryDescr_and {
+.searchFieldset .explanation .queryDescr_and {
     color: #ff0000; 
     margin: 0;
     padding-bottom: 1px; 
     padding-top: 1px;
     font-size: 12px;
     font-weight: bold;
+}
+
+/**
+ * Adding & Editing Set
+**/
+.panelButtons {
+    padding: 8px 4px 8px 4px;
+}
+.hazardModifyPanel .left,
+.relationModifyPanel .left, 
+.parameterModifyPanel .left {
+    border-style: hidden !important;
+    min-width: 20%;
+}
+.managementModifyPanel .left {
+    border-style: hidden !important;
+    width: 40%;
+}
+.hazardModifyPanel .middle,
+.relationModifyPanel .middle, 
+.parameterModifyPanel .middle {
+    border-style: hidden !important;
+    min-width: 80%;
+}
+.managementModifyPanel .middle {
+    border-style: hidden !important;
+    min-width: 50%;
+}
+.relationModifyPanel, .parameterModifyPanel {
+    width: 60%;
+}
+.managementModifyPanel {
+    width: 30%;
+}
+.relationModifyPanel {
+    border-style: none;
+}
+.addHazardPanel {
+    width: 600px;
+}
+.parameterModifyPanel .middle input, .parameterModifyPanel .middle textarea, 
+.parameterModifyPanel .middle .editInput, .managementModifyPanel .middle input, 
+.managementModifyPanel .middle textarea, .managementModifyPanel .middle .editInput,
+.relationModifyPanel textarea, .relationModifyPanel input, .relationModifyPanel select {
+    width: 80%;
+}
+.hiddenField {
+    display: none;
+}
+
+/**
+ * Unused
+**/
+.treeWidth {
+    width:600px;
+}
+.permissionsTable {
+    float: left;
+}
+.ui-dialog {
+    height: 720px;
+    width: 960px;
+}
+.ui-diagram {
+    flex: 1 0 auto;
 }
 .ui-diagram-hazard {
     width:180px; 
@@ -493,7 +393,6 @@ a:link:hover, a:visited:hover
         );
     background-clip: content-box, padding-box;
 }
-
 .ui-diagram-cause {
     width:180px;
     min-height:4em;
@@ -505,7 +404,6 @@ a:link:hover, a:visited:hover
     border-radius: 4px;
     border-right: #f2bb47 8px solid;
 }
-
 .ui-diagram-consequence {
     width:180px; 
     min-height:4em;   
@@ -517,7 +415,6 @@ a:link:hover, a:visited:hover
     border-radius: 4px;
     border-left: #d61d3c 8px solid;
 }
-
 .ui-diagram-prevent {
     max-width:120px; 
     height:auto;     
@@ -528,7 +425,6 @@ a:link:hover, a:visited:hover
     background: #ffffff;
     color: #ffffff;
 }
-
 .ui-diagram-mitigate {
     max-width:120px; 
     height:auto;     
@@ -539,7 +435,6 @@ a:link:hover, a:visited:hover
     background: #ffffff;
     color: #ffffff;
 }
-
 .ui-menu.ui-widget li > .ui-menuitem-link.ui-state-hover {
     color:#ffffff;
     text-decoration:none;
@@ -565,127 +460,10 @@ a:link:hover, a:visited:hover
     background: #ffffff;
     overflow: hidden;
 }
-
-
 .ui-diagram-text:before {
     position: absolute;
     right: 0;
     bottom: 0;
-}
-
-.navigationPath {
-    color: #008080;
-}
-
-.addInfoPanel{
-    width: 500px;
-}
-
-.addInfoBigPanel{
-    width: 600px;
-}
-
-.addInfoPanelRight{
-    width: 500px;
-}
-
-.addInfoBigPanelRight{
-    width: 600px;
-}
-
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-    background-color: #008080;
-    background-image: linear-gradient(to bottom, #008080, #008080);
-}
-
-.viewTableContent{
-    width: 1200px;
-}
-
-.viewBigTableContent{
-    width: 1700px;
-}
-
-.addSelectOne {
-    width: 82%;
-}
-
-.tableColumn10 {
-    width: 10%;
-}
-
-.tableColumn10ct {
-    width: 10%;
-    text-align: center;
-}
-
-.tableColumn15 {
-    width: 15%; 
-}
-
-.tableColumn15ct {
-    width: 15%;
-    text-align: center;
-}
-
-.tableColumn20 {
-    width: 20%;
-}
-
-.tableColumn30 {
-    width: 30%;
-}
-
-.tableColumn40 {
-    width: 40%;
-}
-
-.tableColumn50 {
-    width: 50%;
-}
-
-.tableColumn60 {
-    width: 60%;
-}
-
-.tableColumn70 {
-    width: 70%;
-}
-
-.tableColumn10p {
-    width: 10px;
-}
-
-.tableColumn50p {
-    width: 50px;
-}
-
-.tableColumn80p {
-    width: 80px;
-}
-
-.tableColumn100p {
-    width: 100px;
-}
-
-.tableColumn150p {
-    width: 150px;
-}
-
-.tableColumn200p {
-    width: 200px;
-}
-
-.tableColumn200p {
-    width: 250px;
-}
-
-.tableColumn300p {
-    width: 300px;
-}
-
-.inputField200px{
-    width: 200px;
 }
 .ui-diagram-text:after {
     content: '';
@@ -696,17 +474,14 @@ a:link:hover, a:visited:hover
     margin-top: 0.2em;
     background: white;
 }
-
 .ui-diagram-text:hover {
     overflow: visible;
     color: #ffffff;
 }
-
 .ui-diagram-text:hover .ui-diagram-tooltip {
     visibility: visible;
     opacity: 100;
 }
-
 .ui-diagram-text .ui-diagram-tooltip {
     visibility: hidden;
     opacity: 0;
@@ -714,82 +489,40 @@ a:link:hover, a:visited:hover
     max-width: auto;
     background-color: #ffffff;
     text-align: center;
-
     margin: 0em;
     color: #000000;
-
-    /* Position the tooltip text - see examples below! */
     position: absolute;
     top: 0px;
     left: 0px; 
     z-index: 2;
 }
-
 .ui-diagram-recommend-Ado {
     display:flex;
     justify-content: center;
     color: #ffffff;
     background: #6ebe49;
 }
-
 .ui-diagram-recommend-Rej {
     display:flex;
     justify-content: center;
     color: #ffffff;
     background: #d61d3c;
 }
-
 .ui-diagram-recommend-Ref {
     display:flex;
     justify-content: center;
     color: #000000;
     background: #f2bb47;
 }
-
-.detailTable {
-    margin:auto;
-    width: 100%;
-    border: #dddddd 1px solid;
-    border-radius: 4px;
-    padding: 8px;
-    margin-top: 20px;
-}
-
-.detailTable .detailText {
-    margin-top: 35px;
-    margin-bottom: 5px;
-    margin-left: 10px;
-    font-weight: bold;
-}
-
-.detailTable .hazardDetail {
-    width: 100%;
-}
-
-.detailTable .detailThin {
-    width: 12%;
-}
-
-.detailTable .controlDetail .detailMed {
-    width: 16%;
-}
-
 .fa-remove {
     color: red;
 }
-
-.removePanel {
-    width: 10px;
-    display: block;
-}
-
 .extendTable {
     font-size: 12.5px;
     white-space: nowrap;
     border-collapse: collapse;
     border-spacing: -0px;
 }
-
 .extendTable .utilityHeader {
     background: #008080;
     height: 65px;
@@ -797,7 +530,6 @@ a:link:hover, a:visited:hover
     position: sticky;
     top: 0;
 }
-
 .extendTable .utilityDiv {
     text-align: left;
     width: 98vw;
@@ -805,21 +537,20 @@ a:link:hover, a:visited:hover
     top: 0px;
     left: 1%;
 }
-
-.extendTable .utilityDiv .globalColumnsDiv {
+.extendTable .utilityDiv .globalExportDiv {
     text-align: right;
 }
-
+.extendTable .utilityDiv .globalColumnsDiv {
+    text-align: center;
+}
 .extendTable .utilityDiv p {
     font-size: 18px;
     color: white;
     margin-bottom: 0px;
 }
-
 .extendTable >thead >tr:nth-child(2) {
     background: #008080;
 }
-
 .extendTable >thead >tr:nth-child(2) >th {
     background: linear-gradient(#ffffff, #e7e7e7);
     border-radius: 4px;
@@ -831,26 +562,21 @@ a:link:hover, a:visited:hover
     top: 0;
     min-width: 12em;
 }
-
 .extendTable >tbody >tr >td {
     border: #b7b7b7 1px solid;
     padding-left: 8px;
     padding-right: 8px;
 }
-
 .extendTable >tbody >tr:nth-child(even) {
     background: #f9f9f9;
 }
-
 .extendTable >tbody >tr .HDData, .HWData, .HMData {
     white-space: normal;
 }
-
 .extendTable thead tr:nth-child(2) input,select {
     width: 90%;
     margin-bottom: 4px;
 }
-
 .progress-back {
     display: block;
     position: fixed;
@@ -863,12 +589,23 @@ a:link:hover, a:visited:hover
     background-color: rgb(0, 0, 0);
     background-color: rgba(0, 0, 0, 0.4);
 }
-
 .progress-front {
-    margin: 20% auto;
+    margin: 30% auto;
     width: 80%;
 }
-
+#nHazards {
+    display: none;
+}
+.progress-text {
+    color: white;
+    font-size: 3.2em;
+    text-align: center;
+    position: fixed;
+    left: 40%;
+    top: 40%;
+    margin: 0 0 auto auto;
+    width: 20%;
+}
 .loader,
 .loader:before,
 .loader:after {
@@ -928,16 +665,13 @@ a:link:hover, a:visited:hover
     height: 5em;
   }
 }
-
 .extendTable >tbody >tr >td >table {
     border-collapse: collapse;
 }
-
 .extendTable >tbody >tr >td >table >tbody >tr {
     border-top: 1px #b7b7b7 solid;
     border-bottom: 1px #b7b7b7 solid;
 }
-
 @media print {
     @page {
         size: landscape;

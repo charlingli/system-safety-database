@@ -11,9 +11,13 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:dataTable id="viewTable" value="#{gradeSeparation_MB.listDbGradeSeparation}" var="item" tableStyle="width: auto;">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{gradeSeparation_MB.listDbGradeSeparation}" var="item" styleClass="parameterTable">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="The current grade separations are: " />
+                                </p:outputPanel>
+                            </f:facet>
                             <p:column>
                                 <f:facet name="header">
                                     <p:outputLabel value="Grade Separation Id"/>
@@ -30,73 +34,58 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{gradeSeparation_MB.editButton}">
+                                <h:commandLink value="Edit" disabled="#{gradeSeparation_MB.editButton}" class="commandLink">
                                     <f:ajax listener="#{gradeSeparation_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <h:commandLink value="Delete" action="#{gradeSeparation_MB.deleteGradeSeparation(item)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{gradeSeparation_MB.deleteButton}"/> 
-
-
+                                </h:commandLink> | 
+                                <h:commandLink value="Delete" action="#{gradeSeparation_MB.deleteGradeSeparation(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{gradeSeparation_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
-
-                        <br/>
-                        <br/>
-
-                        <p:commandButton value="Add Grade Separation" disabled="#{gradeSeparation_MB.addButton}"> 
-                            <f:ajax listener="#{gradeSeparation_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-                        <br/>
-                        <br/>
-
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Grade Separation" disabled="#{gradeSeparation_MB.addButton}"> 
+                                <f:ajax listener="#{gradeSeparation_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                         <c:choose>
                             <c:when test="#{gradeSeparation_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{gradeSeparation_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-                        <br/>
-
-
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{gradeSeparation_MB.addFlag or gradeSeparation_MB.editFlag}">
-                            <c:if test="#{gradeSeparation_MB.editFlag}">
-                                <p:outputLabel value="Grade Separation Id:" for="gradeSeparationId" />
-                                <p:inputText id="gradeSeparationId" value="#{gradeSeparation_MB.gradeSeparationObject.gradeSeparationId}" disabled="true" title="GradeSeparationId" required="true" requiredMessage="The GradeSeparationId field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Grade Separation Name:" for="gradeSeparationName" />
-                            <p:inputText id="gradeSeparationName" value="#{gradeSeparation_MB.gradeSeparationObject.gradeSeparationName}" title="GradeSeparationName" required="true" requiredMessage="The GradeSeparationName field is required."/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{gradeSeparation_MB.addFlag}">
-                                <p:commandButton value="Save" action="#{gradeSeparation_MB.addGradeSeparation()}" update="viewTable modifyTable"/>   
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{gradeSeparation_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{gradeSeparation_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{gradeSeparation_MB.editGradeSeparation()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{gradeSeparation_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
-
-
-
+                        <p:panel class="parameterModifyPanel" rendered="#{gradeSeparation_MB.addFlag or gradeSeparation_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{gradeSeparation_MB.addFlag or gradeSeparation_MB.editFlag}">
+                                <c:if test="#{gradeSeparation_MB.editFlag}">
+                                    <p:outputLabel value="Type Id:" for="gradeSeparationId" />
+                                    <p:inputText id="gradeSeparationId" value="#{gradeSeparation_MB.gradeSeparationObject.gradeSeparationId}" disabled="true" title="TypeId" required="true" requiredMessage="The TypeId field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Type Name:" for="gradeSeparationName" />
+                                <p:inputText id="gradeSeparationName" value="#{gradeSeparation_MB.gradeSeparationObject.gradeSeparationName}" title="TypeName" required="true" requiredMessage="The TypeName field is required."/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{gradeSeparation_MB.addFlag}">
+                                    <p:commandButton value="Save" action="#{gradeSeparation_MB.addGradeSeparation()}" update="viewTable modifyTable"/>   
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{gradeSeparation_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{gradeSeparation_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{gradeSeparation_MB.editGradeSeparation()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{gradeSeparation_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

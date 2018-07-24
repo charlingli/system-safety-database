@@ -1,0 +1,362 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <h:form id="hazardsForm">
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="90vh" width="90vw">
+                        <p:diagram value="#{visualisation_MB.model}" styleClass="ui-content"  /> 
+                    </p:dialog>
+                    <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
+                        <p:panel id="hazardPanel" styleClass="detailHazardPanel">
+                            <div class="p-heading-spacer">
+                                <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
+                            </div>
+                            <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
+                                <p:outputLabel value="Hazard Id: "/>
+                                <p:outputLabel value="#{hazardView_MB.detailHazardId}" />
+                                <p:outputLabel value="Hazard Description: " />
+                                <p:outputLabel value="#{hazardView_MB.detailHazardDescription}" />
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel id="causePanel" styleClass="detailHazardPanel">
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
+                            </div>
+                            <p:dataTable value="#{hazardView_MB.detailCauses}" var="cause" emptyMessage="No causes are associated with this hazard.">
+                                <p:column headerText="Cause ID" styleClass="small">
+                                    <p:outputLabel value="#{cause.dbCause.causeId}"/>
+                                </p:column>
+                                <p:column headerText="Cause Description">
+                                    <p:outputLabel value="#{cause.dbCause.causeDescription}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel id="consequencePanel" styleClass="detailHazardPanel">
+                            <h:outputText value="The following consequences are associated with the current hazard:" class="p-emphasis"/>
+                            <p:dataTable value="#{hazardView_MB.detailConsequences}" var="consequence" emptyMessage="No consequences are associated with this hazard.">
+
+                                <p:column headerText="Consequence ID" styleClass="small">
+                                    <p:outputLabel value="#{consequence.dbConsequence.consequenceId}"/>
+                                </p:column>
+                                <p:column headerText="Consequence Description" styleClass="detailThick">
+                                    <p:outputLabel value="#{consequence.dbConsequence.consequenceDescription}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel id="controlPanel" styleClass="detailHazardPanel">
+                            <h:outputText value="The following controls are associated with the current hazard:" class="p-emphasis"/>
+                            <p:dataTable value="#{hazardView_MB.detailControls}" var="control" emptyMessage="No controls are associated with this hazard.">
+                                <p:column headerText="Control Id" styleClass="small">
+                                    <p:outputLabel value="#{control.dbControl.controlId}"/>
+                                </p:column>
+                                <p:column headerText="Control Description">
+                                    <p:outputLabel value="#{control.dbControl.controlDescription}"/>
+                                </p:column>
+                                <p:column headerText="Hierarchy" styleClass="medium">
+                                    <p:outputLabel value="#{control.dbControl.controlHierarchyId.controlHierarchyName}"/>
+                                </p:column>
+                                <p:column headerText="Type" styleClass="medium">
+                                    <p:outputLabel value="#{hazardView_MB.getControlTypeString(control.controlType)}"/>
+                                </p:column>
+                                <p:column headerText="Recommendation" styleClass="medium">
+                                    <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
+                                </p:column>
+                                <p:column headerText="Justification">
+                                    <p:outputLabel value="#{control.controlJustify}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:dialog>
+                    <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
+                        <h:panelGrid columns="2" columnClasses="fields,explanation">
+                            <p:accordionPanel id="searchFields" multiple="true" class="searchAccordion" activeIndex="null">
+                                <p:tab title="Hazard Fields">
+                                    <p:panel styleClass="searchPanel">
+                                        <p:panelGrid columns="3" columnClasses="left,middle,right">
+                                            <p:outputLabel>Hazard Description:</p:outputLabel>
+                                            <p:inputText id="HDInput" value="#{hazardView_MB.searchedHazardDescription}">
+                                                <p:ajax event="keyup" update="HDClear" />
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardDescription}">
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Causes:</p:outputLabel>
+                                            <p:inputText id="CAInput" value="#{hazardView_MB.searchedCauses}">
+                                                <p:ajax event="keyup" update="CAClear" />
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CAClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedCauses}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Consequences:</p:outputLabel>
+                                            <p:inputText id="CQInput" value="#{hazardView_MB.searchedConsequences}">
+                                                <p:ajax event="keyup" update="CQClear" />
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CQClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedConsequences}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Comments:</p:outputLabel>
+                                            <p:inputText id="HMInput" value="#{hazardView_MB.searchedHazardComments}">
+                                                <p:ajax event="keyup" update="HMClear" />
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HMClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardComments}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Location:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HLInput" value="#{hazardView_MB.selectedLocations}" label="Hazard Locations" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listLocations}" var="location" itemLabel="#{location.locationName}" itemValue="#{location.locationId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HLClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedLocations}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Project:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HPInput" value="#{hazardView_MB.selectedProjects}" label="Hazard Projects" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listProjects}" var="project" itemLabel="#{project.projectName}" itemValue="#{project.projectId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HPClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedProjects}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Grade Separation:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="GSInput" value="#{hazardView_MB.selectedGradeSeparations}" label="Grade Separations" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listGradeSeparations}" var="gradeSeparation" itemLabel="#{gradeSeparation.gradeSeparationName}" itemValue="#{gradeSeparation.gradeSeparationId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="GSClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedGradeSeparations}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Construction Type:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="CNInput" value="#{hazardView_MB.selectedConstructionTypes}" label="Construction Types" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listConstructionTypes}" var="constructionType" itemLabel="#{constructionType.constructionTypeName}" itemValue="#{constructionType.constructionTypeId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CNClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedConstructionTypes}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Change Type:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="CHInput" value="#{hazardView_MB.selectedChangeTypes}" label="Change Types" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listChangeTypes}" var="changeType" itemLabel="#{changeType.changeTypeName}" itemValue="#{changeType.changeTypeId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CHClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedChangeTypes}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Activity:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HAInput" value="#{hazardView_MB.selectedHazardActivities}" label="Hazard Activities" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listHazardActivities}" var="hazardActivity" itemLabel="#{hazardActivity.activityName}" itemValue="#{hazardActivity.activityId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HAClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardActivities}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Context:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HCInput" value="#{hazardView_MB.selectedHazardContexts}" label="Hazard Contexts" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listHazardContexts}" var="hazardContext" itemLabel="#{hazardContext.hazardContextName}" itemValue="#{hazardContext.hazardContextId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HCClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardContexts}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Type:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HTInput" value="#{hazardView_MB.selectedHazardTypes}" label="Hazard Types" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listHazardTypes}" var="hazardType" itemLabel="#{hazardType.hazardTypeName}" itemValue="#{hazardType.hazardTypeId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HTClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardTypes}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Status:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HSInput" value="#{hazardView_MB.selectedHazardStatuses}" label="Hazard Statuses" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listHazardStatuses}" var="hazardStatus" itemLabel="#{hazardStatus.hazardStatusName}" itemValue="#{hazardStatus.hazardStatusId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HSClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardStatuses}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Owner:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="HOInput" value="#{hazardView_MB.selectedHazardOwners}" label="Hazard Owners" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listHazardOwners}" var="hazardOwner" itemLabel="#{hazardOwner.ownerName}" itemValue="#{hazardOwner.ownerId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HOClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardOwners}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            </p:panelGrid>
+                                    </p:panel>
+                                </p:tab>
+                                <p:tab title="System Breakdown Structure Codes">
+                                    <p:tree value="#{trees_MB.root}" var="doc"
+                                            selectionMode="checkbox"
+                                            selection="#{hazardView_MB.TNSelectedNodes}">
+                                        <p:treeNode>
+                                            <h:outputText value="#{doc}" />
+                                        </p:treeNode>
+                                    </p:tree>
+                                </p:tab>
+                                <p:tab title="Control Fields">
+                                    <p:panel styleClass="searchPanel">
+                                        <p:panelGrid columns="3" columnClasses="left,middle,right">
+                                            <p:outputLabel>Control Description:</p:outputLabel>
+                                            <p:inputText value="#{hazardView_MB.searchedControlDescription}">
+                                                <p:ajax event="keyup" update="CDClear" />
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedControlDescription}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Control Justification:</p:outputLabel>
+                                            <p:inputText value="#{hazardView_MB.searchedControlJustification}">
+                                                <p:ajax event="keyup" update="CJClear" />
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CJClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedControlJustification}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Control Hierarchy:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="CHMenu" value="#{hazardView_MB.selectedControlHierachies}" label="Hierarchy" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listControlHierarchies}" var="controlHier" itemLabel="#{controlHier.controlHierarchyName}" itemValue="#{controlHier.controlHierarchyId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CTClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlHierachies}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Control Owner:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="COMenu" value="#{hazardView_MB.selectedControlOwners}" label="Owners" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listHazardOwners}" var="controlOwner" itemLabel="#{controlOwner.ownerName}" itemValue="#{controlOwner.ownerId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="COClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlOwners}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Control Recommendation:</p:outputLabel>
+                                            <p:selectCheckboxMenu class="searchInput" id="CRMenu" value="#{hazardView_MB.selectedControlRecommendations}" label="Recommendations" filter="true" filterMatchMode="contains">
+                                                <f:selectItems value="#{hazardView_MB.listControlRecommendations}" var="controlRecommendation" itemLabel="#{controlRecommendation.controlRecommendName}" itemValue="#{controlRecommendation.controlRecommendId}"/>
+                                            </p:selectCheckboxMenu>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="CRClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlRecommendations}"> 
+                                                    <i class="fa fa-remove" />
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                        </p:panelGrid>
+                                    </p:panel>
+                                </p:tab>
+                            </p:accordionPanel>
+                            <p:panel styleClass="queryDescr" visible="#{hazardView_MB.enableQueryDescr}">
+                                <h:outputText value="#{hazardView_MB.htmlCode}" escape="false"/>
+                            </p:panel>
+                        </h:panelGrid>
+                    </p:fieldset>
+                    <div class="panelButtons">
+                        <p:commandButton value="Search Hazards" action="#{hazardView_MB.constructSearchObject()}" update="hazardsForm" />
+                        <p:commandButton value="Reset Fields" update="hazardsForm" process="@this" action="#{hazardView_MB.resetFields()}" >
+                            <p:resetInput target="hazardsForm" />
+                        </p:commandButton>
+                    </div>
+                    <p:dataTable id="hazardsTable" value="#{hazardView_MB.hazardSearchedlist}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
+                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Listing searched hazards: " />
+                                <p:commandButton id="columnToggle" rendered="false" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.showExtended()}" onclick="this.form.target='_blank'" ajax="false">
+                                    <f:param name="hazard.list" value="#{hazardView_MB.hazardSearchedlist}" />
+                                </p:commandButton>
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column style="width: 4%; text-align:center">
+                            <f:facet name="header">
+                                <h:outputText value="Visualise"/>
+                            </f:facet>
+                            <p:commandButton action="#{visualisation_MB.constructModelObject(hazard.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show()" icon="fa fa-sitemap"/>
+                        </p:column>
+                        <p:column style="width: 4%">
+                            <f:facet name="header">
+                                <h:outputText value="Hazard ID"/>
+                            </f:facet>
+                            <p:commandLink id="ajax" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard.hazardId)}" oncomplete="PF('detailOverlay').show()" >
+                                <h:outputText value="#{hazard.hazardId}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column style="width: 25%">
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardDescription}"/>
+                        </p:column>
+                        <p:column style="width: 25%">
+                            <f:facet name="header">
+                                <h:outputText value="Comment"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardComment}"/>
+                        </p:column>
+                        <p:column style="width: 6%">
+                            <f:facet name="header">
+                                <h:outputText value="Context"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardContextId.hazardContextName}"/>
+                        </p:column>
+                        <p:column style="width: 7%">
+                            <f:facet name="header">
+                                <h:outputText value="Location"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardLocation.locationName}"/>
+                        </p:column>
+                        <p:column style="width: 8%">
+                            <f:facet name="header">
+                                <h:outputText value="Activity"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardActivity.activityName}"/>
+                        </p:column>
+                        <p:column style="width: 6%">
+                            <f:facet name="header">
+                                <h:outputText value="Type"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/>
+                        </p:column>
+                        <p:column style="width: 7%">
+                            <f:facet name="header">
+                                <h:outputText value="Status"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardStatusId.hazardStatusName}"/>
+                        </p:column>
+                        <p:column style="width: 8%">
+                            <f:facet name="header">
+                                <h:outputText value="Owner"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.ownerId.ownerName}"/>
+                        </p:column>
+                    </p:dataTable>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

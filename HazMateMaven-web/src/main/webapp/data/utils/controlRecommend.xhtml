@@ -11,103 +11,81 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:dataTable id="viewTable" value="#{controlRecommend_MB.listDbControlRecommend}" var="item" tableStyle="width:auto;">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{controlRecommend_MB.listDbControlRecommend}" var="item" styleClass="parameterTable">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="The current control recommendations are: " />
+                                </p:outputPanel>
+                            </f:facet>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Control Recommend Id"/>
+                                    <p:outputLabel value="Recommendation Id"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.controlRecommendId}"/>
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Control Recommend Name"/>
+                                    <p:outputLabel value="Recommendation Name"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.controlRecommendName}"/>
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Control Justification Required"/>
-                                </f:facet>
-                                <p:outputLabel value="#{controlRecommend_MB.printJustifyRequired(item.controlJustifyRequired)}"/>
-                            </p:column>
-                            <p:column>
-                                <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{controlRecommend_MB.editButton}">
+                                <h:commandLink value="Edit" disabled="#{controlRecommend_MB.editButton}" class="commandLink">
                                     <f:ajax listener="#{controlRecommend_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <h:commandLink value="Delete" action="#{controlRecommend_MB.deleteControlRecommend(item)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{controlRecommend_MB.deleteButton}"/> 
-
-
+                                </h:commandLink> | 
+                                <h:commandLink value="Delete" action="#{controlRecommend_MB.deleteControlRecommend(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{controlRecommend_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
-
-                        <br/>
-                        <br/>
-
-                        <p:commandButton value="Add Control Recommendations" disabled="#{controlRecommend_MB.addButton}"> 
-                            <f:ajax listener="#{controlRecommend_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-                        <br/>
-                        <br/>
-
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Control Recommendation" disabled="#{controlRecommend_MB.addButton}"> 
+                                <f:ajax listener="#{controlRecommend_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                         <c:choose>
                             <c:when test="#{controlRecommend_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{controlRecommend_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-                        <br/>
-
-
-
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{controlRecommend_MB.addFlag or controlRecommend_MB.editFlag}" >
-                            <c:if test="#{controlRecommend_MB.editFlag}">
-                                <p:outputLabel value="Control Recommend Id:" for="controlRecommendId"/>
-                                <p:inputText id="controlRecommendId" value="#{controlRecommend_MB.controlRecommendObject.controlRecommendId}" disabled="true" title="ControlRecommendId" required="true" requiredMessage="The ControlRecommendId field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Control Recommend Name:" for="controlRecommendName" />
-                            <p:inputText id="controlRecommendName" value="#{controlRecommend_MB.controlRecommendObject.controlRecommendName}" title="ControlRecommendName" required="true" requiredMessage="The ControlRecommendName field is required."/>
-                            <p:outputLabel value="Control Justification Required:"/>
-                            <p:selectOneMenu value="#{controlRecommend_MB.controlRecommendObject.controlJustifyRequired}" required="true" requiredMessage="The 'control justification required' field is required.">
-                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
-                                <f:selectItem itemLabel="Yes" itemValue="Y"/>
-                                <f:selectItem itemLabel="No" itemValue="N"/>
-                            </p:selectOneMenu>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{controlRecommend_MB.addFlag}">
-                                <p:commandButton value="Save" action="#{controlRecommend_MB.addControlRecommend()}" update="viewTable modifyTable"/>   
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{controlRecommend_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{controlRecommend_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{controlRecommend_MB.editControlRecommend()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{controlRecommend_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
-
+                        <p:panel class="parameterModifyPanel" rendered="#{controlRecommend_MB.addFlag or controlRecommend_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{controlRecommend_MB.addFlag or controlRecommend_MB.editFlag}">
+                                <c:if test="#{controlRecommend_MB.editFlag}">
+                                    <p:outputLabel value="Recommend Id:" for="controlRecommendId" />
+                                    <p:inputText id="controlRecommendId" value="#{controlRecommend_MB.controlRecommendObject.controlRecommendId}" disabled="true" title="RecommendId" required="true" requiredMessage="The RecommendId field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Recommend Name:" for="controlRecommendName" />
+                                <p:inputText id="controlRecommendName" value="#{controlRecommend_MB.controlRecommendObject.controlRecommendName}" title="RecommendName" required="true" requiredMessage="The RecommendName field is required."/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{controlRecommend_MB.addFlag}">
+                                    <p:commandButton value="Save" action="#{controlRecommend_MB.addControlRecommend()}" update="viewTable modifyTable"/>   
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{controlRecommend_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{controlRecommend_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{controlRecommend_MB.editControlRecommend()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{controlRecommend_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

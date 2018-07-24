@@ -78,6 +78,8 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
+
 /**
  *
  * @author lxra
@@ -160,6 +162,7 @@ public class hazardViewExtend_MB implements Serializable {
     private DbuserPreferencesPK currentPreferencesPK = new DbuserPreferencesPK();
     private DbUser activeUser = new DbUser();
     private String activeUserName;
+    private String nHazards;
     
     public hazardViewExtend_MB() {
     }
@@ -468,6 +471,14 @@ public class hazardViewExtend_MB implements Serializable {
         this.activeUserName = activeUserName;
     }
 
+    public String getnHazards() {
+        return nHazards;
+    }
+
+    public void setnHazards(String nHazards) {
+        this.nHazards = nHazards;
+    }
+
     @PostConstruct
     public void init() {
         activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
@@ -475,6 +486,8 @@ public class hazardViewExtend_MB implements Serializable {
         hazardSearchedList = (List<DbHazard>) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardList");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardList");
 
+        setnHazards(Integer.toString(hazardSearchedList.size()));
+        
         listProjects = dbProjectFacade.findAll();
         listChangeTypes = dbchangeTypeFacade.findAll();
         listConstructionTypes = dbconstructionTypeFacade.findAll();
@@ -702,7 +715,7 @@ public class hazardViewExtend_MB implements Serializable {
         for (int i = 0; i < listDbControlHazard.size(); i+= 1) {
             controlHazardObject = listDbControlHazard.get(i);
             controlObject = controlHazardObject.getDbControl();
-            currentControls.add("• " + controlObject.getControlDescription());
+            currentControls.add(controlObject.getControlDescription());
         }
         return currentControls;
     }
@@ -713,7 +726,7 @@ public class hazardViewExtend_MB implements Serializable {
         for (int i = 0; i < listDbControlHazard.size(); i+= 1) {
             controlHazardObject = listDbControlHazard.get(i);
             controlObject = controlHazardObject.getDbControl();
-            controlHierarchy.add("• " + controlObject.getControlHierarchyId().getControlHierarchyName());
+            controlHierarchy.add(controlObject.getControlHierarchyId().getControlHierarchyName());
         }
         return controlHierarchy;
     }
@@ -725,10 +738,10 @@ public class hazardViewExtend_MB implements Serializable {
             controlHazardObject = listDbControlHazard.get(i);
             switch (controlHazardObject.getControlType()) {
                 case "P":
-                    controlType.add("• Preventive");
+                    controlType.add("Preventive");
                     break;
                 default:
-                    controlType.add("• Mitigative");
+                    controlType.add("Mitigative");
                     break;
             }
         }
@@ -741,7 +754,7 @@ public class hazardViewExtend_MB implements Serializable {
         for (int i = 0; i < listDbControlHazard.size(); i+= 1) {
             controlHazardObject = listDbControlHazard.get(i);
             controlObject = controlHazardObject.getDbControl();
-            controlOwner.add("• " + controlObject.getOwnerId().getOwnerName());
+            controlOwner.add(controlObject.getOwnerId().getOwnerName());
         }
         return controlOwner;
     }
@@ -752,7 +765,7 @@ public class hazardViewExtend_MB implements Serializable {
         for (int i = 0; i < listDbControlHazard.size(); i+= 1) {
             controlHazardObject = listDbControlHazard.get(i);
             controlObject = controlHazardObject.getDbControl();
-            controlRecommend.add("• " + controlHazardObject.getControlRecommendId().getControlRecommendName());
+            controlRecommend.add(controlHazardObject.getControlRecommendId().getControlRecommendName());
         }
         return controlRecommend;
     }
@@ -763,9 +776,13 @@ public class hazardViewExtend_MB implements Serializable {
         for (int i = 0; i < listDbControlHazard.size(); i+= 1) {
             controlHazardObject = listDbControlHazard.get(i);
             controlObject = controlHazardObject.getDbControl();
-            controlJustify.add("• " + controlHazardObject.getControlJustify());
+            controlJustify.add(controlHazardObject.getControlJustify());
         }
         return controlJustify;
+    }
+    
+    public void testFunction() {
+        System.out.println("Check Complete");
     }
     
     public void exportToFile() {
@@ -781,6 +798,7 @@ public class hazardViewExtend_MB implements Serializable {
         List<List<String>> dHazards = new ArrayList<>();
         
         System.out.println("Constructing data");
+        long start = System.currentTimeMillis();
         for (int i = 0; i < hNames.length; i += 1) {
             List<String> tList = new ArrayList<>();
             for (int j = 0; j < hazardSearchedList.size(); j += 1) {
@@ -914,6 +932,8 @@ public class hazardViewExtend_MB implements Serializable {
             }
             dHazards.add(tList);
         }
+        long elapsedTimeMillis = System.currentTimeMillis()-start;
+        System.out.println(elapsedTimeMillis);
         
         System.out.println("Building workbook");
         String filename = "ssd_export_log.xlsx";
@@ -940,6 +960,7 @@ public class hazardViewExtend_MB implements Serializable {
         XSSFRow hRow = (XSSFRow) sh.createRow(0);
         
         System.out.println("Populating data");
+        start = System.currentTimeMillis();
         for (int i = 0; i < hazardSearchedList.size(); i += 1) {
             XSSFRow dRow = (XSSFRow) sh.createRow(i + 1);
             for (int j = 0; j < hNames.length; j += 1) {
@@ -948,15 +969,22 @@ public class hazardViewExtend_MB implements Serializable {
                 dCell.setCellStyle(ds);
             }
         }
+        elapsedTimeMillis = System.currentTimeMillis()-start;
+        System.out.println(elapsedTimeMillis);
         
+        start = System.currentTimeMillis();
         for (int i = 0; i < hNames.length; i += 1) {
             XSSFCell hCell = hRow.createCell(i);
             hCell.setCellValue(ch.createRichTextString(hNames[i]));
             hCell.setCellStyle(hs);
             sh.autoSizeColumn(i);
         }
+        elapsedTimeMillis = System.currentTimeMillis()-start;
+        System.out.println(elapsedTimeMillis);
         
         System.out.println("Writing workbook");
+        
+        start = System.currentTimeMillis();
         try {
             // Prepare response.
             FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -974,6 +1002,8 @@ public class hazardViewExtend_MB implements Serializable {
         } catch (IOException ex) {
             Logger.getLogger(hazardViewExtend_MB.class.getName()).log(Level.SEVERE, null, ex);
         }
+        elapsedTimeMillis = System.currentTimeMillis()-start;
+        System.out.println(elapsedTimeMillis);
     }
     
 //    public void onToggle(ToggleEvent e) {

@@ -70,6 +70,9 @@ public class location_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
+    private boolean addButton = false;
+    private boolean editButton = false; 
+    private boolean deleteButton = false;  
     
     String prevLocationName; 
     
@@ -156,6 +159,30 @@ public class location_MB implements Serializable {
         this.editFlag = editFlag;
     }
 
+    public boolean isAddButton() {
+        return addButton;
+    }
+
+    public void setAddButton(boolean addButton) {
+        this.addButton = addButton;
+    }
+
+    public boolean isEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(boolean editButton) {
+        this.editButton = editButton;
+    }
+
+    public boolean isDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(boolean deleteButton) {
+        this.deleteButton = deleteButton;
+    }
+
     public List<DbProject> getListDbProject() {
         return listDbProject;
     }
@@ -198,9 +225,10 @@ public class location_MB implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The location abbreviation is already in use. Please select an alternative."));
             return;
         }
-        reinitialize();
         
-        addFlag = false; 
+        locationObject = new DbLocation();
+        init();
+        clearLocationObject();
     }
 
     public void editLocation() {
@@ -210,14 +238,16 @@ public class location_MB implements Serializable {
         if (existingLocationName.isEmpty() || existingLocationName.get(0).getLocationName().equals(prevLocationName)) {
             dbLocationFacade.edit(locationObject);
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The Location name already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The location name already exists."));
             return; 
         }
         
         listDbLocation = dbLocationFacade.findAll(); 
-        reinitialize();
+        init();
 
         editFlag = false;
+        addButton = false;
+        deleteButton = false; 
     }
 
     public void deleteLocation(DbLocation locationObject) {
@@ -230,15 +260,23 @@ public class location_MB implements Serializable {
             return;
         }
         init();
+        addButton = false; 
+        editButton = false; 
+        deleteButton = false; 
     }
 
     public void showAdd() {
         addFlag = true;
+        addButton = true;
+        editButton = true; 
+        clearLocationObject();
         
     }
 
     public void showEdit(DbLocation locationObject) {
         editFlag = true;
+        addButton = true; 
+        deleteButton = true; 
 
         this.locationObject = locationObject;
         prevLocationName = locationObject.getLocationName(); 
@@ -253,8 +291,12 @@ public class location_MB implements Serializable {
     public void cancel() {
         addFlag = false;
         editFlag = false;
-
-        reinitialize();
+        
+        addButton = false; 
+        editButton = false; 
+        deleteButton = false; 
+        
+        locationObject = new DbLocation();
     }
 
     public void fillLocationObject() {
@@ -267,12 +309,9 @@ public class location_MB implements Serializable {
         locationObject.setLocationGradeSeparation(gradeSeparationObject);
         locationObject.setLocationChangeType(changeTypeObject);
         locationObject.setProjectId(projectObject);
-
     }
-
-    public void reinitialize() {
-        locationObject = new DbLocation();
-        init();
+    
+    public void clearLocationObject() {
         constructionTypeId = -1;
         gradeSeparationId = -1;
         changeTypeId = -1;

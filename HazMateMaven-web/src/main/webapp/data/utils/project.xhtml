@@ -11,9 +11,13 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:dataTable id="viewTable" value="#{project_MB.listDbProject}" var="item" tableStyle="width:auto;">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{project_MB.listDbProject}" var="item" styleClass="parameterTable">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="The current projects are: " />
+                                </p:outputPanel>
+                            </f:facet>
                             <p:column>
                                 <f:facet name="header">
                                     <p:outputLabel value="Project Id"/>
@@ -36,73 +40,60 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{project_MB.editButton}">
+                                <h:commandLink value="Edit" disabled="#{project_MB.editButton}" class="commandLink">
                                     <f:ajax listener="#{project_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <h:commandLink value="Delete" action="#{project_MB.deleteProject(item)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{project_MB.deleteButton}"/> 
-
-
+                                </h:commandLink> | 
+                                <h:commandLink value="Delete" action="#{project_MB.deleteProject(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{project_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
-
-                        <br/>
-                        <br/>
-
-                        <p:commandButton value="Add Projects" disabled="#{project_MB.addButton}"> 
-                            <f:ajax listener="#{project_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-                        <br/>
-                        <br/>
-
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Project" disabled="#{project_MB.addButton}"> 
+                                <f:ajax listener="#{project_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                         <c:choose>
                             <c:when test="#{project_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{project_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-                        <br/>
-
-
-                        <p:tooltip for="projectAbbrev" showEvent="focus" hideEvent="blur"/>
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{project_MB.addFlag or project_MB.editFlag}">
-                            <c:if test="#{project_MB.editFlag}">
-                                <p:outputLabel value="Project Id:" for="projectId" />
-                                <p:inputText id="projectId" value="#{project_MB.projectObject.projectId}" disabled="true" title="ProjectId" required="true" requiredMessage="The ProjectId field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Project Name:" for="projectName" />
-                            <p:inputText id="projectName" value="#{project_MB.projectObject.projectName}" title="ProjectName" required="true" requiredMessage="The ProjectName field is required."/>
-                            <p:outputLabel value="Project Abbreviation:" for="projectAbbrev"/>
-                            <p:inputText id="projectAbbrev" value="#{project_MB.projectObject.projectAbbrev}" disabled="#{project_MB.editFlag}" maxlength="3" title="This code will be used to uniquely identify hazards belonging to this project" required="true" requiredMessage="The Project Abbreviation field is required"/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{project_MB.addFlag}">
-                                <p:commandButton value="Save" action="#{project_MB.addProject()}" update="viewTable modifyTable"/>   
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{project_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{project_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{project_MB.editProject()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{project_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
+                        <p:panel class="parameterModifyPanel" rendered="#{project_MB.addFlag or project_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{project_MB.addFlag or project_MB.editFlag}">
+                                <c:if test="#{project_MB.editFlag}">
+                                    <p:outputLabel value="Project Id:" for="projectId" />
+                                    <p:inputText id="projectId" value="#{project_MB.projectObject.projectId}" disabled="true" title="ProjectId" required="true" requiredMessage="The Project Id field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Project Name:" for="projectName" />
+                                <p:inputText id="projectName" value="#{project_MB.projectObject.projectName}" title="ProjectName" required="true" requiredMessage="The Project Name field is required."/>
+                                <p:outputLabel value="Project Abbreviation:" for="projectAbbrev"/>
+                                <p:inputText id="projectAbbrev" value="#{project_MB.projectObject.projectAbbrev}" maxlength="3" title="This code will be used to uniquely identify hazards belonging to this project" required="true" requiredMessage="The Project Abbreviation field is required"/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{project_MB.addFlag}">
+                                    <p:commandButton value="Save" action="#{project_MB.addProject()}" update="viewTable modifyTable"/>   
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{project_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{project_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{project_MB.editProject()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{project_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

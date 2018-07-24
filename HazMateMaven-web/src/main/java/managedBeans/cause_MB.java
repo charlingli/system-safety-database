@@ -41,6 +41,9 @@ public class cause_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
+    private boolean addButton = false;
+    private boolean editButton = false;
+    private boolean deleteButton = false;
 
     public cause_MB() {
     }
@@ -75,6 +78,30 @@ public class cause_MB implements Serializable {
 
     public void setEditFlag(boolean editFlag) {
         this.editFlag = editFlag;
+    }
+
+    public boolean isAddButton() {
+        return addButton;
+    }
+
+    public void setAddButton(boolean addButton) {
+        this.addButton = addButton;
+    }
+
+    public boolean isEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(boolean editButton) {
+        this.editButton = editButton;
+    }
+
+    public boolean isDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(boolean deleteButton) {
+        this.deleteButton = deleteButton;
     }
 
     public List<DbCause> getFilteredCauses() {
@@ -133,7 +160,6 @@ public class cause_MB implements Serializable {
         causeObject = new DbCause();
         hazardObject = new DbHazard();
         init();
-        addFlag = false;
     }
 
     public void editCause() {
@@ -161,6 +187,8 @@ public class cause_MB implements Serializable {
         hazardObject = new DbHazard();
         init();
         editFlag = false;
+        addButton = false;
+        deleteButton = false;
     }
 
     public void deleteCause(DbCause causeObject) {
@@ -176,17 +204,25 @@ public class cause_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
+        addButton = true;
+        editButton = true;
     }
 
     public void showEdit(DbCause causeObject) {
-            editFlag = true;
-            this.causeObject = causeObject;
-            hazardObject = new DbHazard(causeObject.getHazardId());
+        editFlag = true;
+        this.causeObject = causeObject;
+        hazardObject = new DbHazard(causeObject.getHazardId());
+        addButton = true;
+        deleteButton = true;
     }
 
     public void cancel() {
         addFlag = false;
         editFlag = false;
+
+        addButton = false;
+        editButton = false;
+        deleteButton = false;
 
         causeObject = new DbCause();
         hazardObject = new DbHazard();

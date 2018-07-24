@@ -157,6 +157,9 @@ public class project_MB implements Serializable {
             return; 
         }
         init(); 
+        addButton = false; 
+        editButton = false; 
+        deleteButton = false; 
     }
     
     public void showAdd(){

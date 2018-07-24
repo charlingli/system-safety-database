@@ -37,6 +37,9 @@ public class hazardContext_MB implements Serializable{
     
     private boolean addFlag = false;  
     private boolean editFlag = false; 
+    private boolean addButton = false;
+    private boolean editButton = false; 
+    private boolean deleteButton = false; 
     
     String prevContextName; 
     
@@ -82,6 +85,30 @@ public class hazardContext_MB implements Serializable{
     public void setEditFlag(boolean editFlag) {
         this.editFlag = editFlag;
     }
+
+    public boolean isAddButton() {
+        return addButton;
+    }
+
+    public void setAddButton(boolean addButton) {
+        this.addButton = addButton;
+    }
+
+    public boolean isEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(boolean editButton) {
+        this.editButton = editButton;
+    }
+
+    public boolean isDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(boolean deleteButton) {
+        this.deleteButton = deleteButton;
+    }
     
     @PostConstruct 
     public void init() { 
@@ -100,7 +127,6 @@ public class hazardContext_MB implements Serializable{
         }
         hazardContextObject = new DbhazardContext();
         init();
-        addFlag = false; 
         
     }
     
@@ -118,6 +144,8 @@ public class hazardContext_MB implements Serializable{
         hazardContextObject = new DbhazardContext(); 
         init(); 
         editFlag = false;
+        addButton = false;
+        deleteButton = false; 
          
     }
     
@@ -138,12 +166,16 @@ public class hazardContext_MB implements Serializable{
     
     public void showAdd(){
         addFlag = true; 
+        addButton = true;
+        editButton = true; 
          
     }
     
     public void showEdit(DbhazardContext hazardContextObject){ 
         editFlag = true; 
-        
+        addButton = true; 
+        deleteButton = true; 
+
         this.hazardContextObject = hazardContextObject; 
         prevContextName = hazardContextObject.getHazardContextName(); 
     }
@@ -152,7 +184,14 @@ public class hazardContext_MB implements Serializable{
         addFlag = false; 
         editFlag = false;
         
+        addButton = false; 
+        editButton = false; 
+        deleteButton = false; 
+        
         hazardContextObject = new DbhazardContext(); 
     }
     
+    public void error() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context is currently assigned to one or more hazards."));
+    }
 }

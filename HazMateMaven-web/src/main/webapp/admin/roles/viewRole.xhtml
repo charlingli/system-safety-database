@@ -9,9 +9,9 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:dataTable var="item" value="#{roles_MB.listDbRole}" styleClass="tableTwo">
+                    <p:dataTable var="item" value="#{roles_MB.listDbRole}" styleClass="parameterTable">
                         <f:facet name="header">
                             <p:outputPanel>
                                 <h:outputText value="The current system roles are: " />
@@ -29,7 +29,7 @@
                             <h:commandLink value="Delete" action="#{roles_MB.delete(item)}" onclick="return confirm('Are you sure?')" class="linkActions"/>
                         </p:column>
                     </p:dataTable>
-                    <div class="actionButtonsDiv">
+                    <div class="panelButtons">
                         <p:commandButton value="Add Role" action="addRole"></p:commandButton>
                     </div>
                 </h:form>

@@ -10,41 +10,41 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Roles Permissions,Add Permission')}" escape="false"/></div>
-                        <p:panel class="addInfoPanel">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Roles Permissions,Add Permission')}" escape="false"/></div>
+                        <p:panel class="managementModifyPanel">
                             <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                            <h:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                            <h:panelGrid columns="2" columnClasses="left,middle">
                                 <p:outputLabel value="Role Id:" for="dbRole" />
-                                <p:selectOneMenu id="dbRole" value="#{role_page_MB.roleInt}" required="true" requiredMessage="The role field is required." styleClass="addSelectOne">
+                                <p:selectOneMenu id="dbRole" value="#{role_page_MB.roleInt}" required="true" requiredMessage="The role field is required." styleClass="editInput">
                                     <f:selectItem itemLabel="--Select role id--" noSelectionOption="true"/>
                                     <f:selectItems value="#{role_page_MB.listDbRole}" var="roleItem" itemLabel="#{roleItem.roleName}" itemValue="#{roleItem.roleId}"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Page Id:" for="dbPage" />
-                                <p:selectOneMenu id="dbPage" value="#{role_page_MB.pageInt}" required="true" requiredMessage="The page field is required." styleClass="addSelectOne">
+                                <p:selectOneMenu id="dbPage" value="#{role_page_MB.pageInt}" required="true" requiredMessage="The page field is required." styleClass="editInput">
                                     <f:selectItem itemLabel="--Select page id--" noSelectionOption="true"/>
                                     <f:selectItems value="#{role_page_MB.listDbPage}" var="pageItem" itemLabel="#{pageItem.pageName}" itemValue="#{pageItem.pageId}"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Add permission:" for="addPermission" />
-                                <p:selectOneMenu id="addPermission" value="#{role_page_MB.rolePageObject.addPermission}" required="true" styleClass="addSelectOne" requiredMessage="The add permission field is required.">
+                                <p:selectOneMenu id="addPermission" value="#{role_page_MB.rolePageObject.addPermission}" required="true" styleClass="editInput" requiredMessage="The add permission field is required.">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                     <f:selectItem itemLabel="No" itemValue="N"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Update permission:" for="updatePermission" />
-                                <p:selectOneMenu id="updatePermission" value="#{role_page_MB.rolePageObject.updatePermission}" required="true" styleClass="addSelectOne" requiredMessage="The update permission field is required." >
+                                <p:selectOneMenu id="updatePermission" value="#{role_page_MB.rolePageObject.updatePermission}" required="true" styleClass="editInput" requiredMessage="The update permission field is required." >
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                     <f:selectItem itemLabel="No" itemValue="N"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Delete permission:" for="deletePermission" />
-                                <p:selectOneMenu id="deletePermission" value="#{role_page_MB.rolePageObject.deletePermission}" required="true" styleClass="addSelectOne" requiredMessage="The delete permission field is required." >
+                                <p:selectOneMenu id="deletePermission" value="#{role_page_MB.rolePageObject.deletePermission}" required="true" styleClass="editInput" requiredMessage="The delete permission field is required." >
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                     <f:selectItem itemLabel="No" itemValue="N"/>
                                 </p:selectOneMenu>
                             </h:panelGrid>
                         </p:panel>
-                        <div class="actionButtonsDiv">
+                        <div class="panelButtons">
                             <p:commandButton value="Save" action="#{role_page_MB.add()}"/>
                             <p:commandButton value="Cancel" action="#{role_page_MB.cancel()}" immediate="true"/>
                             <!--'Immediate' bypasses the validation phase implemented by the 'required' fields--> 

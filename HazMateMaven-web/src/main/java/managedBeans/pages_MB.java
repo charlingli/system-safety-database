@@ -50,7 +50,7 @@ public class pages_MB implements Serializable {
     @EJB
     private DbPageFacadeLocal dbPageFacade;
     private List<DbPage> listDbPage;
-    private List<DbPage> fileteredDbPage;
+    private List<DbPage> filteredDbPage;
     private DbPage pageObject = new DbPage();
     private String pageIndex;
 
@@ -78,12 +78,12 @@ public class pages_MB implements Serializable {
         this.listDbPage = listDbPage;
     }
 
-    public List<DbPage> getFileteredDbPage() {
-        return fileteredDbPage;
+    public List<DbPage> getFilteredDbPage() {
+        return filteredDbPage;
     }
 
-    public void setFileteredDbPage(List<DbPage> fileteredDbPage) {
-        this.fileteredDbPage = fileteredDbPage;
+    public void setFilteredDbPage(List<DbPage> filteredDbPage) {
+        this.filteredDbPage = filteredDbPage;
     }
     
     public pages_MB() {
@@ -136,7 +136,6 @@ public class pages_MB implements Serializable {
     public void delete(DbPage pageObject) {
         dbPageFacade.remove(pageObject);
         init();
-
     }
 
     public boolean generalValidations() {
@@ -172,9 +171,7 @@ public class pages_MB implements Serializable {
                 flag = false;
             }
         }
-
         return flag;
-
     }
 
     public void clearVariables() {
@@ -188,5 +185,4 @@ public class pages_MB implements Serializable {
         clearVariables();
         return "viewPages";
     }
-
 }

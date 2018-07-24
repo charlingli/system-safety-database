@@ -9,58 +9,56 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <div class="viewBigTableContent">
-                        <p:dataTable id="rolePageTable" value="#{role_page_MB.listDbRolePage}" var="item" styleClass="tableOne" resizableColumns="true" widgetVar="rolesPageTable" 
-                                     emptyMessage="No rows found with given criteria" filteredValue="#{role_page_MB.filteredDbRolePage}" scrollable="true" scrollHeight="680">
+                    <p:dataTable id="rolePageTable" value="#{role_page_MB.listDbRolePage}" var="item" styleClass="managementTableLarge" resizableColumns="true" widgetVar="rolesPageTable" 
+                                 emptyMessage="No rows found with given criteria" filteredValue="#{role_page_MB.filteredDbRolePage}" scrollable="true" scrollHeight="680">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="The current system roles and their permissions per page are:" />
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column filterBy="#{item.dbRole.roleName}" class="tableColumn100p">
                             <f:facet name="header">
-                                <p:outputPanel>
-                                    <h:outputText value="The current system roles and their permissions per page are:" />
-                                </p:outputPanel>
+                                <p:outputLabel value="Role Name"/>
                             </f:facet>
-                            <p:column filterBy="#{item.dbRole.roleName}" class="tableColumn100p">
-                                <f:facet name="header">
-                                    <p:outputLabel value="Role Name"/>
-                                </f:facet>
-                                <p:outputLabel value="#{item.dbRole.roleName}"/>
-                            </p:column>
-                            <p:column filterBy="#{item.dbPage.pageName}" class="tableColumn100p">
-                                <f:facet name="header">
-                                    <p:outputLabel value="Page Name"/>
-                                </f:facet>
-                                <p:outputLabel value="#{item.dbPage.pageName}"/>
-                            </p:column>
-                            <p:column filterBy="#{role_page_MB.printPermission(item.addPermission)}" class="tableColumn80p">
-                                <f:facet name="header">
-                                    <p:outputLabel value="Add Permission"/>
-                                </f:facet>
-                                <p:outputLabel value="#{role_page_MB.printPermission(item.addPermission)}"/>
-                            </p:column>
-                            <p:column filterBy="#{role_page_MB.printPermission(item.updatePermission)}" class="tableColumn80p">
-                                <f:facet name="header">
-                                    <p:outputLabel value="Update Permission"/>
-                                </f:facet>
-                                <p:outputLabel value="#{role_page_MB.printPermission(item.updatePermission)}"/>
-                            </p:column>
-                            <p:column filterBy="#{role_page_MB.printPermission(item.deletePermission)}" class="tableColumn80p">
-                                <f:facet name="header">
-                                    <p:outputLabel value="Delete Permission"/>
-                                </f:facet>
-                                <p:outputLabel value="#{role_page_MB.printPermission(item.deletePermission)}"/>
-                            </p:column>
-                            <p:column class="tableColumn80p">
-                                <f:facet name="header">
-                                    <p:outputLabel value="Options"/>
-                                </f:facet>
-                                <p:commandLink value="Edit" action="#{role_page_MB.edit(item)}" class="linkActions"/> 
-                                | 
-                                <p:commandLink value="Delete" action="#{role_page_MB.delete(item)}" onstart="if (!confirm('Are you sure?')) { return; } ;" 
-                                               oncomplete="PF('rolesPageTable').filter()" class="linkActions"/>
-                            </p:column>
-                        </p:dataTable>
-                    </div>
-                    <div class="actionButtonsDiv">
+                            <p:outputLabel value="#{item.dbRole.roleName}"/>
+                        </p:column>
+                        <p:column filterBy="#{item.dbPage.pageName}" class="tableColumn100p">
+                            <f:facet name="header">
+                                <p:outputLabel value="Page Name"/>
+                            </f:facet>
+                            <p:outputLabel value="#{item.dbPage.pageName}"/>
+                        </p:column>
+                        <p:column filterBy="#{role_page_MB.printPermission(item.addPermission)}" class="tableColumn80p">
+                            <f:facet name="header">
+                                <p:outputLabel value="Add Permission"/>
+                            </f:facet>
+                            <p:outputLabel value="#{role_page_MB.printPermission(item.addPermission)}"/>
+                        </p:column>
+                        <p:column filterBy="#{role_page_MB.printPermission(item.updatePermission)}" class="tableColumn80p">
+                            <f:facet name="header">
+                                <p:outputLabel value="Update Permission"/>
+                            </f:facet>
+                            <p:outputLabel value="#{role_page_MB.printPermission(item.updatePermission)}"/>
+                        </p:column>
+                        <p:column filterBy="#{role_page_MB.printPermission(item.deletePermission)}" class="tableColumn80p">
+                            <f:facet name="header">
+                                <p:outputLabel value="Delete Permission"/>
+                            </f:facet>
+                            <p:outputLabel value="#{role_page_MB.printPermission(item.deletePermission)}"/>
+                        </p:column>
+                        <p:column class="tableColumn80p">
+                            <f:facet name="header">
+                                <p:outputLabel value="Options"/>
+                            </f:facet>
+                            <p:commandLink value="Edit" action="#{role_page_MB.edit(item)}" class="linkActions"/> 
+                            | 
+                            <p:commandLink value="Delete" action="#{role_page_MB.delete(item)}" onstart="if (!confirm('Are you sure?')) { return; } ;" 
+                                           oncomplete="PF('rolesPageTable').filter()" class="linkActions"/>
+                        </p:column>
+                    </p:dataTable>
+                    <div class="panelButtons">
                         <p:commandButton value="Assign Permissions" onclick="#{role_page_MB.init()}" action="addRolePage"/>
                     </div>
                 </h:form>

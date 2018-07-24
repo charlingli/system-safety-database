@@ -11,35 +11,36 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
-                        <h:panelGrid columns="2" columnClasses="tableList,tableActions">
+                        <h:panelGrid columns="2" class="relationPanel" columnClasses="results,actions">
                             <p:dataTable id="viewTable" value="#{consequence_MB.listDbConsequence}" var="item" 
                                          widgetVar="consequenceTable" emptyMessage="No consequences found with given criteria"
-                                         filteredValue="#{consequence_MB.filteredConsequences}"  paginator="true" rows="20" paginatorPosition="bottom" >
+                                         filteredValue="#{consequence_MB.filteredConsequences}"  paginator="true" rows="20" 
+                                         paginatorPosition="bottom" styleClass="resultPanel">
                                 <f:facet name="header">
                                     <p:outputPanel>
                                         <p:outputLabel value="Search all fields: "/>
                                         <p:inputText id="globalFilter" onkeyup="PF('consequenceTable').filter()" placeholder="Enter keyword"/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="Consequence Id" filterBy="#{item.consequenceId}" filterMatchMode="exact" styleClass="tableColumn15ct">
+                                <p:column headerText="Consequence Id" filterBy="#{item.consequenceId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.consequenceId}"/>
                                 </p:column>
-                                <p:column headerText="Hazard Id" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="tableColumn15ct">
+                                <p:column headerText="Hazard Id" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.hazardId}"/>
                                 </p:column>
                                 <p:column headerText="Consequence Description" filterBy="#{item.consequenceDescription}" filterMatchMode="contains" styleClass="tableColumn60">
                                     <p:outputLabel value="#{item.consequenceDescription}"/>
                                 </p:column>
-                                <p:column styleClass="tableColumn10ct">
+                                <p:column styleClass="small">
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" class="linkActions">
+                                    <h:commandLink value="Edit" class="commandLink">
                                         <f:ajax listener="#{consequence_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{consequence_MB.deleteConsequence(item)}" immediate="true" class="linkActions" 
+                                    <p:commandLink value="Delete" action="#{consequence_MB.deleteConsequence(item)}" immediate="true" class="commandLink" 
                                                    oncomplete="PF('consequenceTable').filter()" 
                                                    onclick="if (!confirm('This action may also disassociate hazards from their consequence. Do you wish to proceed?')) {
                                                 return;
@@ -47,10 +48,10 @@
                                             ;"/>
                                 </p:column>
                             </p:dataTable>
-                            <p:panel style="border: none">
+                            <p:panel class="relationModifyPanel">
                                 <p:tooltip for="hazardId" showEvent="focus" hideEvent="blur"/>
-                                <p:panel class="addInfoPanelRight" rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="searchGridLeft,searchGridRight" rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
+                                <p:panel rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" columns="2" class="editPanel" columnClasses="left,middle" rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
@@ -70,21 +71,19 @@
                                         <p:outputLabel id="hazardId" value="Hazard Id:" for="addHazard" />
                                         <p:autoComplete id="addHazard" value="#{consequence_MB.hazardObject}" completeMethod="#{consequence_MB.showHazards}"
                                                         var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
-                                                        style="width: 100px;" title="If this consequence is also a hazard in another context, please enter the hazard Id">
-
-                                            <p:column styleClass="idAutocompleteColumn">
+                                                        title="If this consequence is also a hazard in another context, please enter the hazard Id">
+                                            <p:column>
                                                 <h:outputText value="#{hazard.hazardId}" />
                                             </p:column>
-
                                             <p:column>
                                                 <h:outputText value="#{hazard.hazardDescription}" />
                                             </p:column>
                                         </p:autoComplete>
                                         <p:outputLabel value="Consequence Description:" for="consequenceDescription" />
-                                        <p:inputTextarea rows="4" cols="30" id="consequenceDescription" value="#{consequence_MB.consequenceObject.consequenceDescription}" title="ConsequenceDescription" required="true" requiredMessage="The ConsequenceDescription field is required."/>
+                                        <p:inputTextarea rows="4" id="consequenceDescription" value="#{consequence_MB.consequenceObject.consequenceDescription}" title="ConsequenceDescription" required="true" requiredMessage="The ConsequenceDescription field is required."/>
                                     </p:panelGrid>
                                 </p:panel>
-                                <div class="actionButtonsDiv">
+                                <div class="panelButtons">
                                     <c:choose>
                                         <c:when test="#{consequence_MB.addFlag}">
                                             <p:commandButton value="Save" oncomplete="PF('consequenceTable').filter()">
@@ -107,7 +106,7 @@
                                 </div>
                             </p:panel>
                         </h:panelGrid>
-                        <div class="actionButtonsDiv">
+                        <div class="panelButtons">
                             <p:commandButton value="Add Consequences" rendered="#{not (consequence_MB.addFlag or consequence_MB.editFlag)}"> 
                                 <f:ajax listener="#{consequence_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>

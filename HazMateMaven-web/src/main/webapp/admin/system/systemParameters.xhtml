@@ -10,28 +10,28 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="viewForm">
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:panelGrid columns="2" styleClass="hazardInfo" rendered="#{systemParams_MB.infoBox}" columnClasses="hazardInfoFieldName"> 
-                        <p:outputLabel value="Email Manager: " styleClass="hazardInfoFieldName"/>
+                    <p:panelGrid columns="2" class="detailTable" rendered="#{systemParams_MB.infoBox}" columnClasses="label"> 
+                        <p:outputLabel value="Email Manager: "/>
                         <p:outputLabel value="#{systemParams_MB.managerEmail}" />
                         <p:outputLabel value="HazMate License: " />
                         <h:outputText value="#{systemParams_MB.licenseText}" styleClass="resultBox"/>
                     </p:panelGrid>
-                    <div class="linkDiv">
+                    <div class="panelButtons" >
                         <p:commandButton value="Edit Parameters" rendered="#{systemParams_MB.infoBox}">
                             <f:ajax listener="#{systemParams_MB.editParameters}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </div>
-                    <p:panel rendered="#{systemParams_MB.editBox}" styleClass="manyResultBox">
+                    <p:panel rendered="#{systemParams_MB.editBox}" styleClass="systemInformationPanel">
                         <h:panelGrid columns="2" rendered="#{systemParams_MB.editBox}">
                             <p:outputLabel value="Email Manager: " for="email" />
-                            <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="emailField"/>
+                            <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="input" />
                             <p:outputLabel value="License Text: " for="license" />
-                            <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="systemLicense"/>
+                            <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="input" />
                         </h:panelGrid>
                     </p:panel>
-                    <div class="actionButtonsDiv" style="display:#{systemParams_MB.editBox}?'block':'none'}">
+                    <div style="display:#{systemParams_MB.editBox}?'block':'none'}">
                         <p:commandButton rendered="#{systemParams_MB.editBox}" value="Save">
                             <f:ajax listener="#{systemParams_MB.saveParameters()}" execute="@form" render="@form"/>
                         </p:commandButton>

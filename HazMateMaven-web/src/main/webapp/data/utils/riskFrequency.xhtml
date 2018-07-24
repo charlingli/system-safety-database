@@ -11,18 +11,22 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:dataTable id="viewTable" value="#{riskFrequency_MB.listDbRiskFrequency}" var="item" tableStyle="width:auto;">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{riskFrequency_MB.listDbRiskFrequency}" var="item" styleClass="parameterTable">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="The current risk frequencies are: " />
+                                </p:outputPanel>
+                            </f:facet>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Risk Frequency Id"/>
+                                    <p:outputLabel value="Frequency Id"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.riskFrequencyId}"/>
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Frequency Score"/>
+                                    <p:outputLabel value="Frequency Name"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.frequencyScore}"/>
                             </p:column>
@@ -30,71 +34,58 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{riskFrequency_MB.editButton}">
+                                <h:commandLink value="Edit" disabled="#{riskFrequency_MB.editButton}" class="commandLink">
                                     <f:ajax listener="#{riskFrequency_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <h:commandLink value="Delete" action="#{riskFrequency_MB.deleteRiskFrequency(item)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{riskFrequency_MB.deleteButton}"/> 
-
-
+                                </h:commandLink> | 
+                                <h:commandLink value="Delete" action="#{riskFrequency_MB.deleteRiskFrequency(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{riskFrequency_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
-
-                        <br></br>
-                        <br></br>
-                        <p:commandButton value="Add Risk Frequency" disabled="#{riskFrequency_MB.addButton}"> 
-                            <f:ajax listener="#{riskFrequency_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-
-                        <br></br>
-                        <br></br>
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Risk Frequency" disabled="#{riskFrequency_MB.addButton}"> 
+                                <f:ajax listener="#{riskFrequency_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                         <c:choose>
                             <c:when test="#{riskFrequency_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{riskFrequency_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-
-
-                        <br/>
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{riskFrequency_MB.addFlag or riskFrequency_MB.editFlag}">
-                            <c:if test="#{riskFrequency_MB.editFlag}">
-                                <p:outputLabel value="Risk Frequency Id:" for="riskFrequencyId" />
-                                <p:inputText id="riskFrequencyId" value="#{riskFrequency_MB.riskFrequencyObject.riskFrequencyId}" disabled="true" title="RiskFrequencyId" required="true" requiredMessage="The RiskFrequencyId field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Frequency Score:" for="frequencyScore" />
-                            <p:inputText id="frequencyScore" value="#{riskFrequency_MB.riskFrequencyObject.frequencyScore}" title="FrequencyScore" required="true" requiredMessage="The FrequencyScore field is required."/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{riskFrequency_MB.addFlag}">
-                                <p:commandButton value="Save" action="#{riskFrequency_MB.addRiskFrequency()}" update="viewTable modifyTable"/>   
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{riskFrequency_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{riskFrequency_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{riskFrequency_MB.editRiskFrequency()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{riskFrequency_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
-
-
+                        <p:panel class="parameterModifyPanel" rendered="#{riskFrequency_MB.addFlag or riskFrequency_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{riskFrequency_MB.addFlag or riskFrequency_MB.editFlag}">
+                                <c:if test="#{riskFrequency_MB.editFlag}">
+                                    <p:outputLabel value="Frequency Id:" for="riskFrequencyId" />
+                                    <p:inputText id="riskFrequencyId" value="#{riskFrequency_MB.riskFrequencyObject.riskFrequencyId}" disabled="true" title="FrequencyId" required="true" requiredMessage="The FrequencyId field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Frequency Name:" for="riskFrequencyName" />
+                                <p:inputText id="riskFrequencyName" value="#{riskFrequency_MB.riskFrequencyObject.frequencyScore}" title="FrequencyName" required="true" requiredMessage="The FrequencyName field is required."/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{riskFrequency_MB.addFlag}">
+                                    <p:commandButton value="Save" action="#{riskFrequency_MB.addRiskFrequency()}" update="viewTable modifyTable"/>   
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{riskFrequency_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{riskFrequency_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{riskFrequency_MB.editRiskFrequency()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{riskFrequency_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

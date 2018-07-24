@@ -10,9 +10,9 @@
             <ui:define name="content">
                 <h:form>
                     <p:messages autoUpdate="true" showSummary="true" />
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:panel rendered="#{hazardsRelation_MB.searchBox}" styleClass="searchBox">
-                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.searchBox}">
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <p:panel rendered="#{hazardsRelation_MB.searchBox}" styleClass="searchPanel">
+                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.searchBox}" columnClasses="left,middle">
                             <p:outputLabel value="Hazard Id: " />
                             <p:inputText value="#{hazardsRelation_MB.hazardId}"/>
                             <p:outputLabel value="Hazard Description: " />
@@ -23,14 +23,19 @@
                             <p:inputText value="#{hazardsRelation_MB.hazardWorkshop}" />
                         </h:panelGrid>
                     </p:panel>
-                    <div class="actionButtonsDiv" style="display:#{(hazardsRelation_MB.searchBox)?'block':'none'}">
-                        <p:commandButton value="Search" rendered="#{hazardsRelation_MB.searchBox}">
+                    <div class="panelButtons" style="display:#{(hazardsRelation_MB.searchBox)?'block':'none'}">
+                        <p:commandButton value="Search">
                             <f:ajax listener="#{hazardsRelation_MB.searchHazards()}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </div>
                     <p:dataTable value="#{hazardsRelation_MB.listHazards}" var="hazard" rendered="#{hazardsRelation_MB.dataTable}" emptyMessage="No hazard entries found with given criteria."
-                                 styleClass="resultBox">
-                        <p:column headerText="Hazard Id" styleClass="idColumn">
+                                 styleClass="resultPanel">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Select from the following hazards: " />
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column headerText="Hazard Id" styleClass="small">
                             <p:outputLabel value="#{hazard.hazardId}"/>
                         </p:column>
                         <p:column headerText="Hazard Description">
@@ -42,156 +47,155 @@
                         <p:column headerText="Hazard Workshop">
                             <p:outputLabel value="#{hazard.hazardWorkshop}"/>
                         </p:column>
-                        <p:column headerText="Actions" styleClass="actionsBigColumn">
-                            <h:commandLink value="Include relations" action="#{hazardsRelation_MB.includeRelations(hazard)}" styleClass="linkActions"/>
+                        <p:column headerText="Actions" styleClass="small">
+                            <h:commandLink value="Include relations" action="#{hazardsRelation_MB.includeRelations(hazard)}" styleClass="commandLink"/>
                         </p:column>
                     </p:dataTable>
-                    <div class="infoText">
-                        <p:outputLabel value="Updating relations to the hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
-                    </div>    
-                    <p:panelGrid columns="2" rendered="#{hazardsRelation_MB.infoBox}" styleClass="hazardInfo" columnClasses="hazardInfoFieldName"> 
-                        <p:outputLabel value="Hazard Id: "/>
-                        <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardId}" />
-                        <p:outputLabel value="Hazard Location: " />
-                        <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardLocation.locationName}" />
-                        <p:outputLabel value="Hazard Description: " />
-                        <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardDescription}" />
-                        <p:outputLabel value="Hazard Comment: " />
-                        <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardComment}" />
-                        <p:outputLabel value="Hazard Workshop: " />
-                        <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardWorkshop}" />
-                    </p:panelGrid>
-                    <p:panel id="causesPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="manyResultBox">
-                        <pp>
-                            <h:outputText value="The following causes are associated with the current hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
-                        </pp>
-                        <br/>
-                        <br/>
-                        <p:dataTable value="#{hazardsRelation_MB.listHazardCauses}" var="cause" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No causes are associated with this hazard.">
-                            <p:column headerText="Cause Id" styleClass="idColumn">
+                    <p:panel id="hazardGroup" rendered="#{hazardsRelation_MB.infoBox}" styleClass="detailHazardPanel">
+                        <div class="p-heading-spacer">
+                            <p:outputLabel styleClass="p-heading" value="Updating relations to the hazard:"/>
+                        </div>
+                        <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
+                            <p:outputLabel value="Hazard Id: "/>
+                            <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardId}" />
+                            <p:outputLabel value="Hazard Location: " />
+                            <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardLocation.locationName}" />
+                            <p:outputLabel value="Hazard Description: " />
+                            <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardDescription}" />
+                            <p:outputLabel value="Hazard Comment: " />
+                            <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardComment}" />
+                            <p:outputLabel value="Hazard Workshop: " />
+                            <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardWorkshop}" />
+                        </p:panelGrid>
+                    </p:panel>
+                    <p:panel id="causesPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="detailHazardPanel">
+                        <div class="p-emphasis-spacer">
+                            <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
+                        </div>
+                        <p:dataTable value="#{hazardsRelation_MB.listHazardCauses}" var="cause" emptyMessage="No causes are associated with this hazard.">
+                            <p:column headerText="Cause Id" styleClass="small">
                                 <p:outputLabel value="#{cause.dbCause.causeId}"/>
                             </p:column>
                             <p:column headerText="Cause Description">
                                 <p:outputLabel value="#{cause.dbCause.causeDescription}"/>
                             </p:column>
-                            <p:column headerText="Actions" styleClass="actionsColumn"> 
-                                <h:commandLink value="Delete" styleClass="linkActions">
+                            <p:column headerText="Actions" styleClass="small"> 
+                                <h:commandLink value="Delete" styleClass="commandLink">
                                     <f:ajax listener="#{hazardsRelation_MB.deleteHazardCauses(cause)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                             </p:column>
                         </p:dataTable>
-                        <br/>
-                        <br/>
-                        <p:commandLink value="Add Cause" rendered="#{hazardsRelation_MB.infoBox}" styleClass="linkActions">
-                            <f:ajax listener="#{hazardsRelation_MB.addCauseVisible()}" execute="@form" render="@form"/>
-                        </p:commandLink>
-                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addCause}" styleClass="addManyResultBox">
-                            <p:outputLabel value="Cause Description: " for="addCauses" />
-                            <p:autoComplete id="addCauses" multiple="true" value="#{hazardsRelation_MB.listSelectedCauses}" completeMethod="#{hazardsRelation_MB.showUnrelCauses}"
-                                            var="cause1" itemLabel="Cause No #{cause1.causeId}" itemValue="#{cause1}" converter="causeConverter" forceSelection="true">
-                                <p:column styleClass="idAutocompleteColumn">
-                                    <h:outputText value="#{cause1.causeId}" />
-                                </p:column>
-
-                                <p:column>
-                                    <h:outputText value="#{cause1.causeDescription}" />
-                                </p:column>
-                            </p:autoComplete>
-                            <p:commandButton value="Save Causes" rendered="#{hazardsRelation_MB.addCause}">
+                        <div class="p-emphasis-spacer">
+                            <p:commandLink value="Add Cause" class="commandLink" styleClass="commandLink">
+                                <f:ajax listener="#{hazardsRelation_MB.addCauseVisible()}" execute="@form" render="@form"/>
+                            </p:commandLink>
+                        </div>
+                        <div class="p-emphasis-spacer">
+                            <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addCause}" columnClasses="left,middle">
+                                <p:outputLabel value="Cause Description: " for="addCauses" />
+                                <p:autoComplete id="addCauses" multiple="true" value="#{hazardsRelation_MB.listSelectedCauses}" completeMethod="#{hazardsRelation_MB.showUnrelCauses}"
+                                                var="cause1" itemLabel="Cause No #{cause1.causeId}" itemValue="#{cause1}" converter="causeConverter" forceSelection="true">
+                                    <p:column>
+                                        <h:outputText value="#{cause1.causeId}" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{cause1.causeDescription}" />
+                                    </p:column>
+                                </p:autoComplete>
+                            </h:panelGrid>
+                            <p:commandButton value="Save Causes">
                                 <f:ajax listener="#{hazardsRelation_MB.addHazardCauses()}" execute="@form" render="@form"/>
                             </p:commandButton>
-                            <p:commandButton value="Cancel" rendered="#{hazardsRelation_MB.addCause}">
+                            <p:commandButton value="Cancel">
                                 <f:ajax listener="#{hazardsRelation_MB.addCauseCancel()}" execute="@form" render="@form"/>
                             </p:commandButton>
-                        </h:panelGrid>
+                        </div>
                     </p:panel>
-                    <p:panel id="consqsPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="manyResultBox">
-                        <pp>
-                            <h:outputText value="The following consequences are associated with the current hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
-                        </pp>
-                        <br/>
-                        <br/>
-                        <p:dataTable value="#{hazardsRelation_MB.listHazardConsqs}" var="consequence" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No consequences are associated with this hazard.">
-                            <p:column headerText="Consequence Id" styleClass="idColumn">
+                    <p:panel id="consqsPanel" rendered="#{hazardsRelation_MB.infoBox}" styleClass="detailHazardPanel">
+                        <div class="p-emphasis-spacer">
+                            <h:outputText styleClass="p-emphasis" value="The following consequences are associated with the current hazard:"/>
+                        </div>
+                        <p:dataTable value="#{hazardsRelation_MB.listHazardConsqs}" var="consequence" emptyMessage="No consequences are associated with this hazard.">
+                            <p:column headerText="Consequence Id" styleClass="small">
                                 <p:outputLabel value="#{consequence.dbConsequence.consequenceId}"/>
                             </p:column>
                             <p:column headerText="Consequence Description">
                                 <p:outputLabel value="#{consequence.dbConsequence.consequenceDescription}"/>
                             </p:column>
-                            <p:column headerText="Actions" styleClass="actionsColumn"> 
-                                <h:commandLink value="Delete" styleClass="linkActions">
+                            <p:column headerText="Actions" styleClass="small"> 
+                                <h:commandLink value="Delete" styleClass="commandLink">
                                     <f:ajax listener="#{hazardsRelation_MB.deleteHazardConsqs(consequence)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                             </p:column>
                         </p:dataTable>
-                        <br/>
-                        <br/>
-                        <p:commandLink value="Add Consequence" rendered="#{hazardsRelation_MB.infoBox}" styleClass="linkActions">
-                            <f:ajax listener="#{hazardsRelation_MB.addConquenceVisible()}" execute="@form" render="@form"/>
-                        </p:commandLink>
-                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addConq}" styleClass="addManyResultBox">
+                        <div class="p-emphasis-spacer">
+                            <p:commandLink value="Add Consequence" styleClass="commandLink">
+                                <f:ajax listener="#{hazardsRelation_MB.addConquenceVisible()}" execute="@form" render="@form"/>
+                            </p:commandLink>
+                        </div>
+                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addConq}" columnClasses="left,middle">
                             <p:outputLabel value="Consequence Description: " for="addConsqs" />
                             <p:autoComplete id="addConsqs" multiple="true" value="#{hazardsRelation_MB.listSelectedConsqs}" completeMethod="#{hazardsRelation_MB.showUnrelConsqs}"
                                             var="consq1" itemLabel="Consequence No #{consq1.consequenceId}" itemValue="#{consq1}" converter="consqConverter" forceSelection="true">
-                                <p:column styleClass="idAutocompleteColumn">
+                                <p:column>
                                     <h:outputText value="#{consq1.consequenceId}" />
                                 </p:column>
-
                                 <p:column>
                                     <h:outputText value="#{consq1.consequenceDescription}" />
                                 </p:column>
                             </p:autoComplete>
-                            <p:commandButton value="Save Consequences" rendered="#{hazardsRelation_MB.addConq}">
-                                <f:ajax listener="#{hazardsRelation_MB.addHazardConsequences()}" execute="@form" render="@form"/>
-                            </p:commandButton>
-                            <p:commandButton value="Cancel" rendered="#{hazardsRelation_MB.addConq}">
-                                <f:ajax listener="#{hazardsRelation_MB.addConquenceCancel()}" execute="@form" render="@form"/>
-                            </p:commandButton>
                         </h:panelGrid>
+                        <p:commandButton value="Save Consequences">
+                            <f:ajax listener="#{hazardsRelation_MB.addHazardConsequences()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                        <p:commandButton value="Cancel">
+                            <f:ajax listener="#{hazardsRelation_MB.addConquenceCancel()}" execute="@form" render="@form"/>
+                        </p:commandButton>
                     </p:panel>
-                    <p:panel id="controlsGroup" rendered="#{hazardsRelation_MB.infoBox}" styleClass="manyResultBox">
-                        <pp>
-                            <h:outputText value="The following controls are associated with the current hazard:" rendered="#{hazardsRelation_MB.infoBox}"/>
-                        </pp>
-                        <br/>
-                        <br/>
-                        <p:dataTable value="#{hazardsRelation_MB.listHazardControls}" var="control" rendered="#{hazardsRelation_MB.infoBox}" emptyMessage="No controls are associated with this hazard.">
-                            <p:column headerText="Control Id" styleClass="idColumn">
+                    <p:panel id="controlsGroup" rendered="#{hazardsRelation_MB.infoBox}" styleClass="detailHazardPanel">
+                        <div class="p-emphasis-spacer">
+                            <h:outputText styleClass="p-emphasis" value="The following controls are associated with the current hazard:"/>
+                        </div>
+                        <p:dataTable value="#{hazardsRelation_MB.listHazardControls}" var="control" emptyMessage="No controls are associated with this hazard.">
+                            <p:column headerText="Control Id" styleClass="small">
                                 <p:outputLabel value="#{control.dbControl.controlId}"/>
                             </p:column>
                             <p:column headerText="Control Description">
                                 <p:outputLabel value="#{control.dbControl.controlDescription}"/>
                             </p:column>
-                            <p:column headerText="Recommendation" styleClass="idColumn">
+                            <p:column headerText="Recommendation" styleClass="small">
                                 <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
                             </p:column>
-                            <p:column headerText="Control Type" styleClass="idColumn">
+                            <p:column headerText="Control Hierarchy" styleClass="small">
+                                <p:outputLabel value="#{control.dbControl.controlHierarchyId.controlHierarchyName}"/>
+                            </p:column>
+                            <p:column headerText="Control Type" styleClass="small">
                                 <p:outputLabel value="#{control.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
                             </p:column>
                             <p:column headerText="Justification">
                                 <p:outputLabel value="#{control.controlJustify}"/>
                             </p:column>
-                            <p:column headerText="Actions" styleClass="actionsColumn"> 
-                                <h:commandLink value="Edit" styleClass="linkActions">
+                            <p:column headerText="Actions" styleClass="small"> 
+                                <h:commandLink value="Edit" styleClass="commandLink">
                                     <f:ajax listener="#{hazardsRelation_MB.editControlVisible(control)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                                 |
-                                <h:commandLink value="Delete" styleClass="linkActions">
+                                <h:commandLink value="Delete" styleClass="commandLink">
                                     <f:ajax listener="#{hazardsRelation_MB.deleteHazardControls(control)}" execute="@form" render="@form"/>    
                                 </h:commandLink>
                             </p:column>
                         </p:dataTable>
-                        <br/>
-                        <br/>
-                        <p:commandLink value="Add Control" rendered="#{hazardsRelation_MB.infoBox}" styleClass="linkActions">
-                            <f:ajax listener="#{hazardsRelation_MB.addControlVisible()}" execute="@form" render="@form"/>
-                        </p:commandLink>
-                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addControl}" styleClass="addManyResultBox">
+                        <div class="p-emphasis-spacer">
+                            <p:commandLink value="Add Control" styleClass="commandLink">
+                                <f:ajax listener="#{hazardsRelation_MB.addControlVisible()}" execute="@form" render="@form"/>
+                            </p:commandLink>
+                        </div>
+                        <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addControl}" columnClasses="left,middle">
                             <p:outputLabel value="Control Description: " for="addControls" />
                             <p:autoComplete id="addControls" value="#{hazardsRelation_MB.controlHazardObject.dbControl}" completeMethod="#{hazardsRelation_MB.showUnrelControls}"
                                             var="control1" itemLabel="#{control1.controlId}" itemValue="#{control1}" converter="controlConverter" forceSelection="true"
                                             disabled="#{hazardsRelation_MB.txtControlIdHazard}">
-                                <p:column styleClass="idAutocompleteColumn">
+                                <p:column>
                                     <h:outputText value="#{control1.controlId}" />
                                 </p:column>
                                 <p:column>
@@ -208,20 +212,21 @@
                                 <f:selectItems value="#{hazardsRelation_MB.listControlRecommends}" var="ctlRecomm" itemValue="#{ctlRecomm.controlRecommendId}" itemLabel="#{ctlRecomm.controlRecommendName}" />
                                 <f:ajax listener="#{hazardsRelation_MB.loadJustify}" execute="@form" render="@form" />
                             </p:selectOneMenu>
-
                             <p:outputLabel value="Justification: *" for="controlJustify" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                             <p:inputTextarea id="controlJustify" value="#{hazardsRelation_MB.controlJustify}" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                         </h:panelGrid>
                         <p:commandButton value="Save Control" rendered="#{hazardsRelation_MB.addControl}">
                             <f:ajax listener="#{hazardsRelation_MB.addHazardControls()}" execute="@form" render="@form"/>
                         </p:commandButton>
-                        <p:commandButton styleClass="controlCancelBtn" value="Cancel" rendered="#{hazardsRelation_MB.addControl}" immediate="true">
+                        <p:commandButton value="Cancel" rendered="#{hazardsRelation_MB.addControl}" immediate="true">
                             <f:ajax listener="#{hazardsRelation_MB.addControlCancel()}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </p:panel>
-                    <p:commandButton value="Back" rendered="#{hazardsRelation_MB.cancelBtn}">
-                        <f:ajax listener="#{hazardsRelation_MB.cancel()}" execute="@form" render="@form"/>
-                    </p:commandButton>
+                    <div class="panelButtons" style="display:#{(hazardsRelation_MB.cancelBtn)?'block':'none'}">
+                        <p:commandButton value="Back">
+                            <f:ajax listener="#{hazardsRelation_MB.cancel()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                    </div>
                 </h:form>
             </ui:define>
         </ui:composition>

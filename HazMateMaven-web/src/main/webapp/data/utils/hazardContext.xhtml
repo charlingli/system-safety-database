@@ -11,86 +11,77 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
-                        <div class="filteredTable">
-                            <p:dataTable id="viewTable" value="#{hazardContext_MB.listDbHazardContext}" var="item"
-                                         widgetVar="contextTable" emptyMessage="No contexts found with given criteria"
-                                         filteredValue="#{hazardContext_MB.filteredContexts}"  paginator="true" rows="20" paginatorPosition="bottom">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{hazardContext_MB.listDbHazardContext}" var="item" styleClass="parameterTable"
+                                     widgetVar="contextTable" emptyMessage="No contexts found with given criteria"
+                                     filteredValue="#{hazardContext_MB.filteredContexts}"  paginator="true" rows="20" paginatorPosition="bottom">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <p:outputLabel value="Search all fields: "/>
+                                    <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
+                                </p:outputPanel>
+                            </f:facet>
+                            <p:column headerText="Hazard Context Id" filterBy="#{item.hazardContextId}" filterMatchMode="exact" >
+                                <p:outputLabel value="#{item.hazardContextId}"/>
+                            </p:column>
+                            <p:column headerText="Hazard Context Name" filterBy="#{item.hazardContextName}" filterMatchMode="contains" >
+                                <p:outputLabel value="#{item.hazardContextName}"/>
+                            </p:column>
+                            <p:column >
                                 <f:facet name="header">
-                                    <p:outputPanel>
-                                        <p:outputLabel value="Search all fields: "/>
-                                        <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
-                                    </p:outputPanel>
+                                    <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <p:column headerText="Hazard Context Id" filterBy="#{item.hazardContextId}" filterMatchMode="exact" styleClass="idHugeColumn">
-                                    <p:outputLabel value="#{item.hazardContextId}"/>
-                                </p:column>
-                                <p:column headerText="Hazard Context Name" filterBy="#{item.hazardContextName}" filterMatchMode="contains" >
-                                    <p:outputLabel value="#{item.hazardContextName}"/>
-                                </p:column>
-                                <p:column styleClass="idHugeColumn">
-                                    <f:facet name="header">
-                                        <p:outputLabel value="Options"/>
-                                    </f:facet>
-                                    <h:commandLink value="Edit" styleClass="linkActions">
-                                        <f:ajax listener="#{hazardContext_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                    </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{hazardContext_MB.deleteHazardContext(item)}" immediate="true" oncomplete="PF('contextTable').filter()" 
-                                                   onclick="if (!confirm('Are you sure?')) { return; } ;" styleClass="linkActions"/> 
-                                </p:column>
-                            </p:dataTable>
+                                <h:commandLink value="Edit" disabled="#{hazardContext_MB.editButton}" styleClass="commandLink">
+                                    <f:ajax listener="#{hazardContext_MB.showEdit(item)}" execute="@form" render="@form"/>
+                                </h:commandLink> |
+                                <h:commandLink value="Delete" action="#{hazardContext_MB.deleteHazardContext(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{hazardContext_MB.deleteButton}" styleClass="commandLink"/> 
+                            </p:column>
+                        </p:dataTable>
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Hazard Context" disabled="#{hazardContext_MB.addButton}"> 
+                                <f:ajax listener="#{hazardContext_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
                         </div>
-                        <br></br>
-                        <br></br>
-
-                        <p:commandButton value="Add Hazard Context" rendered="#{not (hazardContext_MB.addFlag or hazardContext_MB.editFlag)}"> 
-                            <f:ajax listener="#{hazardContext_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-                        <br/>
-                        <br/>
-
                         <c:choose>
                             <c:when test="#{hazardContext_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{hazardContext_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-
-                        <br/>
-
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{hazardContext_MB.addFlag or hazardContext_MB.editFlag}">
-                            <c:if test="#{hazardContext_MB.editFlag}">
-                                <p:outputLabel value="Hazard Context Id:" for="hazardContextId" />
-                                <p:inputText id="hazardContextId" value="#{hazardContext_MB.hazardContextObject.hazardContextId}" disabled="true" title="HazardContextId" required="true" requiredMessage="The Hazard Context Id field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Hazard Context Name:" for="hazardContextName" />
-                            <p:inputText id="hazardContextName" value="#{hazardContext_MB.hazardContextObject.hazardContextName}" title="HazardContextName" required="true" requiredMessage="The Hazard Context Name field is required."/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{hazardContext_MB.addFlag}">
-                                <p:commandButton value="Save" >
-                                    <f:ajax listener="#{hazardContext_MB.addHazardContext()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{hazardContext_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{hazardContext_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{hazardContext_MB.editHazardContext()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{hazardContext_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                        </c:choose>
+                        <p:panel class="parameterModifyPanel" rendered="#{hazardContext_MB.addFlag or hazardContext_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{hazardContext_MB.addFlag or hazardContext_MB.editFlag}">
+                                <c:if test="#{hazardContext_MB.editFlag}">
+                                    <p:outputLabel value="Context Id:" for="hazardContextId" />
+                                    <p:inputText id="hazardContextId" value="#{hazardContext_MB.hazardContextObject.hazardContextId}" disabled="true" title="ContextId" required="true" requiredMessage="The ContextId field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Context Name:" for="hazardContextName" />
+                                <p:inputText id="hazardContextName" value="#{hazardContext_MB.hazardContextObject.hazardContextName}" title="ContextName" required="true" requiredMessage="The ContextName field is required."/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{hazardContext_MB.addFlag}">
+                                    <p:commandButton value="Save" >
+                                        <f:ajax listener="#{hazardContext_MB.addHazardContext()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{hazardContext_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{hazardContext_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{hazardContext_MB.editHazardContext()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{hazardContext_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
             </ui:define>

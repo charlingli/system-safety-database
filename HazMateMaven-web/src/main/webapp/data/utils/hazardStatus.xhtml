@@ -11,18 +11,22 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:dataTable id="viewTable" value="#{hazardStatus_MB.listDbHazardStatus}" var="item" tableStyle="width:auto;">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{hazardStatus_MB.listDbHazardStatus}" var="item" styleClass="parameterTable">
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="The current hazard statuses are: " />
+                                </p:outputPanel>
+                            </f:facet>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Hazard Status Id"/>
+                                    <p:outputLabel value="Status Id"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.hazardStatusId}"/>
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Hazard Status Name"/>
+                                    <p:outputLabel value="Status Name"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.hazardStatusName}"/>
                             </p:column>
@@ -30,72 +34,58 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{hazardStatus_MB.editButton}">
+                                <h:commandLink value="Edit" disabled="#{hazardStatus_MB.editButton}" class="commandLink">
                                     <f:ajax listener="#{hazardStatus_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <h:commandLink value="Delete" action="#{hazardStatus_MB.deleteHazardStatus(item)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{hazardStatus_MB.deleteButton}"/> 
-
-
+                                </h:commandLink> | 
+                                <h:commandLink value="Delete" action="#{hazardStatus_MB.deleteHazardStatus(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{hazardStatus_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
-
-                        <br></br>
-                        <br></br>
-
-                        <p:commandButton value="Add Hazard Status" disabled="#{hazardStatus_MB.addButton}"> 
-                            <f:ajax listener="#{hazardStatus_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-
-                        <br/>
-                        <br/>
-
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Hazard Status" disabled="#{hazardStatus_MB.addButton}"> 
+                                <f:ajax listener="#{hazardStatus_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                         <c:choose>
                             <c:when test="#{hazardStatus_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{hazardStatus_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-
-                        <br/>
-
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{hazardStatus_MB.addFlag or hazardStatus_MB.editFlag}">
-                            <c:if test="#{hazardStatus_MB.editFlag}">
-                                <p:outputLabel value="Hazard Status Id:" for="hazardStatusId"/>
-                                <p:inputText id="hazardStatusId" value="#{hazardStatus_MB.hazardStatusObject.hazardStatusId}" disabled="true" title="HazardStatusId" required="true" requiredMessage="The HazardStatusId field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Hazard Status Name:" for="hazardStatusName" />
-                            <p:inputText id="hazardStatusName" value="#{hazardStatus_MB.hazardStatusObject.hazardStatusName}" title="HazardStatusName" required="true" requiredMessage="The HazardStatusName field is required."/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{hazardStatus_MB.addFlag}">
-                                <p:commandButton value="Save" action="#{hazardStatus_MB.addHazardStatus()}" update="viewTable modifyTable"/>   
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{hazardStatus_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{hazardStatus_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{hazardStatus_MB.editHazardStatus()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{hazardStatus_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
-
-
+                        <p:panel class="parameterModifyPanel" rendered="#{hazardStatus_MB.addFlag or hazardStatus_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{hazardStatus_MB.addFlag or hazardStatus_MB.editFlag}">
+                                <c:if test="#{hazardStatus_MB.editFlag}">
+                                    <p:outputLabel value="Status Id:" for="hazardStatusId" />
+                                    <p:inputText id="hazardStatusId" value="#{hazardStatus_MB.hazardStatusObject.hazardStatusId}" disabled="true" title="StatusId" required="true" requiredMessage="The StatusId field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Status Name:" for="hazardStatusName" />
+                                <p:inputText id="hazardStatusName" value="#{hazardStatus_MB.hazardStatusObject.hazardStatusName}" title="StatusName" required="true" requiredMessage="The StatusName field is required."/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{hazardStatus_MB.addFlag}">
+                                    <p:commandButton value="Save" action="#{hazardStatus_MB.addHazardStatus()}" update="viewTable modifyTable"/>   
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{hazardStatus_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{hazardStatus_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{hazardStatus_MB.editHazardStatus()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{hazardStatus_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

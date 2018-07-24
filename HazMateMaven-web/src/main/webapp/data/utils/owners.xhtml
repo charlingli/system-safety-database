@@ -11,107 +11,80 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
-                        <div class="filteredTable">
-                        <p:dataTable id="viewTable" value="#{owners_MB.listDbOwners}" var="item"   
-                                     widgetVar="ownersTable" emptyMessage="No owners found with given criteria" filteredValue="#{owners_MB.filteredOwners}" 
-                                     paginator="true" rows="50" paginatorPosition="bottom" 
-                                     rendered="#{not (owners_MB.addFlag or owners_MB.editFlag)}">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:dataTable id="viewTable" value="#{owners_MB.listDbOwners}" var="item" styleClass="parameterTable"
+                                     widgetVar="contextTable" emptyMessage="No contexts found with given criteria"
+                                     filteredValue="#{owners_MB.filteredOwners}"  paginator="true" rows="20" paginatorPosition="bottom">
                             <f:facet name="header">
-
-
                                 <p:outputPanel>
-
-                                    <p:outputLabel value="Search all fields:"/>
-                                    <p:inputText id="globalFilter" onkeyup="PF('ownersTable').filter()" placeholder="Enter keyword"/>
-
+                                    <p:outputLabel value="Search all fields: "/>
+                                    <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
                                 </p:outputPanel>
-
                             </f:facet>
-                            <p:column headerText="Owner Id" filterBy="#{item.ownerId}" filterMatchMode="exact" styleClass="idColumn">
+                            <p:column headerText="Owner Id" filterBy="#{item.ownerId}" filterMatchMode="exact" >
                                 <p:outputLabel value="#{item.ownerId}"/>
                             </p:column>
-                            <p:column headerText="Owner Name" filterBy="#{item.ownerName}" filterMatchMode="contains" styleClass="centerColumn">
+                            <p:column headerText="Owner Name" filterBy="#{item.ownerName}" filterMatchMode="contains" >
                                 <p:outputLabel value="#{item.ownerName}"/>
                             </p:column>
-                            <p:column styleClass="idColumn">
+                            <p:column >
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit">
+                                <h:commandLink value="Edit" disabled="#{owners_MB.editButton}" class="commandLink">
                                     <f:ajax listener="#{owners_MB.showEdit(item)}" execute="@form" render="@form"/>
                                 </h:commandLink> |
-                                <p:commandLink value="Delete" action="#{owners_MB.deleteOwners(item)}" immediate="true" oncomplete="PF('ownersTable').filter()" onclick="if(!confirm('Are you sure?')){return;};"/> 
- 
-
-
+                                <h:commandLink value="Delete" action="#{owners_MB.deleteOwners(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{owners_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
-                        </div>   
-                            
-                        <br/>
-                        <br/>
-
-                        <p:commandButton value="Add Owners" rendered="#{not (owners_MB.addFlag or owners_MB.editFlag)}"> 
-                            <f:ajax listener="#{owners_MB.showAdd()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-                        <br/>
-                        <br/>
-
-
-
+                        <div class="panelButtons">
+                            <p:commandButton value="Add Owner" disabled="#{owners_MB.addButton}"> 
+                                <f:ajax listener="#{owners_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
                         <c:choose>
                             <c:when test="#{owners_MB.addFlag}">
-                                <pp><p:outputLabel value="Add"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
                             <c:when test="#{owners_MB.editFlag}">
-                                <pp><p:outputLabel value="Edit"/></pp>
+                                <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-                        <br/>
-
-
-                        <p:panelGrid id="modifyTable" columns="2" rendered="#{owners_MB.addFlag or owners_MB.editFlag}">
-                            <c:if test="#{owners_MB.editFlag}">
-                                <p:outputLabel value="Owner Id:" for="ownerId" />
-                                <p:inputText id="ownerId" value="#{owners_MB.ownersObject.ownerId}" disabled="true" title="OwnerId" required="true" requiredMessage="The OwnerId field is required."/>
-                            </c:if>
-                            <p:outputLabel value="Owner Name:" for="ownerName" />
-                            <p:inputText id="ownerName" value="#{owners_MB.ownersObject.ownerName}" title="OwnerName" required="true" requiredMessage="The OwnerName field is required."/>
-                        </p:panelGrid>
-
-                        <br/>
-
-                        <c:choose>
-                            <c:when test="#{owners_MB.addFlag}">
-                                <p:commandButton value="Save" oncomplete="PF('ownersTable').filter()">
-                                    <f:ajax listener="#{owners_MB.addOwners()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{owners_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                            </c:when>
-                            <c:when test="#{owners_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{owners_MB.editOwners()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-                                <p:commandButton value="Cancel" immediate="true">
-                                    <f:ajax listener="#{owners_MB.cancel()}" execute="@form" render="@form"/>
-                                </p:commandButton>
-
-                            </c:when>
-                        </c:choose>
-
-
-
-
+                        <p:panel class="parameterModifyPanel" rendered="#{owners_MB.addFlag or owners_MB.editFlag}">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{owners_MB.addFlag or owners_MB.editFlag}">
+                                <c:if test="#{owners_MB.editFlag}">
+                                    <p:outputLabel value="Owner Id:" for="ownerId" />
+                                    <p:inputText id="ownerId" value="#{owners_MB.ownersObject.ownerId}" disabled="true" title="OwnerId" required="true" requiredMessage="The OwnerId field is required."/>
+                                </c:if>
+                                <p:outputLabel value="Owner Name:" for="ownerName" />
+                                <p:inputText id="ownerName" value="#{owners_MB.ownersObject.ownerName}" title="OwnerName" required="true" requiredMessage="The OwnerName field is required."/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <div class="panelButtons">
+                            <c:choose>
+                                <c:when test="#{owners_MB.addFlag}">
+                                    <p:commandButton value="Save" >
+                                        <f:ajax listener="#{owners_MB.addOwners()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{owners_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:when test="#{owners_MB.editFlag}">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{owners_MB.editOwners()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{owners_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </c:when>
+                            </c:choose>
+                        </div>
                     </h:form>
                 </f:view>
-
             </ui:define>
-
         </ui:composition>
-
     </body>
 </html>

@@ -11,7 +11,7 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="true"/>
                         <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" style="width: 500px;" collapsed="true" rendered="#{!editHazard_MB.editFlag}">
                             <p:panelGrid id="searchTable" columns="2" columnClasses="searchGridLeft,searchGridRight" rendered="#{!editHazard_MB.editFlag}">

@@ -11,22 +11,23 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
-                        <h:panelGrid columns="2" columnClasses="tableList,tableActions">
+                        <h:panelGrid columns="2" class="relationPanel" columnClasses="results,actions">
                             <p:dataTable id="viewTable" value="#{control_MB.listDbControl}" var="item"  
                                          widgetVar="controlTable" emptyMessage="No controls found with given criteria" 
-                                         filteredValue="#{control_MB.filteredControls}" paginator="true" rows="15" paginatorPosition="bottom">
+                                         filteredValue="#{control_MB.filteredControls}" paginator="true" rows="15" 
+                                         paginatorPosition="bottom" styleClass="resultPanel">
                                 <f:facet name="header">
                                     <p:outputPanel>
                                         <p:outputLabel value="Search all fields: "/>
                                         <p:inputText id="globalFilter" onkeyup="PF('controlTable').filter()" placeholder="Enter keyword"/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="Control Id" filterBy="#{item.controlId}" filterMatchMode="exact" styleClass="tableColumn15ct">
+                                <p:column headerText="Control Id" filterBy="#{item.controlId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.controlId}"/>
                                 </p:column>
-                                <p:column headerText="Control Hierarchy" filterBy="#{item.controlHierarchyId.controlHierarchyName}" filterMatchMode="in" styleClass="tableColumn15">
+                                <p:column headerText="Control Hierarchy" filterBy="#{item.controlHierarchyId.controlHierarchyName}" filterMatchMode="in" styleClass="small">
                                     <f:facet name="filter">
                                         <p:selectCheckboxMenu label="Hierarchies" onchange="PF('controlTable').filter()" scrollHeight="150"  >
                                             <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="searchHierarchy" itemLabel="#{searchHierarchy.controlHierarchyName}" itemValue="#{searchHierarchy.controlHierarchyName}"  />
@@ -34,20 +35,20 @@
                                     </f:facet>
                                     <p:outputLabel value="#{item.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
-                                <p:column headerText="Owner" filterBy="#{item.ownerId.ownerName}" filterMatchMode="contains" styleClass="tableColumn30">
+                                <p:column headerText="Owner" filterBy="#{item.ownerId.ownerName}" filterMatchMode="contains" styleClass="medium" >
                                     <p:outputLabel value="#{item.ownerId.ownerName}"/>
                                 </p:column>
-                                <p:column headerText="Control Description" filterBy="#{item.controlDescription}" filterMatchMode="contains" styleClass="tableColumn30">
+                                <p:column headerText="Control Description" filterBy="#{item.controlDescription}" filterMatchMode="contains" >
                                     <p:outputLabel value="#{item.controlDescription}"/>
                                 </p:column>
-                                <p:column styleClass="tableColumn10ct">
+                                <p:column styleClass="small">
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" class="linkActions">
+                                    <h:commandLink value="Edit" class="commandLink">
                                         <f:ajax listener="#{control_MB.showEdit(item)}" execute="@form" render="@form" />
                                     </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()" class="linkActions"
+                                    <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()" class="commandLink"
                                                    onclick="if (!confirm('This action may also disassociate hazards from their control. Do you wish to proceed?')) {
                                                                return;
                                                            }
@@ -55,9 +56,9 @@
 
                                 </p:column>
                             </p:dataTable>
-                            <p:panel style="border: none">
-                                <p:panel class="addInfoBigPanelRight" rendered="#{control_MB.addFlag or control_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" columns="2" style="width: 100%;" columnClasses="searchGridLeft,searchGridRight" rendered="#{control_MB.addFlag or control_MB.editFlag}">
+                            <p:panel class="relationModifyPanel">
+                                <p:panel rendered="#{control_MB.addFlag or control_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{control_MB.addFlag or control_MB.editFlag}">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
@@ -65,7 +66,7 @@
                                                         <h:outputText value="Adding control " />
                                                     </c:when>
                                                     <c:when test="#{control_MB.editFlag}">
-                                                        <h:outputText value="Edditing control " />
+                                                        <h:outputText value="Editing control " />
                                                     </c:when>
                                                 </c:choose> 
                                             </p:outputPanel>
@@ -75,7 +76,7 @@
                                             <p:inputText id="controlId" value="#{control_MB.controlObject.controlId}" disabled="true" title="ControlId" required="true" requiredMessage="The ControlId field is required."/>
                                         </c:if>
                                         <p:outputLabel value="Control Description:" for="controlDescription" />
-                                        <p:inputTextarea style="width: 100%" id="controlDescription" value="#{control_MB.controlObject.controlDescription}" title="ControlDescription" required="true" requiredMessage="The ControlDescription field is required."/>
+                                        <p:inputTextarea id="controlDescription" value="#{control_MB.controlObject.controlDescription}" title="ControlDescription" required="true" requiredMessage="The ControlDescription field is required."/>
                                         <p:outputLabel value="Control Hierarchy:" for="controlHierarchyId" />
                                         <p:selectOneMenu id="controlHierarchyId" value="#{control_MB.controlHierarchyId}" title="ControlHierarchyId" required="true" requiredMessage="The ControlHierarchyId field is required.">
                                             <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
@@ -88,7 +89,7 @@
                                         </p:selectOneMenu>
                                     </p:panelGrid> 
                                 </p:panel>
-                                <div class="actionButtonsDiv">
+                                <div class="panelButtons">
                                     <c:choose>
                                         <c:when test="#{control_MB.addFlag}">
                                             <p:commandButton value="Save" oncomplete="PF('controlTable').filter()">   
@@ -111,7 +112,7 @@
                                 </div>
                             </p:panel>
                         </h:panelGrid>
-                        <div class="actionButtonsDiv">
+                        <div class="panelButtons">
                             <p:commandButton value="Add Controls" rendered="#{not (control_MB.addFlag or control_MB.editFlag)}"> 
                                 <f:ajax listener="#{control_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>

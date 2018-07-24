@@ -5,7 +5,6 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
@@ -14,9 +13,8 @@
         <title>HazMate Main Menu</title>
         <f:event type="preRenderView" listener="#{login_MB.validateSession()}" />
     </h:head>
-
-    <h:body>
-        <div id="top">
+    <h:body class="body">
+        <header id="top">
             <ui:insert name="top">
                 <h:form>
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
@@ -30,21 +28,25 @@
                             <p:commandButton icon="ui-icon-power" id="power" actionListener="#{login_MB.closeSession()}" action="/login?faces-redirect=true"/>
                             <p:tooltip id="toolTipPower" for="power" value="Logout" trackMouse="true"/>
                             <p:spacer width="20" height="20"/>
-
                         </f:facet>
                     </p:menubar>
                 </h:form>
             </ui:insert>
-        </div>
-        <div id="content" class="center_content">
-            <ui:insert name="content"></ui:insert>
-        </div>
-        <footer class="licenseFooter">
-            <p:separator />
-            <h:form>
-                <p:outputLabel value="HazMate is under MIT licence, you can find the complete file here: "/>
-                <h:commandLink class="linkActions" value="HazMate.License" action="/license/hazMateLicense" />
-            </h:form>
+        </header>
+        <main class="content">
+            <div id="content">
+                <ui:insert name="content"></ui:insert>
+            </div>
+        </main>
+        <footer class="license">
+            <ui:insert name="footer">
+                <p:separator />
+                <h:form>
+                    <h:outputText value="SSD is licensed using the MIT licence. You can find the complete file "/>
+                    <h:commandLink styleClass="commandLink" value="here" action="/license/hazMateLicense" />
+                    <h:outputText value="."/>
+                </h:form>
+            </ui:insert>
         </footer>
     </h:body>
 </html>

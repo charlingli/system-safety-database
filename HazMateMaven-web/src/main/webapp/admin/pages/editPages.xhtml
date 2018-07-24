@@ -10,10 +10,10 @@
             <ui:define name="content">
                 <f:view>
                     <h:form>
-                        <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Pages Definition,Edit Page')}" escape="false"/></div>
-                        <p:panel class="addInfoPanel">
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Pages Definition,Edit Page')}" escape="false"/></div>
+                        <p:panel class="managementModifyPanel">
                             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false"/>
-                            <p:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                            <p:panelGrid columns="2" columnClasses="left,middle">
                                 <p:outputLabel value="Page Name:" for="pageName" />
                                 <p:inputText id="pageName" value="#{pages_MB.pageObject.pageName}" title="PageName" required="true" requiredMessage="The Page Name field is required."/>
                                 <p:outputLabel value="Page Location:" for="pageLocation" />
@@ -25,13 +25,13 @@
                                 <p:outputLabel value="Page Icon:" for="pageIcon" />
                                 <p:inputText id="pageIcon" value="#{pages_MB.pageObject.pageIcon}" title="PageIcon" />
                                 <p:outputLabel value="Parent Menu:" for="menuId" />
-                                <p:selectOneMenu id="menuId" value="#{pages_MB.menuObject.menuId}" required="true" requiredMessage="The Parent Menu field is required.">
+                                <p:selectOneMenu styleClass="editInput" id="menuId" value="#{pages_MB.menuObject.menuId}" required="true" requiredMessage="The Parent Menu field is required.">
                                     <f:selectItem itemLabel="--Select One--" itemValue=""/>
                                     <f:selectItems noSelectionValue="--Select One--" value="#{pages_MB.getListDbMenu()}" var="p" itemLabel="#{p.menuName}" itemValue="#{p.menuId}"/>                               
                                 </p:selectOneMenu>
                             </p:panelGrid>
                         </p:panel>
-                        <div class="actionButtonsDiv">
+                        <div class="panelButtons">
                             <p:commandButton value="Save" action="#{pages_MB.edit()}"></p:commandButton>
                             <p:commandButton value="Cancel" action="#{pages_MB.cancel()}" immediate="true"></p:commandButton>
                         </div>

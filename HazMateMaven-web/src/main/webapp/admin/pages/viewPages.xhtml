@@ -9,45 +9,43 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <div class="viewBigTableContent">
-                        <p:dataTable var="p" value="#{pages_MB.listDbPage}" styleClass="tableOne" widgetVar="PagesTable" 
-                                     emptyMessage="No rows found with given criteria" filteredValue="#{pages_MB.fileteredDbPage}" scrollable="true" scrollHeight="680">
-                            <f:facet name="header">
-                                <p:outputPanel>
-                                    <h:outputText value="The current system pages are:" />
-                                </p:outputPanel>
-                            </f:facet>
-                            <p:column filterBy="#{p.pageName}" filterMatchMode="contains" class="tableColumn80p">
-                                <f:facet name="header">Page Name</f:facet>   
-                                <p:outputLabel value='#{p.pageName}'/> 
-                            </p:column>
-                            <p:column filterBy="#{p.pageLocation}" filterMatchMode="contains"  class="tableColumn100p">
-                                <f:facet name="header">Page Location</f:facet>   
-                                <p:outputLabel value='#{p.pageLocation}'/>  
-                            </p:column>
-                            <p:column filterBy="#{p.indexPage}" class="tableColumn80p">
-                                <f:facet name="header">Page Index</f:facet>   
-                                <p:outputLabel value='#{p.indexPage}'/>   
-                            </p:column>
-                            <p:column filterBy="#{p.pageIcon}" filterMatchMode="contains" class="tableColumn80p">
-                                <f:facet name="header">Page Icon</f:facet>   
-                                <p:outputLabel value='#{p.pageIcon}'/>   
-                            </p:column>
-                            <p:column filterBy="#{p.menuId}" filterMatchMode="contains" class="tableColumn100p">
-                                <f:facet name="header">Parent Menu</f:facet>   
-                                <p:outputLabel value='#{p.menuId}'/>   
-                            </p:column>
-                            <p:column class="tableColumn80p">
-                                <f:facet name="header">Options</f:facet> 
-                                <p:commandLink value="Edit" action="#{pages_MB.edit(p)}" class="linkActions"/> | 
-                                <p:commandLink value="Delete" action="#{pages_MB.delete(p)}" onstart="if (!confirm('Are you sure?')) { return; } ;"
-                                               oncomplete="PF('PagesTable').filter()" class="linkActions"/>
-                            </p:column>
-                        </p:dataTable>
-                    </div>
-                    <div class="actionButtonsDiv">
+                    <p:dataTable var="p" value="#{pages_MB.listDbPage}" sortBy="#{p.indexPage}" sortOrder="ascending" styleClass="managementTableLarge" widgetVar="PagesTable" 
+                                 emptyMessage="No rows found with given criteria" filteredValue="#{pages_MB.filteredDbPage}" scrollable="true" scrollHeight="680">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="The current system pages are:" />
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column filterBy="#{p.pageName}" filterMatchMode="contains" class="tableColumn80p">
+                            <f:facet name="header">Page Name</f:facet>   
+                            <p:outputLabel value='#{p.pageName}'/> 
+                        </p:column>
+                        <p:column filterBy="#{p.pageLocation}" filterMatchMode="contains"  class="tableColumn100p">
+                            <f:facet name="header">Page Location</f:facet>   
+                            <p:outputLabel value='#{p.pageLocation}'/>  
+                        </p:column>
+                        <p:column filterBy="#{p.indexPage}" class="tableColumn80p">
+                            <f:facet name="header">Page Index</f:facet>   
+                            <p:outputLabel value='#{p.indexPage}'/>   
+                        </p:column>
+                        <p:column filterBy="#{p.pageIcon}" filterMatchMode="contains" class="tableColumn80p">
+                            <f:facet name="header">Page Icon</f:facet>   
+                            <p:outputLabel value='#{p.pageIcon}'/>   
+                        </p:column>
+                        <p:column filterBy="#{p.menuId}" filterMatchMode="contains" class="tableColumn100p">
+                            <f:facet name="header">Parent Menu</f:facet>   
+                            <p:outputLabel value='#{p.menuId}'/>   
+                        </p:column>
+                        <p:column class="tableColumn80p">
+                            <f:facet name="header">Options</f:facet> 
+                            <p:commandLink value="Edit" action="#{pages_MB.edit(p)}" class="linkActions"/> | 
+                            <p:commandLink value="Delete" action="#{pages_MB.delete(p)}" onstart="if (!confirm('Are you sure?')) { return; } ;"
+                                           oncomplete="PF('PagesTable').filter()" class="linkActions"/>
+                        </p:column>
+                    </p:dataTable>
+                    <div class="panelButtons">
                         <p:commandButton value="Add Page" onclick="#{pages_MB.init()}" action="addPages.xhtml"/>
                     </div>
                 </h:form>

@@ -39,6 +39,9 @@ public class owners_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
+    private boolean addButton = false;
+    private boolean editButton = false; 
+    private boolean deleteButton = false; 
     
     String prevOwnerName; 
     
@@ -77,6 +80,30 @@ public class owners_MB implements Serializable {
         this.editFlag = editFlag;
     }
 
+    public boolean isAddButton() {
+        return addButton;
+    }
+
+    public void setAddButton(boolean addButton) {
+        this.addButton = addButton;
+    }
+
+    public boolean isEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(boolean editButton) {
+        this.editButton = editButton;
+    }
+
+    public boolean isDeleteButton() {
+        return deleteButton;
+    }
+
+    public void setDeleteButton(boolean deleteButton) {
+        this.deleteButton = deleteButton;
+    }
+
     public List<DbOwners> getFilteredOwners() {
         return filteredOwners;
     }
@@ -108,7 +135,6 @@ public class owners_MB implements Serializable {
         } 
         ownersObject = new DbOwners();
         init();
-        addFlag = false; 
         
 
     }
@@ -132,6 +158,8 @@ public class owners_MB implements Serializable {
         ownersObject = new DbOwners();
         init();
         editFlag = false;
+        addButton = false;
+        deleteButton = false; 
 
         
 
@@ -159,11 +187,15 @@ public class owners_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
+        addButton = true;
+        editButton = true; 
         
     }
 
     public void showEdit(DbOwners ownersObject) {
         editFlag = true;
+        addButton = true; 
+        deleteButton = true; 
 
         this.ownersObject = ownersObject;
         prevOwnerName = ownersObject.getOwnerName(); 
@@ -173,6 +205,10 @@ public class owners_MB implements Serializable {
         addFlag = false;
         editFlag = false;
 
+        addButton = false; 
+        editButton = false; 
+        deleteButton = false; 
+        
         ownersObject = new DbOwners();
     }
 

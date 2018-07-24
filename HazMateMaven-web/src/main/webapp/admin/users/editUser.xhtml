@@ -10,10 +10,10 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Edit User')}" escape="false"/></div>
-                    <p:panel class="addInfoPanel" >
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Edit User')}" escape="false"/></div>
+                    <p:panel class="parameterModifyPanel" >
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                        <p:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="First Name:"/>
                             <p:inputText id="FNInput" value="#{users_MB.user.firstName}" title="First Name" styleClass="inputField200px" required="true" validatorMessage="The first name must be 60 characters or less." requiredMessage="A first name is required."/>
                             <p:outputLabel value="Last Name:"/>
@@ -38,11 +38,11 @@
                             </p:selectOneMenu>
                         </p:panelGrid>
                     </p:panel>
-                    <div class="actionButtonsDiv">
+                    <div class="panelButtons">
                         <p:commandButton value="Update" action="#{users_MB.edit()}"/>
                         <p:commandButton value="Cancel" immediate="true" action="viewUsers"/>
                     </div>
-                    <p:inputText id="password" value="#{users_MB.user.password}" title="Password" a:readonly="readonly" required="true" requiredMessage="The Password field is required." styleClass="editUser"></p:inputText>
+                    <p:inputText id="password" value="#{users_MB.user.password}" title="Password" a:readonly="readonly" required="true" requiredMessage="The Password field is required." styleClass="hiddenField"></p:inputText>
                 </h:form>
             </ui:define>
         </ui:composition>

@@ -9,10 +9,10 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Add User')}" escape="false"/></div>
-                    <p:panel class="addInfoPanel">
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Add User')}" escape="false"/></div>
+                    <p:panel class="managementModifyPanel">
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:panelGrid id="addUsers" columns="2" columnClasses="searchGridLeft,searchGridRight">
+                        <p:panelGrid id="addUsers" columns="2" columnClasses="left,middle">
                             <p:outputLabel value="First Name:"/>
                             <p:inputText id="FNInput" value="#{users_MB.user.firstName}" title="First Name" required="true" styleClass="inputField200px" validatorMessage="The first name must be 60 characters or less." requiredMessage="A first name is required."/>
                             <p:outputLabel value="Last Name:"/>
@@ -27,11 +27,11 @@
                             <p:outputLabel value="Company:" />
                             <p:inputText id="CPInput" value="#{users_MB.user.company}" title="Company" required="true" styleClass="inputField200px" validatorMessage="The company name must be 45 characters or less." requiredMessage="A company is required."/>
                             <p:outputLabel value="Role:" />
-                            <p:selectOneMenu id="RLInput" value="#{users_MB.submitRole}" required="true" requiredMessage="A role is required." styleClass="addSelectOne">
+                            <p:selectOneMenu id="RLInput" value="#{users_MB.submitRole}" required="true" requiredMessage="A role is required." styleClass="editInput">
                                 <f:selectItems value="#{users_MB.getListRoles()}" />
                             </p:selectOneMenu>
                             <p:outputLabel value="Status: " />
-                            <p:selectOneMenu id="STInput" value="#{users_MB.userStatus}" required="true" requiredMessage="A status is required." styleClass="addSelectOne">
+                            <p:selectOneMenu id="STInput" value="#{users_MB.userStatus}" required="true" requiredMessage="A status is required." styleClass="editInput">
                                 <f:selectItem itemLabel="Active" itemValue="Active" />
                                 <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
                             </p:selectOneMenu>
@@ -45,7 +45,7 @@
 
                         </p:panelGrid>
                     </p:panel>
-                    <div class="actionButtonsDiv">
+                    <div class="panelButtons">
                         <p:commandButton value="Register" action="#{users_MB.add()}"/>
                         <p:commandButton value="Cancel" immediate="true" action="viewUsers"/>
                     </div>

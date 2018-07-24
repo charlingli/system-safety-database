@@ -4,19 +4,8 @@
  * and open the template in the editor.
  */
 
-//var oReq = new XMLHttpRequest();
-//oReq.addEventListener("progress", updateProgress, false);
-//
-//oReq.open();
-//
-//function updateProgress (oEvent) {
-//  if (oEvent.lengthComputable) {
-//    var percentComplete = oEvent.loaded / oEvent.total;
-//    console.log(percentComplete);
-//  } else {
-//    // Unable to compute progress information since the total size is unknown
-//  }
-//}
+var nLoaded = 0;
+var nHazards = 0;
 
 var inputIds = ['HD', 'SP', 'SL', 'SG', 'SN', 'SH', 'HC', 'HA', 'HT', 
     'HO', 'CA', 'CQ', 'RC', 'CD', 'CH', 'CT', 'CO', 'CR', 'CJ', 'CM'];
@@ -30,38 +19,6 @@ function globalFilter() {
             gRows[i].style.display = "";
         } else {
             gRows[i].style.display = "none";
-        }
-    }
-}
-
-function textFilter(id) {
-    tDataSelect = ".extendTable ." + id + "Data";
-    tDataInput = ".extendTable #" + id + "Input";
-    tCols = $(tDataSelect);
-    tRows = $(".extendTable >tbody >tr");
-    tInput = $(tDataInput).val().toLowerCase();
-    for (i = 0; i < tRows.length; i ++ ) {
-        tData = tCols[i].innerText.toLowerCase();
-        if (tData.indexOf(tInput) > -1) {
-            tRows[i].style.display = "";
-        } else {
-            tRows[i].style.display = "none";
-        }
-    }
-}
-
-function choiceFilter(id) {
-    tDataSelect = ".extendTable ." + id + "Data";
-    tDataInput = ".extendTable #" + id + "Input";
-    tCols = $(tDataSelect);
-    tRows = $(".extendTable >tbody >tr");
-    tInput = $(tDataInput).val().toLowerCase();
-    for (i = 0; i < tRows.length; i ++ ) {
-        tData = tCols[i].innerText.toLowerCase();
-        if (tData.indexOf(tInput) > -1) {
-            tRows[i].style.display = "";
-        } else {
-            tRows[i].style.display = "none";
         }
     }
 }
@@ -92,8 +49,13 @@ function filterRows() {
     }
 }
 
+function toggleColumn(id) {
+    
+}
+
 window.onload = function() {
     $("#progress-modal").css("transition", "opacity .5s, top .5s");
     $("#progress-modal").css("opacity", "0");
     $("#progress-modal").css("top", "-100%");
 }
+

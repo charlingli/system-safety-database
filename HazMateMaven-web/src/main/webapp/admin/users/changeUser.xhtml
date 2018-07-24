@@ -10,10 +10,10 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Change Password')}" escape="false"/></div>
-                    <p:panel class="addInfoPanel" >
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Change Password')}" escape="false"/></div>
+                    <p:panel class="parameterModifyPanel" >
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                        <p:panelGrid columns="2" columnClasses="searchGridLeft,searchGridRight">
+                        <p:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="User Email:"/>
                             <p:inputText value="#{users_MB.checkEmail}" styleClass="inputField200px" disabled="true"/>
                             <p:outputLabel value="Set New Password: " for="password"/>
@@ -25,7 +25,7 @@
                             <p:password id="confirmPassword" binding="#{confirmPassword}" title="Confirm Password" styleClass="inputField200px" required="true" requiredMessage="The Confirm Password field is required." />
                         </p:panelGrid>
                     </p:panel>          
-                    <div class="actionButtonsDiv">
+                    <div class="panelButtons">
                         <p:commandButton value="Update" action="#{users_MB.change()}"/>
                         <p:commandButton value="Cancel" immediate="true" action="viewUsers"/>
                     </div>

@@ -9,38 +9,36 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <div class="pagePathNew"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <div class="viewTableContent">
-                        <p:dataTable var="menu" value="#{menus_MB.listMenus}" styleClass="tableOne" sortBy="#{menu.indexMenu}" sortOrder="ascending">
-                            <f:facet name="header">
-                                <p:outputPanel>
-                                    <h:outputText value="The current system menus are: " />
-                                </p:outputPanel>
-                            </f:facet>
-                            <p:column headerText="Menu Name">
-                                <p:outputLabel value="#{menu.menuName}"/>
-                            </p:column> 
-                            <p:column headerText="Menu Type">
-                                <p:outputLabel value="#{menus_MB.menuType(menu.menuType)}"/>
-                            </p:column> 
-                            <p:column headerText="Parent Menu">
-                                <p:outputLabel value="#{menus_MB.parentMenu(menu.parentMenu)}"/>
-                            </p:column> 
-                            <p:column headerText="Menu Icon">
-                                <p:outputLabel value="#{menu.menuIcon}"/>
-                            </p:column> 
-                            <p:column headerText="Menu Index">
-                                <p:outputLabel value="#{menu.indexMenu}"/>
-                            </p:column>
-                            <p:column headerText="Options">
-                                <p:commandLink value="Edit" action="#{menus_MB.editMenu(menu)}" class="linkActions"/>
-                                |
-                                <h:commandLink value="Delete" action="#{menus_MB.deleteMenu(menu)}" onclick="return confirm('Are you sure?')" class="linkActions"/>
-                            </p:column>                        
-                        </p:dataTable>
-                    </div>
-                    <div class="actionButtonsDiv">
+                    <p:dataTable var="menu" value="#{menus_MB.listMenus}" styleClass="managementTableLarge" sortBy="#{menu.indexMenu}" sortOrder="ascending">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="The current system menus are: " />
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:column headerText="Menu Name">
+                            <p:outputLabel value="#{menu.menuName}"/>
+                        </p:column> 
+                        <p:column headerText="Menu Type">
+                            <p:outputLabel value="#{menus_MB.menuType(menu.menuType)}"/>
+                        </p:column> 
+                        <p:column headerText="Parent Menu">
+                            <p:outputLabel value="#{menus_MB.parentMenu(menu.parentMenu)}"/>
+                        </p:column> 
+                        <p:column headerText="Menu Icon">
+                            <p:outputLabel value="#{menu.menuIcon}"/>
+                        </p:column> 
+                        <p:column headerText="Menu Index">
+                            <p:outputLabel value="#{menu.indexMenu}"/>
+                        </p:column>
+                        <p:column headerText="Options">
+                            <p:commandLink value="Edit" action="#{menus_MB.editMenu(menu)}" class="linkActions"/>
+                            |
+                            <h:commandLink value="Delete" action="#{menus_MB.deleteMenu(menu)}" onclick="return confirm('Are you sure?')" class="linkActions"/>
+                        </p:column>                        
+                    </p:dataTable>
+                    <div class="panelButtons">
                         <p:commandButton value="Add Menu" action="addMenus" />
                     </div>
                 </h:form>
