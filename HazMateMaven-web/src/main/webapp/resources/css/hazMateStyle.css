@@ -6,6 +6,7 @@
 /** 
  * Global Layout
 **/
+
 html {
     font-size: 14px;
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
@@ -196,13 +197,30 @@ span.commandLink {
     font-weight: bold;
     color: #004040;
 }
-.parameterTable, .managementTable {
+.parameterTable, .managementTable, .messageDiv {
     width: 800px;
     text-align: center;
 }
 .parameterTableLarge, .managementTableLarge {
     width: 1600px;
     text-align: center;
+}
+@media screen and (max-width: 1800px) {
+  .managementTableLarge {
+      max-width: 1200px;
+  }
+  .managementTableLarge .tableColumn150p {
+      max-width: 80px;
+  }
+  .managementTableLarge .tableColumn150p input {
+      max-width: 60px;
+  }
+  .managementTableLarge .tableColumn200p {
+      max-width: 160px;
+  }
+  .managementTableLarge .tableColumn150p input {
+      max-width: 120px;
+  }
 }
 .profilePanel {
     width: 600px;

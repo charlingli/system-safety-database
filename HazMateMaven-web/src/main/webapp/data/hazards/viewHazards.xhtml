@@ -9,6 +9,7 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="hazardsForm">
+                    <p:hotkey bind="esc" handler="PF('detailOverlay').hide()"></p:hotkey>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="90vh" width="90vw">
@@ -67,7 +68,7 @@
                                     <p:outputLabel value="#{control.dbControl.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
                                 <p:column headerText="Control Type" styleClass="small">
-                                    <p:outputLabel value="#{hazardView_MB.getControlTypeString(control.controlType)}"/>
+                                    <p:outputLabel value="#{control.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
                                 </p:column>
                                 <p:column headerText="Control Recommendation" styleClass="small">
                                     <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
@@ -295,13 +296,13 @@
                                 </p:commandButton>
                             </p:outputPanel>
                         </f:facet>
-                        <p:column style="width: 4%; text-align:center">
+                        <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>
                             </f:facet>
                             <p:commandButton action="#{visualisation_MB.constructModelObject(hazard.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show()" icon="fa fa-sitemap"/>
                         </p:column>
-                        <p:column style="width: 4%">
+                        <p:column style="width: 6%; text-align:center">
                             <f:facet name="header">
                                 <h:outputText value="Hazard ID"/>
                             </f:facet>
@@ -309,13 +310,13 @@
                                 <h:outputText value="#{hazard.hazardId}"/>
                             </p:commandLink>
                         </p:column>
-                        <p:column style="width: 25%">
+                        <p:column style="width: 24%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
                             <h:outputText value="#{hazard.hazardDescription}"/>
                         </p:column>
-                        <p:column style="width: 25%">
+                        <p:column style="width: 24%">
                             <f:facet name="header">
                                 <h:outputText value="Comment"/>
                             </f:facet>
@@ -327,13 +328,13 @@
                             </f:facet>
                             <h:outputText value="#{hazard.hazardContextId.hazardContextName}"/>
                         </p:column>
-                        <p:column style="width: 7%">
+                        <p:column style="width: 6.5%">
                             <f:facet name="header">
                                 <h:outputText value="Location"/>
                             </f:facet>
                             <h:outputText value="#{hazard.hazardLocation.locationName}"/>
                         </p:column>
-                        <p:column style="width: 8%">
+                        <p:column style="width: 7%">
                             <f:facet name="header">
                                 <h:outputText value="Activity"/>
                             </f:facet>
@@ -345,13 +346,13 @@
                             </f:facet>
                             <h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/>
                         </p:column>
-                        <p:column style="width: 7%">
+                        <p:column style="width: 6.5%">
                             <f:facet name="header">
                                 <h:outputText value="Status"/>
                             </f:facet>
                             <h:outputText value="#{hazard.hazardStatusId.hazardStatusName}"/>
                         </p:column>
-                        <p:column style="width: 8%">
+                        <p:column style="width: 7%">
                             <f:facet name="header">
                                 <h:outputText value="Owner"/>
                             </f:facet>

@@ -12,6 +12,9 @@
                 <f:view>
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <div class="messageDiv">
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/>
+                        </div>
                         <p:dataTable id="viewTable" value="#{hazardStatus_MB.listDbHazardStatus}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
@@ -55,7 +58,6 @@
                             </c:when>
                         </c:choose>
                         <p:panel class="parameterModifyPanel" rendered="#{hazardStatus_MB.addFlag or hazardStatus_MB.editFlag}">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{hazardStatus_MB.addFlag or hazardStatus_MB.editFlag}">
                                 <c:if test="#{hazardStatus_MB.editFlag}">
                                     <p:outputLabel value="Status Id:" for="hazardStatusId" />

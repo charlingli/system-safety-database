@@ -847,14 +847,6 @@ public class hazardView_MB implements Serializable {
         detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
     }
     
-    public String getControlTypeString(String controlType) {
-        if (controlType.equals("P")) {
-            return "Preventive";
-        } else {
-            return "Mitigative";
-        }
-    }
-    
     public void clearField(String id) {
         switch(id){
             case "HDClear":
