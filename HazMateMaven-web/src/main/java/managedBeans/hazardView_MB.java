@@ -607,7 +607,7 @@ public class hazardView_MB implements Serializable {
     private void constructHtml(List<searchObject> listFields, List<treeNodeObject> listSbs) {
         if (listFields.isEmpty() && listSbs.isEmpty()) {
             enableQueryDescr = true;
-            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards asociated at least to one cause, consequence and control.</span></h3>";
+            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards associated at least to one cause, consequence and control.</span></h3>";
         } else {
             enableQueryDescr = true;
             htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards meeting the following criteria:</span></h3>";
