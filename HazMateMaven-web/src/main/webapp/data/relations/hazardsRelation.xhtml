@@ -13,7 +13,7 @@
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:panel rendered="#{hazardsRelation_MB.searchBox}" styleClass="searchPanel">
                         <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.searchBox}" columnClasses="left,middle">
-                            <p:outputLabel value="Hazard Id: " />
+                            <p:outputLabel value="Hazard ID: " />
                             <p:inputText value="#{hazardsRelation_MB.hazardId}"/>
                             <p:outputLabel value="Hazard Description: " />
                             <p:inputText value="#{hazardsRelation_MB.hazardDescríption}" />
@@ -35,7 +35,7 @@
                                 <h:outputText value="Select from the following hazards: " />
                             </p:outputPanel>
                         </f:facet>
-                        <p:column headerText="Hazard Id" styleClass="small">
+                        <p:column headerText="Hazard ID" styleClass="small">
                             <p:outputLabel value="#{hazard.hazardId}"/>
                         </p:column>
                         <p:column headerText="Hazard Description">
@@ -56,7 +56,7 @@
                             <p:outputLabel styleClass="p-heading" value="Updating relations to the hazard:"/>
                         </div>
                         <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
-                            <p:outputLabel value="Hazard Id: "/>
+                            <p:outputLabel value="Hazard ID: "/>
                             <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardId}" />
                             <p:outputLabel value="Hazard Location: " />
                             <p:outputLabel value="#{hazardsRelation_MB.hazardObject.hazardLocation.locationName}" />

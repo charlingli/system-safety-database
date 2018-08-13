@@ -19,7 +19,7 @@
                                         <h:outputText value="New Hazard Information " />
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:outputLabel for="hazardId" value="Hazard Id:" />
+                                <p:outputLabel for="hazardId" value="Hazard ID:" />
                                 <p:inputText id="hazardId" value="#{addHazard_MB.hazardObject.hazardId == null ? '(Auto)' : addHazard_MB.hazardObject.hazardId}" disabled="true"/>
                                 <p:outputLabel for="hazardDate" value="Hazard Date:" />
                                 <p:calendar id="hazardDate" value="#{addHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{addHazard_MB.todaysDate()}" />

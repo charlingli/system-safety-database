@@ -27,7 +27,7 @@
                                 <p:column headerText="Consequence Id" filterBy="#{item.consequenceId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.consequenceId}"/>
                                 </p:column>
-                                <p:column headerText="Hazard Id" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
+                                <p:column headerText="Hazard ID" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.hazardId}"/>
                                 </p:column>
                                 <p:column headerText="Consequence Description" filterBy="#{item.consequenceDescription}" filterMatchMode="contains" styleClass="tableColumn60">
@@ -67,7 +67,7 @@
                                             <p:outputLabel value="Consequence Id:" for="consequenceId" />
                                             <p:inputText id="consequenceId" value="#{consequence_MB.consequenceObject.consequenceId}" disabled="true" title="ConsequenceId" required="true" requiredMessage="The ConsequenceId field is required."/>
                                         </c:if>
-                                        <p:outputLabel id="hazardId" value="Hazard Id:" for="addHazard" />
+                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard" />
                                         <p:autoComplete id="addHazard" value="#{consequence_MB.hazardObject}" completeMethod="#{consequence_MB.showHazards}"
                                                         var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
                                                         title="If this consequence is also a hazard in another context, please enter the hazard Id">

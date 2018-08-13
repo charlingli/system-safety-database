@@ -27,7 +27,7 @@
                                 <p:column headerText="Cause Id" filterBy="#{item.causeId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.causeId}"/>
                                 </p:column>
-                                <p:column headerText="Hazard Id" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
+                                <p:column headerText="Hazard ID" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.hazardId}"/>
                                 </p:column>
                                 <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60" >
@@ -67,7 +67,7 @@
                                             <p:outputLabel value="Cause Id:" for="causeId" />
                                             <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The CauseId field is required."/>
                                         </c:if>
-                                        <p:outputLabel id="hazardId" value="Hazard Id:" for="addHazard" />
+                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard" />
                                         <p:autoComplete id="addHazard" value="#{cause_MB.hazardObject}" completeMethod="#{cause_MB.showHazards}"
                                                         var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
                                                         title="If this cause is also a hazard in another context, please enter the hazard Id">

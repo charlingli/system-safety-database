@@ -571,7 +571,7 @@ public class editHazard_MB implements Serializable {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         
         if (!getSelectedHazardId().isEmpty()) {
-            listSearchObject.add(new searchObject("hazardId", getSelectedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard Id"));
+            listSearchObject.add(new searchObject("hazardId", getSelectedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard ID"));
         }
         if (getSelectedHazardDate() != null) {
             listSearchObject.add(new searchObject("hazardDate", df.format(getSelectedHazardDate()), "date", "DbHazard", null, null, null, "=", "Hazard Date"));
