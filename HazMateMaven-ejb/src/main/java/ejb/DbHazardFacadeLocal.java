@@ -38,6 +38,10 @@ public interface DbHazardFacadeLocal {
     List<DbHazard> findRange(int[] range);
 
     List<DbControlHazard> getControlHazard(String hazardId);
+    
+    List<DbControlHazard> getMControlHazard(String hazardId);
+    
+    List<DbControlHazard> getPControlHazard(String hazardId);
 
     List<DbControl> getControls(int controlId);
 

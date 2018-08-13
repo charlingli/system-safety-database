@@ -12,8 +12,79 @@
                     <p:hotkey bind="esc" handler="PF('detailOverlay').hide()"></p:hotkey>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="90vh" width="90vw">
-                        <p:diagram value="#{visualisation_MB.model}" styleClass="ui-content"  /> 
+                    <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="70vh" width="90vw">
+                        <p:panel class="visPanel">
+                        <div class="visCanvas">
+                            <div id="graphic"></div>
+                            <div class="left">
+                                <ui:repeat value="${hazardViewVis_MB.selectedCauses}" var="CA" varStatus="status">
+                                    <div>
+                                        <h:outputText value="${CA.dbCause.causeDescription}"> </h:outputText>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                            <div class="mid">
+                                <div>
+                                    <h:outputText value="${hazardViewVis_MB.selectedDescription}"> </h:outputText>
+                                    <div>
+                                        <div class="frequency">
+                                            <h:outputText value="${hazardViewVis_MB.selectedHazard.riskFrequencyId.frequencyScore}"> </h:outputText>
+                                        </div>
+                                        <div class="severity">
+                                            <h:outputText value="${hazardViewVis_MB.selectedHazard.riskSeverityId.severityScore}"> </h:outputText>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="right">
+                                <ui:repeat value="${hazardViewVis_MB.selectedConsequences}" var="CQ" varStatus="status">
+                                    <div>
+                                        <h:outputText value="${CQ.dbConsequence.consequenceDescription}"> </h:outputText>
+                                    </div>
+                                </ui:repeat>
+                            </div>
+                            <div class="between">
+                                <div class="mid-left">
+                                    <ui:repeat value="${hazardViewVis_MB.selectedPControls}" var="PC" varStatus="status">
+                                        <div>
+                                            <div class="marker"></div>
+                                            <div class="text">
+                                                <h:outputLink id="PCEntry" value="#">
+                                                    <h:outputText value="#{PC.dbControl.controlDescription}"/>
+                                                </h:outputLink>
+                                                <p:tooltip for="PCEntry" value="#{PC.dbControl.controlDescription}" trackMouse="true"/>
+                                            </div>
+                                            <div class="status">
+                                                <h:outputLink id="PCJustify" value="#">
+                                                    <h:outputText value="#{PC.controlRecommendId.controlRecommendName}"/>
+                                                </h:outputLink>
+                                                <p:tooltip for="PCJustify" value="#{PC.controlJustify}" trackMouse="true"/>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                                <div class="mid-right">
+                                    <ui:repeat value="${hazardViewVis_MB.selectedMControls}" var="MC" varStatus="status">
+                                        <div>
+                                            <div class="marker"></div>
+                                            <div class="text">
+                                                <h:outputLink id="MCEntry" value="#">
+                                                    <h:outputText value="#{MC.dbControl.controlDescription}"/>
+                                                </h:outputLink>
+                                                <p:tooltip for="MCEntry" value="#{MC.dbControl.controlDescription}" trackMouse="true"/>
+                                            </div>
+                                            <div class="status">
+                                                <h:outputLink id="MCJustify" value="#">
+                                                    <h:outputText value="#{MC.controlRecommendId.controlRecommendName}"/>
+                                                </h:outputLink>
+                                                <p:tooltip for="MCJustify" value="#{MC.controlJustify}" trackMouse="true"/>
+                                            </div>
+                                        </div>
+                                    </ui:repeat>
+                                </div>
+                            </div>
+                        </div>
+                    </p:panel>
                     </p:dialog>
                     <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
                         <p:panel id="hazardPanel" styleClass="detailHazardPanel">
@@ -300,7 +371,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>
                             </f:facet>
-                            <p:commandButton action="#{visualisation_MB.constructModelObject(hazard.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show()" icon="fa fa-sitemap"/>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap"/>
                         </p:column>
                         <p:column style="width: 6%; text-align:center">
                             <f:facet name="header">
@@ -360,6 +431,8 @@
                         </p:column>
                     </p:dataTable>
                 </h:form>
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.min.js" />
+                <script type="text/javascript" src="../../resources/js/viewVis.js" />
             </ui:define>
         </ui:composition>
     </body>

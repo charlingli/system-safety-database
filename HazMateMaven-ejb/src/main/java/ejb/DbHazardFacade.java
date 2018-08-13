@@ -52,6 +52,22 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
     }
 
     @Override
+    public List<DbControlHazard> getMControlHazard(String hazardId) {
+        return em.createQuery("FROM DbControlHazard c WHERE c.dbHazard.hazardId = :checkHazardId AND c.controlType = 'M'")
+                .setParameter("checkHazardId", hazardId)
+                .getResultList();
+
+    }
+
+    @Override
+    public List<DbControlHazard> getPControlHazard(String hazardId) {
+        return em.createQuery("FROM DbControlHazard c WHERE c.dbHazard.hazardId = :checkHazardId AND c.controlType = 'P'")
+                .setParameter("checkHazardId", hazardId)
+                .getResultList();
+
+    }
+
+    @Override
     public List<DbControl> getControls(int controlId) {
         return em.createQuery("FROM DbControl c WHERE c.dbControl.controlId = :checkControlId")
                 .setParameter("checkControlId", controlId)
