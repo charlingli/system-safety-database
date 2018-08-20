@@ -89,6 +89,12 @@ public class DbUser implements Serializable {
     private DbRole roleId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dbUser")
     private List<DbuserPreferences> dbuserPreferencesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "wfUserIdAdd")
+    private List<DbwfHeader> dbwfHeaderList;
+    @OneToMany(mappedBy = "wfUserIdUpdate")
+    private List<DbwfHeader> dbwfHeaderList1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "wfUserIdApprover")
+    private List<DbwfLine> dbwfLineList;
 
     public DbUser() {
     }
@@ -180,6 +186,42 @@ public class DbUser implements Serializable {
         this.roleId = roleId;
     }
 
+    @XmlTransient
+    public List<DbuserPreferences> getDbuserPreferencesList() {
+        return dbuserPreferencesList;
+    }
+
+    public void setDbuserPreferencesList(List<DbuserPreferences> dbuserPreferencesList) {
+        this.dbuserPreferencesList = dbuserPreferencesList;
+    }
+
+    @XmlTransient
+    public List<DbwfHeader> getDbwfHeaderList() {
+        return dbwfHeaderList;
+    }
+
+    public void setDbwfHeaderList(List<DbwfHeader> dbwfHeaderList) {
+        this.dbwfHeaderList = dbwfHeaderList;
+    }
+
+    @XmlTransient
+    public List<DbwfHeader> getDbwfHeaderList1() {
+        return dbwfHeaderList1;
+    }
+
+    public void setDbwfHeaderList1(List<DbwfHeader> dbwfHeaderList1) {
+        this.dbwfHeaderList1 = dbwfHeaderList1;
+    }
+
+    @XmlTransient
+    public List<DbwfLine> getDbwfLineList() {
+        return dbwfLineList;
+    }
+
+    public void setDbwfLineList(List<DbwfLine> dbwfLineList) {
+        this.dbwfLineList = dbwfLineList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -204,14 +246,4 @@ public class DbUser implements Serializable {
     public String toString() {
         return "entities.DbUser[ userId=" + userId + " ]";
     }
-
-    @XmlTransient
-    public List<DbuserPreferences> getDbuserPreferencesList() {
-        return dbuserPreferencesList;
-    }
-
-    public void setDbuserPreferencesList(List<DbuserPreferences> dbuserPreferencesList) {
-        this.dbuserPreferencesList = dbuserPreferencesList;
-    }
-
 }

@@ -39,7 +39,7 @@ public class DbglobalIdFacade extends AbstractFacade<DbglobalId> implements Dbgl
         if (tmpValidate.isValidationFlag()) {
             DbglobalId bridgeGlobalId = this.findByKey(key1);
             if (bridgeGlobalId.getGlobalIdConsecutive() == null) {
-                return createCombination(1, separator, key1, "", "", zeroPositions);
+                return createCombination(1, separator, key1, null, null, zeroPositions);
             } else {
                 return updateCombination(bridgeGlobalId, 1, separator, key1, "", "", zeroPositions);
             }
@@ -82,7 +82,7 @@ public class DbglobalIdFacade extends AbstractFacade<DbglobalId> implements Dbgl
         DbglobalId resultGlobalId = new DbglobalId();
 
         try {
-            queryStr = "FROM DbglobalId gId WHERE gId.key1 = ?1 ";
+            queryStr = "FROM DbglobalId gId WHERE gId.key1 = ?1 AND gId.key2 = null AND gId.key3 = null";
             Query query = em.createQuery(queryStr);
             query.setParameter(1, key1);
 
@@ -106,7 +106,7 @@ public class DbglobalIdFacade extends AbstractFacade<DbglobalId> implements Dbgl
         DbglobalId resultGlobalId = new DbglobalId();
 
         try {
-            queryStr = "FROM DbglobalId gId WHERE gId.key1 = ?1 AND gId.key2 = ?2 ";
+            queryStr = "FROM DbglobalId gId WHERE gId.key1 = ?1 AND gId.key2 = ?2 AND gId.key3 = null";
             Query query = em.createQuery(queryStr);
             query.setParameter(1, key1);
             query.setParameter(2, key2);

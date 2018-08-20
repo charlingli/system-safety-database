@@ -20,13 +20,18 @@ import entities.DbtreeLevel4;
 import entities.DbtreeLevel5;
 import entities.DbtreeLevel6;
 import entities.DbHazardSbs;
+import entities.DbwfHeader;
 import customObjects.treeNodeObject;
 import customObjects.validateIdObject;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbwfHeaderFacadeLocal;
 import entities.DbHazard;
+import entities.DbUser;
+import entities.DbwfType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -46,8 +51,9 @@ import org.primefaces.model.TreeNode;
 public class trees_MB implements Serializable {
 
     @EJB
+    private DbwfHeaderFacadeLocal dbwfHeaderFacade;
+    @EJB
     private DbHazardFacadeLocal dbHazardFacade;
-
     @EJB
     private DbHazardSbsFacadeLocal dbHazardSbsFacade;
     @EJB
@@ -71,6 +77,8 @@ public class trees_MB implements Serializable {
     private List<treeNodeObject> treeHazardSbsList;
 
     private String gotId;
+    
+    private String autoConsec;
 
     public trees_MB() {
     }
@@ -132,10 +140,19 @@ public class trees_MB implements Serializable {
         this.gotId = gotId;
     }
 
+    public String getAutoConsec() {
+        return autoConsec;
+    }
+
+    public void setAutoConsec(String autoConsec) {
+        this.autoConsec = autoConsec;
+    }
+    
     @PostConstruct
     public void init() {
         listTreeLevel1 = dbtreeLevel1Facade.findAll();
         createTree();
+        System.out.println("managedBeans.trees_MB.init()");
     }
 
     public void displaySelectedMultiple(TreeNode[] nodes) {
@@ -406,6 +423,28 @@ public class trees_MB implements Serializable {
 //        List<DbHazard> resultantList = dbHazardFacade.findHazardsByFieldsOnly(searchList);
 //
 //        System.out.println("managedBeans.trees_MB.testSearch()");
+    }
+
+    public void testWorkFlow() {
+        List<DbUser> listUsers = new ArrayList<>();
+        listUsers.add(new DbUser(1));
+        listUsers.add(new DbUser(2));
+
+        DbwfHeader wfObj = new DbwfHeader();
+        wfObj.setWfTypeId(new DbwfType("W1"));
+        wfObj.setWfStatus("O");
+        wfObj.setWfAddedDateTime(new Date());
+        wfObj.setWfUserIdAdd(new DbUser(2));
+        wfObj.setWfObjectId("NEP-ALL-0005");
+        wfObj.setWfObjectName("Hazard");
+        wfObj.setWfComment1("This an important hazard");
+        wfObj.setWfComment2("It was disscused during the workshop 30-01");
+        wfObj.setWfComment3("This is a testing comment");
+        wfObj.setWfComment4("This is a testing comment2");
+        wfObj.setWfCompleteMethod("HazardApprovalWF");
+
+        validateIdObject result = dbwfHeaderFacade.newWorkFlow(listUsers, wfObj, autoConsec);
+        System.out.println(result.getAnswerString());
     }
 
 }

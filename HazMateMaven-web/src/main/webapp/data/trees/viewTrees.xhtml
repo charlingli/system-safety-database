@@ -11,7 +11,7 @@
                 <br/>
                 <h:form>
                     <p:growl id="msgs" showDetail="true" escape="false"/>
-                    
+
                     <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
                     <br></br>
                     <br></br>
@@ -40,15 +40,22 @@
 
                     <p:inputText value="#{trees_MB.hazardId}" />
                     <p:commandButton action="#{trees_MB.findTreeByHazard(trees_MB.hazardId)}" />
-                    
+
                     <p:commandButton action="#{trees_MB.testSearch()}" value="Test Search" />
-                    
+
                     <p:panel>
                         <p:panelGrid>
                             <p:commandButton action="#{autoIds_MB.testConsecutives}" />
-                             <p:outputLabel value="#{trees_MB.gotId}"/>
+                            <p:outputLabel value="#{trees_MB.gotId}"/>
                         </p:panelGrid>                         
                     </p:panel>
+
+                    <p:panel>
+                        <p:outputLabel>Testing the WF: </p:outputLabel>
+                        <p:inputText placeholder="Write the auto#" value="#{trees_MB.autoConsec}"></p:inputText>
+                        <h:commandButton value="test" action="#{trees_MB.testWorkFlow}"/>
+                    </p:panel>   
+
                 </h:form>
             </ui:define>
         </ui:composition>
