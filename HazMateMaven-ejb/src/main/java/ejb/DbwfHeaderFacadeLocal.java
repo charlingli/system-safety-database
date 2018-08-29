@@ -13,7 +13,7 @@ import javax.ejb.Local;
 
 /**
  *
- * @author lxra
+ * @author David Ortega
  */
 @Local
 public interface DbwfHeaderFacadeLocal {
@@ -34,7 +34,11 @@ public interface DbwfHeaderFacadeLocal {
     
     validateIdObject newWorkFlow(List<DbUser> listApprovers, DbwfHeader wfHeaderObj, String autoNoId);
     
-    int approvalProcess(DbwfHeader wfHeaderObj, String apprType);
+    boolean approvalProcess(DbwfHeader wfHeaderObj, String apprType);
+    
+    boolean rejectionProcess(DbwfHeader wfHeaderObj, String rjtcdType);
+    
+    boolean reviewProcess(DbwfHeader wfHeaderObj, String rwvType);
     
     boolean wfTypesValidation(String wfTypeName);
     

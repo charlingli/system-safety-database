@@ -51,11 +51,21 @@
                     </p:panel>
 
                     <p:panel>
-                        <p:outputLabel>Testing the WF: </p:outputLabel>
+                        <p:outputLabel>Testing the WF Creation: </p:outputLabel>
                         <p:inputText placeholder="Write the auto#" value="#{trees_MB.autoConsec}"></p:inputText>
                         <h:commandButton value="test" action="#{trees_MB.testWorkFlow}"/>
-                    </p:panel>   
+                    </p:panel>
 
+                    <div class="actionButtonsDiv">
+                        <p:panel>
+                            <p:outputLabel>Testing the WF Approval: </p:outputLabel>
+                            <p:inputText placeholder="Write the wf Id #" binding="#{wfId}"></p:inputText>
+                            <p:inputText placeholder="Write the user Id #" binding="#{user}"></p:inputText>
+                            <p:inputText placeholder="transac. type #" binding="#{trType}"></p:inputText>
+                            <p:inputText placeholder="decision type #" binding="#{dcsId}"></p:inputText>
+                            <h:commandButton value="test" action="#{trees_MB.testCompleteWorkFlow(wfId.value, user.value, trType.value, dcsId.value)}"/>
+                        </p:panel>
+                    </div>
                 </h:form>
             </ui:define>
         </ui:composition>

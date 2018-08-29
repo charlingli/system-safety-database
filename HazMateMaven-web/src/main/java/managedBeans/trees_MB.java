@@ -25,8 +25,12 @@ import customObjects.treeNodeObject;
 import customObjects.validateIdObject;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
+import ejb.DbwfLineFacadeLocal;
 import entities.DbHazard;
 import entities.DbUser;
+import entities.DbwfDecision;
+import entities.DbwfLine;
+import entities.DbwfLinePK;
 import entities.DbwfType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,6 +55,8 @@ import org.primefaces.model.TreeNode;
 public class trees_MB implements Serializable {
 
     @EJB
+    private DbwfLineFacadeLocal dbwfLineFacade;
+    @EJB
     private DbwfHeaderFacadeLocal dbwfHeaderFacade;
     @EJB
     private DbHazardFacadeLocal dbHazardFacade;
@@ -68,6 +74,8 @@ public class trees_MB implements Serializable {
     private DbtreeLevel2FacadeLocal dbtreeLevel2Facade;
     @EJB
     private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
+    
+    
 
     private List<DbtreeLevel1> listTreeLevel1;
     private String hazardId;
@@ -446,5 +454,15 @@ public class trees_MB implements Serializable {
         validateIdObject result = dbwfHeaderFacade.newWorkFlow(listUsers, wfObj, autoConsec);
         System.out.println(result.getAnswerString());
     }
-
+    
+    public void testCompleteWorkFlow(String wfId, String userId, String trType, String dcsId) {
+        DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfId, "")), Integer.parseInt(userId));
+        tmpLine.setWfApproverDecisionId(new DbwfDecision(dcsId));
+        tmpLine.setWfApprovalComment("Testing approvals");
+        tmpLine.setWfDateTimeDecision(new Date());
+        
+        dbwfLineFacade.edit(tmpLine);
+        
+        dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfId), trType);
+    }
 }
