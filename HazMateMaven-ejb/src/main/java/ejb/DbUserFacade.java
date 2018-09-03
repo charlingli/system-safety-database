@@ -55,4 +55,11 @@ public class DbUserFacade extends AbstractFacade<DbUser> implements DbUserFacade
         return loggedUser;     
     }
     
+    @Override
+    public List<DbUser> findAllOfRole(int roleId) {
+        return em.createQuery("FROM DbUser u WHERE u.roleId.roleId = :checkRoleId")
+                .setParameter("checkRoleId", roleId)
+                .getResultList();
+    }
+    
 }

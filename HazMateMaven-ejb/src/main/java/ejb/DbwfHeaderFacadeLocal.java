@@ -5,6 +5,7 @@
  */
 package ejb;
 
+import customObjects.searchObject;
 import customObjects.validateIdObject;
 import entities.DbwfHeader;
 import entities.DbUser;
@@ -41,5 +42,7 @@ public interface DbwfHeaderFacadeLocal {
     boolean reviewProcess(DbwfHeader wfHeaderObj, String rwvType);
     
     boolean wfTypesValidation(String wfTypeName);
+    
+    List<DbwfHeader> findWorkflowsByFieldsOnly(List<searchObject> workflowList);
     
 }

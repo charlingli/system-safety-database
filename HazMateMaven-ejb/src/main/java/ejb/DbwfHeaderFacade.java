@@ -5,12 +5,16 @@
  */
 package ejb;
 
+import customObjects.searchObject;
 import customObjects.validateIdObject;
 import entities.DbUser;
 import entities.DbwfHeader;
 import entities.DbwfLine;
 import entities.DbwfLinePK;
-import java.util.Date;
+import java.sql.Date;
+import java.time.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.ejb.EJB;
@@ -18,6 +22,7 @@ import javax.ejb.Stateless;
 import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 /**
  *
@@ -87,7 +92,8 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             workObj.setWfStatus("A");
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
-            workObj.setWfUpdatedDateTime(new Date());
+            java.util.Date currentDate = new java.util.Date();
+            workObj.setWfUpdatedDateTime(currentDate);
             this.edit(workObj);
             //Send to the completion method
             wfCompleteAction(workObj, "Approved");
@@ -119,7 +125,8 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             workObj.setWfStatus("R");
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
-            workObj.setWfUpdatedDateTime(new Date());
+            java.util.Date currentDate = new java.util.Date();
+            workObj.setWfUpdatedDateTime(currentDate);
             this.edit(workObj);
             //Send to the completion method
             wfCompleteAction(workObj, "Rejected");
@@ -150,7 +157,8 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             workObj.setWfStatus("I");
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
-            workObj.setWfUpdatedDateTime(new Date());
+            java.util.Date currentDate = new java.util.Date();
+            workObj.setWfUpdatedDateTime(currentDate);
             this.edit(workObj);
             //Send to the completion method
             wfCompleteAction(workObj, "Review");
@@ -173,14 +181,14 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
     //This method will check all the work flow implemented types.
     public boolean wfTypesValidation(String wfTypeName) {
         switch (wfTypeName) {
-            case "All approvers":
+            case "All approve":
                 return true;
-            case "50 + 1 approvers":
+            case "Majority approve":
                 return true;
-            case "First approver":
+            case "First to approve":
                 return true;
             default:
-                System.out.println("ejb.DbwfHeaderFacade.wfTypesValidation() -> The required type " + wfTypeName + "is not implemented!");
+                System.out.println("ejb.DbwfHeaderFacade.wfTypesValidation() -> The required type " + wfTypeName + " is not implemented!");
                 break;
         }
         return false;
@@ -194,7 +202,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             String pattern = "^([A-Za-z0-9]){1,10}$";
             for (String tmp : parts) {
                 if (!Pattern.matches(pattern, tmp)) {
-                    return new validateIdObject(false, "The consecutive section " + tmp + " is empty or it's lenght is larger than 10 characters.");
+                    return new validateIdObject(false, "The consecutive section " + tmp + " is empty or it's length is larger than 10 characters.");
                 }
             }
         }
@@ -219,17 +227,17 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
     private boolean validateWfApprovalConditions(DbwfHeader wfObj) {
         if (wfTypesValidation(wfObj.getWfTypeId().getWfTypeName())) {
             switch (wfObj.getWfTypeId().getWfTypeName()) {
-                case "All approvers":
+                case "All approve":
                     if (dbwfLineFacade.validateAllApprovers(wfObj, "A")) {
                         return true;
                     }
                     break;
-                case "50 + 1 approvers":
+                case "Majority approve":
                     if (dbwfLineFacade.validate50plus1Approvers(wfObj, "A")) {
                         return true;
                     }
                     break;
-                case "First approver":
+                case "First to approve":
                     if (dbwfLineFacade.validateFirstApprover(wfObj, "A")) {
                         return true;
                     }
@@ -243,18 +251,18 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
     }
 
     //This method will validate the particular wf conditions (wf business logic for rejections or revisions)
-    //In case one approver rejectes the transaction in the type "All approvers" that transaction won't have future concensus,
+    //In case one approver rejectes the transaction in the type "All approve" that transaction won't have future concensus,
     //therefore the complete flow will rejecte in that case.
     private boolean validateWfRejectionConditions(DbwfHeader wfObj, String rejectOrReview) {
         if (wfTypesValidation(wfObj.getWfTypeId().getWfTypeName())) {
             switch (wfObj.getWfTypeId().getWfTypeName()) {
-                case "50 + 1 approvers":
+                case "Majority approve":
                     if (dbwfLineFacade.validate50plus1Approvers(wfObj, rejectOrReview)) {
                         return true;
                     }
                     break;
-                case "All approvers":
-                case "First approver":
+                case "All approve":
+                case "First to approve":
                     if (dbwfLineFacade.validateFirstApprover(wfObj, rejectOrReview)) {
                         return true;
                     }
@@ -276,5 +284,152 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                 System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The hazazar will be approved.");
                 break;
         }
+    }
+    
+    private String logicOperator(String relationType, int paramNo) {
+        String finalSTR = "";
+        paramNo++;
+        switch (relationType) {
+            case "=":
+                finalSTR = " = ?" + paramNo + " ";
+                break;
+            case "like":
+                finalSTR = " LIKE CONCAT('%', ?" + paramNo + ", '%') ";
+                break;
+            case "in":
+                finalSTR = " IN ?" + paramNo + " ";
+                break;
+        }
+        return finalSTR;
+    }
+    
+    @Override
+    public List<DbwfHeader> findWorkflowsByFieldsOnly(List<searchObject> workflowList) {
+        String querySTR = "SELECT DISTINCT Wf FROM DbwfHeader Wf ";
+        List<DbwfHeader> resultantList = new ArrayList<>();
+        boolean flagEntities = true;
+        boolean flagInitialCycle = true;
+
+        //Adding the alias table according to each object in the list
+        for (int x = 0; x < workflowList.size(); x++) {
+            switch (workflowList.get(x).getEntity1Name()) {
+                case "DbwfHeader":
+                    workflowList.get(x).setTableAlias("Wf");
+                    break;
+                default:
+                    flagEntities = false;
+                    break;
+            }
+        }
+
+        //if some unkown entity was introduced in the list, the function will not go to the next step.
+        if (flagEntities) {
+            //creating all the where criterias
+            for (int x = 0; x < workflowList.size(); x++) {
+                StringBuilder tmpString = new StringBuilder();
+
+                if (flagInitialCycle) {
+                    flagInitialCycle = false;
+                    tmpString.append("WHERE ");
+                } else {
+                    tmpString.append("AND ");
+                }
+
+                if (workflowList.get(x).getEntity3Name() != null) {
+                    tmpString.append(workflowList.get(x).getTableAlias());
+                    tmpString.append(".");
+                    tmpString.append(workflowList.get(x).getEntity2Name());
+                    tmpString.append(".");
+                    tmpString.append(workflowList.get(x).getEntity3Name());
+                    tmpString.append(".");
+                    tmpString.append(workflowList.get(x).getFieldName());
+                    tmpString.append(logicOperator(workflowList.get(x).getRelationType(), x));
+                    querySTR = querySTR + tmpString.toString();
+                } else if (workflowList.get(x).getEntity2Name() != null) {
+                    tmpString.append(workflowList.get(x).getTableAlias());
+                    tmpString.append(".");
+                    tmpString.append(workflowList.get(x).getEntity2Name());
+                    tmpString.append(".");
+                    tmpString.append(workflowList.get(x).getFieldName());
+                    tmpString.append(logicOperator(workflowList.get(x).getRelationType(), x));
+                    querySTR = querySTR + tmpString.toString();
+                } else if (workflowList.get(x).getEntity1Name() != null) {
+                    tmpString.append(workflowList.get(x).getTableAlias());
+                    tmpString.append(".");
+                    tmpString.append(workflowList.get(x).getFieldName());
+                    tmpString.append(logicOperator(workflowList.get(x).getRelationType(), x));
+                    querySTR = querySTR + tmpString.toString();
+                }
+            }
+
+            try {
+                boolean flagParameters = true;
+                Query query = em.createQuery(querySTR);
+                for (int x = 0; x < workflowList.size(); x++) {
+                    int paramNo = x + 1;
+                    switch (workflowList.get(x).getFieldType()) {
+                        case "string":
+                            if ("=".equals(workflowList.get(x).getRelationType())
+                                    || "like".equals(workflowList.get(x).getRelationType())) {
+                                query.setParameter(paramNo, workflowList.get(x).getUserInput());
+                            } else if ("in".equals(workflowList.get(x).getRelationType())) {
+                                String parts[] = workflowList.get(x).getUserInput().split("\\,");
+                                if (parts.length > 0) {
+                                    List<String> inString = new ArrayList<>();
+                                    inString.addAll(Arrays.asList(parts));
+                                    query.setParameter(paramNo, inString);
+                                } else {
+                                    flagParameters = false;
+                                }
+                            }
+                            break;
+                        case "int":
+                            if ("=".equals(workflowList.get(x).getRelationType())
+                                    || "like".equals(workflowList.get(x).getRelationType())) {
+                                query.setParameter(paramNo, Integer.parseInt(workflowList.get(x).getUserInput()));
+                            } else if ("in".equals(workflowList.get(x).getRelationType())) {
+                                String parts[] = workflowList.get(x).getUserInput().split("\\,");
+                                if (parts.length > 0) {
+                                    List<Integer> inInt = new ArrayList<>();
+                                    for (String tmpString : parts) {
+                                        Integer tmpVal = Integer.parseInt(tmpString);
+                                        inInt.add(tmpVal);
+                                    }
+                                    query.setParameter(paramNo, inInt);
+                                } else {
+                                    flagParameters = false;
+                                }
+                            }
+                            break;
+                        case "date":
+                            if ("=".equals(workflowList.get(x).getRelationType())) {
+                                query.setParameter(paramNo, Date.valueOf(workflowList.get(x).getUserInput()));
+                            }
+                            break;
+                        default:
+                            flagParameters = false;
+                            System.out.println("ejb.DbwfHeaderFacade.findWorkflowsByFieldsOnly(): "
+                                    + "The fieldType is not allowed.");
+                            break;
+                    }
+                }
+
+                if (flagParameters) {
+                    resultantList = query.getResultList();
+                } else {
+                    System.out.println("ejb.DbwfHeaderFacade.findWorkflowsByFieldsOnly(): "
+                            + "The function could not find a string separed by commas in a filed marked as IN relationype.");
+                }
+
+            } catch (Exception e) {
+                throw e;
+            }
+
+        } else {
+            System.out.println("ejb.DbwfHeaderFacade.findWorkflowsByFieldsOnly(): "
+                    + "Some entites could not be matched with the managed by this function.");
+        }
+
+        return resultantList;
     }
 }

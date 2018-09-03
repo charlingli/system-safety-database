@@ -32,7 +32,6 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
     public DbwfLineFacade() {
         super(DbwfLine.class);
     }
-
     @Override
     public DbwfLine findByIdAndUser(DbwfLine wfObjLn, int userId) {
         String queryStr;
@@ -145,5 +144,11 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
 
         return numberOfLinesApproved >= 1;
     }
-
+    
+    @Override
+    public List<DbwfLine> findAllOfWF(String wfId) {
+        return em.createQuery("FROM DbwfLine l WHERE l.dbwfLinePK.wfId = :checkwfId")
+                .setParameter("checkwfId", wfId)
+                .getResultList();
+    }
 }
