@@ -281,7 +281,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
         switch (wfObj.getWfCompleteMethod()) {
             case "HazardApprovalWF":
                 //include the logic to this scenario
-                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The hazazar will be approved.");
+                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item will be approved.");
                 break;
         }
     }

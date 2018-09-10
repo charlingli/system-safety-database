@@ -277,7 +277,7 @@ span.commandLinkWhite {
     margin-top: 8px;
     margin-bottom: 8px
 }
-#wfForm\:inputInformation {
+#wfForm\:decisionComments, #wfForm\:decisionMultiple {
     margin: 10px;
     width: calc(100% - 30px);
 }
@@ -305,9 +305,6 @@ span.commandLinkWhite {
 .relationPanel .actions {
     vertical-align: top;
     width: 40%;
-}
-.searchFieldset, resultPanel {
-    width: calc(100% - 5px);
 }
 .searchFieldset .fields {
     vertical-align: top;

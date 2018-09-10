@@ -5,9 +5,8 @@
  */
 package managedBeans;
 
-import ejb.DbriskClassFacadeLocal;
-import entities.DbHazard;
-import entities.DbriskClass;
+import ejb.DbwfDecisionFacadeLocal;
+import entities.DbwfDecision;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -21,18 +20,17 @@ import javax.faces.view.ViewScoped;
  *
  * @author alan8
  */
-@Named(value = "riskClass_MB")
+@Named(value = "workflowDecision_MB")
 @ViewScoped
-public class riskClass_MB implements Serializable {
+public class workflowDecision_MB implements Serializable {
 
     @EJB
-    private DbriskClassFacadeLocal dbriskClassFacade;
+    private DbwfDecisionFacadeLocal dbwfDecisionFacade;
 
-    private List<DbriskClass> listDbRiskClass;
-    private List<DbHazard> listDbHazard;
-    private List<DbriskClass> existingRiskClass; 
+    private List<DbwfDecision> listDbWfDecision;
+    private List<DbwfDecision> existingWfDecision; 
     
-    private DbriskClass riskClassObject = new DbriskClass();
+    private DbwfDecision wfDecisionObject = new DbwfDecision();
 
     private boolean addFlag = false;
     private boolean editFlag = false;
@@ -40,25 +38,25 @@ public class riskClass_MB implements Serializable {
     private boolean editButton = false;
     private boolean deleteButton = false;
     
-    String prevRiskClassName; 
+    String prevWfDecisionName; 
     
-    public riskClass_MB() {
+    public workflowDecision_MB() {
     }
 
-    public List<DbriskClass> getListDbRiskClass() {
-        return listDbRiskClass;
+    public List<DbwfDecision> getListDbWfDecision() {
+        return listDbWfDecision;
     }
 
-    public void setListDbRiskClass(List<DbriskClass> listDbRiskClass) {
-        this.listDbRiskClass = listDbRiskClass;
+    public void setListDbWfDecision(List<DbwfDecision> listDbWfDecision) {
+        this.listDbWfDecision = listDbWfDecision;
     }
 
-    public DbriskClass getRiskClassObject() {
-        return riskClassObject;
+    public DbwfDecision getWfDecisionObject() {
+        return wfDecisionObject;
     }
 
-    public void setRiskClassObject(DbriskClass riskClassObject) {
-        this.riskClassObject = riskClassObject;
+    public void setWfDecisionObject(DbwfDecision wfDecisionObject) {
+        this.wfDecisionObject = wfDecisionObject;
     }
 
     public boolean isAddFlag() {
@@ -103,45 +101,45 @@ public class riskClass_MB implements Serializable {
 
     @PostConstruct
     public void init() {
-        listDbRiskClass = dbriskClassFacade.findAll();
+        listDbWfDecision = dbwfDecisionFacade.findAll();
     }
 
-    public void addRiskClass() {
-        existingRiskClass = dbriskClassFacade.findByName("riskClassName", riskClassObject.getRiskClassName());
+    public void addwfDecision() {
+        existingWfDecision = dbwfDecisionFacade.findByName("wfDecisionName", wfDecisionObject.getWfDecisionName());
         
-        if (existingRiskClass.isEmpty()) {
-            dbriskClassFacade.create(riskClassObject);
+        if (existingWfDecision.isEmpty()) {
+            dbwfDecisionFacade.create(wfDecisionObject);
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already."));
             return;
         }
         
-        riskClassObject = new DbriskClass();
+        wfDecisionObject = new DbwfDecision();
         init();
 
     }
 
-    public void editRiskClass() {
-        existingRiskClass = dbriskClassFacade.findByName("riskClassName", riskClassObject.getRiskClassName());
+    public void editwfDecision() {
+        existingWfDecision = dbwfDecisionFacade.findByName("wfDecisionName", wfDecisionObject.getWfDecisionName());
         
-        if (existingRiskClass.isEmpty() || existingRiskClass.get(0).getRiskClassName().equals(prevRiskClassName)) {
-            dbriskClassFacade.edit(riskClassObject);
+        if (existingWfDecision.isEmpty() || existingWfDecision.get(0).getWfDecisionName().equals(prevWfDecisionName)) {
+            dbwfDecisionFacade.edit(wfDecisionObject);
         } else { 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already."));
             return;
         }
-        riskClassObject = new DbriskClass();
+        wfDecisionObject = new DbwfDecision();
         init();
         editFlag = false;
         addButton = false;
         deleteButton = false;
     }
 
-    public void deleteRiskClass(DbriskClass riskClassObject) {
-        listDbHazard = dbriskClassFacade.checkRiskClass(riskClassObject.getRiskClassId());
+    public void deletewfDecision(DbwfDecision wfDecisionObject) {
+        existingWfDecision = dbwfDecisionFacade.checkWfDecision(wfDecisionObject.getWfDecisionId());
 
-        if (listDbHazard.isEmpty()) {
-            dbriskClassFacade.remove(riskClassObject);
+        if (existingWfDecision.isEmpty()) {
+            dbwfDecisionFacade.remove(wfDecisionObject);
         } else {
             error();
             return;
@@ -155,13 +153,13 @@ public class riskClass_MB implements Serializable {
         editButton = true;
     }
 
-    public void showEdit(DbriskClass riskClassObject) {
+    public void showEdit(DbwfDecision wfDecisionObject) {
         editFlag = true;
         addButton = true;
         deleteButton = true;
 
-        this.riskClassObject = riskClassObject;
-        prevRiskClassName = riskClassObject.getRiskClassName(); 
+        this.wfDecisionObject = wfDecisionObject;
+        prevWfDecisionName = wfDecisionObject.getWfDecisionName(); 
     }
 
     public void cancel() {
@@ -172,7 +170,7 @@ public class riskClass_MB implements Serializable {
         editButton = false;
         deleteButton = false;
 
-        riskClassObject = new DbriskClass();
+        wfDecisionObject = new DbwfDecision();
     }
     
     public void error() {

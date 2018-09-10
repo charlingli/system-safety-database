@@ -7,13 +7,19 @@ package managedBeans;
 
 import customObjects.searchObject;
 import ejb.DbUserFacadeLocal;
+import ejb.DbwfDecisionFacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
 import ejb.DbwfLineFacadeLocal;
+import ejb.DbwfTypeFacadeLocal;
 import entities.DbwfHeader;
 import entities.DbUser;
+import entities.DbwfDecision;
 import entities.DbwfLine;
+import entities.DbwfLinePK;
+import entities.DbwfType;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -32,7 +38,10 @@ import javax.faces.view.ViewScoped;
 public class managementWF_MB implements Serializable {
 
     @EJB
-    private DbUserFacadeLocal dbUserFacade;
+    private DbwfDecisionFacadeLocal dbwfDecisionFacade;
+
+    @EJB
+    private DbwfTypeFacadeLocal dbwfTypeFacade;
 
     @EJB
     private DbwfLineFacadeLocal dbwfLineFacade;
@@ -44,14 +53,10 @@ public class managementWF_MB implements Serializable {
     private List<DbwfHeader> selectWF;
     private DbwfHeader detailWF;
     private List<DbwfLine> detailLine;
-    private DbwfHeader requestWF;
-    private String requestInfo;
-    private boolean searchBox;
-    private boolean dataTable;
-    private boolean cancelBtn;
-    private boolean infoBox;
+    private DbwfHeader approvalWF;
+    private String approvalDecision;
     private String wfID;
-    private String wfStatus;
+    private List<String> wfStatus;
     private String wfAddDT;
     private DbUser wfAddUser;
     private String wfUpdateDT;
@@ -62,6 +67,9 @@ public class managementWF_MB implements Serializable {
     private String wfComment2;
     private String wfComment3;
     private String wfComment4;
+    private List<DbwfType> listwfType;
+    private List<DbwfDecision> listwfDecision;
+    private DbUser activeUser;
 
     public managementWF_MB() {
     }
@@ -98,52 +106,20 @@ public class managementWF_MB implements Serializable {
         this.detailLine = detailLine;
     }
 
-    public DbwfHeader getRequestWF() {
-        return requestWF;
+    public DbwfHeader getApprovalWF() {
+        return approvalWF;
     }
 
-    public void setRequestWF(DbwfHeader requestWF) {
-        this.requestWF = requestWF;
+    public void setApprovalWF(DbwfHeader approvalWF) {
+        this.approvalWF = approvalWF;
     }
 
-    public String getRequestInfo() {
-        return requestInfo;
+    public String getApprovalDecision() {
+        return approvalDecision;
     }
 
-    public void setRequestInfo(String requestInfo) {
-        this.requestInfo = requestInfo;
-    }
-
-    public boolean isSearchBox() {
-        return searchBox;
-    }
-
-    public void setSearchBox(boolean searchBox) {
-        this.searchBox = searchBox;
-    }
-
-    public boolean isDataTable() {
-        return dataTable;
-    }
-
-    public void setDataTable(boolean dataTable) {
-        this.dataTable = dataTable;
-    }
-
-    public boolean isCancelBtn() {
-        return cancelBtn;
-    }
-
-    public void setCancelBtn(boolean cancelBtn) {
-        this.cancelBtn = cancelBtn;
-    }
-
-    public boolean isInfoBox() {
-        return infoBox;
-    }
-
-    public void setInfoBox(boolean infoBox) {
-        this.infoBox = infoBox;
+    public void setApprovalDecision(String approvalDecision) {
+        this.approvalDecision = approvalDecision;
     }
 
     public String getWfID() {
@@ -154,11 +130,11 @@ public class managementWF_MB implements Serializable {
         this.wfID = wfID;
     }
 
-    public String getWfStatus() {
+    public List<String> getWfStatus() {
         return wfStatus;
     }
 
-    public void setWfStatus(String wfStatus) {
+    public void setWfStatus(List<String> wfStatus) {
         this.wfStatus = wfStatus;
     }
 
@@ -241,13 +217,28 @@ public class managementWF_MB implements Serializable {
     public void setWfComment4(String wfComment4) {
         this.wfComment4 = wfComment4;
     }
+
+    public List<DbwfType> getListwfType() {
+        return listwfType;
+    }
+
+    public void setListwfType(List<DbwfType> listwfType) {
+        this.listwfType = listwfType;
+    }
+
+    public List<DbwfDecision> getListwfDecision() {
+        return listwfDecision;
+    }
+
+    public void setListwfDecision(List<DbwfDecision> listwfDecision) {
+        this.listwfDecision = listwfDecision;
+    }
     
     @PostConstruct
     public void init() {
-        searchBox = true;
-        dataTable = false;
-        cancelBtn = false;
-        infoBox = false;
+        activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        setListwfType(dbwfTypeFacade.findAll());
+        setListwfDecision(dbwfDecisionFacade.findAll());
     }
     
     private List<searchObject> createSearchList() {
@@ -310,6 +301,19 @@ public class managementWF_MB implements Serializable {
             tmpSearchObj.setRelationType("like");
             tmpSearchObj.setUserInput(wfComment4);
             searchList.add(tmpSearchObj);
+            tmpSearchObj = new searchObject();
+        }
+        if (wfStatus.size() > 0) {
+            tmpSearchObj.setEntity1Name("DbwfHeader");
+            tmpSearchObj.setFieldName("wfStatus");
+            tmpSearchObj.setFieldType("string");
+            tmpSearchObj.setRelationType("in");
+            String userInputString = "";
+            for (String selectedOption : wfStatus) {
+                userInputString += selectedOption + ",";
+            }
+            tmpSearchObj.setUserInput(userInputString);
+            searchList.add(tmpSearchObj);
         }
 
         return searchList;
@@ -324,43 +328,65 @@ public class managementWF_MB implements Serializable {
         setDetailLine(dbwfLineFacade.findAllOfWF(wfObject.getWfId()));
     }
     
-    public void approveItems(List<DbwfHeader> wfItems) {
+    public void prepareDecision(DbwfHeader wfItem, String decisionId) {
+        setApprovalWF(wfItem);
+        setApprovalDecision(decisionId);
+    }
+    
+    public void sendDecision(String approvalComment) {
+        DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(getApprovalWF().getWfId(), "")), activeUser.getUserId());
+        tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
+        tmpLine.setWfApprovalComment(approvalComment);
+        tmpLine.setWfDateTimeDecision(new Date());
+        dbwfLineFacade.edit(tmpLine);
+        
+        if (getApprovalDecision().equals("A")) {
+            System.out.println("Sending approval of " + getApprovalWF().getWfId() + " with message " + approvalComment);
+            dbwfHeaderFacade.approvalProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
+        } else if (getApprovalDecision().equals("R")) {
+            System.out.println("Sending rejection of " + getApprovalWF().getWfId() + " with message " + approvalComment);
+            dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
+        } else if (getApprovalDecision().equals("I")) {
+            System.out.println("Sending request of " + getApprovalWF().getWfId() + " with message " + approvalComment);
+            dbwfHeaderFacade.reviewProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
+        }
+        setApprovalWF(null);
+        searchWorkflows();
+        init();
+    }
+    
+    public void prepareDecisions(List<DbwfHeader> wfItems, String decisionId) {
         if (wfItems.size() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No items selected for approval."));
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approvals sent for all items."));
-            for (DbwfHeader wfItem : wfItems) {
-                dbwfHeaderFacade.approvalProcess(wfItem, "adminApproval");
+        }
+        setApprovalDecision(decisionId);
+    }
+    
+    public void sendDecisions(String approvalComment) {
+        for (DbwfHeader wfItem : selectWF) {
+            DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfItem.getWfId(), "")), activeUser.getUserId());
+            tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
+            tmpLine.setWfApprovalComment(approvalComment);
+            tmpLine.setWfDateTimeDecision(new Date());
+            dbwfLineFacade.edit(tmpLine);
+            
+            if (getApprovalDecision().equals("A")) {
+                System.out.println("Sending approval of " + wfItem.getWfId() + " with message " + approvalComment);
+                dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+            } else if (getApprovalDecision().equals("R")) {
+                System.out.println("Sending rejection of " + wfItem.getWfId() + " with message " + approvalComment);
+                dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+            } else if (getApprovalDecision().equals("I")) {
+                System.out.println("Sending request of " + wfItem.getWfId() + " with message " + approvalComment);
+                dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
             }
         }
-    }
-    
-    public void approveItem(DbwfHeader wfItem) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approval sent for item."));
-        System.out.println(wfItem.getWfId());
-        dbwfHeaderFacade.approvalProcess(wfItem, "adminApproval");
-    }
-    
-    public void rejectItems(List<DbwfHeader> wfItems) {
-        for (DbwfHeader wfItem : wfItems) {
-//            dbwfHeaderFacade.approvalProcess(wfItem, "adminApproval");
-        }
-        System.out.println("Not yet supported");
-    }
-    
-    public void rejectItem(DbwfHeader wfItem) {
-        System.out.println("Not yet supported");
-    }
-    
-    public void requestItem(DbwfHeader wfItem) {
-        System.out.println("Not yet supported");
-        setRequestWF(wfItem);
-    }
-    
-    public void sendRequest() {
-        System.out.println("Not yet supported");
-        System.out.println("Sending request of " + getRequestWF().getWfId() + " with message " + requestInfo);
-        setRequestInfo("");
-        setRequestWF(null);
+        setApprovalWF(null);
+        searchWorkflows();
+        init();
     }
 }

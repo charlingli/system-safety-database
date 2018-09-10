@@ -8,82 +8,9 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <h:form id="visForm">
+                <h:form id="wfForm">
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:panel class="visPanel">
-                        <div class="visCanvas">
-                            <div id="graphic"></div>
-                            <div class="left">
-                                <ui:repeat value="${hazardViewVis_MB.selectedCauses}" var="CA" varStatus="status">
-                                    <div>
-                                        <h:outputText value="${CA.dbCause.causeDescription}"> </h:outputText>
-                                    </div>
-                                </ui:repeat>
-                            </div>
-                            <div class="mid">
-                                <div>
-                                    <h:outputText value="${hazardViewVis_MB.selectedDescription}"> </h:outputText>
-                                    <div class="frequency">
-                                        <h:outputText value="${hazardViewVis_MB.selectedHazard.riskFrequencyId.frequencyScore}"> </h:outputText>
-                                    </div>
-                                    <div class="severity">
-                                        <h:outputLink value="#">
-                                            <h:outputText value="${hazardViewVis_MB.selectedHazard.riskSeverityId.severityScore}"> </h:outputText>
-                                        </h:outputLink>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right">
-                                <ui:repeat value="${hazardViewVis_MB.selectedConsequences}" var="CQ" varStatus="status">
-                                    <div>
-                                        <h:outputText value="${CQ.dbConsequence.consequenceDescription}"> </h:outputText>
-                                    </div>
-                                </ui:repeat>
-                            </div>
-                            <div class="between">
-                                <div class="mid-left">
-                                    <ui:repeat value="${hazardViewVis_MB.selectedMControls}" var="PC" varStatus="status">
-                                        <div>
-                                            <div class="marker"></div>
-                                            <div class="text">
-                                                <h:outputLink id="PCEntry" value="#">
-                                                    <h:outputText value="#{PC.dbControl.controlDescription}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="PCEntry" value="#{PC.dbControl.controlDescription}" trackMouse="true"/>
-                                            </div>
-                                            <div class="status">
-                                                <h:outputLink id="PCJustify" value="#">
-                                                    <h:outputText value="#{PC.controlRecommendId.controlRecommendName}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="PCJustify" value="#{PC.controlJustify}" trackMouse="true"/>
-                                            </div>
-                                        </div>
-                                    </ui:repeat>
-                                </div>
-                                <div class="mid-right">
-                                    <ui:repeat value="${hazardViewVis_MB.selectedMControls}" var="MC" varStatus="status">
-                                        <div>
-                                            <div class="marker"></div>
-                                            <div class="text">
-                                                <h:outputLink id="MCEntry" value="#">
-                                                    <h:outputText value="#{MC.dbControl.controlDescription}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="MCEntry" value="#{MC.dbControl.controlDescription}" trackMouse="true"/>
-                                            </div>
-                                            <div class="status">
-                                                <h:outputLink id="MCJustify" value="#">
-                                                    <h:outputText value="#{MC.controlRecommendId.controlRecommendName}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="MCJustify" value="#{MC.controlJustify}" trackMouse="true"/>
-                                            </div>
-                                        </div>
-                                    </ui:repeat>
-                                </div>
-                            </div>
-                        </div>
-                    </p:panel>
-                    <p:commandButton value="Generate" oncomplete="buildVis()" action="#{hazardViewVis_MB.constructObject('NEP-ALL-0009')}" update="visForm">  </p:commandButton>
-                    <p:remoteCommand name="updateVis" oncomplete="buildVis()" action="#{hazardViewVis_MB.constructObject('NEP-ALL-0009')}" update="visForm" />
+                    
                 </h:form>
                 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.min.js" />
                 <script type="text/javascript" src="../../resources/js/viewVis.js" />

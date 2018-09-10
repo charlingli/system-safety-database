@@ -13,70 +13,70 @@
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
-                        <p:dataTable id="viewTable" value="#{workflowType_MB.listDbwfType}" var="item" styleClass="parameterTable">
+                        <p:dataTable id="viewTable" value="#{workflowDecision_MB.listDbWfDecision}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current workflow types are: " />
+                                    <h:outputText value="The current workflow decisions are: " />
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Type Id"/>
+                                    <p:outputLabel value="Decision Id"/>
                                 </f:facet>
-                                <p:outputLabel value="#{item.wfTypeId}"/>
+                                <p:outputLabel value="#{item.wfDecisionId}"/>
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
-                                    <p:outputLabel value="Type Name"/>
+                                    <p:outputLabel value="Decision Name"/>
                                 </f:facet>
-                                <p:outputLabel value="#{item.wfTypeName}"/>
+                                <p:outputLabel value="#{item.wfDecisionName}"/>
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{workflowType_MB.editButton}" class="commandLink">
-                                    <f:ajax listener="#{workflowType_MB.showEdit(item)}" execute="@form" render="@form"/>
+                                <h:commandLink value="Edit" disabled="#{workflowDecision_MB.editButton}" class="commandLink">
+                                    <f:ajax listener="#{workflowDecision_MB.showEdit(item)}" execute="@form" render="@form"/>
                                 </h:commandLink> | 
-                                <h:commandLink value="Delete" action="#{workflowType_MB.deletewfType(item)}" immediate="true" 
-                                               onclick="return confirm('Are you sure?')" disabled="#{workflowType_MB.deleteButton}" class="commandLink"/> 
+                                <h:commandLink value="Delete" action="#{workflowDecision_MB.deletewfDecision(item)}" immediate="true" 
+                                               onclick="return confirm('Are you sure?')" disabled="#{workflowDecision_MB.deleteButton}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Risk Class" disabled="#{workflowType_MB.addButton}"> 
-                                <f:ajax listener="#{workflowType_MB.showAdd()}" execute="@form" render="@form"/>
+                            <p:commandButton value="Add Workflow Decision" disabled="#{workflowDecision_MB.addButton}"> 
+                                <f:ajax listener="#{workflowDecision_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
                         <c:choose>
-                            <c:when test="#{workflowType_MB.addFlag}">
+                            <c:when test="#{workflowDecision_MB.addFlag}">
                                 <p class="p-emphasis"><p:outputLabel value="Add"/></p>
                             </c:when>
-                            <c:when test="#{workflowType_MB.editFlag}">
+                            <c:when test="#{workflowDecision_MB.editFlag}">
                                 <p class="p-emphasis"><p:outputLabel value="Edit"/></p>
                             </c:when>
                         </c:choose>
-                        <p:panel class="parameterModifyPanel" rendered="#{workflowType_MB.addFlag or workflowType_MB.editFlag}">
-                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{workflowType_MB.addFlag or workflowType_MB.editFlag}">
-                                <p:outputLabel value="Class Id:" for="wfTypeId" />
-                                <p:inputText id="wfTypeId" value="#{workflowType_MB.wfTypeObject.wfTypeId}" title="ClassId" required="true" requiredMessage="The ClassId field is required."/>
-                                <p:outputLabel value="Class Name:" for="wfTypeName" />
-                                <p:inputText id="wfTypeName" value="#{workflowType_MB.wfTypeObject.wfTypeName}" title="ClassName" required="true" requiredMessage="The ClassName field is required."/>
+                        <p:panel class="parameterModifyPanel" rendered="#{workflowDecision_MB.addFlag or workflowDecision_MB.editFlag}">
+                            <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{workflowDecision_MB.addFlag or workflowDecision_MB.editFlag}">
+                                <p:outputLabel value="Decision Id:" for="wfDecisionId" />
+                                <p:inputText id="wfDecisionId" value="#{workflowDecision_MB.wfDecisionObject.wfDecisionId}" title="Decision Id" required="true" requiredMessage="The Decision Id field is required."/>
+                                <p:outputLabel value="Decision Name:" for="wfDecisionName" />
+                                <p:inputText id="wfDecisionName" value="#{workflowDecision_MB.wfDecisionObject.wfDecisionName}" title="Decision Name" required="true" requiredMessage="The Decision Name field is required."/>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">
                             <c:choose>
-                                <c:when test="#{workflowType_MB.addFlag}">
-                                    <p:commandButton value="Save" action="#{workflowType_MB.addwfType()}" update="viewTable modifyTable"/>   
+                                <c:when test="#{workflowDecision_MB.addFlag}">
+                                    <p:commandButton value="Save" action="#{workflowDecision_MB.addwfDecision()}" update="viewTable modifyTable"/>   
                                     <p:commandButton value="Cancel" immediate="true">
-                                        <f:ajax listener="#{workflowType_MB.cancel()}" execute="@form" render="@form"/>
+                                        <f:ajax listener="#{workflowDecision_MB.cancel()}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                 </c:when>
-                                <c:when test="#{workflowType_MB.editFlag}">
+                                <c:when test="#{workflowDecision_MB.editFlag}">
                                     <p:commandButton value="Save">
-                                        <f:ajax listener="#{workflowType_MB.editwfType()}" execute="@form" render="@form"/>
+                                        <f:ajax listener="#{workflowDecision_MB.editwfDecision()}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                     <p:commandButton value="Cancel" immediate="true">
-                                        <f:ajax listener="#{workflowType_MB.cancel()}" execute="@form" render="@form"/>
+                                        <f:ajax listener="#{workflowDecision_MB.cancel()}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                 </c:when>
                             </c:choose>

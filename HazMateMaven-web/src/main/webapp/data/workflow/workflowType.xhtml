@@ -33,6 +33,18 @@
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
+                                    <p:outputLabel value="Type Description"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.wfTypeDescription}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <p:outputLabel value="Notification Needed?"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.wfTypeSendEmail == 'Y' ? 'Yes' : item.wfTypeSendEmail == 'N' ? 'No' : item.wfTypeSendEmail}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
                                 <h:commandLink value="Edit" disabled="#{workflowType_MB.editButton}" class="commandLink">
@@ -43,7 +55,7 @@
                             </p:column>
                         </p:dataTable>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Risk Class" disabled="#{workflowType_MB.addButton}"> 
+                            <p:commandButton value="Add Workflow Type" disabled="#{workflowType_MB.addButton}"> 
                                 <f:ajax listener="#{workflowType_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
@@ -57,10 +69,18 @@
                         </c:choose>
                         <p:panel class="parameterModifyPanel" rendered="#{workflowType_MB.addFlag or workflowType_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{workflowType_MB.addFlag or workflowType_MB.editFlag}">
-                                <p:outputLabel value="Class Id:" for="wfTypeId" />
-                                <p:inputText id="wfTypeId" value="#{workflowType_MB.wfTypeObject.wfTypeId}" title="ClassId" required="true" requiredMessage="The ClassId field is required."/>
-                                <p:outputLabel value="Class Name:" for="wfTypeName" />
-                                <p:inputText id="wfTypeName" value="#{workflowType_MB.wfTypeObject.wfTypeName}" title="ClassName" required="true" requiredMessage="The ClassName field is required."/>
+                                <p:outputLabel value="Type Id:" for="wfTypeId" />
+                                <p:inputText id="wfTypeId" value="#{workflowType_MB.wfTypeObject.wfTypeId}" title="Type Id" required="true" requiredMessage="The Type Id field is required."/>
+                                <p:outputLabel value="Type Name:" for="wfTypeName" />
+                                <p:inputText id="wfTypeName" value="#{workflowType_MB.wfTypeObject.wfTypeName}" title="Type Name" required="true" requiredMessage="The Type Name field is required."/>
+                                <p:outputLabel value="Type Description:" for="wfTypeDescription" />
+                                <p:inputText id="wfTypeDescription" value="#{workflowType_MB.wfTypeObject.wfTypeDescription}" title="Type Description" required="true" requiredMessage="The Type Name field is required."/>
+                                <p:outputLabel value="Notification Required?" for="wfTypeNotification" />
+                                <p:selectOneMenu class="editInput" id="wfTypeNotification" value="#{workflowType_MB.wfTypeObject.wfTypeSendEmail}" required="true" requiredMessage="The Notification Required field is required.">
+                                    <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Yes" itemValue="Y" />
+                                    <f:selectItem itemLabel="No" itemValue="N" />
+                                </p:selectOneMenu>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">

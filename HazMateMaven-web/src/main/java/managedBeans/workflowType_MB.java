@@ -109,12 +109,10 @@ public class workflowType_MB implements Serializable {
     @PostConstruct
     public void init() {
         listDbwfType = dbwfTypeFacade.findAll();
-        System.out.println("Started");
-        System.out.println(listDbwfType);
     }
 
     public void addwfType() {
-        if (dbwfHeaderFacade.wfTypesValidation(wfTypeObject.getWfTypeName())) {
+        if (!dbwfHeaderFacade.wfTypesValidation(wfTypeObject.getWfTypeName())) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "There is no business logic associated with this workflow type."));
         }
         dbwfTypeFacade.create(wfTypeObject);
