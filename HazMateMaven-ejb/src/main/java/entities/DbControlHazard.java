@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Juan David
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_control_hazard")
@@ -30,9 +30,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "DbControlHazard.findAll", query = "SELECT d FROM DbControlHazard d")
     , @NamedQuery(name = "DbControlHazard.findByHazardId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.hazardId = :hazardId")
-    , @NamedQuery(name = "DbControlHazard.findByControlId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.controlId = :controlId")})
-
+    , @NamedQuery(name = "DbControlHazard.findByControlId", query = "SELECT d FROM DbControlHazard d WHERE d.dbControlHazardPK.controlId = :controlId")
+    , @NamedQuery(name = "DbControlHazard.findByControlType", query = "SELECT d FROM DbControlHazard d WHERE d.controlType = :controlType")
+    , @NamedQuery(name = "DbControlHazard.findByControlExistingOrProposed", query = "SELECT d FROM DbControlHazard d WHERE d.controlExistingOrProposed = :controlExistingOrProposed")})
 public class DbControlHazard implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DbControlHazardPK dbControlHazardPK;
@@ -40,6 +42,16 @@ public class DbControlHazard implements Serializable {
     @Size(max = 65535)
     @Column(name = "controlJustify")
     private String controlJustify;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1)
+    @Column(name = "controlType")
+    private String controlType;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1)
+    @Column(name = "controlExistingOrProposed")
+    private String controlExistingOrProposed;
     @JoinColumn(name = "controlId", referencedColumnName = "controlId", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DbControl dbControl;
@@ -49,11 +61,6 @@ public class DbControlHazard implements Serializable {
     @JoinColumn(name = "hazardId", referencedColumnName = "hazardId", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DbHazard dbHazard;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1)
-    @Column(name = "controlType")
-    private String controlType;
 
     public DbControlHazard() {
     }
@@ -62,9 +69,10 @@ public class DbControlHazard implements Serializable {
         this.dbControlHazardPK = dbControlHazardPK;
     }
 
-    public DbControlHazard(DbControlHazardPK dbControlHazardPK, String controlJustify) {
+    public DbControlHazard(DbControlHazardPK dbControlHazardPK, String controlType, String controlExistingOrProposed) {
         this.dbControlHazardPK = dbControlHazardPK;
-        this.controlJustify = controlJustify;
+        this.controlType = controlType;
+        this.controlExistingOrProposed = controlExistingOrProposed;
     }
 
     public DbControlHazard(String hazardId, int controlId) {
@@ -94,7 +102,15 @@ public class DbControlHazard implements Serializable {
     public void setControlType(String controlType) {
         this.controlType = controlType;
     }
-    
+
+    public String getControlExistingOrProposed() {
+        return controlExistingOrProposed;
+    }
+
+    public void setControlExistingOrProposed(String controlExistingOrProposed) {
+        this.controlExistingOrProposed = controlExistingOrProposed;
+    }
+
     public DbControl getDbControl() {
         return dbControl;
     }
@@ -143,4 +159,5 @@ public class DbControlHazard implements Serializable {
     public String toString() {
         return "entities.DbControlHazard[ dbControlHazardPK=" + dbControlHazardPK + " ]";
     }
+    
 }

@@ -461,6 +461,9 @@ public class trees_MB implements Serializable {
         tmpLine.setWfApprovalComment("Testing approvals");
         tmpLine.setWfDateTimeDecision(new Date());
         
+        
+        
+        
         dbwfLineFacade.edit(tmpLine);
         
         dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfId), trType);

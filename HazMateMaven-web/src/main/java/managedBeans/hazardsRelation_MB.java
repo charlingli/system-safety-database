@@ -6,6 +6,7 @@
 package managedBeans;
 
 import customObjects.searchObject;
+import customObjects.validateIdObject;
 import ejb.DbCauseFacadeLocal;
 import ejb.DbConsequenceFacadeLocal;
 import ejb.DbControlFacadeLocal;
@@ -13,7 +14,9 @@ import ejb.DbControlHazardFacadeLocal;
 import ejb.DbHazardCauseFacadeLocal;
 import ejb.DbHazardConsequenceFacadeLocal;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbUserFacadeLocal;
 import ejb.DbcontrolRecommendFacadeLocal;
+import ejb.DbwfHeaderFacadeLocal;
 import entities.DbCause;
 import entities.DbConsequence;
 import entities.DbControl;
@@ -24,10 +27,14 @@ import entities.DbHazardCause;
 import entities.DbHazardCausePK;
 import entities.DbHazardConsequence;
 import entities.DbHazardConsequencePK;
+import entities.DbUser;
 import entities.DbcontrolRecommend;
+import entities.DbwfHeader;
+import entities.DbwfType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -39,12 +46,16 @@ import javax.faces.view.ViewScoped;
 /**
  *
  * @author Juan David
- * 
+ *
  */
 @Named(value = "hazardsRelation_MB")
 @ViewScoped
 public class hazardsRelation_MB implements Serializable {
 
+    @EJB
+    private DbwfHeaderFacadeLocal dbwfHeaderFacade;
+    @EJB
+    private DbUserFacadeLocal dbUserFacade;
     @EJB
     private DbCauseFacadeLocal dbCauseFacade;
     @EJB
@@ -73,6 +84,9 @@ public class hazardsRelation_MB implements Serializable {
     private List<DbControl> listUnrelatedControls;
     private List<DbControl> listSelectedControls;
     private List<DbcontrolRecommend> listControlRecommends;
+    private List<DbHazardCause> listCausesBeforeEditing;
+    private List<DbHazardConsequence> listConsqsBeforeEditing;
+    private List<DbControlHazard> listControlsBeforeEditing;
     private DbHazard hazardObject;
     private DbControlHazard controlHazardObject;
     private boolean searchBox;
@@ -92,6 +106,7 @@ public class hazardsRelation_MB implements Serializable {
     private String controlType;
     private String controlJustify;
     private String controlSaveAction;
+    private String redirectionSource;
 
     public hazardsRelation_MB() {
     }
@@ -327,7 +342,7 @@ public class hazardsRelation_MB implements Serializable {
     public void setControlType(String controlType) {
         this.controlType = controlType;
     }
-    
+
     @PostConstruct
     public void init() {
         searchBox = true;
@@ -339,6 +354,8 @@ public class hazardsRelation_MB implements Serializable {
         addControl = false;
         addControlJustify = false;
         controlHazardObject = new DbControlHazard();
+        //Validate if this component has been called due to another page redirection.
+        redirectedPage();
     }
 
     public void searchHazards() {
@@ -361,7 +378,7 @@ public class hazardsRelation_MB implements Serializable {
         listUnrelatedCauses = dbCauseFacade.findUnrelatedByHazardId(hazardObject.getHazardId());
         addCause = true;
     }
-    
+
     public void addCauseCancel() {
         addCause = false;
     }
@@ -415,10 +432,10 @@ public class hazardsRelation_MB implements Serializable {
         listUnrelatedConsqs = dbConsequenceFacade.findUnrelatedByHazardId(hazardObject.getHazardId());
         addConq = true;
     }
-    
+
     public void addConquenceCancel() {
         addConq = false;
-    }    
+    }
 
     public List<DbConsequence> showUnrelConsqs(String query) {
         List<DbConsequence> filteredConsqs = new ArrayList<>();
@@ -473,10 +490,10 @@ public class hazardsRelation_MB implements Serializable {
         txtControlIdHazard = false;
         controlSaveAction = "Save";
     }
-    
+
     public void addControlCancel() {
         addControl = false;
-    }    
+    }
 
     public void editControlVisible(DbControlHazard dbControlHazardIn) {
         listControlRecommends = dbcontrolRecommendFacade.findAll();
@@ -487,7 +504,7 @@ public class hazardsRelation_MB implements Serializable {
         setControlRecommendId(controlHazardObject.getControlRecommendId().getControlRecommendId().toString());
         setControlType(controlHazardObject.getControlType());
         setControlJustify(controlHazardObject.getControlJustify());
-        if (controlHazardObject.getControlJustify() != null){
+        if (controlHazardObject.getControlJustify() != null) {
             addControlJustify = true;
         }
     }
@@ -517,6 +534,7 @@ public class hazardsRelation_MB implements Serializable {
         DbcontrolRecommend tmpCtlRecommend = dbcontrolRecommendFacade.find(Integer.parseInt(controlRecommendId));
         controlHazardObject.setDbHazard(hazardObject);
         controlHazardObject.setControlType(controlType);
+        controlHazardObject.setControlExistingOrProposed("J");
         controlHazardObject.setDbControlHazardPK(
                 new DbControlHazardPK(hazardObject.getHazardId(), controlHazardObject.getDbControl().getControlId()));
         controlHazardObject.setControlRecommendId(new DbcontrolRecommend(Integer.parseInt(controlRecommendId)));
@@ -552,7 +570,7 @@ public class hazardsRelation_MB implements Serializable {
         listUnrelatedControls = dbControlFacade.findUnrelatedByHazardId(hazardObject.getHazardId());
     }
 
-    public void cancel() {
+    public void sendToApproval() {
         hazardId = "";
         hazardDescríption = "";
         hazardComment = "";
@@ -570,6 +588,7 @@ public class hazardsRelation_MB implements Serializable {
         listSelectedCauses = new ArrayList<>();
         listSelectedConsqs = new ArrayList<>();
         listSelectedControls = new ArrayList<>();
+        triggerWorkFlow();
     }
 
     private List<searchObject> createSearchList() {
@@ -616,4 +635,41 @@ public class hazardsRelation_MB implements Serializable {
         return searchList;
     }
 
+    //This method controls the behaviour when the hazard relations has been called due to a redirection page from add or edit hazard.
+    private void redirectedPage() {
+        DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
+        if (initialHazard != null) {
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");
+            setHazardId(initialHazard.getHazardId());
+            searchHazards();
+            includeRelations(initialHazard);
+            redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("redirectionSource");
+        }
+        listCausesBeforeEditing = listHazardCauses;
+        listConsqsBeforeEditing = listHazardConsqs;
+        listControlsBeforeEditing = listHazardControls;
+    }
+
+    //Triggers the work flow whenever a new hazard has been added, edited or simply the hazard relations have changed. 
+    private void triggerWorkFlow() {
+        if (redirectionSource.equals("AddHazard")) {
+            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("App. Manager");
+            if (!listApprovers.isEmpty()) {
+                DbwfHeader wfObj = new DbwfHeader();
+                wfObj.setWfTypeId(new DbwfType("W3"));
+                wfObj.setWfStatus("O");
+                wfObj.setWfAddedDateTime(new Date());
+                wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
+                wfObj.setWfObjectId(hazardObject.getHazardId());
+                wfObj.setWfObjectName("Hazard");
+                wfObj.setWfComment1("This flow was created to approve a new hazard in the ssd.");
+                wfObj.setWfCompleteMethod("HazardApprovalWF");
+                validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-HRD");
+                System.out.println(result.getAnswerString());
+            } else {
+                System.out.println("managedBeans.hazardsRelation_MB.triggerWorkFlow() -> There are not users with the role 'App. Manager'");
+            }
+        }
+    }
 }

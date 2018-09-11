@@ -57,8 +57,8 @@ public class DbControlHazardFacade extends AbstractFacade<DbControlHazard> imple
             querySTR = "DELETE FROM DbControlHazard HCtl WHERE HCtl.dbHazard.hazardId = ?1 "
                     + "AND HCtl.dbControl.controlId = ?2 ";
             Query query = em.createQuery(querySTR);
-            query.setParameter(1, dbControlHazard.getDbHazard().getHazardId());
-            query.setParameter(2, dbControlHazard.getDbControl().getControlId());
+            query.setParameter(1, dbControlHazard.getDbControlHazardPK().getHazardId());
+            query.setParameter(2, dbControlHazard.getDbControlHazardPK().getControlId());
 
             rows = query.executeUpdate();
 

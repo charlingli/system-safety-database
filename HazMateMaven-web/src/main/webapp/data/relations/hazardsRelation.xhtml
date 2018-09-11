@@ -86,7 +86,7 @@
                             </p:column>
                         </p:dataTable>
                         <div class="p-emphasis-spacer">
-                            <p:commandLink value="Add Cause" class="commandLink" styleClass="commandLink">
+                            <p:commandLink value="Assign Cause" class="commandLink" styleClass="commandLink">
                                 <f:ajax listener="#{hazardsRelation_MB.addCauseVisible()}" execute="@form" render="@form"/>
                             </p:commandLink>
                         </div>
@@ -131,7 +131,7 @@
                             </p:column>
                         </p:dataTable>
                         <div class="p-emphasis-spacer">
-                            <p:commandLink value="Add Consequence" styleClass="commandLink">
+                            <p:commandLink value="Assign Consequence" styleClass="commandLink">
                                 <f:ajax listener="#{hazardsRelation_MB.addConquenceVisible()}" execute="@form" render="@form"/>
                             </p:commandLink>
                         </div>
@@ -193,7 +193,7 @@
                             </p:column>
                         </p:dataTable>
                         <div class="p-emphasis-spacer">
-                            <p:commandLink value="Add Control" styleClass="commandLink">
+                            <p:commandLink value="Assign Control" styleClass="commandLink">
                                 <f:ajax listener="#{hazardsRelation_MB.addControlVisible()}" execute="@form" render="@form"/>
                             </p:commandLink>
                         </div>
@@ -232,8 +232,8 @@
                         </div>
                     </p:panel>
                     <div class="panelButtons" style="display:#{(hazardsRelation_MB.cancelBtn)?'block':'none'}">
-                        <p:commandButton value="Back">
-                            <f:ajax listener="#{hazardsRelation_MB.cancel()}" execute="@form" render="@form"/>
+                        <p:commandButton value="Submit for Review">
+                            <f:ajax listener="#{hazardsRelation_MB.sendToApproval()}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </div>
                 </h:form>

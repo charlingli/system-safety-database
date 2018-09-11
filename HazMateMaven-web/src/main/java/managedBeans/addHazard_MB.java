@@ -53,6 +53,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -461,6 +462,12 @@ public class addHazard_MB implements Serializable {
 
         clearTree();
         collapsingOrExpanding(root, false);
+    }
+    
+    public String assignRelations(){
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelObj", hazardObject);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("redirectionSource", "AddHazard");
+        return "/data/relations/hazardsRelation";
     }
 
     public void clearTree() {

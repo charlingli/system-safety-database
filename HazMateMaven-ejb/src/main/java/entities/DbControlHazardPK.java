@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author Juan David
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Embeddable
 public class DbControlHazardPK implements Serializable {

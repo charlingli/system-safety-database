@@ -99,6 +99,8 @@
                             <p:commandButton value="Create a new Hazard" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}">
                                 <f:ajax listener="#{addHazard_MB.reinitialize()}" execute="@form" render="@form"/>
                             </p:commandButton>
+                            <p:commandButton value="Assign Relations" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}" 
+                                             action="#{addHazard_MB.assignRelations()}" ajax="false"/>
                         </div>
                     </h:form>
                 </f:view>
