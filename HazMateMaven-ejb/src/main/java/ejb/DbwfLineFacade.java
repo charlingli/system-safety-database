@@ -32,6 +32,7 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
     public DbwfLineFacade() {
         super(DbwfLine.class);
     }
+    
     @Override
     public DbwfLine findByIdAndUser(DbwfLine wfObjLn, int userId) {
         String queryStr;
@@ -55,6 +56,27 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
             throw e;
         }
         return resultLine;       
+    }
+    
+    @Override
+    public List<DbwfLine> findOpenByUser(int userId) {
+        String queryStr;
+        List<DbwfLine> resultantList = new ArrayList<>();
+
+        try {
+            queryStr = "SELECT l FROM DbwfLine l WHERE l.wfUserIdApprover.userId = ?1 " + 
+                    " AND EXISTS (SELECT 'X' FROM DbwfHeader h WHERE h.wfId = l.dbwfLinePK.wfId " + 
+                    " AND h.wfStatus ='O') AND l.wfApproverDecisionId IS NULL";
+            Query query = em.createQuery(queryStr);
+            query.setParameter(1, userId);
+
+            resultantList = query.getResultList();
+
+        } catch (Exception e) {
+
+            throw e;
+        }
+        return resultantList;       
     }
 
     @Override

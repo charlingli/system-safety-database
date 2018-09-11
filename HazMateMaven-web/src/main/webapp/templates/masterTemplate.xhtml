@@ -20,7 +20,7 @@
                 <h:form>
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
                         <f:facet name="options">
-                            <p:commandButton icon="fa fa-dashboard" action="/admin/masterMenu" id="workflows"/>
+                            <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.listWF.size() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflows"/>
                             <p:tooltip id="toolTipWorkflows" for="workflows" value="Workflows" trackMouse="true"/>
                             <p:spacer width="20" height="20"/>
                             <p:commandButton icon="fa fa-home" action="/admin/masterMenu" id="home"/>

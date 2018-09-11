@@ -73,8 +73,10 @@ public class hazardView_MB implements Serializable {
     private String searchedHazardComments;
     private String searchedControlDescription;
     private String searchedControlJustification;
+    private DbHazard detailHazard;
     private String detailHazardId;
     private String detailHazardDescription;
+    private String detailHazardComment;
     private List<DbHazardCause> detailCauses;
     private List<DbHazardConsequence> detailConsequences;
     private List<DbControlHazard> detailControls;
@@ -177,6 +179,14 @@ public class hazardView_MB implements Serializable {
         this.searchedControlJustification = searchedControlJustification;
     }
 
+    public DbHazard getDetailHazard() {
+        return detailHazard;
+    }
+
+    public void setDetailHazard(DbHazard detailHazard) {
+        this.detailHazard = detailHazard;
+    }
+
     public String getDetailHazardId() {
         return detailHazardId;
     }
@@ -191,6 +201,14 @@ public class hazardView_MB implements Serializable {
 
     public void setDetailHazardDescription(String detailHazardDescription) {
         this.detailHazardDescription = detailHazardDescription;
+    }
+
+    public String getDetailHazardComment() {
+        return detailHazardComment;
+    }
+
+    public void setDetailHazardComment(String detailHazardComment) {
+        this.detailHazardComment = detailHazardComment;
     }
 
     public List<DbHazardCause> getDetailCauses() {
@@ -840,8 +858,9 @@ public class hazardView_MB implements Serializable {
     public void showDetail(String hazardId) {
         setDetailHazardId(hazardId);
         setHazardDetailList(dbHazardFacade.findByName("hazardId", getDetailHazardId()));
-        DbHazard detailHazard = getHazardDetailList().get(0);
+        detailHazard = getHazardDetailList().get(0);
         setDetailHazardDescription(detailHazard.getHazardDescription());
+        setDetailHazardComment(detailHazard.getHazardComment());
         detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
         detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
         detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());

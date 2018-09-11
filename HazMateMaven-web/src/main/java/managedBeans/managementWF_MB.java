@@ -341,13 +341,10 @@ public class managementWF_MB implements Serializable {
         dbwfLineFacade.edit(tmpLine);
         
         if (getApprovalDecision().equals("A")) {
-            System.out.println("Sending approval of " + getApprovalWF().getWfId() + " with message " + approvalComment);
             dbwfHeaderFacade.approvalProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
         } else if (getApprovalDecision().equals("R")) {
-            System.out.println("Sending rejection of " + getApprovalWF().getWfId() + " with message " + approvalComment);
             dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
         } else if (getApprovalDecision().equals("I")) {
-            System.out.println("Sending request of " + getApprovalWF().getWfId() + " with message " + approvalComment);
             dbwfHeaderFacade.reviewProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
@@ -373,13 +370,10 @@ public class managementWF_MB implements Serializable {
             dbwfLineFacade.edit(tmpLine);
             
             if (getApprovalDecision().equals("A")) {
-                System.out.println("Sending approval of " + wfItem.getWfId() + " with message " + approvalComment);
                 dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
             } else if (getApprovalDecision().equals("R")) {
-                System.out.println("Sending rejection of " + wfItem.getWfId() + " with message " + approvalComment);
                 dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
             } else if (getApprovalDecision().equals("I")) {
-                System.out.println("Sending request of " + wfItem.getWfId() + " with message " + approvalComment);
                 dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));

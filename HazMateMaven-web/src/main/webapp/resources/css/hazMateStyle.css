@@ -120,6 +120,28 @@ footer {
     border-radius: 4px;
     padding: 2px;
 }
+.workflow-badge:after {
+    content:"!";
+    position: absolute;
+    height:1.2rem;
+    bottom:0.8rem;
+    left:1.2rem;
+    width:1.2rem;
+    text-align: center;
+    font-size: 1rem;
+    border-radius: 50%;
+    color: white;
+    background-color: rgb(243, 114, 134);
+    background-image: -ms-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(252, 196, 205)), to(rgb(243, 114, 134)));
+    background-image: -webkit-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -o-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -moz-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    border: 1px solid rgb(201, 39, 65);
+    border-color: rgb(243, 114, 134) rgb(243, 114, 134) rgb(224, 77, 100);
+    border-bottom-color: rgb(224, 77, 100);
+}
 
 /**
  * Text

@@ -96,11 +96,6 @@
                             </h:panelGrid>
                         </p:panel>
                     </p:fieldset>
-                    <div class="panelButtons">
-                        <p:commandButton value="Search">
-                            <f:ajax listener="#{managementWF_MB.searchWorkflows()}" execute="@form" render="@form"/>
-                        </p:commandButton>
-                    </div>
                     <p:dataTable value="#{managementWF_MB.listWF}" id="wfTable" widgetVar="wfTable"  var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{managementWF_MB.selectWF}" disabledSelection="#{wf.wfStatus == 'A' || wf.wfStatus == 'R'}" rowKey="#{wf.wfId}" scrollable="true" scrollHeight="600">
                         <f:facet name="header">
                             <p:outputPanel>
@@ -118,10 +113,10 @@
                                 <h:outputText value="#{wf.wfId}"/>
                             </p:commandLink>
                         </p:column>
-                        <p:column headerText="Workflow Object Type : ID" styleClass="small">
+                        <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
                             <p:outputLabel value="#{wf.wfObjectName} : #{wf.wfObjectId}" />
                         </p:column>
-                        <p:column headerText="Workflow Status" styleClass="small">
+                        <p:column headerText="Workflow Status &amp; Last Update " styleClass="small">
                             <p:outputLabel value="#{wf.wfStatus == 'O' ? 'Open' : wf.wfStatus == 'A' ? 'Approved' : wf.wfStatus == 'R' ? 'Rejected' : wf.wfStatus == 'I' ? 'Information Requested' : wf.wfStatus} as of #{wf.wfUpdatedDateTime == null ? wf.wfAddedDateTime : wf.wfUpdatedDateTime}"/>
                         </p:column>
                         <p:column headerText="Workflow Owner" styleClass="small">
