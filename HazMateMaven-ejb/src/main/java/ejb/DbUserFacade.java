@@ -57,7 +57,6 @@ public class DbUserFacade extends AbstractFacade<DbUser> implements DbUserFacade
     
     @Override
     public List<DbUser> getUsersByRole(String roleName){
-        DbUser loggedUser = null;
         String querySTR;
         List<DbUser> resultList = new ArrayList<>();
         try {
