@@ -35,5 +35,5 @@ public interface DbUserFacadeLocal {
     DbUser initSession(String userEmail, String password);
     
     List<DbUser> getUsersByRole(String roleName);
-    
+
 }
