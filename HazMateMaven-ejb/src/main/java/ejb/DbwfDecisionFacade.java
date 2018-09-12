@@ -6,6 +6,7 @@
 package ejb;
 
 import entities.DbwfDecision;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +28,14 @@ public class DbwfDecisionFacade extends AbstractFacade<DbwfDecision> implements 
 
     public DbwfDecisionFacade() {
         super(DbwfDecision.class);
+    }
+    
+    @Override
+    public List<DbwfDecision> checkWfDecision(String wfDecisionId)   {
+        return em.createQuery("FROM DbwfHeader w WHERE w.wfApproverDecisionId.wfDecisionId = :checkwfDecisionId")
+                .setParameter("checkwfDecisionId", wfDecisionId)
+                .setMaxResults(10)
+                .getResultList(); 
     }
     
 }

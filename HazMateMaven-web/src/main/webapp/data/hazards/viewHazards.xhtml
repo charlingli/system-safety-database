@@ -87,7 +87,7 @@
                     </p:panel>
                     </p:dialog>
                     <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
-                        <p:panel id="hazardPanel" styleClass="detailHazardPanel">
+                        <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
                             </div>
@@ -96,56 +96,117 @@
                                 <p:outputLabel value="#{hazardView_MB.detailHazardId}" />
                                 <p:outputLabel value="Hazard Description: " />
                                 <p:outputLabel value="#{hazardView_MB.detailHazardDescription}" />
+                                <p:outputLabel value="Hazard Comments: " />
+                                <p:outputLabel value="#{hazardView_MB.detailHazardComment}" />
                             </p:panelGrid>
+                        </p:panel>
+                        <p:panel id="hazardPanel" class="detailHazardPanel">
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="Hazard Information:"/>
+                            </div>
+                            <p:dataTable value="#{hazardView_MB.detailHazard}">
+                                <p:column headerText="SBS Code" styleClass="small">
+                                    <p:outputLabel value="Placeholder"/>
+                                </p:column>
+                                <p:column headerText="Activity" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardContextId.hazardContextName}"/>
+                                </p:column>
+                                <p:column headerText="Context" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardActivity.activityName}"/>
+                                </p:column>
+                                <p:column headerText="Type" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Owner" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.ownerId.ownerName}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="Location Information:"/>
+                            </div>
+                            <p:dataTable value="#{hazardView_MB.detailHazard}">
+                                <p:column headerText="Project" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardLocation.projectId.projectName}"/>
+                                </p:column>
+                                <p:column headerText="Location" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardLocation.locationName}"/>
+                                </p:column>
+                                <p:column headerText="Grade Separation" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardLocation.locationGradeSeparation.gradeSeparationName}"/>
+                                </p:column>
+                                <p:column headerText="Construction Type" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardLocation.locationConstructionType.constructionTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Change Type" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardLocation.locationChangeType.changeTypeName}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="Risk Information:"/>
+                            </div>
+                            <p:dataTable value="#{hazardView_MB.detailHazard}">
+                                <p:column headerText="Class" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskClassId.riskClassName}"/>
+                                </p:column>
+                                <p:column headerText="Frequency" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskFrequencyId.frequencyScore}"/>
+                                </p:column>
+                                <p:column headerText="Severity" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskSeverityId.severityScore}"/>
+                                </p:column>
+                                <p:column headerText="Score" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskScore}"/>
+                                </p:column>
+                            </p:dataTable>
                         </p:panel>
                         <p:panel id="causePanel" class="detailHazardPanel">
                             <div class="p-emphasis-spacer">
                                 <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
                             </div>
-                            <p:dataTable value="#{hazardView_MB.detailCauses}" var="cause" emptyMessage="No causes are associated with this hazard.">
+                            <p:dataTable value="#{hazardView_MB.detailCauses}" var="CA" emptyMessage="No causes are associated with this hazard.">
                                 <p:column headerText="Cause ID" styleClass="small">
-                                    <p:outputLabel value="#{cause.dbCause.causeId}"/>
+                                    <p:outputLabel value="#{CA.dbCause.causeId}"/>
                                 </p:column>
                                 <p:column headerText="Cause Description">
-                                    <p:outputLabel value="#{cause.dbCause.causeDescription}"/>
+                                    <p:outputLabel value="#{CA.dbCause.causeDescription}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>
                         <p:panel id="consequencePanel" styleClass="detailHazardPanel">
                             <h:outputText value="The following consequences are associated with the current hazard:" class="p-emphasis"/>
-                            <p:dataTable value="#{hazardView_MB.detailConsequences}" var="consequence" emptyMessage="No consequences are associated with this hazard.">
+                            <p:dataTable value="#{hazardView_MB.detailConsequences}" var="CQ" emptyMessage="No consequences are associated with this hazard.">
 
                                 <p:column headerText="Consequence ID" styleClass="small">
-                                    <p:outputLabel value="#{consequence.dbConsequence.consequenceId}"/>
+                                    <p:outputLabel value="#{CQ.dbConsequence.consequenceId}"/>
                                 </p:column>
                                 <p:column headerText="Consequence Description" styleClass="detailThick">
-                                    <p:outputLabel value="#{consequence.dbConsequence.consequenceDescription}"/>
+                                    <p:outputLabel value="#{CQ.dbConsequence.consequenceDescription}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>
                         <p:panel id="controlPanel" styleClass="detailHazardPanel">
                             <h:outputText value="The following controls are associated with the current hazard:" class="p-emphasis"/>
-                            <p:dataTable value="#{hazardView_MB.detailControls}" var="control" emptyMessage="No controls are associated with this hazard.">
+                            <p:dataTable value="#{hazardView_MB.detailControls}" var="CO" emptyMessage="No controls are associated with this hazard.">
                                 <p:column headerText="Control Id" styleClass="small">
-                                    <p:outputLabel value="#{control.dbControl.controlId}"/>
+                                    <p:outputLabel value="#{CO.dbControl.controlId}"/>
                                 </p:column>
                                 <p:column headerText="Control Description">
-                                    <p:outputLabel value="#{control.dbControl.controlDescription}"/>
+                                    <p:outputLabel value="#{CO.dbControl.controlDescription}"/>
                                 </p:column>
                                 <p:column headerText="Control Owner" styleClass="small">
-                                    <p:outputLabel value="#{control.dbControl.ownerId.ownerName}"/>
+                                    <p:outputLabel value="#{CO.dbControl.ownerId.ownerName}"/>
                                 </p:column>
                                 <p:column headerText="Control Hierarchy" styleClass="small">
-                                    <p:outputLabel value="#{control.dbControl.controlHierarchyId.controlHierarchyName}"/>
+                                    <p:outputLabel value="#{CO.dbControl.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
                                 <p:column headerText="Control Type" styleClass="small">
-                                    <p:outputLabel value="#{control.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
+                                    <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
                                 </p:column>
                                 <p:column headerText="Control Recommendation" styleClass="small">
-                                    <p:outputLabel value="#{control.controlRecommendId.controlRecommendName}"/>
+                                    <p:outputLabel value="#{CO.controlRecommendId.controlRecommendName}"/>
                                 </p:column>
                                 <p:column headerText="Justification">
-                                    <p:outputLabel value="#{control.controlJustify}"/>
+                                    <p:outputLabel value="#{CO.controlJustify}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>

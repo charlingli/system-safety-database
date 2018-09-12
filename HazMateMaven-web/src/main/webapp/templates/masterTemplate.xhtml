@@ -20,13 +20,16 @@
                 <h:form>
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
                         <f:facet name="options">
-                            <p:commandButton icon="ui-icon-home" action="/admin/masterMenu" id="home"/>
+                            <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.listWF.size() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflows"/>
+                            <p:tooltip id="toolTipWorkflows" for="workflows" value="Workflows" trackMouse="true"/>
+                            <p:spacer width="20" height="20"/>
+                            <p:commandButton icon="fa fa-home" action="/admin/masterMenu" id="home"/>
                             <p:tooltip id="toolTipHome" for="home" value="Home" trackMouse="true"/>
                             <p:spacer width="20" height="20"/>
-                            <p:commandButton icon="ui-icon-person" action="/admin/users/activeUserProfile" id="profile"/> 
+                            <p:commandButton icon="fa fa-user" action="/admin/users/activeUserProfile" id="profile"/> 
                             <p:tooltip id="toolTipProfile" for="profile" value="Profile" trackMouse="true" />
                             <p:spacer width="20" height="20"/>
-                            <p:commandButton icon="ui-icon-power" id="power" actionListener="#{login_MB.closeSession()}" action="/login?faces-redirect=true"/>
+                            <p:commandButton icon="fa fa-power-off" id="power" actionListener="#{login_MB.closeSession()}" action="/login?faces-redirect=true"/>
                             <p:tooltip id="toolTipPower" for="power" value="Logout" trackMouse="true"/>
                             <p:spacer width="20" height="20"/>
                         </f:facet>

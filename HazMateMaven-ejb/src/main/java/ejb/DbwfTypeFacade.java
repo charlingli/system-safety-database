@@ -5,7 +5,9 @@
  */
 package ejb;
 
+import entities.DbwfHeader;
 import entities.DbwfType;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,4 +31,11 @@ public class DbwfTypeFacade extends AbstractFacade<DbwfType> implements DbwfType
         super(DbwfType.class);
     }
     
+    @Override
+    public List<DbwfHeader> checkwfType(String wfTypeId)   {
+        return em.createQuery("FROM DbwfHeader w WHERE w.wfTypeId.wfTypeId = :checkId")
+                .setParameter("checkId", wfTypeId)
+                .setMaxResults(10)
+                .getResultList(); 
+    }
 }

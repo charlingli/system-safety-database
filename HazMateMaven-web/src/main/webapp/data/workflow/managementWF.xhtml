@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <h:form id="wfForm">
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <p:hotkey bind="esc" handler="PF('detailOverlay').hide(); PF('requestOverlay').hide()"></p:hotkey>
+                    <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
+                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
+                        <p:panel id="hazardPanel" styleClass="detailHazardPanel">
+                            <div class="p-heading-spacer">
+                                <p:outputLabel styleClass="p-heading" value="Viewing details of the workflow:"/>
+                            </div>
+                            <p:panelGrid columns="4" class="detailTable" columnClasses="label,,label"> 
+                                <p:outputLabel value="Workflow ID: "/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfId}" />
+                                <p:outputLabel value="Comment 1:"/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment1}" />
+                                <p:outputLabel value="Workflow Object Type &amp; Id "/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfObjectName} : #{managementWF_MB.detailWF.wfObjectId}" />
+                                <p:outputLabel value="Comment 2:" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment2}" />
+                                <p:outputLabel value="Workflow Status &amp; Last Update "/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfStatus == 'O' ? 'Open' : managementWF_MB.detailWF.wfStatus == 'A' ? 'Approved' : managementWF_MB.detailWF.wfStatus == 'R' ? 'Rejected' : managementWF_MB.detailWF.wfStatus == 'I' ? 'Open' : managementWF_MB.detailWF.wfStatus} as of #{managementWF_MB.detailWF.wfUpdatedDateTime == null ? managementWF_MB.detailWF.wfAddedDateTime : managementWF_MB.detailWF.wfUpdatedDateTime}" />
+                                <p:outputLabel value="Comment 3:" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment3}" />
+                                <p:outputLabel value="Workflow Owner "/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfUserIdAdd.firstName} #{managementWF_MB.detailWF.wfUserIdAdd.lastName}" />
+                                <p:outputLabel value="Comment 4:" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment4}" />
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel styleClass="detailHazardPanel">
+                            <h:outputText value="The following users are associated with this workflow:" class="p-emphasis"/>
+                            <p:dataTable value="#{managementWF_MB.detailLine}" var="line" emptyMessage="No updates have been made to this workflow.">
+                                <p:column headerText="Update User" styleClass="small">
+                                    <p:outputLabel value="#{line.wfUserIdApprover.firstName} #{line.wfUserIdApprover.lastName}"/>
+                                </p:column>
+                                <p:column headerText="Update Decision" styleClass="small">
+                                    <p:outputLabel value="#{line.wfApproverDecisionId.wfDecisionName}"/>
+                                </p:column>
+                                <p:column headerText="Update Comments">
+                                    <p:outputLabel value="#{line.wfApprovalComment}"/>
+                                </p:column>
+                                <p:column headerText="Update Timestamp">
+                                    <p:outputLabel value="#{line.wfDateTimeDecision}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:dialog>
+                    <p:dialog id="requestDialog" header="#{managementWF_MB.approvalDecision == 'A' ? 'Approve with comments' : managementWF_MB.approvalDecision == 'R' ? 'Reject with comments' : managementWF_MB.approvalDecision == 'I' ? 'Request for information' : managementWF_MB.approvalDecision}" widgetVar="requestOverlay" height="18vh" width="32vw">
+                        <p:panel styleClass="detailHazardPanel">
+                            <h:outputText value="Information to be sent to workflow owner:" class="p-emphasis"/>
+                            <p:inputTextarea id="decisionComments" binding="#{approvalComment}" />
+                            <p:commandButton value="Send Decision" >
+                                <f:ajax listener="#{managementWF_MB.sendDecision(approvalComment.value)}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </p:panel>
+                    </p:dialog>
+                    <p:dialog id="requestMultipleDialog" header="#{managementWF_MB.approvalDecision == 'A' ? 'Approve all with comments' : managementWF_MB.approvalDecision == 'R' ? 'Reject all with comments' : managementWF_MB.approvalDecision == 'I' ? 'Request for information' : managementWF_MB.approvalDecision}" widgetVar="multipleOverlay" height="18vh" width="32vw">
+                        <p:panel styleClass="detailHazardPanel">
+                            <h:outputText value="Information to be sent to workflow owners:" class="p-emphasis"/>
+                            <p:inputTextarea id="decisionMultiple" binding="#{approvalComments}" />
+                            <p:commandButton value="Send Decisions" >
+                                <f:ajax listener="#{managementWF_MB.sendDecisions(approvalComments.value)}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </p:panel>
+                    </p:dialog>
+                    <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
+                        <p:panel styleClass="searchPanel">
+                            <h:panelGrid columns="2" columnClasses="left,middle">
+                                <p:outputLabel value="Workflow ID: " />
+                                <p:inputText value="#{managementWF_MB.wfID}"/>
+                                <p:outputLabel value="Workflow Object ID: " />
+                                <p:inputText value="#{managementWF_MB.wfObjectID}" />
+                                <p:outputLabel value="Comment 1:" />
+                                <p:inputText value="#{managementWF_MB.wfComment1}" />
+                                <p:outputLabel value="Comment 2:" />
+                                <p:inputText value="#{managementWF_MB.wfComment2}" />
+                                <p:outputLabel value="Comment 3:" />
+                                <p:inputText value="#{managementWF_MB.wfComment3}" />
+                                <p:outputLabel value="Comment 4:" />
+                                <p:inputText value="#{managementWF_MB.wfComment4}" />
+                                <p:outputLabel value="Workflow Status:"/>
+                                <p:selectCheckboxMenu class="searchInput" value="#{managementWF_MB.wfStatus}" label="Workflow Status">
+                                    <f:selectItem itemValue="A" itemLabel="Approved" />
+                                    <f:selectItem itemValue="R" itemLabel="Rejected" />
+                                    <f:selectItem itemValue="I" itemLabel="Open" />
+                                </p:selectCheckboxMenu>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:fieldset>
+                    <p:dataTable value="#{managementWF_MB.listWF}" id="wfTable" widgetVar="wfTable"  var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{managementWF_MB.selectWF}" disabledSelection="#{wf.wfStatus == 'A' || wf.wfStatus == 'R'}" rowKey="#{wf.wfId}" scrollable="true" scrollHeight="600">
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="All workflow entries:" />
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:ajax event="rowSelect" update=":wfForm" />
+                        <p:ajax event="rowUnselect" update=":wfForm" />
+                        <p:ajax event="rowSelectCheckbox" update=":wfForm" />
+                        <p:ajax event="rowUnselectCheckbox" update=":wfForm" />
+                        <p:ajax event="rowUnselectCheckbox" update=":wfForm" />
+                        <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+                        <p:column headerText="Workflow ID" styleClass="small">
+                            <p:commandLink id="ajax" update="wfForm" actionListener="#{managementWF_MB.showDetail(wf)}" oncomplete="PF('detailOverlay').show()" >
+                                <h:outputText value="#{wf.wfId}"/>
+                            </p:commandLink>
+                        </p:column>
+                        <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
+                            <p:outputLabel value="#{wf.wfObjectName} : #{wf.wfObjectId}" />
+                        </p:column>
+                        <p:column headerText="Workflow Status &amp; Last Update " styleClass="small">
+                            <p:outputLabel value="#{wf.wfStatus == 'O' ? 'Open' : wf.wfStatus == 'A' ? 'Approved' : wf.wfStatus == 'R' ? 'Rejected' : wf.wfStatus == 'I' ? 'Information Requested' : wf.wfStatus} as of #{wf.wfUpdatedDateTime == null ? wf.wfAddedDateTime : wf.wfUpdatedDateTime}"/>
+                        </p:column>
+                        <p:column headerText="Workflow Owner" styleClass="small">
+                            <p:outputLabel value="#{wf.wfUserIdAdd.firstName} #{wf.wfUserIdAdd.lastName}"/>
+                        </p:column>
+                        <p:column headerText="Workflow Comments">
+                            <p:outputLabel value="#{wf.wfComment1}"/><br />
+                            <p:outputLabel value="#{wf.wfComment2}"/><br />
+                            <p:outputLabel value="#{wf.wfComment3}"/><br />
+                            <p:outputLabel value="#{wf.wfComment4}"/>
+                        </p:column>
+                        <p:column headerText="Approval Actions" styleClass="small">
+                            <p:commandButton id="approveButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O' and wf.wfStatus != 'I'}" icon="fa fa-check" styleClass="approveButton"/> | 
+                            <p:commandButton id="rejectButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O' and wf.wfStatus != 'I'}" icon="fa fa-times" styleClass="rejectButton"/> | 
+                            <p:commandButton id="requestButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O' and wf.wfStatus != 'I'}" icon="fa fa-info" styleClass="requestButton"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:outputPanel>
+                                <h:outputText value="Selected #{managementWF_MB.selectWF.size()} #{managementWF_MB.selectWF.size() != 1 ? 'workflows' : 'workflow'}. "/>
+                                <p:commandButton action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'A')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-check" styleClass="approveButton"/> | 
+                                <p:commandButton action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'R')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-times" styleClass="rejectButton"/> |  
+                                <p:commandButton action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'I')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-info" styleClass="requestButton"/>
+                            </p:outputPanel>
+                        </f:facet>
+                    </p:dataTable>
+                </h:form>
+            </ui:define> 
+        </ui:composition>
+    </body>
+</html>

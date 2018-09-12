@@ -30,4 +30,7 @@ public interface DbwfDecisionFacadeLocal {
 
     int count();
     
+    List<DbwfDecision> findByName(String fieldName, String fieldValue);
+    
+    List<DbwfDecision> checkWfDecision(String riskClassId);
 }

@@ -5,6 +5,7 @@
  */
 package ejb;
 
+import entities.DbwfHeader;
 import entities.DbwfType;
 import java.util.List;
 import javax.ejb.Local;
@@ -30,4 +31,7 @@ public interface DbwfTypeFacadeLocal {
 
     int count();
     
+    List<DbwfType> findByName(String fieldName, String fieldValue);
+    
+    List<DbwfHeader> checkwfType(String wfTypeId);
 }

@@ -35,6 +35,12 @@
                             </p:column>
                             <p:column>
                                 <f:facet name="header">
+                                    <p:outputLabel value="Justification Required?"/>
+                                </f:facet>
+                                <p:outputLabel value="#{item.controlJustifyRequired == 'Y' ? 'Yes' : item.controlJustifyRequired == 'N' ? 'No' : item.controlJustifyRequired}"/>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
                                 <h:commandLink value="Edit" disabled="#{controlRecommend_MB.editButton}" class="commandLink">
@@ -60,11 +66,17 @@
                         <p:panel class="parameterModifyPanel" rendered="#{controlRecommend_MB.addFlag or controlRecommend_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{controlRecommend_MB.addFlag or controlRecommend_MB.editFlag}">
                                 <c:if test="#{controlRecommend_MB.editFlag}">
-                                    <p:outputLabel value="Recommend Id:" for="controlRecommendId" />
+                                    <p:outputLabel value="Recommendation Id:" for="controlRecommendId" />
                                     <p:inputText id="controlRecommendId" value="#{controlRecommend_MB.controlRecommendObject.controlRecommendId}" disabled="true" title="RecommendId" required="true" requiredMessage="The RecommendId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Recommend Name:" for="controlRecommendName" />
+                                <p:outputLabel value="Recommendation Name:" for="controlRecommendName" />
                                 <p:inputText id="controlRecommendName" value="#{controlRecommend_MB.controlRecommendObject.controlRecommendName}" title="RecommendName" required="true" requiredMessage="The RecommendName field is required."/>
+                                <p:outputLabel value="Justification Required:" for="controlJustifyRequired" />                                
+                                <p:selectOneMenu class="editInput" id="controlJustifyRequired" value="#{controlRecommend_MB.controlRecommendObject.controlJustifyRequired}" required="true" requiredMessage="The ControlJustifyRequired field is required.">
+                                    <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Yes" itemValue="Y" />
+                                    <f:selectItem itemLabel="No" itemValue="N" />
+                                </p:selectOneMenu>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">

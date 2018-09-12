@@ -120,6 +120,28 @@ footer {
     border-radius: 4px;
     padding: 2px;
 }
+.workflow-badge:after {
+    content:"!";
+    position: absolute;
+    height:1.2rem;
+    bottom:0.8rem;
+    left:1.2rem;
+    width:1.2rem;
+    text-align: center;
+    font-size: 1rem;
+    border-radius: 50%;
+    color: white;
+    background-color: rgb(243, 114, 134);
+    background-image: -ms-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(252, 196, 205)), to(rgb(243, 114, 134)));
+    background-image: -webkit-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -o-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -moz-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    border: 1px solid rgb(201, 39, 65);
+    border-color: rgb(243, 114, 134) rgb(243, 114, 134) rgb(224, 77, 100);
+    border-bottom-color: rgb(224, 77, 100);
+}
 
 /**
  * Text
@@ -157,12 +179,62 @@ a.commandLink:hover, .ui-widget-content a:hover {
 span.commandLink {
     color: #008080;
 }
+a.commandLinkWhite {
+    color: #ffffff;
+    text-decoration: underline;
+    font-weight: bold;
+}
+a.commandLinkWhite:hover {
+    color: #ffffff;
+}
+span.commandLinkWhite {
+    color: #ffffff;
+}
+.ui-state-default.approveButton {
+    background-color: rgb(186, 235, 163);
+    background-image: -ms-linear-gradient(top, rgb(242, 253, 237), rgb(186, 235, 163));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(242, 253, 237)), to(rgb(186, 235, 163)));
+    background-image: -webkit-linear-gradient(top, rgb(242, 253, 237), rgb(186, 235, 163));
+    background-image: -o-linear-gradient(top, rgb(242, 253, 237), rgb(186, 235, 163));
+    background-image: linear-gradient(top, rgb(242, 253, 237), rgb(186, 235, 163));
+    background-image: -moz-linear-gradient(top, rgb(242, 253, 237), rgb(186, 235, 163));
+    border: 1px solid rgb(112, 188, 76);
+    border-color: #BAEBA3 #BAEBA3 #9ADE7A;
+    border-bottom-color: #70BC4C;
+    margin: 2px;
+}
+.ui-state-default.rejectButton {
+    background-color: rgb(243, 114, 134);
+    background-image: -ms-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(252, 196, 205)), to(rgb(243, 114, 134)));
+    background-image: -webkit-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -o-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    background-image: -moz-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
+    border: 1px solid rgb(201, 39, 65);
+    border-color: rgb(243, 114, 134) rgb(243, 114, 134) rgb(224, 77, 100);
+    border-bottom-color: rgb(224, 77, 100);
+    margin: 2px;
+}
+.ui-state-default.requestButton {
+    background-color: rgb(255, 222, 151);
+    background-image: -ms-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(255, 244, 222)), to(rgb(255, 222, 151)));
+    background-image: -webkit-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: -o-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: -moz-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    border: 1px solid rgb(179, 139, 52);
+    border-color: rgb(255, 222, 151) rgb(255, 222, 151) rgb(216, 178, 95);
+    border-bottom-color: rgb(216, 178, 95);
+    margin: 2px;
+}
 
 /**
  * Information Set (for detailed hazard/system information)
 **/
 .detailHazardPanel, .systemInformationPanel {
-    width: 100% - 5px;
+    width: calc(100% - 5px);
     margin-top: 8px;
     margin-bottom: 8px
 }
@@ -176,7 +248,7 @@ span.commandLink {
     width: 70%
 }
 .detailTable {
-    width: 60%;
+    width: 100%;
     border: #dddddd 1px solid;
     border-radius: 4px;
     padding: 8px;
@@ -227,6 +299,10 @@ span.commandLink {
     margin-top: 8px;
     margin-bottom: 8px
 }
+#wfForm\:decisionComments, #wfForm\:decisionMultiple {
+    margin: 10px;
+    width: calc(100% - 30px);
+}
 
 /**
  * Searching & Results Set
@@ -251,9 +327,6 @@ span.commandLink {
 .relationPanel .actions {
     vertical-align: top;
     width: 40%;
-}
-.searchFieldset, resultPanel {
-    width: 100% - 5px;
 }
 .searchFieldset .fields {
     vertical-align: top;
