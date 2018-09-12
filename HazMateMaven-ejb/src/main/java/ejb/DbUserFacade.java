@@ -72,5 +72,5 @@ public class DbUserFacade extends AbstractFacade<DbUser> implements DbUserFacade
         
         return resultList;     
     }
-    
-}
+
+    }
