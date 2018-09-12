@@ -34,6 +34,4 @@ public interface DbUserFacadeLocal {
     
     DbUser initSession(String userEmail, String password);
     
-    List<DbUser> findAllOfRole(int roleId);
-    
 }
