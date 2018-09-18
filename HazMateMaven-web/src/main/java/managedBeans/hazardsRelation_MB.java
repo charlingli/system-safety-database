@@ -31,15 +31,19 @@ import entities.DbUser;
 import entities.DbcontrolRecommend;
 import entities.DbwfHeader;
 import entities.DbwfType;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
@@ -84,10 +88,7 @@ public class hazardsRelation_MB implements Serializable {
     private List<DbControl> listUnrelatedControls;
     private List<DbControl> listSelectedControls;
     private List<DbcontrolRecommend> listControlRecommends;
-    private List<DbHazardCause> listCausesBeforeEditing;
-    private List<DbHazardConsequence> listConsqsBeforeEditing;
-    private List<DbControlHazard> listControlsBeforeEditing;
-    private DbHazard hazardObject;
+    private DbHazard hazardObject = new DbHazard();
     private DbControlHazard controlHazardObject;
     private boolean searchBox;
     private boolean dataTable;
@@ -342,7 +343,7 @@ public class hazardsRelation_MB implements Serializable {
     public void setControlType(String controlType) {
         this.controlType = controlType;
     }
-
+    
     @PostConstruct
     public void init() {
         searchBox = true;
@@ -646,9 +647,6 @@ public class hazardsRelation_MB implements Serializable {
             redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("redirectionSource");
         }
-        listCausesBeforeEditing = listHazardCauses;
-        listConsqsBeforeEditing = listHazardConsqs;
-        listControlsBeforeEditing = listHazardControls;
     }
 
     //Triggers the work flow whenever a new hazard has been added, edited or simply the hazard relations have changed. 
@@ -666,7 +664,13 @@ public class hazardsRelation_MB implements Serializable {
                 wfObj.setWfComment1("This flow was created to approve a new hazard in the ssd.");
                 wfObj.setWfCompleteMethod("HazardApprovalWF");
                 validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-HRD");
-                System.out.println(result.getAnswerString());
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/masterMenu.xhtml");
+                    
+                } catch (IOException ex) {
+                    Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //System.out.println(result.getAnswerString());
             } else {
                 System.out.println("managedBeans.hazardsRelation_MB.triggerWorkFlow() -> There are not users with the role 'App. Manager'");
             }
