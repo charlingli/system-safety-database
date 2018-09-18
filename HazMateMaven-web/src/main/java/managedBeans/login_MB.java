@@ -77,7 +77,7 @@ public class login_MB implements Serializable {
     public String initSession() {
         String Redirection = null;
         try {
-            DbUser loggedUser = dbUserFacade.initSession(userEmail, hashPassword(password));            
+            DbUser loggedUser = dbUserFacade.initSession(userEmail, hashPassword(password));
             if (loggedUser != null) {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("activeUser", loggedUser);
                 Redirection = "/admin/masterMenu?faces-redirect=true";
@@ -91,14 +91,17 @@ public class login_MB implements Serializable {
     }
 
     public void validateSession() {
-        try {
-            DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
-
-            if (activeUser == null) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            String ctx = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+            try {
+                DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+                System.out.println("Validation Security -> Page: " + ctx);
+                if (activeUser == null) {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+                }
+            } catch (IOException e) {
+                System.out.println("managedBeans.login_MB.validateSession() -> " + e);
             }
-        } catch (IOException e) {
-
         }
     }
 
