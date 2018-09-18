@@ -35,6 +35,8 @@ public interface DbwfLineFacadeLocal {
     
     DbwfLine findByIdAndUser(DbwfLine wfObjLn, int userId);
     
+    List<DbwfLine> findActiveByUser(int userId);
+    
     List<DbwfLine> findOpenByUser(int userId);
     
     boolean validateAllApprovers(DbwfHeader wfObj, String decisionType);

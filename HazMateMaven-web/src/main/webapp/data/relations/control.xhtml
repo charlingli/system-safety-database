@@ -35,10 +35,10 @@
                                     </f:facet>
                                     <p:outputLabel value="#{item.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
-                                <p:column headerText="Owner" filterBy="#{item.ownerId.ownerName}" filterMatchMode="contains" styleClass="medium" >
+                                <p:column headerText="Owner" filterBy="#{item.ownerId.ownerName}" filterMatchMode="contains" styleClass="medium">
                                     <p:outputLabel value="#{item.ownerId.ownerName}"/>
                                 </p:column>
-                                <p:column headerText="Control Description" filterBy="#{item.controlDescription}" filterMatchMode="contains" >
+                                <p:column headerText="Control Description" filterBy="#{item.controlDescription}" filterMatchMode="contains">
                                     <p:outputLabel value="#{item.controlDescription}"/>
                                 </p:column>
                                 <p:column styleClass="small">
@@ -46,7 +46,7 @@
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
                                     <h:commandLink value="Edit" disabled="#{control_MB.editButton}" class="commandLink">
-                                        <f:ajax listener="#{control_MB.showEdit(item)}" execute="@form" render="@form" />
+                                        <f:ajax listener="#{control_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
                                     <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()"
                                                    onclick="if (!confirm('This action may also disassociate hazards from their control. Do you wish to proceed?')) {
@@ -62,26 +62,26 @@
                                             <p:outputPanel>
                                                 <c:choose>
                                                     <c:when test="#{control_MB.addFlag}">
-                                                        <h:outputText value="Adding control " />
+                                                        <h:outputText value="Adding control "/>
                                                     </c:when>
                                                     <c:when test="#{control_MB.editFlag}">
-                                                        <h:outputText value="Editing control " />
+                                                        <h:outputText value="Editing control "/>
                                                     </c:when>
                                                 </c:choose> 
                                             </p:outputPanel>
                                         </f:facet>
                                         <c:if test="#{control_MB.editFlag}">
-                                            <p:outputLabel value="Control Id:" for="controlId" />
+                                            <p:outputLabel value="Control Id:" for="controlId"/>
                                             <p:inputText id="controlId" value="#{control_MB.controlObject.controlId}" disabled="true" title="ControlId" required="true" requiredMessage="The ControlId field is required."/>
                                         </c:if>
-                                        <p:outputLabel value="Control Description:" for="controlDescription" />
+                                        <p:outputLabel value="Control Description:" for="controlDescription"/>
                                         <p:inputTextarea id="controlDescription" value="#{control_MB.controlObject.controlDescription}" title="ControlDescription" required="true" requiredMessage="The ControlDescription field is required."/>
-                                        <p:outputLabel value="Control Hierarchy:" for="controlHierarchyId" />
+                                        <p:outputLabel value="Control Hierarchy:" for="controlHierarchyId"/>
                                         <p:selectOneMenu id="controlHierarchyId" value="#{control_MB.controlHierarchyId}" title="ControlHierarchyId" required="true" requiredMessage="The ControlHierarchyId field is required.">
                                             <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                             <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="controlHierarchyItem" itemLabel="#{controlHierarchyItem.controlHierarchyName}" itemValue="#{controlHierarchyItem.controlHierarchyId}"/>
                                         </p:selectOneMenu>
-                                        <p:outputLabel value="Owner Id:" for="ownerId" />
+                                        <p:outputLabel value="Owner Id:" for="ownerId"/>
                                         <p:selectOneMenu id="ownerId" value="#{control_MB.ownerId}" title="OwnerId" required="true" requiredMessage="The OwnerId field is required.">
                                             <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                             <f:selectItems value="#{control_MB.listDbOwners}" var="ownersItem" itemLabel="#{ownersItem.ownerName}" itemValue="#{ownersItem.ownerId}"/>

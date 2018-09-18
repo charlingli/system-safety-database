@@ -14,14 +14,14 @@
                     <p:dataTable var="item" value="#{roles_MB.listDbRole}" styleClass="parameterTable">
                         <f:facet name="header">
                             <p:outputPanel>
-                                <h:outputText value="The current system roles are: " />
+                                <h:outputText value="The current system roles are: "/>
                             </p:outputPanel>
                         </f:facet>
                         <p:column headerText="Role Name" class="tableColumn80p">
-                            <p:outputLabel value="#{item.roleName}" />
+                            <p:outputLabel value="#{item.roleName}"/>
                         </p:column>
                         <p:column headerText="Status" class="tableColumn80p">
-                            <p:outputLabel value="#{roles_MB.printStatus(item.roleStatus)}" />
+                            <p:outputLabel value="#{roles_MB.printStatus(item.roleStatus)}"/>
                         </p:column>
                         <p:column headerText="Option" class="tableColumn80p">
                             <p:commandLink value="Edit" action="#{roles_MB.edit(item)}" class="linkActions"/> 

@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{gradeSeparation_MB.listDbGradeSeparation}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current grade separations are: " />
+                                    <h:outputText value="The current grade separations are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{gradeSeparation_MB.addFlag or gradeSeparation_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{gradeSeparation_MB.addFlag or gradeSeparation_MB.editFlag}">
                                 <c:if test="#{gradeSeparation_MB.editFlag}">
-                                    <p:outputLabel value="Type Id:" for="gradeSeparationId" />
+                                    <p:outputLabel value="Type Id:" for="gradeSeparationId"/>
                                     <p:inputText id="gradeSeparationId" value="#{gradeSeparation_MB.gradeSeparationObject.gradeSeparationId}" disabled="true" title="TypeId" required="true" requiredMessage="The TypeId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Type Name:" for="gradeSeparationName" />
+                                <p:outputLabel value="Type Name:" for="gradeSeparationName"/>
                                 <p:inputText id="gradeSeparationName" value="#{gradeSeparation_MB.gradeSeparationObject.gradeSeparationName}" title="TypeName" required="true" requiredMessage="The TypeName field is required."/>
                             </p:panelGrid>
                         </p:panel>

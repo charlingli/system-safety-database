@@ -123,24 +123,24 @@ footer {
 .workflow-badge:after {
     content:"!";
     position: absolute;
-    height:1.2rem;
-    bottom:0.8rem;
-    left:1.2rem;
-    width:1.2rem;
+    height:0.8rem;
+    bottom:1.2rem;
+    left:1.4rem;
+    width:0.8rem;
     text-align: center;
-    font-size: 1rem;
+    font-size: 0.7rem;
     border-radius: 50%;
     color: white;
-    background-color: rgb(243, 114, 134);
-    background-image: -ms-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
-    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(252, 196, 205)), to(rgb(243, 114, 134)));
-    background-image: -webkit-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
-    background-image: -o-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
-    background-image: linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
-    background-image: -moz-linear-gradient(top, rgb(252, 196, 205), rgb(243, 114, 134));
-    border: 1px solid rgb(201, 39, 65);
-    border-color: rgb(243, 114, 134) rgb(243, 114, 134) rgb(224, 77, 100);
-    border-bottom-color: rgb(224, 77, 100);
+    background-color: rgb(214, 29, 58);
+    background-image: -ms-linear-gradient(top, rgb(226, 71, 95), rgb(214, 29, 58));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(226, 71, 95)), to(rgb(214, 29, 58)));
+    background-image: -webkit-linear-gradient(top, rgb(226, 71, 95), rgb(214, 29, 58));
+    background-image: -o-linear-gradient(top, rgb(226, 71, 95), rgb(214, 29, 58));
+    background-image: linear-gradient(top, rgb(226, 71, 95), rgb(214, 29, 58));
+    background-image: -moz-linear-gradient(top, rgb(226, 71, 95), rgb(214, 29, 58));
+    border: 1px solid rgb(226, 71, 95);
+    border-color: rgb(214, 29, 58) rgb(214, 29, 58) rgb(133, 0, 21);
+    border-bottom-color: rgb(133, 0, 21);
 }
 
 /**
@@ -217,6 +217,19 @@ span.commandLinkWhite {
     margin: 2px;
 }
 .ui-state-default.requestButton {
+    background-color: rgb(255, 222, 151);
+    background-image: -ms-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(255, 244, 222)), to(rgb(255, 222, 151)));
+    background-image: -webkit-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: -o-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    background-image: -moz-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
+    border: 1px solid rgb(179, 139, 52);
+    border-color: rgb(255, 222, 151) rgb(255, 222, 151) rgb(216, 178, 95);
+    border-bottom-color: rgb(216, 178, 95);
+    margin: 2px;
+}
+.ui-state-default.resendButton {
     background-color: rgb(255, 222, 151);
     background-image: -ms-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(255, 244, 222)), to(rgb(255, 222, 151)));

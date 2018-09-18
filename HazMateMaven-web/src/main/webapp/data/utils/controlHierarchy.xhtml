@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{controlHierarchy_MB.listDbControlHierarchy}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current control hiararchy types are: " />
+                                    <h:outputText value="The current control hiararchy types are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{controlHierarchy_MB.addFlag or controlHierarchy_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{controlHierarchy_MB.addFlag or controlHierarchy_MB.editFlag}">
                                 <c:if test="#{controlHierarchy_MB.editFlag}">
-                                    <p:outputLabel value="Hierarchy Type Id:" for="controlHierarchyId" />
+                                    <p:outputLabel value="Hierarchy Type Id:" for="controlHierarchyId"/>
                                     <p:inputText id="controlHierarchyId" value="#{controlHierarchy_MB.controlHierarchyObject.controlHierarchyId}" disabled="true" title="HierarchyId" required="true" requiredMessage="The HierarchyId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Hierarchy Type Name:" for="controlHierarchyName" />
+                                <p:outputLabel value="Hierarchy Type Name:" for="controlHierarchyName"/>
                                 <p:inputText id="controlHierarchyName" value="#{controlHierarchy_MB.controlHierarchyObject.controlHierarchyName}" title="HierarchyName" required="true" requiredMessage="The HierarchyName field is required."/>
                             </p:panelGrid>
                         </p:panel>

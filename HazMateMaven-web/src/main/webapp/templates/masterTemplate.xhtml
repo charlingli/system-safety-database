@@ -4,15 +4,16 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <h:head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
-        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon" />
+        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon"/>
         <title>HazMate Main Menu</title>
-        <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0" />
-        <f:event type="preRenderView" listener="#{login_MB.validateSession()}" />
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0"/>
+        <f:event type="preRenderView" listener="#{login_MB.validateSession()}"/>
     </h:head>
     <h:body class="body">
         <header id="top">
@@ -20,14 +21,33 @@
                 <h:form>
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
                         <f:facet name="options">
-                            <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.listWF.size() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflows"/>
-                            <p:tooltip id="toolTipWorkflows" for="workflows" value="Workflows" trackMouse="true"/>
+                            <c:choose>
+                                <c:when test="#{userWF_MB.isAdminUser}">
+                                    <p:menuButton icon="fa fa-tasks" styleClass="#{userWF_MB.listMyWF.size() > 0 || userWF_MB.listOpenWF.size() > 0 ? 'workflow-badge' : ''}" id="workflowAdmin">
+                                        <p:menuitem value="Approve Workflows (#{userWF_MB.listOpenWF.size()})" action="/data/workflow/adminWF" icon="fa fa-check"/>
+                                        <p:menuitem value="Review Workflows (#{userWF_MB.listMyWF.size()})" action="/data/workflow/userWF" icon="fa fa-pencil"/>
+                                    </p:menuButton>
+                                    <p:tooltip id="toolTipWorkflowAdmin" for="workflowAdmin" trackMouse="true">
+                                        <h:outputText value="#{userWF_MB.listOpenWF.size()} workflows requiring approval"/>
+                                        <br />
+                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows requesting review"/>
+                                    </p:tooltip>
+                                </c:when>
+                                <c:otherwise>
+                                    <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.listMyWF.size() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflowUser"/>
+                                    <p:tooltip id="toolTipWorkflowUser" for="workflowUser" trackMouse="true">
+                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows requesting review"/>
+                                    </p:tooltip>
+                                </c:otherwise>
+                            </c:choose>
+                            
+                            
                             <p:spacer width="20" height="20"/>
                             <p:commandButton icon="fa fa-home" action="/admin/masterMenu" id="home"/>
                             <p:tooltip id="toolTipHome" for="home" value="Home" trackMouse="true"/>
                             <p:spacer width="20" height="20"/>
                             <p:commandButton icon="fa fa-user" action="/admin/users/activeUserProfile" id="profile"/> 
-                            <p:tooltip id="toolTipProfile" for="profile" value="Profile" trackMouse="true" />
+                            <p:tooltip id="toolTipProfile" for="profile" value="Profile" trackMouse="true"/>
                             <p:spacer width="20" height="20"/>
                             <p:commandButton icon="fa fa-power-off" id="power" actionListener="#{login_MB.closeSession()}" action="/login?faces-redirect=true"/>
                             <p:tooltip id="toolTipPower" for="power" value="Logout" trackMouse="true"/>
@@ -47,7 +67,7 @@
                 <p:separator />
                 <h:form>
                     <h:outputText value="SSD is licensed using the MIT licence. You can find the complete file "/>
-                    <h:commandLink styleClass="commandLink" value="here" action="/license/hazMateLicense" />
+                    <h:commandLink styleClass="commandLink" value="here" action="/license/hazMateLicense"/>
                     <h:outputText value="."/>
                 </h:form>
             </ui:insert>

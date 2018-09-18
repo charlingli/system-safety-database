@@ -9,14 +9,14 @@
       xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
     <h:head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/recssLayout.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
-        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon" />
+        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon"/>
         <title>HazMate Main Menu</title>
-        <f:event type="preRenderView" listener="#{login_MB.validateSession()}" />
-        <script type="text/javascript" src="../../resources/js/viewHazardExtend.js" />
+        <f:event type="preRenderView" listener="#{login_MB.validateSession()}"/>
+        <script type="text/javascript" src="../../resources/js/viewHazardExtend.js"/>
     </h:head>
     <body>
         <form jsf:id="hazardsForm" jsf:prependId="false">
@@ -67,7 +67,7 @@
                             <div class="utilityDiv ui-g">
                                 <div class="globalFilterDiv ui-g-4">
                                     <p>Global Filter:</p>
-                                    <input type="text" id="gInput" onkeyup="globalFilter()" placeholder="Enter keyword" />
+                                    <input type="text" id="gInput" onkeyup="globalFilter()" placeholder="Enter keyword"/>
                                 </div>
                                 <div class="globalColumnsDiv ui-g-4">
                                     <p>Show/Hide Columms:</p>
@@ -75,14 +75,14 @@
                                 </div>
                                 <div class="globalExportDiv ui-g-4">
                                     <p>Export Hazards:</p>
-                                    <h:commandButton action="#{hazardViewExtend_MB.testFunction()}" value="As .xls" />
+                                    <h:commandButton action="#{hazardViewExtend_MB.testFunction()}" value="As .xls"/>
                                 </div>
                             </div>
                         </th>
                     </tr>
                     <tr>
                         <th class="IDData"><p>Hazard ID</p></th>
-                        <th class="HDData"><p>Hazard Description</p><input type="text" id="HDInput" onkeyup="filterRows()" /></th>
+                        <th class="HDData"><p>Hazard Description</p><input type="text" id="HDInput" onkeyup="filterRows()"/></th>
                         <th class="SCData"><p>Hazard SBS Code</p></th>
                         <th class="SPData"><p>Source Project</p>
                             <select id="SPInput" onchange="filterRows()">
@@ -156,8 +156,8 @@
                                 </ui:repeat>
                             </select> 
                         </th>
-                        <th><p>Hazard Causes</p><input type="text" id="CAInput" onkeyup="filterRows()" /></th>
-                        <th><p>Hazard Consequences</p><input type="text" id="CQInput" onkeyup="filterRows()" /></th>
+                        <th><p>Hazard Causes</p><input type="text" id="CAInput" onkeyup="filterRows()"/></th>
+                        <th><p>Hazard Consequences</p><input type="text" id="CQInput" onkeyup="filterRows()"/></th>
                         <th><p>Risk Category</p>
                             <select id="RCInput" onchange="filterRows()">
                                 <option value="">Risk Category</option>
@@ -169,7 +169,7 @@
                         <th><p>Risk Frequency</p></th>
                         <th><p>Risk Severity</p></th>
                         <th><p>Risk Score</p></th>
-                        <th><p>Control Description</p><input type="text" id="CDInput" onkeyup="filterRows('CD')" /></th>
+                        <th><p>Control Description</p><input type="text" id="CDInput" onkeyup="filterRows('CD')"/></th>
                         <th><p>Control Hierarchy</p>
                             <select id="CHInput" onchange="filterRows()">
                                 <option value="">Control Hierarchy</option>
@@ -202,17 +202,17 @@
                                 </ui:repeat>
                             </select> 
                         </th>
-                        <th><p>Control Justification</p><input type="text" id="CJInput" onkeyup="filterRows()" /></th>
+                        <th><p>Control Justification</p><input type="text" id="CJInput" onkeyup="filterRows()"/></th>
                         <th><p>Date of Entry</p></th>
                         <th><p>Workshop of Entry</p></th>
-                        <th><p>Comments</p><input type="text" id="CMInput" onkeyup="filterRows()" /></th>
+                        <th><p>Comments</p><input type="text" id="CMInput" onkeyup="filterRows()"/></th>
                     </tr>
                 </thead>
                 <tbody>
                     <ui:repeat value="#{hazardViewExtend_MB.hazardSearchedList}" var="hazard" varStatus="status">
                         <tr>
-                            <td class="IDData"><h:outputText value="#{hazard.hazardId}" /></td>
-                            <td class="HDData"><h:outputText value="#{hazard.hazardDescription}" /></td>
+                            <td class="IDData"><h:outputText value="#{hazard.hazardId}"/></td>
+                            <td class="HDData"><h:outputText value="#{hazard.hazardDescription}"/></td>
                             <td class="SCData">
                                 <table>
                                     <ui:repeat value="#{hazardViewExtend_MB.viewSbsCondensed(hazard.hazardId)}" var="code">
@@ -225,21 +225,21 @@
                                     </ui:repeat>
                                 </table>
                             </td>
-                            <td class="SPData"><h:outputText value="#{hazard.hazardLocation.projectId.projectName}" /></td>
-                            <td class="SLData"><h:outputText value="#{hazard.hazardLocation.locationName}" /></td>
-                            <td class="SGData"><h:outputText value="#{hazard.hazardLocation.locationGradeSeparation.gradeSeparationName}" /></td>
-                            <td class="SNData"><h:outputText value="#{hazard.hazardLocation.locationConstructionType.constructionTypeName}" /></td>
-                            <td class="SHData"><h:outputText value="#{hazard.hazardLocation.locationChangeType.changeTypeName}" /></td>
-                            <td class="HCData"><h:outputText value="#{hazard.hazardContextId.hazardContextName}" /></td>
-                            <td class="HAData"><h:outputText value="#{hazard.hazardActivity.activityName}" /></td>
-                            <td class="HTData"><h:outputText value="#{hazard.hazardTypeId.hazardTypeName}" /></td>
-                            <td class="HOData"><h:outputText value="#{hazard.ownerId.ownerName}" /></td>
+                            <td class="SPData"><h:outputText value="#{hazard.hazardLocation.projectId.projectName}"/></td>
+                            <td class="SLData"><h:outputText value="#{hazard.hazardLocation.locationName}"/></td>
+                            <td class="SGData"><h:outputText value="#{hazard.hazardLocation.locationGradeSeparation.gradeSeparationName}"/></td>
+                            <td class="SNData"><h:outputText value="#{hazard.hazardLocation.locationConstructionType.constructionTypeName}"/></td>
+                            <td class="SHData"><h:outputText value="#{hazard.hazardLocation.locationChangeType.changeTypeName}"/></td>
+                            <td class="HCData"><h:outputText value="#{hazard.hazardContextId.hazardContextName}"/></td>
+                            <td class="HAData"><h:outputText value="#{hazard.hazardActivity.activityName}"/></td>
+                            <td class="HTData"><h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/></td>
+                            <td class="HOData"><h:outputText value="#{hazard.ownerId.ownerName}"/></td>
                             <td class="CAData">
                                 <table>
                                     <ui:repeat value="#{hazardViewExtend_MB.viewHazardCause(hazard.hazardId)}" var="cause">
                                         <tr>
                                             <td>
-                                                <h:outputText id="CAEntry" value="#{cause}" />
+                                                <h:outputText id="CAEntry" value="#{cause}"/>
                                             </td>
                                         </tr>
                                     </ui:repeat>
@@ -250,22 +250,22 @@
                                     <ui:repeat value="#{hazardViewExtend_MB.viewHazardConsequence(hazard.hazardId)}" var="consequence">
                                         <tr>
                                             <td>
-                                                <h:outputText id="CQEntry" value="#{consequence}" />
+                                                <h:outputText id="CQEntry" value="#{consequence}"/>
                                             </td>
                                         </tr>
                                     </ui:repeat>
                                 </table>
                             </td>
-                            <td class="RCData"><h:outputText value="#{hazard.riskClassId.riskClassName}" /></td>
-                            <td class="RFData"><h:outputText value="#{hazard.riskFrequencyId.frequencyScore}" /></td>
-                            <td class="RSData"><h:outputText value="#{hazard.riskSeverityId.severityScore}" /></td>
-                            <td class="RRData"><h:outputText value="#{hazard.riskScore}" /></td>
+                            <td class="RCData"><h:outputText value="#{hazard.riskClassId.riskClassName}"/></td>
+                            <td class="RFData"><h:outputText value="#{hazard.riskFrequencyId.frequencyScore}"/></td>
+                            <td class="RSData"><h:outputText value="#{hazard.riskSeverityId.severityScore}"/></td>
+                            <td class="RRData"><h:outputText value="#{hazard.riskScore}"/></td>
                             <td class="CDData">
                                 <table>
                                     <ui:repeat value="#{hazardViewExtend_MB.viewControlDescription(hazard.hazardId)}" var="CD">
                                         <tr>
                                             <td>
-                                                <h:outputText id="CDEntry" value=" #{CD}" />
+                                                <h:outputText id="CDEntry" value=" #{CD}"/>
                                             </td>
                                         </tr>
                                     </ui:repeat>
@@ -306,9 +306,9 @@
                                     </ui:repeat>
                                 </table>
                             </td>
-                            <td class="HEData"><h:outputText value="#{hazard.hazardDate}" /></td>
-                            <td class="HWData"><h:outputText value="#{hazard.hazardWorkshop}" /></td>
-                            <td class="HMData"><h:outputText value="#{hazard.hazardComment}" /></td>
+                            <td class="HEData"><h:outputText value="#{hazard.hazardDate}"/></td>
+                            <td class="HWData"><h:outputText value="#{hazard.hazardWorkshop}"/></td>
+                            <td class="HMData"><h:outputText value="#{hazard.hazardComment}"/></td>
                         </tr>
                         <script> 
                             nLoaded += 1;

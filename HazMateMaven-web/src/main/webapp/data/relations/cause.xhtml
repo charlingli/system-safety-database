@@ -30,7 +30,7 @@
                                 <p:column headerText="Hazard ID" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.hazardId}"/>
                                 </p:column>
-                                <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60" >
+                                <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60">
                                     <p:outputLabel value="#{item.causeDescription}"/>
                                 </p:column>
                                 <p:column styleClass="small">
@@ -50,35 +50,35 @@
                             <p:panel class="relationModifyPanel">
                                 <p:tooltip for="hazardId" showEvent="focus" hideEvent="blur"/>
                                 <p:panel rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{cause_MB.addFlag or cause_MB.editFlag}" >
+                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
                                                     <c:when test="#{cause_MB.addFlag}">
-                                                        <h:outputText value="Adding cause: " />
+                                                        <h:outputText value="Adding cause: "/>
                                                     </c:when>
                                                     <c:when test="#{cause_MB.editFlag}">
-                                                        <h:outputText value="Editing cause: " />
+                                                        <h:outputText value="Editing cause: "/>
                                                     </c:when>
                                                 </c:choose> 
                                             </p:outputPanel>
                                         </f:facet>
                                         <c:if test="#{cause_MB.editFlag}">
-                                            <p:outputLabel value="Cause Id:" for="causeId" />
+                                            <p:outputLabel value="Cause Id:" for="causeId"/>
                                             <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The CauseId field is required."/>
                                         </c:if>
-                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard" />
+                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard"/>
                                         <p:autoComplete id="addHazard" value="#{cause_MB.hazardObject}" completeMethod="#{cause_MB.showHazards}"
                                                         var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
                                                         title="If this cause is also a hazard in another context, please enter the hazard Id">
                                             <p:column>
-                                                <h:outputText value="#{hazard.hazardId}" />
+                                                <h:outputText value="#{hazard.hazardId}"/>
                                             </p:column>
                                             <p:column>
-                                                <h:outputText value="#{hazard.hazardDescription}" />
+                                                <h:outputText value="#{hazard.hazardDescription}"/>
                                             </p:column>
                                         </p:autoComplete>
-                                        <p:outputLabel value="Cause Description:" for="causeDescription" />
+                                        <p:outputLabel value="Cause Description:" for="causeDescription"/>
                                         <p:inputTextarea rows="4" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The CauseDescription field is required."/>
                                     </p:panelGrid>
                                 </p:panel>

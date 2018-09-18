@@ -14,24 +14,24 @@
                         <p:panel class="managementModifyPanel">
                             <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                             <h:panelGrid columns="2" columnClasses="left,middle">
-                                <p:outputLabel value="Role Name:" for="addPermission" />
+                                <p:outputLabel value="Role Name:" for="addPermission"/>
                                 <p:inputText value="#{role_page_MB.rolePageObject.dbRole.roleName}" disabled="true"/>
-                                <p:outputLabel value="Page Name:" for="addPermission" />
+                                <p:outputLabel value="Page Name:" for="addPermission"/>
                                 <p:inputText value="#{role_page_MB.rolePageObject.dbPage.pageName}" disabled="true"/>
-                                <p:outputLabel value="Add permission:" for="addPermission" />
+                                <p:outputLabel value="Add permission:" for="addPermission"/>
                                 <p:selectOneMenu id="addPermission" value="#{role_page_MB.rolePageObject.addPermission}" required="true" styleClass="editInput" requiredMessage="The add permission field is required.">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                     <f:selectItem itemLabel="No" itemValue="N"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Update permission:" for="updatePermission" />
-                                <p:selectOneMenu id="updatePermission" value="#{role_page_MB.rolePageObject.updatePermission}" required="true" styleClass="editInput" requiredMessage="The update permission field is required." >
+                                <p:outputLabel value="Update permission:" for="updatePermission"/>
+                                <p:selectOneMenu id="updatePermission" value="#{role_page_MB.rolePageObject.updatePermission}" required="true" styleClass="editInput" requiredMessage="The update permission field is required.">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                     <f:selectItem itemLabel="No" itemValue="N"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Delete permission:" for="deletePermission" />
-                                <p:selectOneMenu id="deletePermission" value="#{role_page_MB.rolePageObject.deletePermission}" required="true" styleClass="editInput" requiredMessage="The delete permission field is required." >
+                                <p:outputLabel value="Delete permission:" for="deletePermission"/>
+                                <p:selectOneMenu id="deletePermission" value="#{role_page_MB.rolePageObject.deletePermission}" required="true" styleClass="editInput" requiredMessage="The delete permission field is required.">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                     <f:selectItem itemLabel="No" itemValue="N"/>

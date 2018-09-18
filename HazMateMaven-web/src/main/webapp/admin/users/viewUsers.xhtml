@@ -11,10 +11,10 @@
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:dataTable styleClass="managementTableLarge" id="userTable" value="#{users_MB.listUsers}" var="user" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}" >
+                    <p:dataTable styleClass="managementTableLarge" id="userTable" value="#{users_MB.listUsers}" var="user" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}">
                         <f:facet name="header">
                             <p:outputPanel>
-                                <h:outputText value="Search all user entries: " />
+                                <h:outputText value="Search all user entries: "/>
                                 <p:inputText id="globalFilter" onkeyup="PF('usersTable').filter()" placeholder="Enter keyword"/>
                             </p:outputPanel>
                         </f:facet>
@@ -50,25 +50,25 @@
                         </p:column>
                         <p:column filterBy="#{user.roleId.roleName}" filterMatchMode="exact" class="tableColumn150p">
                             <f:facet name="header">
-                                <h:outputText value="Role" />
+                                <h:outputText value="Role"/>
                             </f:facet>
                             <f:facet name="filter">
-                                <p:selectOneMenu onchange="PF('usersTable').filter()" >
-                                    <f:selectItem itemLabel="All Roles" itemValue="#{null}" noSelectionOption="true" />
-                                    <f:selectItems value="#{users_MB.listRoles}" />
+                                <p:selectOneMenu onchange="PF('usersTable').filter()">
+                                    <f:selectItem itemLabel="All Roles" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{users_MB.listRoles}"/>
                                 </p:selectOneMenu>
                             </f:facet>
-                            <h:outputText id="RLEntry" value="#{user.roleId.roleName}" />
+                            <h:outputText id="RLEntry" value="#{user.roleId.roleName}"/>
                         </p:column>
                         <p:column filterBy="#{users_MB.getStatusString(user.userStatus)}" filterMatchMode="exact" class="tableColumn150p">
                             <f:facet name="header">
-                                <h:outputText value="Status" />
+                                <h:outputText value="Status"/>
                             </f:facet>
                             <f:facet name="filter">
-                                <p:selectOneMenu onchange="PF('usersTable').filter()" >
-                                    <f:selectItem itemLabel="All Statuses" itemValue="#{null}" noSelectionOption="true" />
-                                    <f:selectItem itemLabel="Active" itemValue="Active" />
-                                    <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
+                                <p:selectOneMenu onchange="PF('usersTable').filter()">
+                                    <f:selectItem itemLabel="All Statuses" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Active" itemValue="Active"/>
+                                    <f:selectItem itemLabel="Inactive" itemValue="Inactive"/>
                                 </p:selectOneMenu>
                             </f:facet>
                             <h:outputText id="STEntry" value="#{users_MB.getStatusString(user.userStatus)}" class="tableColumn300p"/>

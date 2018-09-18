@@ -11,22 +11,22 @@
                 <h:form id="addMenus">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Menus Structure,Edit Menu')}" escape="false"/></div>
                     <p:panel class="managementModifyPanel">
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" />
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <h:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="Menu Name:" for="menuName"/>
                             <p:inputText id="menuName" value="#{menus_MB.menuObjectVariable.menuName}" required="true" requiredMessage="Menu name is required."/>
                             <p:outputLabel value="Menu Type:" for="menuType"/>
                             <p:selectOneMenu id="menuType" value="#{menus_MB.menuObjectVariable.menuType}" styleClass="editInput" validatorMessage="Menu type is required.">
                                 <f:selectItem itemLabel="Select.." itemValue="#{null}" noSelectionOption="true"/>
-                                <f:selectItem itemLabel="Main Menu" itemValue="M" />
-                                <f:selectItem itemLabel="Submenu" itemValue="S" />
-                                <p:ajax listener="#{menus_MB.loadParents()}" update="menuParent" />
+                                <f:selectItem itemLabel="Main Menu" itemValue="M"/>
+                                <f:selectItem itemLabel="Submenu" itemValue="S"/>
+                                <p:ajax listener="#{menus_MB.loadParents()}" update="menuParent"/>
                             </p:selectOneMenu>
                             <p:outputLabel value="Parent Menu:"/>
                             <p:selectOneMenu id="menuParent" value="#{menus_MB.menuParent}" disabled="#{menus_MB.menuParentDisabled}" styleClass="editInput">
-                                <f:selectItems value="#{menus_MB.listParents}" var="parents" itemValue="#{parents.menuId}" itemLabel="#{parents.menuName}" />
+                                <f:selectItems value="#{menus_MB.listParents}" var="parents" itemValue="#{parents.menuId}" itemLabel="#{parents.menuName}"/>
                             </p:selectOneMenu>
-                            <p:outputLabel value="Menu Icon:" />
+                            <p:outputLabel value="Menu Icon:"/>
                             <p:inputText id="menuIcon" value="#{menus_MB.menuObjectVariable.menuIcon}"/>
                             <p:outputLabel value="Menu Index:" for="menuIndex"/>
                             <p:inputText id="menuIndex" value="#{menus_MB.menuIndex}" required="true" requiredMessage="Menu index is required." validator="menuIndexValidator">

@@ -6,11 +6,16 @@
 package managedBeans;
 
 import customObjects.searchObject;
+import ejb.DbHazardFacadeLocal;
 import ejb.DbUserFacadeLocal;
 import ejb.DbwfDecisionFacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
 import ejb.DbwfLineFacadeLocal;
 import ejb.DbwfTypeFacadeLocal;
+import entities.DbControlHazard;
+import entities.DbHazard;
+import entities.DbHazardCause;
+import entities.DbHazardConsequence;
 import entities.DbwfHeader;
 import entities.DbUser;
 import entities.DbwfDecision;
@@ -38,6 +43,9 @@ import javax.faces.view.ViewScoped;
 public class managementWF_MB implements Serializable {
 
     @EJB
+    private DbHazardFacadeLocal dbHazardFacade;
+
+    @EJB
     private DbwfDecisionFacadeLocal dbwfDecisionFacade;
 
     @EJB
@@ -55,6 +63,10 @@ public class managementWF_MB implements Serializable {
     private List<DbwfLine> detailLine;
     private DbwfHeader approvalWF;
     private String approvalDecision;
+    private DbHazard detailHazard;
+    private List<DbHazardCause> detailCauses;
+    private List<DbHazardConsequence> detailConsequences;
+    private List<DbControlHazard> detailControls;
     private String wfID;
     private List<String> wfStatus;
     private String wfAddDT;
@@ -120,6 +132,38 @@ public class managementWF_MB implements Serializable {
 
     public void setApprovalDecision(String approvalDecision) {
         this.approvalDecision = approvalDecision;
+    }
+
+    public DbHazard getDetailHazard() {
+        return detailHazard;
+    }
+
+    public void setDetailHazard(DbHazard detailHazard) {
+        this.detailHazard = detailHazard;
+    }
+
+    public List<DbHazardCause> getDetailCauses() {
+        return detailCauses;
+    }
+
+    public void setDetailCauses(List<DbHazardCause> detailCauses) {
+        this.detailCauses = detailCauses;
+    }
+
+    public List<DbHazardConsequence> getDetailConsequences() {
+        return detailConsequences;
+    }
+
+    public void setDetailConsequences(List<DbHazardConsequence> detailConsequences) {
+        this.detailConsequences = detailConsequences;
+    }
+
+    public List<DbControlHazard> getDetailControls() {
+        return detailControls;
+    }
+
+    public void setDetailControls(List<DbControlHazard> detailControls) {
+        this.detailControls = detailControls;
     }
 
     public String getWfID() {
@@ -328,6 +372,13 @@ public class managementWF_MB implements Serializable {
         setDetailLine(dbwfLineFacade.findAllOfWF(wfObject.getWfId()));
     }
     
+    public void showHazard(DbwfHeader wfHeader) {
+        setDetailHazard(dbHazardFacade.findByName("hazardId", wfHeader.getWfObjectId()).get(0));
+        detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
+        detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
+        detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
+    }
+    
     public void prepareDecision(DbwfHeader wfItem, String decisionId) {
         setApprovalWF(wfItem);
         setApprovalDecision(decisionId);
@@ -363,20 +414,24 @@ public class managementWF_MB implements Serializable {
     
     public void sendDecisions(String approvalComment) {
         for (DbwfHeader wfItem : selectWF) {
-            DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfItem.getWfId(), "")), activeUser.getUserId());
-            tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
-            tmpLine.setWfApprovalComment(approvalComment);
-            tmpLine.setWfDateTimeDecision(new Date());
-            dbwfLineFacade.edit(tmpLine);
-            
-            if (getApprovalDecision().equals("A")) {
-                dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
-            } else if (getApprovalDecision().equals("R")) {
-                dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
-            } else if (getApprovalDecision().equals("I")) {
-                dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+            if (wfItem.getWfStatus().equals("O")) {
+                DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfItem.getWfId(), "")), activeUser.getUserId());
+                tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
+                tmpLine.setWfApprovalComment(approvalComment);
+                tmpLine.setWfDateTimeDecision(new Date());
+                dbwfLineFacade.edit(tmpLine);
+
+                if (getApprovalDecision().equals("A")) {
+                    dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+                } else if (getApprovalDecision().equals("R")) {
+                    dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+                } else if (getApprovalDecision().equals("I")) {
+                    dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
+                }
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "Some selected workflows already have actions applied."));
             }
         }
         setApprovalWF(null);

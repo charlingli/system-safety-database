@@ -13,27 +13,27 @@
                     <p:hotkey bind="esc" handler="PF('detailOverlay').hide(); PF('requestOverlay').hide()"></p:hotkey>
                     <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
                     <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
-                        <p:panel id="hazardPanel" styleClass="detailHazardPanel">
+                        <p:panel id="workflowPanel" styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the workflow:"/>
                             </div>
                             <p:panelGrid columns="4" class="detailTable" columnClasses="label,,label"> 
                                 <p:outputLabel value="Workflow ID: "/>
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfId}" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfId}"/>
                                 <p:outputLabel value="Comment 1:"/>
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment1}" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment1}"/>
                                 <p:outputLabel value="Workflow Object Type &amp; Id "/>
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfObjectName} : #{managementWF_MB.detailWF.wfObjectId}" />
-                                <p:outputLabel value="Comment 2:" />
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment2}" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfObjectName} : #{managementWF_MB.detailWF.wfObjectId}"/>
+                                <p:outputLabel value="Comment 2:"/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment2}"/>
                                 <p:outputLabel value="Workflow Status &amp; Last Update "/>
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfStatus == 'O' ? 'Open' : managementWF_MB.detailWF.wfStatus == 'A' ? 'Approved' : managementWF_MB.detailWF.wfStatus == 'R' ? 'Rejected' : managementWF_MB.detailWF.wfStatus == 'I' ? 'Open' : managementWF_MB.detailWF.wfStatus} as of #{managementWF_MB.detailWF.wfUpdatedDateTime == null ? managementWF_MB.detailWF.wfAddedDateTime : managementWF_MB.detailWF.wfUpdatedDateTime}" />
-                                <p:outputLabel value="Comment 3:" />
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment3}" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfStatus == 'O' ? 'Open' : managementWF_MB.detailWF.wfStatus == 'A' ? 'Approved' : managementWF_MB.detailWF.wfStatus == 'R' ? 'Rejected' : managementWF_MB.detailWF.wfStatus == 'I' ? 'Open' : managementWF_MB.detailWF.wfStatus} as of #{managementWF_MB.detailWF.wfUpdatedDateTime == null ? managementWF_MB.detailWF.wfAddedDateTime : managementWF_MB.detailWF.wfUpdatedDateTime}"/>
+                                <p:outputLabel value="Comment 3:"/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment3}"/>
                                 <p:outputLabel value="Workflow Owner "/>
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfUserIdAdd.firstName} #{managementWF_MB.detailWF.wfUserIdAdd.lastName}" />
-                                <p:outputLabel value="Comment 4:" />
-                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment4}" />
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfUserIdAdd.firstName} #{managementWF_MB.detailWF.wfUserIdAdd.lastName}"/>
+                                <p:outputLabel value="Comment 4:"/>
+                                <p:outputLabel value="#{managementWF_MB.detailWF.wfComment4}"/>
                             </p:panelGrid>
                         </p:panel>
                         <p:panel styleClass="detailHazardPanel">
@@ -54,20 +54,147 @@
                             </p:dataTable>
                         </p:panel>
                     </p:dialog>
+                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="70vw">
+                        <p:panel styleClass="detailHazardPanel">
+                            <div class="p-heading-spacer">
+                                <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
+                            </div>
+                            <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
+                                <p:outputLabel value="Hazard ID: "/>
+                                <p:outputLabel value="#{managementWF_MB.detailHazard.hazardId}"/>
+                                <p:outputLabel value="Hazard Description: "/>
+                                <p:outputLabel value="#{managementWF_MB.detailHazard.hazardDescription}"/>
+                                <p:outputLabel value="Hazard Comments: "/>
+                                <p:outputLabel value="#{managementWF_MB.detailHazard.hazardComment}"/>
+                            </p:panelGrid>
+                        </p:panel>
+                        <p:panel id="hazardPanel" class="detailHazardPanel">
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="Hazard Information:"/>
+                            </div>
+                            <p:dataTable value="#{managementWF_MB.detailHazard}" emptyMessage="No hazard found.">
+                                <p:column headerText="SBS Code" styleClass="small">
+                                    <p:outputLabel value="Placeholder"/>
+                                </p:column>
+                                <p:column headerText="Activity" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardContextId.hazardContextName}"/>
+                                </p:column>
+                                <p:column headerText="Context" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardActivity.activityName}"/>
+                                </p:column>
+                                <p:column headerText="Type" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Owner" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.ownerId.ownerName}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="Location Information:"/>
+                            </div>
+                            <p:dataTable value="#{managementWF_MB.detailHazard}" emptyMessage="No location details found.">
+                                <p:column headerText="Project" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardLocation.projectId.projectName}"/>
+                                </p:column>
+                                <p:column headerText="Location" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardLocation.locationName}"/>
+                                </p:column>
+                                <p:column headerText="Grade Separation" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardLocation.locationGradeSeparation.gradeSeparationName}"/>
+                                </p:column>
+                                <p:column headerText="Construction Type" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardLocation.locationConstructionType.constructionTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Change Type" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardLocation.locationChangeType.changeTypeName}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="Risk Information:"/>
+                            </div>
+                            <p:dataTable value="#{managementWF_MB.detailHazard}" emptyMessage="No risk details found.">
+                                <p:column headerText="Class" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.riskClassId.riskClassName}"/>
+                                </p:column>
+                                <p:column headerText="Frequency" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.riskFrequencyId.frequencyScore}"/>
+                                </p:column>
+                                <p:column headerText="Severity" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.riskSeverityId.severityScore}"/>
+                                </p:column>
+                                <p:column headerText="Score" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.riskScore}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel id="causePanel" class="detailHazardPanel">
+                            <div class="p-emphasis-spacer">
+                                <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
+                            </div>
+                            <p:dataTable value="#{managementWF_MB.detailCauses}" var="CA" emptyMessage="No causes are associated with this hazard.">
+                                <p:column headerText="Cause ID" styleClass="small">
+                                    <p:outputLabel value="#{CA.dbCause.causeId}"/>
+                                </p:column>
+                                <p:column headerText="Cause Description">
+                                    <p:outputLabel value="#{CA.dbCause.causeDescription}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel id="consequencePanel" styleClass="detailHazardPanel">
+                            <h:outputText value="The following consequences are associated with the current hazard:" class="p-emphasis"/>
+                            <p:dataTable value="#{managementWF_MB.detailConsequences}" var="CQ" emptyMessage="No consequences are associated with this hazard.">
+
+                                <p:column headerText="Consequence ID" styleClass="small">
+                                    <p:outputLabel value="#{CQ.dbConsequence.consequenceId}"/>
+                                </p:column>
+                                <p:column headerText="Consequence Description" styleClass="detailThick">
+                                    <p:outputLabel value="#{CQ.dbConsequence.consequenceDescription}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                        <p:panel id="controlPanel" styleClass="detailHazardPanel">
+                            <h:outputText value="The following controls are associated with the current hazard:" class="p-emphasis"/>
+                            <p:dataTable value="#{managementWF_MB.detailControls}" var="CO" emptyMessage="No controls are associated with this hazard.">
+                                <p:column headerText="Control Id" styleClass="small">
+                                    <p:outputLabel value="#{CO.dbControl.controlId}"/>
+                                </p:column>
+                                <p:column headerText="Control Description">
+                                    <p:outputLabel value="#{CO.dbControl.controlDescription}"/>
+                                </p:column>
+                                <p:column headerText="Control Owner" styleClass="small">
+                                    <p:outputLabel value="#{CO.dbControl.ownerId.ownerName}"/>
+                                </p:column>
+                                <p:column headerText="Control Hierarchy" styleClass="small">
+                                    <p:outputLabel value="#{CO.dbControl.controlHierarchyId.controlHierarchyName}"/>
+                                </p:column>
+                                <p:column headerText="Control Type" styleClass="small">
+                                    <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
+                                </p:column>
+                                <p:column headerText="Control Recommendation" styleClass="small">
+                                    <p:outputLabel value="#{CO.controlRecommendId.controlRecommendName}"/>
+                                </p:column>
+                                <p:column headerText="Justification">
+                                    <p:outputLabel value="#{CO.controlJustify}"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:dialog>
                     <p:dialog id="requestDialog" header="#{managementWF_MB.approvalDecision == 'A' ? 'Approve with comments' : managementWF_MB.approvalDecision == 'R' ? 'Reject with comments' : managementWF_MB.approvalDecision == 'I' ? 'Request for information' : managementWF_MB.approvalDecision}" widgetVar="requestOverlay" height="18vh" width="32vw">
                         <p:panel styleClass="detailHazardPanel">
-                            <h:outputText value="Information to be sent to workflow owner:" class="p-emphasis"/>
-                            <p:inputTextarea id="decisionComments" binding="#{approvalComment}" />
-                            <p:commandButton value="Send Decision" >
+                            <h:outputText value="#{managementWF_MB.approvalDecision == 'A' ? 'Approval comments:' : managementWF_MB.approvalDecision == 'R' ? 'Rejection justification' : managementWF_MB.approvalDecision == 'I' ? 'Information requested:' : managementWF_MB.approvalDecision}" class="p-emphasis"/>
+                            <p:inputTextarea id="decisionComments" binding="#{approvalComment}"/>
+                            <p:commandButton value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve' : managementWF_MB.approvalDecision == 'R' ? 'Reject' : managementWF_MB.approvalDecision == 'I' ? 'Request Information' : managementWF_MB.approvalDecision}">
                                 <f:ajax listener="#{managementWF_MB.sendDecision(approvalComment.value)}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </p:panel>
                     </p:dialog>
                     <p:dialog id="requestMultipleDialog" header="#{managementWF_MB.approvalDecision == 'A' ? 'Approve all with comments' : managementWF_MB.approvalDecision == 'R' ? 'Reject all with comments' : managementWF_MB.approvalDecision == 'I' ? 'Request for information' : managementWF_MB.approvalDecision}" widgetVar="multipleOverlay" height="18vh" width="32vw">
                         <p:panel styleClass="detailHazardPanel">
-                            <h:outputText value="Information to be sent to workflow owners:" class="p-emphasis"/>
-                            <p:inputTextarea id="decisionMultiple" binding="#{approvalComments}" />
-                            <p:commandButton value="Send Decisions" >
+                            <h:outputText value="#{managementWF_MB.approvalDecision == 'A' ? 'Approval comments:' : managementWF_MB.approvalDecision == 'R' ? 'Rejection justification' : managementWF_MB.approvalDecision == 'I' ? 'Information requested:' : managementWF_MB.approvalDecision}" class="p-emphasis"/>
+                            <p:inputTextarea id="decisionMultiple" binding="#{approvalComments}">
+                                <f:validateLength minimum="0"/>
+                            </p:inputTextarea>
+                            <p:commandButton value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve' : managementWF_MB.approvalDecision == 'R' ? 'Reject' : managementWF_MB.approvalDecision == 'I' ? 'Request Information' : managementWF_MB.approvalDecision}">
                                 <f:ajax listener="#{managementWF_MB.sendDecisions(approvalComments.value)}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </p:panel>
@@ -75,46 +202,60 @@
                     <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
                         <p:panel styleClass="searchPanel">
                             <h:panelGrid columns="2" columnClasses="left,middle">
-                                <p:outputLabel value="Workflow ID: " />
+                                <p:outputLabel value="Workflow ID: "/>
                                 <p:inputText value="#{managementWF_MB.wfID}"/>
-                                <p:outputLabel value="Workflow Object ID: " />
-                                <p:inputText value="#{managementWF_MB.wfObjectID}" />
-                                <p:outputLabel value="Comment 1:" />
-                                <p:inputText value="#{managementWF_MB.wfComment1}" />
-                                <p:outputLabel value="Comment 2:" />
-                                <p:inputText value="#{managementWF_MB.wfComment2}" />
-                                <p:outputLabel value="Comment 3:" />
-                                <p:inputText value="#{managementWF_MB.wfComment3}" />
-                                <p:outputLabel value="Comment 4:" />
-                                <p:inputText value="#{managementWF_MB.wfComment4}" />
+                                <p:outputLabel value="Workflow Object ID: "/>
+                                <p:inputText value="#{managementWF_MB.wfObjectID}"/>
+                                <p:outputLabel value="Comment 1:"/>
+                                <p:inputText value="#{managementWF_MB.wfComment1}"/>
+                                <p:outputLabel value="Comment 2:"/>
+                                <p:inputText value="#{managementWF_MB.wfComment2}"/>
+                                <p:outputLabel value="Comment 3:"/>
+                                <p:inputText value="#{managementWF_MB.wfComment3}"/>
+                                <p:outputLabel value="Comment 4:"/>
+                                <p:inputText value="#{managementWF_MB.wfComment4}"/>
                                 <p:outputLabel value="Workflow Status:"/>
                                 <p:selectCheckboxMenu class="searchInput" value="#{managementWF_MB.wfStatus}" label="Workflow Status">
-                                    <f:selectItem itemValue="A" itemLabel="Approved" />
-                                    <f:selectItem itemValue="R" itemLabel="Rejected" />
-                                    <f:selectItem itemValue="I" itemLabel="Open" />
+                                    <f:selectItem itemValue="A" itemLabel="Approved"/>
+                                    <f:selectItem itemValue="R" itemLabel="Rejected"/>
+                                    <f:selectItem itemValue="I" itemLabel="Information Requested"/>
+                                    <f:selectItem itemValue="O" itemLabel="Open"/>
                                 </p:selectCheckboxMenu>
                             </h:panelGrid>
                         </p:panel>
                     </p:fieldset>
+                    <div class="panelButtons">
+                        <p:commandButton value="Search Workflows" action="#{managementWF_MB.searchWorkflows()}" update=":wfForm"/>
+                    </div>
                     <p:dataTable value="#{managementWF_MB.listWF}" id="wfTable" widgetVar="wfTable"  var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{managementWF_MB.selectWF}" disabledSelection="#{wf.wfStatus == 'A' || wf.wfStatus == 'R'}" rowKey="#{wf.wfId}" scrollable="true" scrollHeight="600">
                         <f:facet name="header">
                             <p:outputPanel>
-                                <h:outputText value="All workflow entries:" />
+                                <h:outputText value="All workflow entries:"/>
                             </p:outputPanel>
                         </f:facet>
-                        <p:ajax event="rowSelect" update=":wfForm" />
-                        <p:ajax event="rowUnselect" update=":wfForm" />
-                        <p:ajax event="rowSelectCheckbox" update=":wfForm" />
-                        <p:ajax event="rowUnselectCheckbox" update=":wfForm" />
-                        <p:ajax event="rowUnselectCheckbox" update=":wfForm" />
-                        <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+                        <p:ajax event="rowSelect" update=":wfForm"/>
+                        <p:ajax event="rowUnselect" update=":wfForm"/>
+                        <p:ajax event="rowSelectCheckbox" update=":wfForm"/>
+                        <p:ajax event="rowUnselectCheckbox" update=":wfForm"/>
+                        <p:ajax event="toggleSelect" update=":wfForm"/>
+                        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
                         <p:column headerText="Workflow ID" styleClass="small">
-                            <p:commandLink id="ajax" update="wfForm" actionListener="#{managementWF_MB.showDetail(wf)}" oncomplete="PF('detailOverlay').show()" >
+                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{managementWF_MB.showDetail(wf)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.wfId}"/>
                             </p:commandLink>
+                            <p:tooltip for="wfAjax">
+                                <i class="fa fa-search"/>
+                                <h:outputText value=" View Workflow"/>
+                            </p:tooltip>
                         </p:column>
                         <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
-                            <p:outputLabel value="#{wf.wfObjectName} : #{wf.wfObjectId}" />
+                            <p:commandLink id="objAjax" update=":wfForm" actionListener="#{managementWF_MB.showHazard(wf)}" oncomplete="PF('objectOverlay').show()">
+                                <h:outputText value="#{wf.wfObjectName} : #{wf.wfObjectId}"/>
+                            </p:commandLink>
+                            <p:tooltip for="objAjax">
+                                <i class="fa fa-search"/>
+                                <h:outputText value=" View Hazard"/>
+                            </p:tooltip>
                         </p:column>
                         <p:column headerText="Workflow Status &amp; Last Update " styleClass="small">
                             <p:outputLabel value="#{wf.wfStatus == 'O' ? 'Open' : wf.wfStatus == 'A' ? 'Approved' : wf.wfStatus == 'R' ? 'Rejected' : wf.wfStatus == 'I' ? 'Information Requested' : wf.wfStatus} as of #{wf.wfUpdatedDateTime == null ? wf.wfAddedDateTime : wf.wfUpdatedDateTime}"/>
@@ -129,9 +270,9 @@
                             <p:outputLabel value="#{wf.wfComment4}"/>
                         </p:column>
                         <p:column headerText="Approval Actions" styleClass="small">
-                            <p:commandButton id="approveButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O' and wf.wfStatus != 'I'}" icon="fa fa-check" styleClass="approveButton"/> | 
-                            <p:commandButton id="rejectButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O' and wf.wfStatus != 'I'}" icon="fa fa-times" styleClass="rejectButton"/> | 
-                            <p:commandButton id="requestButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O' and wf.wfStatus != 'I'}" icon="fa fa-info" styleClass="requestButton"/>
+                            <p:commandButton id="approveButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-check" styleClass="approveButton"/> | 
+                            <p:commandButton id="rejectButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-times" styleClass="rejectButton"/> | 
+                            <p:commandButton id="requestButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-info" styleClass="requestButton"/>
                         </p:column>
                         <f:facet name="footer">
                             <p:outputPanel>

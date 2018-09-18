@@ -6,6 +6,7 @@
 package managedBeans;
 
 import ejb.DbHazardFacadeLocal;
+import ejb.DbUserFacadeLocal;
 import entities.DbControlHazard;
 import entities.DbHazard;
 import entities.DbHazardCause;
@@ -23,7 +24,11 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class hazardViewVis_MB {
     @EJB
+    private DbUserFacadeLocal dbUserFacade;
+    
+    @EJB
     private DbHazardFacadeLocal dbHazardFacade;
+    
     private List<DbHazard> listDbHazard;
     private DbHazard selectedHazard;
     private String selectedDescription;
@@ -95,5 +100,9 @@ public class hazardViewVis_MB {
         setSelectedConsequences(dbHazardFacade.getHazardConsequence(selectedHazard.getHazardId()));
         setSelectedMControls(dbHazardFacade.getMControlHazard(selectedHazard.getHazardId()));
         setSelectedPControls(dbHazardFacade.getPControlHazard(selectedHazard.getHazardId()));
+    }
+    
+    public void testPageAccess() {
+        System.out.println(dbUserFacade.getPageAccessForUser(1, "Users Definition"));
     }
 }

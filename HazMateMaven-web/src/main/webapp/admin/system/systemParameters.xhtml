@@ -14,21 +14,21 @@
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:panelGrid columns="2" class="detailTable" rendered="#{systemParams_MB.infoBox}" columnClasses="label"> 
                         <p:outputLabel value="Email Manager: "/>
-                        <p:outputLabel value="#{systemParams_MB.managerEmail}" />
-                        <p:outputLabel value="HazMate License: " />
+                        <p:outputLabel value="#{systemParams_MB.managerEmail}"/>
+                        <p:outputLabel value="HazMate License: "/>
                         <h:outputText value="#{systemParams_MB.licenseText}" styleClass="resultBox"/>
                     </p:panelGrid>
-                    <div class="panelButtons" >
+                    <div class="panelButtons">
                         <p:commandButton value="Edit Parameters" rendered="#{systemParams_MB.infoBox}">
                             <f:ajax listener="#{systemParams_MB.editParameters}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </div>
                     <p:panel rendered="#{systemParams_MB.editBox}" styleClass="systemInformationPanel">
                         <h:panelGrid columns="2" rendered="#{systemParams_MB.editBox}">
-                            <p:outputLabel value="Email Manager: " for="email" />
-                            <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="input" />
-                            <p:outputLabel value="License Text: " for="license" />
-                            <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="input" />
+                            <p:outputLabel value="Email Manager: " for="email"/>
+                            <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="input"/>
+                            <p:outputLabel value="License Text: " for="license"/>
+                            <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="input"/>
                         </h:panelGrid>
                     </p:panel>
                     <div style="display:#{systemParams_MB.editBox}?'block':'none'}">

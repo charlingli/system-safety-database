@@ -16,7 +16,7 @@
                         <p:dataTable id="viewTable" value="#{workflowDecision_MB.listDbWfDecision}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current workflow decisions are: " />
+                                    <h:outputText value="The current workflow decisions are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -57,9 +57,9 @@
                         </c:choose>
                         <p:panel class="parameterModifyPanel" rendered="#{workflowDecision_MB.addFlag or workflowDecision_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{workflowDecision_MB.addFlag or workflowDecision_MB.editFlag}">
-                                <p:outputLabel value="Decision Id:" for="wfDecisionId" />
+                                <p:outputLabel value="Decision Id:" for="wfDecisionId"/>
                                 <p:inputText id="wfDecisionId" value="#{workflowDecision_MB.wfDecisionObject.wfDecisionId}" title="Decision Id" required="true" requiredMessage="The Decision Id field is required."/>
-                                <p:outputLabel value="Decision Name:" for="wfDecisionName" />
+                                <p:outputLabel value="Decision Name:" for="wfDecisionName"/>
                                 <p:inputText id="wfDecisionName" value="#{workflowDecision_MB.wfDecisionObject.wfDecisionName}" title="Decision Name" required="true" requiredMessage="The Decision Name field is required."/>
                             </p:panelGrid>
                         </p:panel>

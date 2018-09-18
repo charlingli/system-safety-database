@@ -15,16 +15,16 @@
                         <p:panel>
                             <p class="p-heading">My Profile</p>
                             <p:panelGrid columns="2" class="profileTable" columnClasses="label">
-                                <p:outputLabel value="Name:" />
-                                <h:outputText value="#{activeUser_MB.activeUserName}" />
-                                <p:outputLabel value="Company:" />
-                                <h:outputText value="#{activeUser_MB.activeUserCompany}" />
-                                <p:outputLabel value="Position:" />
-                                <h:outputText value="#{activeUser_MB.activeUserPosition}" />
-                                <p:outputLabel value="Mobile Number:" />
-                                <h:outputText value="#{activeUser_MB.activeUserPosition}" />
-                                <p:outputLabel value="Email:" />
-                                <h:outputText value="#{activeUser_MB.activeUserPosition}" />
+                                <p:outputLabel value="Name:"/>
+                                <h:outputText value="#{activeUser_MB.activeUserName}"/>
+                                <p:outputLabel value="Company:"/>
+                                <h:outputText value="#{activeUser_MB.activeUserCompany}"/>
+                                <p:outputLabel value="Position:"/>
+                                <h:outputText value="#{activeUser_MB.activeUserPosition}"/>
+                                <p:outputLabel value="Mobile Number:"/>
+                                <h:outputText value="#{activeUser_MB.activeUserPosition}"/>
+                                <p:outputLabel value="Email:"/>
+                                <h:outputText value="#{activeUser_MB.activeUserPosition}"/>
                             </p:panelGrid>
                         </p:panel>
                         <p:accordionPanel id="profileFields" multiple="true" activeIndex="null">
@@ -38,11 +38,11 @@
                                     <h:inputSecret id="currentPassword" value="#{activeUser_MB.currentPassword}" title="First Name" required="true" requiredMessage="The Current Password field is required."/>
                                     <p:outputLabel value="Set New Password: " for="activePassword"/>
                                     <h:inputSecret id="activePassword" value="#{activeUser_MB.activeUserPassword}" title="Password" required="true" requiredMessage="The Password field is required.">
-                                        <f:validator validatorId="passwordValidator" />
-                                        <f:attribute name="confirmPassword" value="#{confirmPassword}" />
+                                        <f:validator validatorId="passwordValidator"/>
+                                        <f:attribute name="confirmPassword" value="#{confirmPassword}"/>
                                     </h:inputSecret>
                                     <p:outputLabel value="Confirm Password:" for="confirmPassword"/>
-                                    <h:inputSecret id="confirmPassword" binding="#{confirmPassword}" title="Confirm Password" required="true" requiredMessage="The Confirm Password field is required." />
+                                    <h:inputSecret id="confirmPassword" binding="#{confirmPassword}" title="Confirm Password" required="true" requiredMessage="The Confirm Password field is required."/>
                                 </p:panelGrid>
                                 <div class="panelButtons">
                                     <p:commandButton value="Update" action="#{activeUser_MB.activeChange()}"/>
@@ -56,14 +56,14 @@
                                 <div class="permissionsTable">
                                     <p:dataTable id="availablePermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.availablePageList}" emptyMessage="No available pages.">
                                         <p:column headerText ="Available Pages: ">
-                                            <h:outputText value="#{permission}" />
+                                            <h:outputText value="#{permission}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </div>
                                 <div class="permissionsTable">
                                     <p:dataTable id="restrictedPermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.restrictedPageList}" emptyMessage="No restricted pages.">
                                         <p:column headerText ="Restricted Pages: ">
-                                            <h:outputText value="#{permission}" />
+                                            <h:outputText value="#{permission}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </div>

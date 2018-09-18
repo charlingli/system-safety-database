@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{changeType_MB.listDbChangeType}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current change types are: " />
+                                    <h:outputText value="The current change types are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{changeType_MB.addFlag or changeType_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{changeType_MB.addFlag or changeType_MB.editFlag}">
                                 <c:if test="#{changeType_MB.editFlag}">
-                                    <p:outputLabel value="Type Id:" for="changeTypeId" />
+                                    <p:outputLabel value="Type Id:" for="changeTypeId"/>
                                     <p:inputText id="changeTypeId" value="#{changeType_MB.changeTypeObject.changeTypeId}" disabled="true" title="TypeId" required="true" requiredMessage="The TypeId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Type Name:" for="changeTypeName" />
+                                <p:outputLabel value="Type Name:" for="changeTypeName"/>
                                 <p:inputText id="changeTypeName" value="#{changeType_MB.changeTypeObject.changeTypeName}" title="TypeName" required="true" requiredMessage="The TypeName field is required."/>
                             </p:panelGrid>
                         </p:panel>

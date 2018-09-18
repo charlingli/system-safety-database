@@ -17,36 +17,36 @@
                             <p:panelGrid id="searchTable" columns="2" class="searchPanel" columnClasses="left,middle" rendered="#{!editHazard_MB.editFlag}">
                                 <p:outputLabel value="Hazard ID:" for="hazardId"/>
                                 <p:inputText id="hazardId" value="#{editHazard_MB.selectedHazardId}" title="HazardId" readonly="false"/>
-                                <p:outputLabel for="hazardDate" value="Hazard Date:" />
-                                <p:calendar id="hazardDate" value="#{editHazard_MB.selectedHazardDate}" title="HazardDate" maxdate="#{addHazard_MB.todaysDate()}" />
-                                <p:outputLabel value="Hazard Description:" for="hazardDescription" />
+                                <p:outputLabel for="hazardDate" value="Hazard Date:"/>
+                                <p:calendar id="hazardDate" value="#{editHazard_MB.selectedHazardDate}" title="HazardDate" maxdate="#{addHazard_MB.todaysDate()}"/>
+                                <p:outputLabel value="Hazard Description:" for="hazardDescription"/>
                                 <p:inputTextarea rows="4" cols="30" id="hazardDescription" value="#{editHazard_MB.selectedHazardDescription}" title="HazardDescription"/>
-                                <p:outputLabel value="Hazard Context:" for="hazardContextId" />
+                                <p:outputLabel value="Hazard Context:" for="hazardContextId"/>
                                 <p:selectOneMenu id="hazardContextId" value="#{editHazard_MB.selectedHazardContext}" class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbHazardContext}" var="hazardContextItem" itemLabel="#{hazardContextItem.hazardContextName}" itemValue="#{hazardContextItem.hazardContextId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Location:" for="hazardLocation" />
+                                <p:outputLabel value="Hazard Location:" for="hazardLocation"/>
                                 <p:selectOneMenu id="hazardLocation" value="#{editHazard_MB.selectedHazardLocation}" class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbLocation}" var="locationItem" itemLabel="#{locationItem.locationName}" itemValue="#{locationItem.locationId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Activity:" for="hazardActivity" />
+                                <p:outputLabel value="Hazard Activity:" for="hazardActivity"/>
                                 <p:selectOneMenu id="hazardActivity" value="#{editHazard_MB.selectedHazardActivity}" class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbHazardActivity}" var="activityItem" itemLabel="#{activityItem.activityName}" itemValue="#{activityItem.activityId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Owner:" for="ownerId" />
+                                <p:outputLabel value="Owner:" for="ownerId"/>
                                 <p:selectOneMenu id="ownerId" value="#{editHazard_MB.selectedOwner}" class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbOwners}" var="ownersItem" itemLabel="#{ownersItem.ownerName}" itemValue="#{ownersItem.ownerId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Type:" for="hazardTypeId" />
+                                <p:outputLabel value="Hazard Type:" for="hazardTypeId"/>
                                 <p:selectOneMenu id="hazardTypeId" value="#{editHazard_MB.selectedHazardType}" class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbhazardType}" var="typeItem" itemLabel="#{typeItem.hazardTypeName}" itemValue="#{typeItem.hazardTypeId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Status:" for="hazardStatusId" />
+                                <p:outputLabel value="Hazard Status:" for="hazardStatusId"/>
                                 <p:selectOneMenu id="hazardStatusId" value="#{editHazard_MB.selectedHazardStatus}" class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbHazardStatus}" var="statusItem" itemLabel="#{statusItem.hazardStatusName}" itemValue="#{statusItem.hazardStatusId}"/>
@@ -61,7 +61,7 @@
                             </p:panelGrid>
                         </p:fieldset>
                         <div class="panelButtons" style="display:#{(!editHazard_MB.editFlag)?'block':'none'}">
-                            <p:commandButton value="Search" rendered="#{!editHazard_MB.editFlag}" >
+                            <p:commandButton value="Search" rendered="#{!editHazard_MB.editFlag}">
                                 <f:ajax listener="#{editHazard_MB.constructSearchObject()}" execute="@form" render="@form"/>
                             </p:commandButton>
                             <p:commandButton value="Clear search" action="#{editHazard_MB.clearSearch()}" update="searchTable" rendered="#{!editHazard_MB.editFlag}"/>
@@ -70,7 +70,7 @@
                                      paginator="true" rows="25" paginatorPosition="bottom">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="Select from the following hazards: " />
+                                    <h:outputText value="Select from the following hazards: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column> 
@@ -84,7 +84,7 @@
                                     <p:outputLabel value="Hazard Date"/>
                                 </f:facet>
                                 <p:outputLabel value="#{item.hazardDate}">
-                                    <f:convertDateTime pattern="MM/dd/yyyy" />
+                                    <f:convertDateTime pattern="MM/dd/yyyy"/>
                                 </p:outputLabel>
                             </p:column>
                             <p:column>
@@ -156,18 +156,18 @@
                             <p:panelGrid id="modifyTable" columns="2" rendered="#{editHazard_MB.editFlag}" columnClasses="left,middle">
                                 <f:facet name="header">
                                     <p:outputPanel>
-                                        <h:outputText value="Editing Hazard Information " />
+                                        <h:outputText value="Editing Hazard Information "/>
                                     </p:outputPanel>
                                 </f:facet>
                                 <p:outputLabel value="Hazard ID:"/>
                                 <p:inputText value="#{editHazard_MB.hazardObject.hazardId}" disabled="true" title="HazardId" readonly="false"/>
-                                <p:outputLabel value="Hazard Date:" />
-                                <p:calendar value="#{editHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{editHazard_MB.todaysDate()}" />
+                                <p:outputLabel value="Hazard Date:"/>
+                                <p:calendar value="#{editHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{editHazard_MB.todaysDate()}"/>
                                 <p:outputLabel value="Hazard Description:"  />
                                 <p:inputTextarea rows="3" cols="60"  value="#{editHazard_MB.hazardObject.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
-                                <p:outputLabel value="Hazard Comment:" />
-                                <p:inputTextarea rows="3" cols="60" value="#{editHazard_MB.hazardObject.hazardComment}" title="HazardComment" />
-                                <p:outputLabel value="Hazard Workshop:" />
+                                <p:outputLabel value="Hazard Comment:"/>
+                                <p:inputTextarea rows="3" cols="60" value="#{editHazard_MB.hazardObject.hazardComment}" title="HazardComment"/>
+                                <p:outputLabel value="Hazard Workshop:"/>
                                 <p:inputTextarea rows="2" cols="60"  value="#{editHazard_MB.hazardObject.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
                                 <p:outputLabel value="Hazard Review:"  />
                                 <p:selectOneMenu  value="#{editHazard_MB.hazardObject.hazardReview}" required="true" requiredMessage="The HazardReview field is required." class="tableColumn150p" autoWidth="false">
@@ -195,7 +195,7 @@
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbHazardStatus}" var="statusItem" itemLabel="#{statusItem.hazardStatusName}" itemValue="#{statusItem.hazardStatusId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Type:" />
+                                <p:outputLabel value="Hazard Type:"/>
                                 <p:selectOneMenu  value="#{editHazard_MB.typeId}" required="true" requiredMessage="The HazardTypeId field is required." class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbhazardType}" var="typeItem" itemLabel="#{typeItem.hazardTypeName}" itemValue="#{typeItem.hazardTypeId}"/>
@@ -210,12 +210,12 @@
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbHazardContext}" var="hazardContextItem" itemLabel="#{hazardContextItem.hazardContextName}" itemValue="#{hazardContextItem.hazardContextId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Risk Frequency:" />
+                                <p:outputLabel value="Risk Frequency:"/>
                                 <p:selectOneMenu  value="#{editHazard_MB.freqId}" required="true" requiredMessage="The RiskFrequencyId field is required." class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbRiskFrequency}" var="riskFreqItem" itemLabel="#{riskFreqItem.frequencyScore}" itemValue="#{riskFreqItem.riskFrequencyId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Risk Severity:" />
+                                <p:outputLabel value="Risk Severity:"/>
                                 <p:selectOneMenu  value="#{editHazard_MB.severityId}" required="true" requiredMessage="The RiskSeverityId field is required." class="tableColumn150p" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{editHazard_MB.listDbRiskSeverity}" var="riskSeverityItem" itemLabel="#{riskSeverityItem.severityScore}" itemValue="#{riskSeverityItem.riskSeverityId}"/>
@@ -236,18 +236,18 @@
                                 selectionMode="checkbox"
                                 selection="#{editHazard_MB.selectedNodes}">
                             <p:treeNode>
-                                <p:outputLabel value="#{doc}" />
+                                <p:outputLabel value="#{doc}"/>
                             </p:treeNode>
                         </p:tree>
-                        <div class="panelButtons" >
+                        <div class="panelButtons">
                             <c:choose>
                                 <c:when test="#{editHazard_MB.editFlag and not editHazard_MB.treeFlag}">
-                                    <p:commandButton value="Save hazard without SBS" >
+                                    <p:commandButton value="Save hazard without SBS">
                                         <f:ajax listener="#{editHazard_MB.editHazard()}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                 </c:when>
                                 <c:when test="#{editHazard_MB.treeFlag}">
-                                    <p:commandButton value="Save hazard and SBS" >
+                                    <p:commandButton value="Save hazard and SBS">
                                         <f:ajax listener="#{editHazard_MB.editHazardSBS(editHazard_MB.selectedNodes)}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                 </c:when>

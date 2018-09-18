@@ -374,7 +374,7 @@ public class addHazard_MB implements Serializable {
         hazardObject.setHazardId(dbglobalIdFacade.nextConsecutive(key1, key2, "-", 4).getAnswerString());
 
         //Calculating the risk score and persisting the object in the database.
-        hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
+        hazardObject.setRiskScore(dbHazardFacade.getRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue(), dbriskSeverityFacade.find(severityId).getSeverityValue()));
 
         //Setting the audit fields
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");

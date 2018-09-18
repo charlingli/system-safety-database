@@ -13,7 +13,7 @@
                     <p:panel class="managementModifyPanel">
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <p:panelGrid columns="2" columnClasses="left,middle">
-                            <p:outputLabel value="Role name:" for="roleName" />
+                            <p:outputLabel value="Role name:" for="roleName"/>
                             <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="Please specify name of role"/>
                             <p:outputLabel value="Role status" for="status"/>
                             <p:selectOneMenu styleClass="editInput" id="status" value="#{roles_MB.strStatus}" required="true" requiredMessage="Please select role status">

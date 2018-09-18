@@ -6,9 +6,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,16 +14,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Juan David
+ * @author lxra
  */
 @Entity
 @Table(name = "db_riskFrequency")
@@ -33,7 +29,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "DbriskFrequency.findAll", query = "SELECT d FROM DbriskFrequency d")
     , @NamedQuery(name = "DbriskFrequency.findByRiskFrequencyId", query = "SELECT d FROM DbriskFrequency d WHERE d.riskFrequencyId = :riskFrequencyId")
-    , @NamedQuery(name = "DbriskFrequency.findByFrequencyScore", query = "SELECT d FROM DbriskFrequency d WHERE d.frequencyScore = :frequencyScore")})
+    , @NamedQuery(name = "DbriskFrequency.findByFrequencyScore", query = "SELECT d FROM DbriskFrequency d WHERE d.frequencyScore = :frequencyScore")
+    , @NamedQuery(name = "DbriskFrequency.findByFrequencyValue", query = "SELECT d FROM DbriskFrequency d WHERE d.frequencyValue = :frequencyValue")})
 public class DbriskFrequency implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -44,15 +41,13 @@ public class DbriskFrequency implements Serializable {
     private Integer riskFrequencyId;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 2)
+    @Size(min = 1, max = 100)
     @Column(name = "frequencyScore")
     private String frequencyScore;
     @Basic(optional = false)
     @NotNull
     @Column(name = "frequencyValue")
     private int frequencyValue;
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskFrequencyId")
-    private List<DbHazard> dbHazardList;
 
     public DbriskFrequency() {
     }
@@ -82,7 +77,7 @@ public class DbriskFrequency implements Serializable {
     public void setFrequencyScore(String frequencyScore) {
         this.frequencyScore = frequencyScore;
     }
-    
+
     public int getFrequencyValue() {
         return frequencyValue;
     }
@@ -91,23 +86,13 @@ public class DbriskFrequency implements Serializable {
         this.frequencyValue = frequencyValue;
     }
 
-    @XmlTransient
-    public List<DbHazard> getDbHazardList() {
-        return dbHazardList;
-    }
-
-    public void setDbHazardList(List<DbHazard> dbHazardList) {
-        this.dbHazardList = dbHazardList;
-    }
-    
-
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (riskFrequencyId != null ? riskFrequencyId.hashCode() : 0);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
@@ -123,7 +108,7 @@ public class DbriskFrequency implements Serializable {
 
     @Override
     public String toString() {
-        return frequencyScore;
+        return "entities.DbriskFrequency[ riskFrequencyId=" + riskFrequencyId + " ]";
     }
-
+    
 }

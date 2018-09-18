@@ -24,10 +24,10 @@
                                     <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
                                 </p:outputPanel>
                             </f:facet>
-                            <p:column headerText="Hazard Context Id" filterBy="#{item.hazardContextId}" filterMatchMode="exact" >
+                            <p:column headerText="Hazard Context Id" filterBy="#{item.hazardContextId}" filterMatchMode="exact">
                                 <p:outputLabel value="#{item.hazardContextId}"/>
                             </p:column>
-                            <p:column headerText="Hazard Context Name" filterBy="#{item.hazardContextName}" filterMatchMode="contains" >
+                            <p:column headerText="Hazard Context Name" filterBy="#{item.hazardContextName}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.hazardContextName}"/>
                             </p:column>
                             <p:column >
@@ -57,17 +57,17 @@
                         <p:panel class="parameterModifyPanel" rendered="#{hazardContext_MB.addFlag or hazardContext_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{hazardContext_MB.addFlag or hazardContext_MB.editFlag}">
                                 <c:if test="#{hazardContext_MB.editFlag}">
-                                    <p:outputLabel value="Context Id:" for="hazardContextId" />
+                                    <p:outputLabel value="Context Id:" for="hazardContextId"/>
                                     <p:inputText id="hazardContextId" value="#{hazardContext_MB.hazardContextObject.hazardContextId}" disabled="true" title="ContextId" required="true" requiredMessage="The ContextId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Context Name:" for="hazardContextName" />
+                                <p:outputLabel value="Context Name:" for="hazardContextName"/>
                                 <p:inputText id="hazardContextName" value="#{hazardContext_MB.hazardContextObject.hazardContextName}" title="ContextName" required="true" requiredMessage="The ContextName field is required."/>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">
                             <c:choose>
                                 <c:when test="#{hazardContext_MB.addFlag}">
-                                    <p:commandButton value="Save" >
+                                    <p:commandButton value="Save">
                                         <f:ajax listener="#{hazardContext_MB.addHazardContext()}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                     <p:commandButton value="Cancel" immediate="true">

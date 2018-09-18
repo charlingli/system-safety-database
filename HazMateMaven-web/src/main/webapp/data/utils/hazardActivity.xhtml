@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{hazardActivity_MB.listDbHazardActivity}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current hazard activities are: " />
+                                    <h:outputText value="The current hazard activities are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{hazardActivity_MB.addFlag or hazardActivity_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{hazardActivity_MB.addFlag or hazardActivity_MB.editFlag}">
                                 <c:if test="#{hazardActivity_MB.editFlag}">
-                                    <p:outputLabel value="Activity Id:" for="activityId" />
+                                    <p:outputLabel value="Activity Id:" for="activityId"/>
                                     <p:inputText id="activityId" value="#{hazardActivity_MB.hazardActivityObject.activityId}" disabled="true" title="ActivityId" required="true" requiredMessage="The ActivityId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Activity Name:" for="activityName" />
+                                <p:outputLabel value="Activity Name:" for="activityName"/>
                                 <p:inputText id="activityName" value="#{hazardActivity_MB.hazardActivityObject.activityName}" title="ActivityName" required="true" requiredMessage="The ActivityName field is required."/>
                             </p:panelGrid>
                         </p:panel>

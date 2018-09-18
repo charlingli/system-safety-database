@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{constructionType_MB.listDbConstructionType}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current construction types are: " />
+                                    <h:outputText value="The current construction types are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{constructionType_MB.addFlag or constructionType_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{constructionType_MB.addFlag or constructionType_MB.editFlag}">
                                 <c:if test="#{constructionType_MB.editFlag}">
-                                    <p:outputLabel value="Type Id:" for="constructionTypeId" />
+                                    <p:outputLabel value="Type Id:" for="constructionTypeId"/>
                                     <p:inputText id="constructionTypeId" value="#{constructionType_MB.constructionTypeObject.constructionTypeId}" disabled="true" title="TypeId" required="true" requiredMessage="The TypeId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Type Name:" for="constructionTypeName" />
+                                <p:outputLabel value="Type Name:" for="constructionTypeName"/>
                                 <p:inputText id="constructionTypeName" value="#{constructionType_MB.constructionTypeObject.constructionTypeName}" title="TypeName" required="true" requiredMessage="The TypeName field is required."/>
                             </p:panelGrid>
                         </p:panel>

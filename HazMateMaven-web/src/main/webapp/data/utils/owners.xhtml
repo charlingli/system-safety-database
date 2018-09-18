@@ -24,10 +24,10 @@
                                     <p:inputText id="globalFilter" onkeyup="PF('contextTable').filter()" placeholder="Enter keyword"/>
                                 </p:outputPanel>
                             </f:facet>
-                            <p:column headerText="Owner Id" filterBy="#{item.ownerId}" filterMatchMode="exact" >
+                            <p:column headerText="Owner Id" filterBy="#{item.ownerId}" filterMatchMode="exact">
                                 <p:outputLabel value="#{item.ownerId}"/>
                             </p:column>
-                            <p:column headerText="Owner Name" filterBy="#{item.ownerName}" filterMatchMode="contains" >
+                            <p:column headerText="Owner Name" filterBy="#{item.ownerName}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.ownerName}"/>
                             </p:column>
                             <p:column >
@@ -57,17 +57,17 @@
                         <p:panel class="parameterModifyPanel" rendered="#{owners_MB.addFlag or owners_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{owners_MB.addFlag or owners_MB.editFlag}">
                                 <c:if test="#{owners_MB.editFlag}">
-                                    <p:outputLabel value="Owner Id:" for="ownerId" />
+                                    <p:outputLabel value="Owner Id:" for="ownerId"/>
                                     <p:inputText id="ownerId" value="#{owners_MB.ownersObject.ownerId}" disabled="true" title="OwnerId" required="true" requiredMessage="The OwnerId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Owner Name:" for="ownerName" />
+                                <p:outputLabel value="Owner Name:" for="ownerName"/>
                                 <p:inputText id="ownerName" value="#{owners_MB.ownersObject.ownerName}" title="OwnerName" required="true" requiredMessage="The OwnerName field is required."/>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">
                             <c:choose>
                                 <c:when test="#{owners_MB.addFlag}">
-                                    <p:commandButton value="Save" >
+                                    <p:commandButton value="Save">
                                         <f:ajax listener="#{owners_MB.addOwners()}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                     <p:commandButton value="Cancel" immediate="true">

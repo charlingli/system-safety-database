@@ -83,10 +83,11 @@
                         </div>
                     </p:panel>
                     <p:commandButton value="Generate" oncomplete="buildVis()" action="#{hazardViewVis_MB.constructObject('NEP-ALL-0009')}" update="visForm">  </p:commandButton>
-                    <p:remoteCommand name="updateVis" oncomplete="buildVis()" action="#{hazardViewVis_MB.constructObject('NEP-ALL-0009')}" update="visForm" />
+                    <p:remoteCommand name="updateVis" oncomplete="buildVis()" action="#{hazardViewVis_MB.constructObject('NEP-ALL-0009')}" update="visForm"/>
+                    <p:commandButton value="Test Page Access" action="#{hazardViewVis_MB.testPageAccess()}"/>
                 </h:form>
-                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.min.js" />
-                <script type="text/javascript" src="../../resources/js/viewVis.js" />
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.min.js"/>
+                <script type="text/javascript" src="../../resources/js/viewVis.js"/>
             </ui:define> 
         </ui:composition>
     </body>

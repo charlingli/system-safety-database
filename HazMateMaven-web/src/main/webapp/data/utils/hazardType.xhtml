@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{hazardType_MB.listDbHazardType}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current hazard types are: " />
+                                    <h:outputText value="The current hazard types are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{hazardType_MB.addFlag or hazardType_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{hazardType_MB.addFlag or hazardType_MB.editFlag}">
                                 <c:if test="#{hazardType_MB.editFlag}">
-                                    <p:outputLabel value="Type Id:" for="hazardTypeId" />
+                                    <p:outputLabel value="Type Id:" for="hazardTypeId"/>
                                     <p:inputText id="hazardTypeId" value="#{hazardType_MB.hazardTypeObject.hazardTypeId}" disabled="true" title="TypeId" required="true" requiredMessage="The TypeId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Type Name:" for="hazardTypeName" />
+                                <p:outputLabel value="Type Name:" for="hazardTypeName"/>
                                 <p:inputText id="hazardTypeName" value="#{hazardType_MB.hazardTypeObject.hazardTypeName}" title="TypeName" required="true" requiredMessage="The TypeName field is required."/>
                             </p:panelGrid>
                         </p:panel>

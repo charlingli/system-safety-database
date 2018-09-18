@@ -72,5 +72,24 @@ public class DbUserFacade extends AbstractFacade<DbUser> implements DbUserFacade
         
         return resultList;     
     }
-
+    
+    @Override
+    public boolean getPageAccessForUser(int userId, String pageName) {
+        String querySTR;
+        List<DbUser> resultList = new ArrayList<>();
+        try {
+            querySTR = "SELECT u FROM DbUser u WHERE EXISTS (SELECT 'x' "
+                    + "FROM DbRolePage rp WHERE u.roleId = rp.dbRole.roleId "
+                    + "AND rp.dbPage.pageName = ?1) AND u.userId = ?2";
+            Query query = em.createQuery(querySTR);
+            query.setParameter(1, pageName);
+            query.setParameter(2, userId);
+            
+            resultList = query.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return resultList.size() > 0;
     }
+
+}

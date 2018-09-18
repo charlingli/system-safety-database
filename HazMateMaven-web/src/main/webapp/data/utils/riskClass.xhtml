@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{riskClass_MB.listDbRiskClass}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current risk classes are: " />
+                                    <h:outputText value="The current risk classes are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -60,10 +60,10 @@
                         <p:panel class="parameterModifyPanel" rendered="#{riskClass_MB.addFlag or riskClass_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{riskClass_MB.addFlag or riskClass_MB.editFlag}">
                                 <c:if test="#{riskClass_MB.editFlag}">
-                                    <p:outputLabel value="Class Id:" for="riskClassId" />
+                                    <p:outputLabel value="Class Id:" for="riskClassId"/>
                                     <p:inputText id="riskClassId" value="#{riskClass_MB.riskClassObject.riskClassId}" disabled="true" title="ClassId" required="true" requiredMessage="The ClassId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Class Name:" for="riskClassName" />
+                                <p:outputLabel value="Class Name:" for="riskClassName"/>
                                 <p:inputText id="riskClassName" value="#{riskClass_MB.riskClassObject.riskClassName}" title="ClassName" required="true" requiredMessage="The ClassName field is required."/>
                             </p:panelGrid>
                         </p:panel>

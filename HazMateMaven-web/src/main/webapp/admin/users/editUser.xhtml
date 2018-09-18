@@ -11,7 +11,7 @@
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Edit User')}" escape="false"/></div>
-                    <p:panel class="parameterModifyPanel" >
+                    <p:panel class="parameterModifyPanel">
                         <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <p:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="First Name:"/>
@@ -19,22 +19,22 @@
                             <p:outputLabel value="Last Name:"/>
                             <p:inputText id="LNInput" value="#{users_MB.user.lastName}" title="Last Name" styleClass="inputField200px" required="true" validatorMessage="The last name must be 60 characters or less." requiredMessage="A last name is required."/>
                             <p:outputLabel value="Email:"/>
-                            <p:inputText id="EMInput" value="#{users_MB.user.userEmail}" title="Email" styleClass="inputField200px" required="true" requiredMessage="An email is required." validatorMessage="The email is invalid." >
-                                <f:validateLength minimum="1" maximum="60" />
-                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]" />
+                            <p:inputText id="EMInput" value="#{users_MB.user.userEmail}" title="Email" styleClass="inputField200px" required="true" requiredMessage="An email is required." validatorMessage="The email is invalid.">
+                                <f:validateLength minimum="1" maximum="60"/>
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"/>
                             </p:inputText>
-                            <p:outputLabel value="Mobile Number:" />
+                            <p:outputLabel value="Mobile Number:"/>
                             <p:inputText id="MNInput" value="#{users_MB.user.mobileNumber}" title="Contact Number" styleClass="inputField200px" required="true" validatorMessage="The contact number must be 10 characters or less." requiredMessage="A contact number is required."/>
-                            <p:outputLabel value="Company:" />
+                            <p:outputLabel value="Company:"/>
                             <p:inputText id="CPInput" value="#{users_MB.user.company}" title="Company" styleClass="inputField200px" required="true" validatorMessage="The company name must be 45 characters or less." requiredMessage="A company is required."/>
-                            <p:outputLabel value="Role:" />
+                            <p:outputLabel value="Role:"/>
                             <p:selectOneMenu id="RLInput" value="#{users_MB.submitRole}" required="true" requiredMessage="A role is required." style="width: 82%">
-                                <f:selectItems value="#{users_MB.getListRoles()}" />
+                                <f:selectItems value="#{users_MB.getListRoles()}"/>
                             </p:selectOneMenu>
-                            <p:outputLabel value="Status: " />
+                            <p:outputLabel value="Status: "/>
                             <p:selectOneMenu id="STInput" value="#{users_MB.userStatus}" required="true" requiredMessage="A status is required." style="width: 82%">
-                                <f:selectItem itemLabel="Active" itemValue="Active" />
-                                <f:selectItem itemLabel="Inactive" itemValue="Inactive" />
+                                <f:selectItem itemLabel="Active" itemValue="Active"/>
+                                <f:selectItem itemLabel="Inactive" itemValue="Inactive"/>
                             </p:selectOneMenu>
                         </p:panelGrid>
                     </p:panel>

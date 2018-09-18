@@ -45,7 +45,8 @@ public class userWF_MB implements Serializable {
     @EJB
     private DbwfHeaderFacadeLocal dbwfHeaderFacade;
     
-    private List<DbwfLine> listWF;
+    private List<DbwfLine> listOpenWF;
+    private List<DbwfLine> listMyWF;
     private List<DbwfLine> selectWF;
     private DbwfHeader detailWF;
     private List<DbwfLine> detailLine;
@@ -56,16 +57,25 @@ public class userWF_MB implements Serializable {
     private DbwfHeader approvalWF;
     private String approvalDecision;
     private DbUser activeUser;
+    private boolean isAdminUser;
 
     public userWF_MB() {
     }
 
-    public List<DbwfLine> getListWF() {
-        return listWF;
+    public List<DbwfLine> getListOpenWF() {
+        return listOpenWF;
     }
 
-    public void setListWF(List<DbwfLine> listWF) {
-        this.listWF = listWF;
+    public void setListOpenWF(List<DbwfLine> listOpenWF) {
+        this.listOpenWF = listOpenWF;
+    }
+
+    public List<DbwfLine> getListMyWF() {
+        return listMyWF;
+    }
+
+    public void setListMyWF(List<DbwfLine> listMyWF) {
+        this.listMyWF = listMyWF;
     }
 
     public List<DbwfLine> getSelectWF() {
@@ -140,10 +150,23 @@ public class userWF_MB implements Serializable {
         this.approvalDecision = approvalDecision;
     }
 
+    public boolean isIsAdminUser() {
+        return isAdminUser;
+    }
+
+    public void setIsAdminUser(boolean isAdminUser) {
+        this.isAdminUser = isAdminUser;
+    }
+
     @PostConstruct
     public void init() {
         activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
-        setListWF(dbwfLineFacade.findOpenByUser(activeUser.getUserId()));
+        setIsAdminUser(false);
+        if (activeUser.getRoleId().getRoleId() == 1 | activeUser.getRoleId().getRoleId() == 2) {
+            setIsAdminUser(true);
+        }
+        setListOpenWF(dbwfLineFacade.findOpenByUser(activeUser.getUserId()));
+        setListMyWF(dbwfLineFacade.findActiveByUser(activeUser.getUserId()));
     }
     
     public void showDetail(DbwfHeader wfHeader) {
@@ -199,7 +222,7 @@ public class userWF_MB implements Serializable {
             wfItem.setWfApprovalComment(approvalComment);
             wfItem.setWfDateTimeDecision(new Date());
             dbwfLineFacade.edit(wfItem);
-            
+
             if (getApprovalDecision().equals("A")) {
                 System.out.println("Sending approval of " + wfItem.getDbwfHeader().getWfId() + " with message " + approvalComment);
                 dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getDbwfHeader().getWfId()), "userApproval");
@@ -215,5 +238,13 @@ public class userWF_MB implements Serializable {
         }
         setApprovalWF(null);
         init();
+    }
+    
+    public void editHazard(DbHazard wfHazard) {
+        
+    }
+    
+    public void resendWorkflow() {
+        
     }
 }

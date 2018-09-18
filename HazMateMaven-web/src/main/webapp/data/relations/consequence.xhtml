@@ -55,30 +55,30 @@
                                             <p:outputPanel>
                                                 <c:choose>
                                                     <c:when test="#{consequence_MB.addFlag}">
-                                                        <h:outputText value="Adding consequence " />
+                                                        <h:outputText value="Adding consequence "/>
                                                     </c:when>
                                                     <c:when test="#{consequence_MB.editFlag}">
-                                                        <h:outputText value="Edditing consequence " />
+                                                        <h:outputText value="Edditing consequence "/>
                                                     </c:when>
                                                 </c:choose> 
                                             </p:outputPanel>
                                         </f:facet>
                                         <c:if test="#{consequence_MB.editFlag}">
-                                            <p:outputLabel value="Consequence Id:" for="consequenceId" />
+                                            <p:outputLabel value="Consequence Id:" for="consequenceId"/>
                                             <p:inputText id="consequenceId" value="#{consequence_MB.consequenceObject.consequenceId}" disabled="true" title="ConsequenceId" required="true" requiredMessage="The ConsequenceId field is required."/>
                                         </c:if>
-                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard" />
+                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard"/>
                                         <p:autoComplete id="addHazard" value="#{consequence_MB.hazardObject}" completeMethod="#{consequence_MB.showHazards}"
                                                         var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
                                                         title="If this consequence is also a hazard in another context, please enter the hazard Id">
                                             <p:column>
-                                                <h:outputText value="#{hazard.hazardId}" />
+                                                <h:outputText value="#{hazard.hazardId}"/>
                                             </p:column>
                                             <p:column>
-                                                <h:outputText value="#{hazard.hazardDescription}" />
+                                                <h:outputText value="#{hazard.hazardDescription}"/>
                                             </p:column>
                                         </p:autoComplete>
-                                        <p:outputLabel value="Consequence Description:" for="consequenceDescription" />
+                                        <p:outputLabel value="Consequence Description:" for="consequenceDescription"/>
                                         <p:inputTextarea rows="4" id="consequenceDescription" value="#{consequence_MB.consequenceObject.consequenceDescription}" title="ConsequenceDescription" required="true" requiredMessage="The ConsequenceDescription field is required."/>
                                     </p:panelGrid>
                                 </p:panel>

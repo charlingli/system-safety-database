@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{riskSeverity_MB.listDbRiskSeverity}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current risk severities are: " />
+                                    <h:outputText value="The current risk severities are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -66,12 +66,12 @@
                         <p:panel class="parameterModifyPanel" rendered="#{riskSeverity_MB.addFlag or riskSeverity_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{riskSeverity_MB.addFlag or riskSeverity_MB.editFlag}">
                                 <c:if test="#{riskSeverity_MB.editFlag}">
-                                    <p:outputLabel value="Severity Id:" for="riskSeverityId" />
+                                    <p:outputLabel value="Severity Id:" for="riskSeverityId"/>
                                     <p:inputText id="riskSeverityId" value="#{riskSeverity_MB.riskSeverityObject.riskSeverityId}" disabled="true" title="SeverityId" required="true" requiredMessage="The SeverityId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Severity Name:" for="riskSeverityName" />
+                                <p:outputLabel value="Severity Name:" for="riskSeverityName"/>
                                 <p:inputText id="riskSeverityName" value="#{riskSeverity_MB.riskSeverityObject.severityScore}" title="SeverityName" required="true" requiredMessage="The SeverityName field is required."/>
-                                <p:outputLabel value="Severity Value:" for="riskSeverityValue" />
+                                <p:outputLabel value="Severity Value:" for="riskSeverityValue"/>
                                 <p:inputNumber id="riskSeverityValue" value="#{riskSeverity_MB.riskSeverityObject.severityValue}" converter="javax.faces.Integer" decimalPlaces="0" title="SeverityValue" required="true" requiredMessage="The SeverityValue field is required."/>
                             </p:panelGrid>
                         </p:panel>

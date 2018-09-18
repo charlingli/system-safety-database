@@ -19,7 +19,7 @@
                     <h3>System Breakdown Structure (SBS)</h3>
                     <p:tree value="#{trees_MB.root}" var="node" dynamic="true" styleClass="treeWidth">
                         <p:treeNode>
-                            <h:outputText value="#{node}" />
+                            <h:outputText value="#{node}"/>
                         </p:treeNode>
                     </p:tree>
                     <br></br>
@@ -29,7 +29,7 @@
                             selectionMode="checkbox"
                             selection="#{trees_MB.selectedNodes}">
                         <p:treeNode>
-                            <h:outputText value="#{doc}" />
+                            <h:outputText value="#{doc}"/>
                         </p:treeNode>
                     </p:tree>
 
@@ -38,14 +38,14 @@
                     <br></br>
                     <br></br>
 
-                    <p:inputText value="#{trees_MB.hazardId}" />
-                    <p:commandButton action="#{trees_MB.findTreeByHazard(trees_MB.hazardId)}" />
+                    <p:inputText value="#{trees_MB.hazardId}"/>
+                    <p:commandButton action="#{trees_MB.findTreeByHazard(trees_MB.hazardId)}"/>
 
-                    <p:commandButton action="#{trees_MB.testSearch()}" value="Test Search" />
+                    <p:commandButton action="#{trees_MB.testSearch()}" value="Test Search"/>
 
                     <p:panel>
                         <p:panelGrid>
-                            <p:commandButton action="#{autoIds_MB.testConsecutives}" />
+                            <p:commandButton action="#{autoIds_MB.testConsecutives}"/>
                             <p:outputLabel value="#{trees_MB.gotId}"/>
                         </p:panelGrid>                         
                     </p:panel>

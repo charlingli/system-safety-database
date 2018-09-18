@@ -70,4 +70,6 @@ public interface DbHazardFacadeLocal {
     List<DbHazard> findHazardsByFieldsOnly(List<searchObject> hazardList);
     
     List<DbHazard> validateHazardId(String hazardId);
+    
+    int getRiskScore(int frequencyScore, int severityScore);
 }

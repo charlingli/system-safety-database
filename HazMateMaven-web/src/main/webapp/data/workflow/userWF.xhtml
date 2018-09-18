@@ -19,21 +19,21 @@
                             </div>
                             <p:panelGrid columns="4" class="detailTable" columnClasses="label,,label"> 
                                 <p:outputLabel value="Workflow ID: "/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfId}" />
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfId}"/>
                                 <p:outputLabel value="Comment 1:"/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment1}" />
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment1}"/>
                                 <p:outputLabel value="Workflow Object Type &amp; Id "/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfObjectName} : #{userWF_MB.detailWF.wfObjectId}" />
-                                <p:outputLabel value="Comment 2:" />
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment2}" />
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfObjectName} : #{userWF_MB.detailWF.wfObjectId}"/>
+                                <p:outputLabel value="Comment 2:"/>
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment2}"/>
                                 <p:outputLabel value="Workflow Status &amp; Last Update:"/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfStatus == 'O' ? 'Open' : userWF_MB.detailWF.wfStatus == 'A' ? 'Approved' : userWF_MB.detailWF.wfStatus == 'R' ? 'Rejected' : userWF_MB.detailWF.wfStatus == 'I' ? 'Open' : userWF_MB.detailWF.wfStatus} as of #{userWF_MB.detailWF.wfUpdatedDateTime == null ? userWF_MB.detailWF.wfAddedDateTime : userWF_MB.detailWF.wfUpdatedDateTime}" />
-                                <p:outputLabel value="Comment 3:" />
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment3}" />
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfStatus == 'O' ? 'Open' : userWF_MB.detailWF.wfStatus == 'A' ? 'Approved' : userWF_MB.detailWF.wfStatus == 'R' ? 'Rejected' : userWF_MB.detailWF.wfStatus == 'I' ? 'Open' : userWF_MB.detailWF.wfStatus} as of #{userWF_MB.detailWF.wfUpdatedDateTime == null ? userWF_MB.detailWF.wfAddedDateTime : userWF_MB.detailWF.wfUpdatedDateTime}"/>
+                                <p:outputLabel value="Comment 3:"/>
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment3}"/>
                                 <p:outputLabel value="Workflow Owner "/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfUserIdAdd.firstName} #{userWF_MB.detailWF.wfUserIdAdd.lastName}" />
-                                <p:outputLabel value="Comment 4:" />
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment4}" />
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfUserIdAdd.firstName} #{userWF_MB.detailWF.wfUserIdAdd.lastName}"/>
+                                <p:outputLabel value="Comment 4:"/>
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfComment4}"/>
                             </p:panelGrid>
                         </p:panel>
                     </p:dialog>
@@ -44,11 +44,11 @@
                             </div>
                             <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
                                 <p:outputLabel value="Hazard ID: "/>
-                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardId}" />
-                                <p:outputLabel value="Hazard Description: " />
-                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardDescription}" />
-                                <p:outputLabel value="Hazard Comments: " />
-                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardComment}" />
+                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardId}"/>
+                                <p:outputLabel value="Hazard Description: "/>
+                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardDescription}"/>
+                                <p:outputLabel value="Hazard Comments: "/>
+                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardComment}"/>
                             </p:panelGrid>
                         </p:panel>
                         <p:panel id="hazardPanel" class="detailHazardPanel">
@@ -165,8 +165,8 @@
                     <p:dialog id="requestDialog" header="#{userWF_MB.approvalDecision == 'A' ? 'Approve with comments' : userWF_MB.approvalDecision == 'R' ? 'Reject with comments' : userWF_MB.approvalDecision == 'I' ? 'Request for information' : userWF_MB.approvalDecision}" widgetVar="requestOverlay" height="18vh" width="32vw">
                         <p:panel styleClass="detailHazardPanel">
                             <h:outputText value="Information to be sent to workflow owner:" class="p-emphasis"/>
-                            <p:inputTextarea id="decisionComments" binding="#{approvalComment}" />
-                            <p:commandButton value="Send Decision" >
+                            <p:inputTextarea id="decisionComments" binding="#{approvalComment}"/>
+                            <p:commandButton value="Send Decision">
                                 <f:ajax listener="#{userWF_MB.sendDecision(approvalComment.value)}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </p:panel>
@@ -174,57 +174,61 @@
                     <p:dialog id="requestMultipleDialog" header="#{userWF_MB.approvalDecision == 'A' ? 'Approve all with comments' : userWF_MB.approvalDecision == 'R' ? 'Reject all with comments' : userWF_MB.approvalDecision == 'I' ? 'Request for information' : userWF_MB.approvalDecision}" widgetVar="multipleOverlay" height="18vh" width="32vw">
                         <p:panel styleClass="detailHazardPanel">
                             <h:outputText value="Information to be sent to workflow owners:" class="p-emphasis"/>
-                            <p:inputTextarea id="decisionMultiple" binding="#{approvalComments}" />
-                            <p:commandButton value="Send Decisions" >
+                            <p:inputTextarea id="decisionMultiple" binding="#{approvalComments}"/>
+                            <p:commandButton value="Send Decisions">
                                 <f:ajax listener="#{userWF_MB.sendDecisions(approvalComments.value)}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </p:panel>
                     </p:dialog>
-                    <p:dataTable value="#{userWF_MB.listWF}" id="wfTable" widgetVar="wfTable" var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{userWF_MB.selectWF}" disabledSelection="#{wf.dbwfHeader.wfStatus == 'A' || wf.dbwfHeader.wfStatus == 'R'}" rowKey="#{wf.dbwfHeader.wfId}" scrollable="true" scrollHeight="600">
+                    <p:dataTable value="#{userWF_MB.listMyWF}" id="mywfTable" widgetVar="wfTable" var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{userWF_MB.selectWF}" disabledSelection="#{wf.dbwfHeader.wfStatus == 'A' || wf.dbwfHeader.wfStatus == 'R'}" rowKey="#{wf.dbwfHeader.wfId}" scrollable="true" scrollHeight="400">
                         <f:facet name="header">
                             <p:outputPanel>
-                                <h:outputText value="All workflow entries:" />
+                                <h:outputText value="All workflow entries:"/>
                             </p:outputPanel>
                         </f:facet>
-                        <p:ajax event="rowSelect" update=":wfForm" />
-                        <p:ajax event="rowUnselect" update=":wfForm" />
-                        <p:ajax event="rowSelectCheckbox" update=":wfForm" />
-                        <p:ajax event="rowUnselectCheckbox" update=":wfForm" />
-                        <p:ajax event="rowUnselectCheckbox" update=":wfForm" />
-                        <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+                        <p:ajax event="rowSelect" update=":wfForm"/>
+                        <p:ajax event="rowUnselect" update=":wfForm"/>
+                        <p:ajax event="rowSelectCheckbox" update=":wfForm"/>
+                        <p:ajax event="rowUnselectCheckbox" update=":wfForm"/>
+                        <p:ajax event="toggleSelect" update=":wfForm"/>
+                        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
                         <p:column headerText="Workflow ID" styleClass="small">
-                            <p:commandLink id="wfAjax" update="wfForm" actionListener="#{userWF_MB.showDetail(wf.dbwfHeader)}" oncomplete="PF('detailOverlay').show()" >
+                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{userWF_MB.showDetail(wf.dbwfHeader)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.dbwfHeader.wfId}"/>
                             </p:commandLink>
+                            <p:tooltip for="wfAjax">
+                                <i class="fa fa-search"/>
+                                <h:outputText value=" View Workflow"/>
+                            </p:tooltip>
                         </p:column>
                         <p:column headerText="Workflow Object Type : ID" styleClass="small">
-                            <p:commandLink id="objAjax" update="wfForm" actionListener="#{userWF_MB.showHazard(wf.dbwfHeader)}" oncomplete="PF('objectOverlay').show()" >
-                                <h:outputText value="#{wf.dbwfHeader.wfObjectName} : #{wf.dbwfHeader.wfObjectId}" />
+                            <p:commandLink id="objAjax" update=":wfForm" actionListener="#{userWF_MB.showHazard(wf.dbwfHeader)}" oncomplete="PF('objectOverlay').show()">
+                                <h:outputText value="#{wf.dbwfHeader.wfObjectName} : #{wf.dbwfHeader.wfObjectId}"/>
                             </p:commandLink>
+                            <p:tooltip for="objAjax">
+                                <i class="fa fa-edit"/>
+                                <h:outputText value=" Edit Hazard"/>
+                            </p:tooltip>
                         </p:column>
                         <p:column headerText="Workflow Status" styleClass="small">
                             <p:outputLabel value="#{wf.dbwfHeader.wfStatus == 'O' ? 'Open' : wf.dbwfHeader.wfStatus == 'A' ? 'Approved' : wf.dbwfHeader.wfStatus == 'R' ? 'Rejected' : wf.dbwfHeader.wfStatus == 'I' ? 'Information Requested' : wf.dbwfHeader.wfStatus} as of #{wf.dbwfHeader.wfUpdatedDateTime == null ? wf.dbwfHeader.wfAddedDateTime : wf.dbwfHeader.wfUpdatedDateTime}"/>
                         </p:column>
-                        <p:column headerText="Workflow Owner" styleClass="small">
+                        <p:column headerText="Latest Approver" styleClass="small">
                             <p:outputLabel value="#{wf.dbwfHeader.wfUserIdAdd.firstName} #{wf.dbwfHeader.wfUserIdAdd.lastName}"/>
                         </p:column>
-                        <p:column headerText="Workflow Comments">
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment1}"/><br />
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment2}"/><br />
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment3}"/><br />
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment4}"/>
+                        <p:column headerText="Approver Comments">
+                            <p:outputLabel value="#{wf.wfApprovalComment}"/>
                         </p:column>
                         <p:column headerText="Approval Actions" styleClass="small">
-                            <p:commandButton id="approveButton" actionListener="#{userWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update="wfForm" icon="fa fa-check" styleClass="approveButton"/> | 
-                            <p:commandButton id="rejectButton" actionListener="#{userWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update="wfForm" icon="fa fa-times" styleClass="rejectButton"/> | 
-                            <p:commandButton id="requestButton" actionListener="#{userWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('requestOverlay').show()" update="wfForm" icon="fa fa-info" styleClass="requestButton"/>
+                            <p:commandButton id="editButton" actionListener="#{userWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('editOverlay').show()" update=":wfForm" icon="fa fa-pencil" styleClass="editButton"/> | 
+                            <p:commandButton id="resendButton" actionListener="#{userWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update=":wfForm" icon="fa fa-share" styleClass="resendButton"/> | 
+                            <p:commandButton id="rejectButton" actionListener="#{userWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update=":wfForm" icon="fa fa-times" styleClass="rejectButton"/>
                         </p:column>
                         <f:facet name="footer">
                             <p:outputPanel>
                                 <h:outputText value="Selected #{userWF_MB.selectWF.size()} #{userWF_MB.selectWF.size() != 1 ? 'workflows' : 'workflow'}. "/>
-                                <p:commandButton action="#{userWF_MB.prepareDecisions(userWF_MB.selectWF, 'A')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > userWF_MB.selectWF.size()}" icon="fa fa-check" styleClass="approveButton"/> | 
-                                <p:commandButton action="#{userWF_MB.prepareDecisions(userWF_MB.selectWF, 'R')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > userWF_MB.selectWF.size()}" icon="fa fa-times" styleClass="rejectButton"/> |  
-                                <p:commandButton action="#{userWF_MB.prepareDecisions(userWF_MB.selectWF, 'I')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > userWF_MB.selectWF.size()}" icon="fa fa-info" styleClass="requestButton"/>
+                                <p:commandButton action="#{userWF_MB.prepareDecisions(userWF_MB.selectWF, 'A')}" oncomplete="PF('multipleOverlay').show()" update=":wfForm" disabled="#{1 > userWF_MB.selectWF.size()}" icon="fa fa-check" styleClass="approveButton"/> | 
+                                <p:commandButton action="#{userWF_MB.prepareDecisions(userWF_MB.selectWF, 'R')}" oncomplete="PF('multipleOverlay').show()" update=":wfForm" disabled="#{1 > userWF_MB.selectWF.size()}" icon="fa fa-times" styleClass="rejectButton"/>
                             </p:outputPanel>
                         </f:facet>
                     </p:dataTable>

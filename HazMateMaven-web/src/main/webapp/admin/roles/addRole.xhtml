@@ -14,8 +14,8 @@
                         <p:panel class="managementModifyPanel">
                             <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                             <p:panelGrid columns="2" columnClasses="left,middle">
-                                <p:outputLabel value="Role name:" for="roleName" />
-                                <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="*Please specify the name of the role" />
+                                <p:outputLabel value="Role name:" for="roleName"/>
+                                <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="*Please specify the name of the role"/>
                                 <p:outputLabel value="Role status" for="roleStatus"/>
                                 <p:selectOneMenu id="roleStatus" value="#{roles_MB.strStatus}" required="true" styleClass="editInput" requiredMessage="*Please specify role status">
                                     <f:selectItem itemLabel="--Select role status--" noSelectionOption="true"/>
@@ -25,8 +25,8 @@
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">
-                            <p:commandButton value="Save" action="#{roles_MB.add()}" />
-                            <p:commandButton value="Cancel" action="#{roles_MB.cancel()}" immediate="true" />
+                            <p:commandButton value="Save" action="#{roles_MB.add()}"/>
+                            <p:commandButton value="Cancel" action="#{roles_MB.cancel()}" immediate="true"/>
                         </div>
                     </h:form>
                 </f:view>

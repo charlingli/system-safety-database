@@ -18,7 +18,7 @@
                         <p:dataTable id="viewTable" value="#{riskFrequency_MB.listDbRiskFrequency}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>
-                                    <h:outputText value="The current risk frequencies are: " />
+                                    <h:outputText value="The current risk frequencies are: "/>
                                 </p:outputPanel>
                             </f:facet>
                             <p:column>
@@ -66,12 +66,12 @@
                         <p:panel class="parameterModifyPanel" rendered="#{riskFrequency_MB.addFlag or riskFrequency_MB.editFlag}">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{riskFrequency_MB.addFlag or riskFrequency_MB.editFlag}">
                                 <c:if test="#{riskFrequency_MB.editFlag}">
-                                    <p:outputLabel value="Frequency Id:" for="riskFrequencyId" />
+                                    <p:outputLabel value="Frequency Id:" for="riskFrequencyId"/>
                                     <p:inputText id="riskFrequencyId" value="#{riskFrequency_MB.riskFrequencyObject.riskFrequencyId}" disabled="true" title="FrequencyId" required="true" requiredMessage="The FrequencyId field is required."/>
                                 </c:if>
-                                <p:outputLabel value="Frequency Name:" for="riskFrequencyName" />
+                                <p:outputLabel value="Frequency Name:" for="riskFrequencyName"/>
                                 <p:inputText id="riskFrequencyName" value="#{riskFrequency_MB.riskFrequencyObject.frequencyScore}" title="FrequencyName" required="true" requiredMessage="The FrequencyName field is required."/>
-                                <p:outputLabel value="Frequency Value:" for="riskFrequencyValue" />
+                                <p:outputLabel value="Frequency Value:" for="riskFrequencyValue"/>
                                 <p:inputNumber id="riskFrequencyValue" value="#{riskFrequency_MB.riskFrequencyObject.frequencyValue}" converter="javax.faces.Integer" decimalPlaces="0" title="FrequencyValue" required="true" requiredMessage="The FrequencyValue field is required."/>
                             </p:panelGrid>
                         </p:panel>
