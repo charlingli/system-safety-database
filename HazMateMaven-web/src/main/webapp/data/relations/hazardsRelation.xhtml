@@ -182,6 +182,9 @@
                             <p:column headerText="Justification">
                                 <p:outputLabel value="#{control.controlJustify}"/>
                             </p:column>
+                            <p:column headerText="Control Status" styleClass="small">
+                                <p:outputLabel value="#{control.controlExistingOrProposed}"/>
+                            </p:column>
                             <p:column headerText="Actions" styleClass="small"> 
                                 <h:commandLink value="Edit" styleClass="commandLink">
                                     <f:ajax listener="#{hazardsRelation_MB.editControlVisible(control)}" execute="@form" render="@form"/>    
@@ -221,6 +224,11 @@
                             </p:selectOneMenu>
                             <p:outputLabel value="Justification: *" for="controlJustify" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                             <p:inputTextarea id="controlJustify" value="#{hazardsRelation_MB.controlJustify}" rendered="#{hazardsRelation_MB.addControlJustify}"/>
+                            <p:outputLabel value="Control Status: " for="controlStatus"/>
+                            <p:selectOneMenu id="controlStatus" value="#{hazardsRelation_MB.controlType}">
+                                <f:selectItem itemValue="E" itemLabel="Existing"/>
+                                <f:selectItem itemValue="P" itemLabel="Proposed"/>
+                            </p:selectOneMenu>
                         </h:panelGrid>
                         <div class="panelButtons">
                             <p:commandButton value="Save Control" rendered="#{hazardsRelation_MB.addControl}">

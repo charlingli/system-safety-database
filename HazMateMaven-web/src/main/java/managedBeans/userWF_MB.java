@@ -243,6 +243,7 @@ public class userWF_MB implements Serializable {
     public String editHazard(DbwfHeader wfHeader) {
         setDetailHazard(dbHazardFacade.findByName("hazardId", wfHeader.getWfObjectId()).get(0));
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelObj", getDetailHazard());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelWF", wfHeader);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("redirectionSource", "EditHazard");
         return "/data/hazards/editHazard";
     }

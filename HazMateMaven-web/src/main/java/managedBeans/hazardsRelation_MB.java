@@ -106,6 +106,7 @@ public class hazardsRelation_MB implements Serializable {
     private String controlRecommendId;
     private String controlType;
     private String controlJustify;
+    private String controlStatus;
     private String controlSaveAction;
     private String redirectionSource;
 
@@ -336,6 +337,14 @@ public class hazardsRelation_MB implements Serializable {
         this.controlJustify = controlJustify;
     }
 
+    public String getControlStatus() {
+        return controlStatus;
+    }
+
+    public void setControlStatus(String controlStatus) {
+        this.controlStatus = controlStatus;
+    }
+
     public String getControlType() {
         return controlType;
     }
@@ -535,7 +544,7 @@ public class hazardsRelation_MB implements Serializable {
         DbcontrolRecommend tmpCtlRecommend = dbcontrolRecommendFacade.find(Integer.parseInt(controlRecommendId));
         controlHazardObject.setDbHazard(hazardObject);
         controlHazardObject.setControlType(controlType);
-        controlHazardObject.setControlExistingOrProposed("J");
+        controlHazardObject.setControlExistingOrProposed(controlStatus);
         controlHazardObject.setDbControlHazardPK(
                 new DbControlHazardPK(hazardObject.getHazardId(), controlHazardObject.getDbControl().getControlId()));
         controlHazardObject.setControlRecommendId(new DbcontrolRecommend(Integer.parseInt(controlRecommendId)));
