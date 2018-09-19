@@ -229,7 +229,7 @@ span.commandLinkWhite {
     border-bottom-color: rgb(216, 178, 95);
     margin: 2px;
 }
-.ui-state-default.resendButton {
+.ui-state-default.editButton {
     background-color: rgb(255, 222, 151);
     background-image: -ms-linear-gradient(top, rgb(255, 244, 222), rgb(255, 222, 151));
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgb(255, 244, 222)), to(rgb(255, 222, 151)));
