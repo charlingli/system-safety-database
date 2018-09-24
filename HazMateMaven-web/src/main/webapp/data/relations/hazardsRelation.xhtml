@@ -240,7 +240,7 @@
                         </div>
                     </p:panel>
                     <div class="panelButtons" style="display:#{(hazardsRelation_MB.cancelBtn)?'block':'none'}">
-                        <p:commandButton value="Submit for Review">
+                        <p:commandButton value="#{hazardsRelation_MB.finalActionButton}">
                             <f:ajax listener="#{hazardsRelation_MB.sendToApproval()}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </div>
