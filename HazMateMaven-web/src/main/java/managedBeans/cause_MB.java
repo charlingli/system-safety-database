@@ -247,7 +247,6 @@ public class cause_MB implements Serializable {
     }
     
     public void showLinkedHazards(DbCause selectedCause) {
-        System.out.println("Testing using " + selectedCause.getCauseDescription());
         setSelectedCause(selectedCause);
         setSelectedHazards(dbHazardFacade.getHazardsFromCause(selectedCause.getCauseId()));
     }

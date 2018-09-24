@@ -243,7 +243,6 @@ public class consequence_MB implements Serializable {
     }
     
     public void showLinkedHazards(DbConsequence selectedConsequence) {
-        System.out.println("Testing using " + selectedConsequence.getConsequenceDescription());
         setSelectedConsequence(selectedConsequence);
         setSelectedHazards(dbHazardFacade.getHazardsFromConsequence(selectedConsequence.getConsequenceId()));
     }

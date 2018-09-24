@@ -92,7 +92,7 @@
                         </div>
                         <div class="p-emphasis-spacer">
                             <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addCause}" columnClasses="left,middle">
-                                <p:outputLabel value="Cause Description: " for="addCauses"/>
+                                <p:outputLabel value="Cause Description: *" for="addCauses"/>
                                 <p:autoComplete id="addCauses" multiple="true" value="#{hazardsRelation_MB.listSelectedCauses}" completeMethod="#{hazardsRelation_MB.showUnrelCauses}"
                                                 var="cause1" itemLabel="Cause No #{cause1.causeId}" itemValue="#{cause1}" converter="causeConverter" forceSelection="true">
                                     <p:column>
@@ -136,7 +136,7 @@
                             </p:commandLink>
                         </div>
                         <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addConq}" columnClasses="left,middle">
-                            <p:outputLabel value="Consequence Description: " for="addConsqs"/>
+                            <p:outputLabel value="Consequence Description: *" for="addConsqs"/>
                             <p:autoComplete id="addConsqs" multiple="true" value="#{hazardsRelation_MB.listSelectedConsqs}" completeMethod="#{hazardsRelation_MB.showUnrelConsqs}"
                                             var="consq1" itemLabel="Consequence No #{consq1.consequenceId}" itemValue="#{consq1}" converter="consqConverter" forceSelection="true">
                                 <p:column>
@@ -201,7 +201,7 @@
                             </p:commandLink>
                         </div>
                         <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.addControl}" columnClasses="left,middle">
-                            <p:outputLabel value="Control Description: " for="addControls"/>
+                            <p:outputLabel value="Control Description: *" for="addControls"/>
                             <p:autoComplete id="addControls" value="#{hazardsRelation_MB.controlHazardObject.dbControl}" completeMethod="#{hazardsRelation_MB.showUnrelControls}"
                                             var="control1" itemLabel="#{control1.controlId}" itemValue="#{control1}" converter="controlConverter" forceSelection="true"
                                             disabled="#{hazardsRelation_MB.txtControlIdHazard}">
@@ -212,19 +212,19 @@
                                     <h:outputText value="#{control1.controlDescription}"/>
                                 </p:column>
                             </p:autoComplete>
-                            <p:outputLabel value="Control Type: " for="controlType"/>
+                            <p:outputLabel value="Control Type: *" for="controlType"/>
                             <p:selectOneMenu id="controlType" value="#{hazardsRelation_MB.controlType}">
                                 <f:selectItem itemValue="M" itemLabel="Mitigative"/>
                                 <f:selectItem itemValue="P" itemLabel="Preventive"/>
                             </p:selectOneMenu>
-                            <p:outputLabel value="Control Recommendation: " for="controlRecommend"/>
+                            <p:outputLabel value="Control Recommendation: *" for="controlRecommend"/>
                             <p:selectOneMenu id="controlRecommend" value="#{hazardsRelation_MB.controlRecommendId}" required="true">
                                 <f:selectItems value="#{hazardsRelation_MB.listControlRecommends}" var="ctlRecomm" itemValue="#{ctlRecomm.controlRecommendId}" itemLabel="#{ctlRecomm.controlRecommendName}"/>
                                 <f:ajax listener="#{hazardsRelation_MB.loadJustify}" execute="@form" render="@form"/>
                             </p:selectOneMenu>
                             <p:outputLabel value="Justification: *" for="controlJustify" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                             <p:inputTextarea id="controlJustify" value="#{hazardsRelation_MB.controlJustify}" rendered="#{hazardsRelation_MB.addControlJustify}"/>
-                            <p:outputLabel value="Control Status: " for="controlStatus"/>
+                            <p:outputLabel value="Control Status: *" for="controlStatus"/>
                             <p:selectOneMenu id="controlStatus" value="#{hazardsRelation_MB.controlType}">
                                 <f:selectItem itemValue="E" itemLabel="Existing"/>
                                 <f:selectItem itemValue="P" itemLabel="Proposed"/>

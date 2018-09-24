@@ -9,7 +9,6 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="wfForm">
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:hotkey bind="esc" handler="PF('detailOverlay').hide(); PF('requestOverlay').hide()"></p:hotkey>
                     <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
                     <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
