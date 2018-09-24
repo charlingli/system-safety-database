@@ -38,6 +38,8 @@ public class cause_MB implements Serializable {
     private List<DbHazard> listHazards;
     private DbHazard hazardObject;
     private DbCause causeObject;
+    private DbCause selectedCause;
+    private List<DbHazard> selectedHazards;
 
     private boolean addFlag = false;
     private boolean editFlag = false;
@@ -62,6 +64,22 @@ public class cause_MB implements Serializable {
 
     public void setCauseObject(DbCause causeObject) {
         this.causeObject = causeObject;
+    }
+
+    public DbCause getSelectedCause() {
+        return selectedCause;
+    }
+
+    public void setSelectedCause(DbCause selectedCause) {
+        this.selectedCause = selectedCause;
+    }
+
+    public List<DbHazard> getSelectedHazards() {
+        return selectedHazards;
+    }
+
+    public void setSelectedHazards(List<DbHazard> selectedHazards) {
+        this.selectedHazards = selectedHazards;
     }
 
     public boolean isAddFlag() {
@@ -227,17 +245,11 @@ public class cause_MB implements Serializable {
         causeObject = new DbCause();
         hazardObject = new DbHazard();
     }
-
-    public List<DbHazard> showHazards(String query) {
-        List<DbHazard> filteredHazard = new ArrayList<>();
-
-        for (int i = 0; i < listHazards.size(); i++) {
-            DbHazard findHazard = listHazards.get(i);
-            if (findHazard.getHazardDescription().toLowerCase().contains(query.toLowerCase())) {
-                filteredHazard.add(findHazard);
-            }
-        }
-        return filteredHazard;
+    
+    public void showLinkedHazards(DbCause selectedCause) {
+        System.out.println("Testing using " + selectedCause.getCauseDescription());
+        setSelectedCause(selectedCause);
+        setSelectedHazards(dbHazardFacade.getHazardsFromCause(selectedCause.getCauseId()));
     }
-
+    
 }

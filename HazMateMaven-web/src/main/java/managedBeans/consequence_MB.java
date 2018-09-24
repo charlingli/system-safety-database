@@ -38,6 +38,8 @@ public class consequence_MB implements Serializable {
     private List<DbHazard> listHazards;
     private DbHazard hazardObject;
     private DbConsequence consequenceObject;
+    private DbConsequence selectedConsequence;
+    private List<DbHazard> selectedHazards;
 
     private boolean addFlag = false;
     private boolean editFlag = false;
@@ -62,6 +64,22 @@ public class consequence_MB implements Serializable {
 
     public void setConsequenceObject(DbConsequence consequenceObject) {
         this.consequenceObject = consequenceObject;
+    }
+
+    public DbConsequence getSelectedConsequence() {
+        return selectedConsequence;
+    }
+
+    public void setSelectedConsequence(DbConsequence selectedConsequence) {
+        this.selectedConsequence = selectedConsequence;
+    }
+
+    public List<DbHazard> getSelectedHazards() {
+        return selectedHazards;
+    }
+
+    public void setSelectedHazards(List<DbHazard> selectedHazards) {
+        this.selectedHazards = selectedHazards;
     }
 
     public boolean isAddFlag() {
@@ -223,17 +241,11 @@ public class consequence_MB implements Serializable {
         consequenceObject = new DbConsequence();
         hazardObject = new DbHazard();
     }
-
-    public List<DbHazard> showHazards(String query) {
-        List<DbHazard> filteredHazard = new ArrayList<>();
-
-        for (int i = 0; i < listHazards.size(); i++) {
-            DbHazard findHazard = listHazards.get(i);
-            if (findHazard.getHazardDescription().toLowerCase().contains(query.toLowerCase())) {
-                filteredHazard.add(findHazard);
-            }
-        }
-        return filteredHazard;
+    
+    public void showLinkedHazards(DbConsequence selectedConsequence) {
+        System.out.println("Testing using " + selectedConsequence.getConsequenceDescription());
+        setSelectedConsequence(selectedConsequence);
+        setSelectedHazards(dbHazardFacade.getHazardsFromConsequence(selectedConsequence.getConsequenceId()));
     }
 
 }

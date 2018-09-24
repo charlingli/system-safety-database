@@ -651,5 +651,32 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         }
         return riskScore;
     }
-
+    
+    @Override
+    public List<DbHazard> getHazardsFromCause(int causeId) {
+        return em.createQuery("SELECT h FROM DbHazard h WHERE EXISTS(SELECT 'x' "
+                + "FROM DbHazardCause hc WHERE hc.dbHazard.hazardId = h.hazardId "
+                + "AND hc.dbCause.causeId = ?1)")
+                .setParameter(1, causeId)
+                .getResultList();
+    }
+    
+    @Override
+    public List<DbHazard> getHazardsFromConsequence(int consequenceId) {
+        return em.createQuery("SELECT h FROM DbHazard h WHERE EXISTS(SELECT 'x' "
+                + "FROM DbHazardConsequence hc WHERE hc.dbHazard.hazardId = h.hazardId "
+                + "AND hc.dbConsequence.consequenceId = ?1)")
+                .setParameter(1, consequenceId)
+                .getResultList();
+    }
+    
+    @Override
+    public List<DbHazard> getHazardsFromControl(int controlId) {
+        return em.createQuery("SELECT h FROM DbHazard h WHERE EXISTS(SELECT 'x' "
+                + "FROM DbControlHazard hc WHERE hc.dbHazard.hazardId = h.hazardId "
+                + "AND hc.dbControl.controlId = ?1)")
+                .setParameter(1, controlId)
+                .getResultList();
+    }
+    
 }

@@ -10,9 +10,82 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
-                    <h:form>
+                    <h:form id="controlForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
+                        <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
+                            <p:panel styleClass="detailHazardPanel">
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with control #{control_MB.controlObject.controlId}:"/>
+                                    <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
+                                        <p:outputLabel value="Control Description: "/>
+                                        <p:outputLabel value="#{control_MB.selectedControl.controlDescription}"/>
+                                    </p:panelGrid>
+                                </div>
+                                <p:dataTable id="hazardsTable" value="#{control_MB.selectedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
+                                     scrollable="true" scrollHeight="400" scrollRows="100" liveScroll="true" styleClass="resultPanel">
+                                    <f:facet name="header">
+                                        <p:outputPanel>
+                                            <h:outputText value="The associated hazards are: "/>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                    <p:column style="width: 6%; text-align:center">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard ID"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardId}"/>
+                                    </p:column>
+                                    <p:column style="width: 24%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Description"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardDescription}"/>
+                                    </p:column>
+                                    <p:column style="width: 24%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Comment"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardComment}"/>
+                                    </p:column>
+                                    <p:column style="width: 6%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Context"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardContextId.hazardContextName}"/>
+                                    </p:column>
+                                    <p:column style="width: 6.5%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Location"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardLocation.locationName}"/>
+                                    </p:column>
+                                    <p:column style="width: 7%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Activity"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardActivity.activityName}"/>
+                                    </p:column>
+                                    <p:column style="width: 6%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/>
+                                    </p:column>
+                                    <p:column style="width: 6.5%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Status"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardStatusId.hazardStatusName}"/>
+                                    </p:column>
+                                    <p:column style="width: 7%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Owner"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.ownerId.ownerName}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </p:dialog>
                         <h:panelGrid columns="2" class="relationPanel" columnClasses="results,actions">
                             <p:dataTable id="viewTable" value="#{control_MB.listDbControl}" var="item"  
                                          widgetVar="controlTable" emptyMessage="No controls found with given criteria" 
@@ -40,6 +113,9 @@
                                 </p:column>
                                 <p:column headerText="Control Description" filterBy="#{item.controlDescription}" filterMatchMode="contains">
                                     <p:outputLabel value="#{item.controlDescription}"/>
+                                </p:column>
+                                <p:column headerText="Linked Hazards" styleClass="small">
+                                    <p:commandButton action="#{control_MB.showLinkedHazards(item)}" update="controlForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
                                 </p:column>
                                 <p:column styleClass="small">
                                     <f:facet name="header">

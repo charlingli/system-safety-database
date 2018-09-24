@@ -10,9 +10,82 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
-                    <h:form>
+                    <h:form id="causeForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
+                        <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
+                            <p:panel styleClass="detailHazardPanel">
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with the cause #{cause_MB.selectedCause.causeId}:"/>
+                                    <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
+                                        <p:outputLabel value="Cause Description: "/>
+                                        <p:outputLabel value="#{cause_MB.selectedCause.causeDescription}"/>
+                                    </p:panelGrid>
+                                </div>
+                                <p:dataTable id="hazardsTable" value="#{cause_MB.selectedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
+                                     scrollable="true" scrollHeight="400" scrollRows="100" liveScroll="true" styleClass="resultPanel">
+                                    <f:facet name="header">
+                                        <p:outputPanel>
+                                            <h:outputText value="The associated hazards are: "/>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                    <p:column style="width: 6%; text-align:center">
+                                        <f:facet name="header">
+                                            <h:outputText value="Hazard ID"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardId}"/>
+                                    </p:column>
+                                    <p:column style="width: 24%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Description"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardDescription}"/>
+                                    </p:column>
+                                    <p:column style="width: 24%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Comment"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardComment}"/>
+                                    </p:column>
+                                    <p:column style="width: 6%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Context"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardContextId.hazardContextName}"/>
+                                    </p:column>
+                                    <p:column style="width: 6.5%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Location"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardLocation.locationName}"/>
+                                    </p:column>
+                                    <p:column style="width: 7%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Activity"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardActivity.activityName}"/>
+                                    </p:column>
+                                    <p:column style="width: 6%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Type"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/>
+                                    </p:column>
+                                    <p:column style="width: 6.5%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Status"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.hazardStatusId.hazardStatusName}"/>
+                                    </p:column>
+                                    <p:column style="width: 7%">
+                                        <f:facet name="header">
+                                            <h:outputText value="Owner"/>
+                                        </f:facet>
+                                        <h:outputText value="#{hazard.ownerId.ownerName}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </p:panel>
+                        </p:dialog>
                         <h:panelGrid columns="2" class="relationPanel" columnClasses="results,actions">
                             <p:dataTable id="viewTable" value="#{cause_MB.listDbCause}" var="item" 
                                          widgetVar="causeTable" emptyMessage="No causes found with given criteria" 
@@ -27,11 +100,11 @@
                                 <p:column headerText="Cause Id" filterBy="#{item.causeId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.causeId}"/>
                                 </p:column>
-                                <p:column headerText="Hazard ID" filterBy="#{item.hazardId}" filterMatchMode="exact" styleClass="small">
-                                    <p:outputLabel value="#{item.hazardId}"/>
-                                </p:column>
                                 <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60">
                                     <p:outputLabel value="#{item.causeDescription}"/>
+                                </p:column>
+                                <p:column headerText="Linked Hazards" styleClass="small">
+                                    <p:commandButton action="#{cause_MB.showLinkedHazards(item)}" update="causeForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
                                 </p:column>
                                 <p:column styleClass="small">
                                     <f:facet name="header">
@@ -48,7 +121,6 @@
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
-                                <p:tooltip for="hazardId" showEvent="focus" hideEvent="blur"/>
                                 <p:panel rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
                                     <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
                                         <f:facet name="header">
@@ -67,17 +139,6 @@
                                             <p:outputLabel value="Cause Id:" for="causeId"/>
                                             <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The CauseId field is required."/>
                                         </c:if>
-                                        <p:outputLabel id="hazardId" value="Hazard ID:" for="addHazard"/>
-                                        <p:autoComplete id="addHazard" value="#{cause_MB.hazardObject}" completeMethod="#{cause_MB.showHazards}"
-                                                        var="hazard" itemLabel="#{hazard.hazardId}" itemValue="#{hazard}" converter="hazardConverter"
-                                                        title="If this cause is also a hazard in another context, please enter the hazard Id">
-                                            <p:column>
-                                                <h:outputText value="#{hazard.hazardId}"/>
-                                            </p:column>
-                                            <p:column>
-                                                <h:outputText value="#{hazard.hazardDescription}"/>
-                                            </p:column>
-                                        </p:autoComplete>
                                         <p:outputLabel value="Cause Description:" for="causeDescription"/>
                                         <p:inputTextarea rows="4" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The CauseDescription field is required."/>
                                     </p:panelGrid>

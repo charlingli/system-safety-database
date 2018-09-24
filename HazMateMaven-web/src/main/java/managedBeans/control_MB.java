@@ -6,9 +6,11 @@
 package managedBeans;
 
 import ejb.DbControlFacadeLocal;
+import ejb.DbHazardFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbcontrolHierarchyFacadeLocal;
 import entities.DbControl;
+import entities.DbHazard;
 import entities.DbOwners;
 import entities.DbcontrolHierarchy;
 import java.io.Serializable;
@@ -29,6 +31,9 @@ import javax.faces.view.ViewScoped;
 public class control_MB implements Serializable {
 
     @EJB
+    private DbHazardFacadeLocal dbHazardFacade;
+
+    @EJB
     private DbOwnersFacadeLocal dbOwnersFacade;
 
     @EJB
@@ -36,7 +41,7 @@ public class control_MB implements Serializable {
 
     @EJB
     private DbControlFacadeLocal dbControlFacade;
-
+    
     private List<DbControl> listDbControl;
     private List<DbcontrolHierarchy> listDbControlHierarchy;
     private List<DbOwners> listDbOwners;
@@ -45,6 +50,9 @@ public class control_MB implements Serializable {
     private DbControl controlObject = new DbControl();
     private DbcontrolHierarchy controlHierarchyObject = new DbcontrolHierarchy();
     private DbOwners ownersObject = new DbOwners();
+    
+    private DbControl selectedControl;
+    private List<DbHazard> selectedHazards;
 
     private int controlHierarchyId;
     private int ownerId;
@@ -88,6 +96,22 @@ public class control_MB implements Serializable {
 
     public void setListDbOwners(List<DbOwners> listDbOwners) {
         this.listDbOwners = listDbOwners;
+    }
+
+    public DbControl getSelectedControl() {
+        return selectedControl;
+    }
+
+    public void setSelectedControl(DbControl selectedControl) {
+        this.selectedControl = selectedControl;
+    }
+
+    public List<DbHazard> getSelectedHazards() {
+        return selectedHazards;
+    }
+
+    public void setSelectedHazards(List<DbHazard> selectedHazards) {
+        this.selectedHazards = selectedHazards;
     }
 
     public int getControlHierarchyId() {
@@ -240,5 +264,10 @@ public class control_MB implements Serializable {
         init();
         controlHierarchyId = -1;
         ownerId = -1;
+    }
+    
+    public void showLinkedHazards(DbControl selectedControl) {
+        setSelectedControl(selectedControl);
+        setSelectedHazards(dbHazardFacade.getHazardsFromCause(selectedControl.getControlId()));
     }
 }
