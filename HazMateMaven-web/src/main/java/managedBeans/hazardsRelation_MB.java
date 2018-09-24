@@ -109,6 +109,7 @@ public class hazardsRelation_MB implements Serializable {
     private String controlStatus;
     private String controlSaveAction;
     private String redirectionSource;
+    private String finalActionButton;
 
     public hazardsRelation_MB() {
     }
@@ -352,7 +353,17 @@ public class hazardsRelation_MB implements Serializable {
     public void setControlType(String controlType) {
         this.controlType = controlType;
     }
+
+    public String getFinalActionButton() {
+        return finalActionButton;
+    }
+
+    public void setFinalActionButton(String finalActionButton) {
+        this.finalActionButton = finalActionButton;
+    }
     
+    
+
     @PostConstruct
     public void init() {
         searchBox = true;
@@ -364,6 +375,7 @@ public class hazardsRelation_MB implements Serializable {
         addControl = false;
         addControlJustify = false;
         controlHazardObject = new DbControlHazard();
+        finalActionButton = "Save";
         //Validate if this component has been called due to another page redirection.
         redirectedPage();
     }
@@ -649,6 +661,7 @@ public class hazardsRelation_MB implements Serializable {
     private void redirectedPage() {
         DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
         if (initialHazard != null) {
+            finalActionButton = "Submit for review";
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");
             setHazardId(initialHazard.getHazardId());
             searchHazards();
@@ -660,29 +673,52 @@ public class hazardsRelation_MB implements Serializable {
 
     //Triggers the work flow whenever a new hazard has been added, edited or simply the hazard relations have changed. 
     private void triggerWorkFlow() {
-        if (redirectionSource.equals("AddHazard")) {
-            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("App. Manager");
-            if (!listApprovers.isEmpty()) {
-                DbwfHeader wfObj = new DbwfHeader();
-                wfObj.setWfTypeId(new DbwfType("W3"));
-                wfObj.setWfStatus("O");
-                wfObj.setWfAddedDateTime(new Date());
-                wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
-                wfObj.setWfObjectId(hazardObject.getHazardId());
-                wfObj.setWfObjectName("Hazard");
-                wfObj.setWfComment1("This flow was created to approve a new hazard in the ssd.");
-                wfObj.setWfCompleteMethod("HazardApprovalWF");
-                validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-HRD");
-                try {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/masterMenu.xhtml");
-                    
-                } catch (IOException ex) {
-                    Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                //System.out.println(result.getAnswerString());
+        boolean wfTriggered = false;
+        if (redirectionSource != null) {
+            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("App. Manager - WF Approver");
+            if (!listApprovers.isEmpty() && redirectionSource.equals("AddHazard")) {
+                createNewWf(listApprovers, hazardObject, "This flow was created to approve a new hazard in the ssd.");
+                wfTriggered = true;
+            } else if (!listApprovers.isEmpty() && redirectionSource.equals("EditHazard")) {
+                //first, edit the current workflow
+                DbwfHeader currentWF = (DbwfHeader) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelWF");
+                currentWF.setWfComment2("This flow was closed due to the user updated the requiere information, hence a new workflow will triggered.");
+                currentWF.setWfStatus("C");
+                dbwfHeaderFacade.edit(currentWF);
+                //second, create a new workflow
+                String Comment = "This flow was created to approve a new hazard in the ssd, this flow contains the latest requested changes, refer to worfFlow Id " + currentWF.getWfId();
+                createNewWf(listApprovers, hazardObject, Comment);
+                //Third, delete variables
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("redirectionSource");
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelWF");
+                wfTriggered = true;
             } else {
-                System.out.println("managedBeans.hazardsRelation_MB.triggerWorkFlow() -> There are not users with the role 'App. Manager'");
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Saving workflow: ", "There are not users with the role 'App. Manager - WF Approver'."));
             }
         }
+        if (wfTriggered) {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/masterMenu.xhtml");
+
+            } catch (IOException ex) {
+                Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    private void createNewWf(List<DbUser> listApp, DbHazard hazardObj, String Comment1) {
+        DbwfHeader wfObj = new DbwfHeader();
+        wfObj.setWfTypeId(new DbwfType("W3"));
+        wfObj.setWfStatus("O");
+        wfObj.setWfAddedDateTime(new Date());
+        wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
+        wfObj.setWfObjectId(hazardObj.getHazardId());
+        wfObj.setWfObjectName("Hazard");
+        wfObj.setWfComment1(Comment1);
+        wfObj.setWfCompleteMethod("HazardApprovalWF");
+        validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApp, wfObj, "WKF-HRD");
     }
 }

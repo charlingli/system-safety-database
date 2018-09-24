@@ -47,6 +47,7 @@ import entities.DbtreeLevel3;
 import entities.DbtreeLevel4;
 import entities.DbtreeLevel5;
 import entities.DbtreeLevel6;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -134,9 +137,9 @@ public class editHazard_MB implements Serializable {
     private int freqId;
     private int severityId;
     private int riskClassId;
-    
-    String strHazardReview; 
-    
+
+    String strHazardReview;
+
     private boolean editFlag = false;
     private boolean deleteButton = false;
 
@@ -153,8 +156,8 @@ public class editHazard_MB implements Serializable {
     private searchObject hazardTypeIdObject;
     private searchObject hazardStatusIdObject;
     private searchObject riskClassIdObject;
-    private searchObject legacyIdObject; 
-    
+    private searchObject legacyIdObject;
+
     private String selectedHazardId;
     private Date selectedHazardDate;
     private String selectedHazardContext;
@@ -165,8 +168,9 @@ public class editHazard_MB implements Serializable {
     private String selectedHazardType;
     private String selectedHazardStatus;
     private String selectedRiskClass;
-    private String selectedLegacyId; 
-    
+    private String selectedLegacyId;
+    private String redirectionSource;
+
     /*Variables relating to the SBS tree*/
     private TreeNode root;
     private TreeNode[] selectedNodes;
@@ -550,7 +554,7 @@ public class editHazard_MB implements Serializable {
     public void setSelectedHazardDate(Date selectedHazardDate) {
         this.selectedHazardDate = selectedHazardDate;
     }
-    
+
     @PostConstruct
     public void init() {
         listDbHazardActivity = dbhazardActivityFacade.findAll();
@@ -562,6 +566,7 @@ public class editHazard_MB implements Serializable {
         listDbRiskFrequency = dbriskFrequencyFacade.findAll();
         listDbRiskSeverity = dbriskSeverityFacade.findAll();
         listDbRiskClass = dbriskClassFacade.findAll();
+        redirectedPage();
     }
 
     public void constructSearchObject() {
@@ -569,7 +574,7 @@ public class editHazard_MB implements Serializable {
         listSearchObject = new ArrayList<>();
         listDbHazard = new ArrayList<>();
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        
+
         if (!getSelectedHazardId().isEmpty()) {
             listSearchObject.add(new searchObject("hazardId", getSelectedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard ID"));
         }
@@ -579,17 +584,17 @@ public class editHazard_MB implements Serializable {
         if (getSelectedHazardContext() != null) {
             listSearchObject.add(new searchObject("hazardContextId", getSelectedHazardContext(), "int", "DbHazard", "hazardContextId", null, null, "=", "Hazard Context"));
         }
-        if (!getSelectedHazardDescription().isEmpty()) {
+        if ( getSelectedHazardDescription() != null) {
             listSearchObject.add(new searchObject("hazardDescription", getSelectedHazardDescription(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
         }
         if (getSelectedHazardLocation() != null) {
-           listSearchObject.add(new searchObject("locationId", getSelectedHazardLocation(), "int", "DbHazard", "hazardLocation", null, null, "=", "Hazard Location"));
+            listSearchObject.add(new searchObject("locationId", getSelectedHazardLocation(), "int", "DbHazard", "hazardLocation", null, null, "=", "Hazard Location"));
         }
         if (getSelectedHazardActivity() != null) {
-           listSearchObject.add(new searchObject("activityId", getSelectedHazardActivity(), "int", "DbHazard", "hazardActivity", null, null, "=", "Hazard Activity"));
+            listSearchObject.add(new searchObject("activityId", getSelectedHazardActivity(), "int", "DbHazard", "hazardActivity", null, null, "=", "Hazard Activity"));
         }
         if (getSelectedOwner() != null) {
-           listSearchObject.add(new searchObject("ownerId", getSelectedOwner(), "int", "DbHazard", "ownerId", null, null, "=", "Hazard Owner"));
+            listSearchObject.add(new searchObject("ownerId", getSelectedOwner(), "int", "DbHazard", "ownerId", null, null, "=", "Hazard Owner"));
         }
         if (getSelectedHazardType() != null) {
             listSearchObject.add(new searchObject("hazardTypeId", getSelectedHazardType(), "int", "DbHazard", "hazardTypeId", null, null, "=", "Hazard Type"));
@@ -600,19 +605,16 @@ public class editHazard_MB implements Serializable {
         if (getSelectedRiskClass() != null) {
             listSearchObject.add(new searchObject("riskClassId", getSelectedRiskClass(), "int", "DbHazard", "riskClassId", null, null, "=", "Hazard Risk"));
         }
-        if (!getSelectedLegacyId().isEmpty()) {
+        if (getSelectedLegacyId() != null) {
             listSearchObject.add(new searchObject("legacyId", getSelectedLegacyId(), "string", "DbHazard", "riskClassId", null, null, "like", "Legacy Id"));
         }
 
-
-
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
-
         editFlag = false;   //Close modifyTable and enable 'deleteButton' when 'Search' is pressed 
         deleteButton = false;
         treeFlag = false; //Close the SBS tree and set the 'Edit SBS' button to generate tree 
         popFlag = true;
-        init(); //Update search dropdown lists for subsequent searches
+        //init(); //Update search dropdown lists for subsequent searches
 
     }
 
@@ -651,29 +653,30 @@ public class editHazard_MB implements Serializable {
     }
 
     public void editHazard() {
-        List<DbriskFrequency> returnedFrequencyList; 
-        List<DbriskSeverity> returnedSeverityList; 
-        
+        List<DbriskFrequency> returnedFrequencyList;
+        List<DbriskSeverity> returnedSeverityList;
+
         fillHazardObject();
-        
+
         hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
 
         //Setting the audit fields
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         hazardObject.setUpdatedDateTime(new Date());
         hazardObject.setUserIdUpdate(activeUser.getUserId());
-        
+
         dbHazardFacade.edit(hazardObject);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully edited!"));
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again
         editFlag = false;
         deleteButton = false;
+        redirectToRelations();
     }
 
     public void editSbs(TreeNode[] nodes) {
 
         dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
-        displaySelectedMultiple1(nodes);
+        displaySelectedMultiple(nodes);
         addSBS();
 
         treeFlag = false;
@@ -727,7 +730,7 @@ public class editHazard_MB implements Serializable {
         selectedHazardType = null;
         selectedHazardStatus = null;
         selectedRiskClass = null;
-        selectedLegacyId = null; 
+        selectedLegacyId = null;
     }
 
     public void fillHazardObject() {
@@ -770,7 +773,7 @@ public class editHazard_MB implements Serializable {
         return strHazardReview;
     }
 
-    public void displaySelectedMultiple1(TreeNode[] nodes) {
+    public void displaySelectedMultiple(TreeNode[] nodes) {
         if (nodes != null && nodes.length > 0) {
             treeCheckedNodesList = new ArrayList<>();
             DbtreeLevel1 tmpTreeNode = dbtreeLevel1Facade.findByName(root.getChildren().get(0).toString());
@@ -931,7 +934,29 @@ public class editHazard_MB implements Serializable {
         selectedNodes = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
         popFlag = false; //command button that calls this function is no longer rendered 
     }
-    
+
+    //This method controls the behaviour when the hazard relations has been called due to a redirection page from add or edit hazard.
+    private void redirectedPage() {
+        DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
+        if (initialHazard != null) {
+            setSelectedHazardId(initialHazard.getHazardId());
+            constructSearchObject();
+            showEdit(initialHazard);
+            redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
+        }
+    }
+
+    //Reditects to the hazard relations whenever the intial call came from a workflow process.
+    private void redirectToRelations() {
+        if (redirectionSource.equals("EditHazard")) {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../data/relations/hazardsRelation.xhtml");
+            } catch (IOException ex) {
+                Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     public Date todaysDate() {
         Calendar c = Calendar.getInstance();
         return c.getTime();
