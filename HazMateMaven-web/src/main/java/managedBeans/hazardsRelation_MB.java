@@ -387,7 +387,7 @@ public class hazardsRelation_MB implements Serializable {
     }
 
     public void includeRelations(DbHazard hazardIn) {
-        this.hazardObject = hazardIn;
+        hazardObject = hazardIn;
         listHazardCauses = dbHazardCauseFacade.findByHazardId(hazardObject.getHazardId());
         listHazardConsqs = dbHazardConsequenceFacade.findByHazardId(hazardObject.getHazardId());
         listHazardControls = dbControlHazardFacade.findByHazardId(hazardObject.getHazardId());
@@ -605,12 +605,12 @@ public class hazardsRelation_MB implements Serializable {
         addConq = false;
         addControl = false;
         addControlJustify = false;
-        hazardObject = new DbHazard();
         controlHazardObject = new DbControlHazard();
         listSelectedCauses = new ArrayList<>();
         listSelectedConsqs = new ArrayList<>();
         listSelectedControls = new ArrayList<>();
         triggerWorkFlow();
+        hazardObject = new DbHazard();
     }
 
     private List<searchObject> createSearchList() {
