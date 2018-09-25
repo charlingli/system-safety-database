@@ -46,8 +46,9 @@ public class userWF_MB implements Serializable {
     private DbwfHeaderFacadeLocal dbwfHeaderFacade;
     
     private List<DbwfLine> listOpenWF;
-    private List<DbwfLine> listMyWF;
+    private List<DbwfHeader> listMyWF;
     private List<DbwfLine> selectWF;
+    private List<DbwfHeader> selectWFHeader;
     private DbwfHeader detailWF;
     private List<DbwfLine> detailLine;
     private DbHazard detailHazard;
@@ -70,11 +71,11 @@ public class userWF_MB implements Serializable {
         this.listOpenWF = listOpenWF;
     }
 
-    public List<DbwfLine> getListMyWF() {
+    public List<DbwfHeader> getListMyWF() {
         return listMyWF;
     }
 
-    public void setListMyWF(List<DbwfLine> listMyWF) {
+    public void setListMyWF(List<DbwfHeader> listMyWF) {
         this.listMyWF = listMyWF;
     }
 
@@ -84,6 +85,14 @@ public class userWF_MB implements Serializable {
 
     public void setSelectWF(List<DbwfLine> selectWF) {
         this.selectWF = selectWF;
+    }
+
+    public List<DbwfHeader> getSelectWFHeader() {
+        return selectWFHeader;
+    }
+
+    public void setSelectWFHeader(List<DbwfHeader> selectWFHeader) {
+        this.selectWFHeader = selectWFHeader;
     }
 
     public DbwfHeader getDetailWF() {
@@ -133,7 +142,7 @@ public class userWF_MB implements Serializable {
     public void setDetailControls(List<DbControlHazard> detailControls) {
         this.detailControls = detailControls;
     }
-    
+
     public DbwfHeader getApprovalWF() {
         return approvalWF;
     }
@@ -166,7 +175,7 @@ public class userWF_MB implements Serializable {
             setIsAdminUser(true);
         }
         setListOpenWF(dbwfLineFacade.findOpenByUser(activeUser.getUserId()));
-        setListMyWF(dbwfLineFacade.findActiveByUser(activeUser.getUserId()));
+        setListMyWF(dbwfHeaderFacade.findActiveByUser(activeUser.getUserId()));
     }
     
     public void showDetail(DbwfHeader wfHeader) {
@@ -183,6 +192,11 @@ public class userWF_MB implements Serializable {
     
     public void prepareDecision(DbwfLine wfItem, String decisionId) {
         setApprovalWF(wfItem.getDbwfHeader());
+        setApprovalDecision(decisionId);
+    }
+    
+    public void prepareDecisionHeader(DbwfHeader wfItem, String decisionId) {
+        setApprovalWF(wfItem);
         setApprovalDecision(decisionId);
     }
     
@@ -208,6 +222,17 @@ public class userWF_MB implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
             }
+            setApprovalWF(null);
+            init();
+        }
+    }
+    
+    public void sendRejection(String approvalComment) {
+        if (approvalComment.length() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
+        } else {
+            dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflows."));
             setApprovalWF(null);
             init();
         }
@@ -242,6 +267,19 @@ public class userWF_MB implements Serializable {
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
                 }
+            }
+            setApprovalWF(null);
+            init();
+        }
+    }
+    
+    public void sendRejections(String approvalComment) {
+        if (approvalComment.length() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
+        } else {
+            for (DbwfHeader wfItem : selectWFHeader) {
+                dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "userApproval");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflows."));
             }
             setApprovalWF(null);
             init();

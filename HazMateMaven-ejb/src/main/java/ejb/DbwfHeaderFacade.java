@@ -432,4 +432,24 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
 
         return resultantList;
     }
+    
+    @Override
+    public List<DbwfHeader> findActiveByUser(int userId) {
+        String queryStr;
+        List<DbwfHeader> resultantList = new ArrayList<>();
+
+        try {
+            queryStr = "SELECT h FROM DbwfHeader h WHERE h.wfStatus = 'I' "
+                    + "AND h.wfUserIdAdd.userId = ?1";
+            Query query = em.createQuery(queryStr);
+            query.setParameter(1, userId);
+
+            resultantList = query.getResultList();
+
+        } catch (Exception e) {
+
+            throw e;
+        }
+        return resultantList;       
+    }
 }
