@@ -22,7 +22,7 @@
                                 <p:outputLabel value="#{managementWF_MB.detailWF.wfId}"/>
                                 <p:outputLabel value="Comment 1:"/>
                                 <p:outputLabel value="#{managementWF_MB.detailWF.wfComment1}"/>
-                                <p:outputLabel value="Workflow Object Type : Id "/>
+                                <p:outputLabel value="Workflow Object Type &amp; Id "/>
                                 <p:outputLabel value="#{managementWF_MB.detailWF.wfObjectName} : #{managementWF_MB.detailWF.wfObjectId}"/>
                                 <p:outputLabel value="Comment 2:"/>
                                 <p:outputLabel value="#{managementWF_MB.detailWF.wfComment2}"/>
@@ -253,7 +253,7 @@
                         </p:column>
                         <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
                             <p:commandLink id="objAjax" update=":wfForm" actionListener="#{managementWF_MB.showHazard(wf)}" oncomplete="PF('objectOverlay').show()">
-                                <h:outputText value="#{wf.wfObjectName} &amp; #{wf.wfObjectId}"/>
+                                <h:outputText value="#{wf.wfObjectName} : #{wf.wfObjectId}"/>
                             </p:commandLink>
                             <p:tooltip for="objAjax">
                                 <i class="fa fa-search"/>
