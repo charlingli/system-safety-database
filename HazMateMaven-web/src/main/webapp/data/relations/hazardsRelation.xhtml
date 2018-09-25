@@ -183,7 +183,7 @@
                                 <p:outputLabel value="#{control.controlJustify}"/>
                             </p:column>
                             <p:column headerText="Control Status" styleClass="small">
-                                <p:outputLabel value="#{control.controlExistingOrProposed}"/>
+                                <p:outputLabel value="#{control.controlExistingOrProposed == 'P' ? 'Proposed' : control.controlExistingOrProposed == 'E' ? 'Existing' : control.controlExistingOrProposed}"/>
                             </p:column>
                             <p:column headerText="Actions" styleClass="small"> 
                                 <h:commandLink value="Edit" styleClass="commandLink">
@@ -217,7 +217,7 @@
                                 <f:selectItem itemValue="M" itemLabel="Mitigative"/>
                                 <f:selectItem itemValue="P" itemLabel="Preventive"/>
                             </p:selectOneMenu>
-                            <p:outputLabel value="Control Recommendation: *" for="controlRecommend"/>
+                            <p:outputLabel value="Control Recommendation: " for="controlRecommend"/>
                             <p:selectOneMenu id="controlRecommend" value="#{hazardsRelation_MB.controlRecommendId}" required="true">
                                 <f:selectItems value="#{hazardsRelation_MB.listControlRecommends}" var="ctlRecomm" itemValue="#{ctlRecomm.controlRecommendId}" itemLabel="#{ctlRecomm.controlRecommendName}"/>
                                 <f:ajax listener="#{hazardsRelation_MB.loadJustify}" execute="@form" render="@form"/>
@@ -225,7 +225,7 @@
                             <p:outputLabel value="Justification: *" for="controlJustify" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                             <p:inputTextarea id="controlJustify" value="#{hazardsRelation_MB.controlJustify}" rendered="#{hazardsRelation_MB.addControlJustify}"/>
                             <p:outputLabel value="Control Status: *" for="controlStatus"/>
-                            <p:selectOneMenu id="controlStatus" value="#{hazardsRelation_MB.controlType}">
+                            <p:selectOneMenu id="controlStatus" value="#{hazardsRelation_MB.controlStatus}">
                                 <f:selectItem itemValue="E" itemLabel="Existing"/>
                                 <f:selectItem itemValue="P" itemLabel="Proposed"/>
                             </p:selectOneMenu>

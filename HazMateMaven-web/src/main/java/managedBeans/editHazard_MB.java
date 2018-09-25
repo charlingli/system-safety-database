@@ -606,7 +606,7 @@ public class editHazard_MB implements Serializable {
             listSearchObject.add(new searchObject("riskClassId", getSelectedRiskClass(), "int", "DbHazard", "riskClassId", null, null, "=", "Hazard Risk"));
         }
         if (getSelectedLegacyId() != null) {
-            listSearchObject.add(new searchObject("legacyId", getSelectedLegacyId(), "string", "DbHazard", "riskClassId", null, null, "like", "Legacy Id"));
+            listSearchObject.add(new searchObject("legacyId", getSelectedLegacyId(), "string", "DbHazard", null, null, null, "like", "Legacy Id"));
         }
 
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
@@ -948,11 +948,13 @@ public class editHazard_MB implements Serializable {
 
     //Reditects to the hazard relations whenever the intial call came from a workflow process.
     private void redirectToRelations() {
-        if (redirectionSource.equals("EditHazard")) {
-            try {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../data/relations/hazardsRelation.xhtml");
-            } catch (IOException ex) {
-                Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
+        if (redirectionSource != null) {
+            if (redirectionSource.equals("EditHazard")) {
+                try {
+                    FacesContext.getCurrentInstance().getExternalContext().redirect("./../../data/relations/hazardsRelation.xhtml");
+                } catch (IOException ex) {
+                    Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }

@@ -200,7 +200,7 @@
                                     <p:outputLabel value="#{CO.dbControl.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
                                 <p:column headerText="Control Type" styleClass="small">
-                                    <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : control.controlType == 'M' ? 'Mitigative' : control.controlType}"/>
+                                    <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : CO.controlType == 'M' ? 'Mitigative' : CO.controlType}"/>
                                 </p:column>
                                 <p:column headerText="Control Recommendation" styleClass="small">
                                     <p:outputLabel value="#{CO.controlRecommendId.controlRecommendName}"/>
@@ -209,7 +209,7 @@
                                     <p:outputLabel value="#{CO.controlJustify}"/>
                                 </p:column>
                                 <p:column headerText="Control Status" styleClass="small">
-                                    <p:outputLabel value="#{CO.controlExistingOrProposed}"/>
+                                    <p:outputLabel value="#{CO.controlExistingOrProposed == 'P' ? 'Proposed' : CO.controlExistingOrProposed == 'E' ? 'Existing' : CO.controlExistingOrProposed}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>

@@ -16,7 +16,7 @@
                         <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
-                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with the cause #{cause_MB.selectedCause.causeId}:"/>
+                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with cause ##{cause_MB.selectedCause.causeId}:"/>
                                     <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
                                         <p:outputLabel value="Cause Description: "/>
                                         <p:outputLabel value="#{cause_MB.selectedCause.causeDescription}"/>
