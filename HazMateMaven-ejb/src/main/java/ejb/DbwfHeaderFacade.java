@@ -281,7 +281,13 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
         switch (wfObj.getWfCompleteMethod()) {
             case "HazardApprovalWF":
                 //include the logic to this scenario
-                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item will be approved.");
+                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item will be approved (logic required).");
+                break;
+            case "HazardSuggestionWF":
+                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item has been edited (no logic required).");
+                break;
+            case "HazardDeletionWF":
+                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item will be deleted (logic required).");
                 break;
         }
     }
@@ -431,5 +437,25 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
         }
 
         return resultantList;
+    }
+    
+    @Override
+    public List<DbwfHeader> findActiveByUser(int userId) {
+        String queryStr;
+        List<DbwfHeader> resultantList = new ArrayList<>();
+
+        try {
+            queryStr = "SELECT h FROM DbwfHeader h WHERE h.wfStatus = 'I' "
+                    + "AND h.wfUserIdAdd.userId = ?1";
+            Query query = em.createQuery(queryStr);
+            query.setParameter(1, userId);
+
+            resultantList = query.getResultList();
+
+        } catch (Exception e) {
+
+            throw e;
+        }
+        return resultantList;       
     }
 }

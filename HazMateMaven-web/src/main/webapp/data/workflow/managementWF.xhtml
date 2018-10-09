@@ -273,16 +273,34 @@
                             <p:outputLabel value="#{wf.wfComment4}"/>
                         </p:column>
                         <p:column headerText="Approval Actions" styleClass="small">
-                            <p:commandButton id="approveButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-check" styleClass="approveButton"/> | 
-                            <p:commandButton id="rejectButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-times" styleClass="rejectButton"/> | 
+                            <p:commandButton id="approveButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-check" styleClass="approveButton"/> 
+                            <p:commandButton id="rejectButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-ban" styleClass="rejectButton"/> 
                             <p:commandButton id="requestButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('requestOverlay').show()" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-info" styleClass="requestButton"/>
+                            <p:tooltip for="approveButton">
+                                <h:outputText value="Approve Workflow"/>
+                            </p:tooltip>
+                            <p:tooltip for="rejectButton">
+                                <h:outputText value="Reject Workflow"/>
+                            </p:tooltip>
+                            <p:tooltip for="requestButton">
+                                <h:outputText value="Request Information"/>
+                            </p:tooltip>
                         </p:column>
                         <f:facet name="footer">
                             <p:outputPanel>
                                 <h:outputText value="Selected #{managementWF_MB.selectWF.size()} #{managementWF_MB.selectWF.size() != 1 ? 'workflows' : 'workflow'}. "/>
-                                <p:commandButton action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'A')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-check" styleClass="approveButton"/> | 
-                                <p:commandButton action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'R')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-times" styleClass="rejectButton"/> |  
-                                <p:commandButton action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'I')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-info" styleClass="requestButton"/>
+                                <p:commandButton id="approveAllButton" action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'A')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-check" styleClass="approveButton"/> 
+                                <p:commandButton id="rejectAllButton" action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'R')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-ban" styleClass="rejectButton"/> 
+                                <p:commandButton id="requestAllButton" action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'I')}" oncomplete="PF('multipleOverlay').show()" update="wfForm" disabled="#{1 > managementWF_MB.selectWF.size()}" icon="fa fa-info" styleClass="requestButton"/>
+                                <p:tooltip for="approveAllButton">
+                                    <h:outputText value="Approve Selected Workflows"/>
+                                </p:tooltip>
+                                <p:tooltip for="rejectAllButton">
+                                    <h:outputText value="Reject Selected Workflows"/>
+                                </p:tooltip>
+                                <p:tooltip for="requestAllButton">
+                                    <h:outputText value="Request Information"/>
+                                </p:tooltip>
                             </p:outputPanel>
                         </f:facet>
                     </p:dataTable>

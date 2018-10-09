@@ -686,7 +686,7 @@ public class hazardsRelation_MB implements Serializable {
                 currentWF.setWfStatus("C");
                 dbwfHeaderFacade.edit(currentWF);
                 //second, create a new workflow
-                String Comment = "This flow was created to approve a new hazard in the ssd, this flow contains the latest requested changes, refer to worfFlow Id " + currentWF.getWfId();
+                String Comment = "This flow was created to approve a new hazard in the ssd, this flow contains the latest requested changes, refer to workflow Id " + currentWF.getWfId();
                 createNewWf(listApprovers, hazardObject, Comment);
                 //Third, delete variables
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");
@@ -696,7 +696,7 @@ public class hazardsRelation_MB implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Saving workflow: ", "There are not users with the role 'App. Manager - WF Approver'."));
+                                "Saving workflow: ", "There are not users with the role 'Core user'."));
             }
         }
         if (wfTriggered) {

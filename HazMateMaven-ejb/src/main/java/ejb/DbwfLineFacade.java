@@ -78,27 +78,6 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
         }
         return resultantList;       
     }
-    
-    @Override
-    public List<DbwfLine> findActiveByUser(int userId) {
-        String queryStr;
-        List<DbwfLine> resultantList = new ArrayList<>();
-
-        try {
-            queryStr = "SELECT l FROM DbwfLine l WHERE EXISTS "
-                    + "(SELECT 'X' FROM DbwfHeader h WHERE h.wfId = l.dbwfLinePK.wfId " + 
-                     "AND h.wfStatus = 'I' AND h.wfUserIdAdd.userId = ?1) AND l.wfApproverDecisionId IS NULL";
-            Query query = em.createQuery(queryStr);
-            query.setParameter(1, userId);
-
-            resultantList = query.getResultList();
-
-        } catch (Exception e) {
-
-            throw e;
-        }
-        return resultantList;       
-    }
 
     @Override
     //This method checks if all the approvers have given their response to complete the transaction.

@@ -45,4 +45,5 @@ public interface DbwfHeaderFacadeLocal {
     
     List<DbwfHeader> findWorkflowsByFieldsOnly(List<searchObject> workflowList);
     
+    List<DbwfHeader> findActiveByUser(int userId);
 }
