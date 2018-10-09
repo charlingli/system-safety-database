@@ -141,7 +141,7 @@ public class editHazard_MB implements Serializable {
     String strHazardReview;
 
     private boolean editFlag = false;
-    private boolean deleteButton = false;
+//    private boolean deleteButton = false;
 
     /*Variables relating to the Search function*/
     private List<searchObject> listSearchObject;
@@ -498,14 +498,14 @@ public class editHazard_MB implements Serializable {
     public void setRiskClassId(int riskClassId) {
         this.riskClassId = riskClassId;
     }
+//
+//    public boolean isDeleteButton() {
+//        return deleteButton;
+//    }
 
-    public boolean isDeleteButton() {
-        return deleteButton;
-    }
-
-    public void setDeleteButton(boolean deleteButton) {
-        this.deleteButton = deleteButton;
-    }
+//    public void setDeleteButton(boolean deleteButton) {
+//        this.deleteButton = deleteButton;
+//    }
 
     public TreeNode getRoot() {
         return root;
@@ -611,7 +611,7 @@ public class editHazard_MB implements Serializable {
 
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
         editFlag = false;   //Close modifyTable and enable 'deleteButton' when 'Search' is pressed 
-        deleteButton = false;
+//        deleteButton = false;
         treeFlag = false; //Close the SBS tree and set the 'Edit SBS' button to generate tree 
         popFlag = true;
         //init(); //Update search dropdown lists for subsequent searches
@@ -634,7 +634,7 @@ public class editHazard_MB implements Serializable {
 
     public void showEdit(DbHazard hazardObject) {
         editFlag = true;
-        deleteButton = true;
+//        deleteButton = true;
         this.hazardObject = hazardObject;
         activityId = hazardObject.getHazardActivity().getActivityId();
         locationId = hazardObject.getHazardLocation().getLocationId();
@@ -662,7 +662,7 @@ public class editHazard_MB implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully edited!"));
         listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);//update view of hazards table by performing search again
         editFlag = false;
-        deleteButton = false;
+//        deleteButton = false;
         redirectToRelations();
     }
 
@@ -686,11 +686,11 @@ public class editHazard_MB implements Serializable {
         }
     }
 
-    public void deleteHazard(DbHazard hazardObject) {
-        dbHazardFacade.remove(hazardObject);
-        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again 
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully deleted!"));
-    }
+//    public void deleteHazard(DbHazard hazardObject) {
+//        dbHazardFacade.remove(hazardObject);
+//        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again 
+//        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully deleted!"));
+//    }
 
     public void closeTree() {
         treeFlag = false;
@@ -699,7 +699,7 @@ public class editHazard_MB implements Serializable {
 
     public void cancel() {
         editFlag = false;
-        deleteButton = false;
+//        deleteButton = false;
         treeFlag = false;
         popFlag = true;
     }
@@ -791,6 +791,9 @@ public class editHazard_MB implements Serializable {
         int counterLevel5 = 1;
         int counterLevel6 = 1;
 
+        
+        
+        
         List<TreeNode> listTreeNode = new ArrayList<>();
 
         DbtreeLevel1 tmpResultObjLevel1 = dbtreeLevel1Facade.find(1); //This line might modified to get a dynamic tree
