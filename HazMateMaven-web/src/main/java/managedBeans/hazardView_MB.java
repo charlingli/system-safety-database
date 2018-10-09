@@ -2,11 +2,14 @@ package managedBeans;
 
 import customObjects.searchObject;
 import customObjects.treeNodeObject;
+import customObjects.validateIdObject;
 import ejb.DbHazardFacadeLocal;
 import entities.*;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbProjectFacadeLocal;
+import ejb.DbQualityFacadeLocal;
+import ejb.DbUserFacadeLocal;
 import ejb.DbchangeTypeFacadeLocal;
 import ejb.DbconstructionTypeFacadeLocal;
 import ejb.DbcontrolHierarchyFacadeLocal;
@@ -17,6 +20,8 @@ import ejb.DbhazardContextFacadeLocal;
 import ejb.DbhazardStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
+import ejb.DbwfHeaderFacadeLocal;
+import java.io.IOException;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -24,10 +29,15 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.RateEvent;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -38,6 +48,12 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class hazardView_MB implements Serializable {
 
+    @EJB
+    private DbwfHeaderFacadeLocal dbwfHeaderFacade;
+    @EJB
+    private DbUserFacadeLocal dbUserFacade;
+    @EJB
+    private DbQualityFacadeLocal dbQualityFacade;
     @EJB
     private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
     @EJB
@@ -67,6 +83,7 @@ public class hazardView_MB implements Serializable {
     @EJB
     private DbcontrolHierarchyFacadeLocal dbcontrolHierarchyFacade;
 
+    private DbUser activeUser;
     private String searchedCauses;
     private String searchedConsequences;
     private String searchedHazardDescription;
@@ -110,12 +127,18 @@ public class hazardView_MB implements Serializable {
     private TreeNode[] TNSelectedNodes;
     private String htmlCode;
     private boolean enableQueryDescr;
+    private DbQuality qualityObject;
+    private DbQualityPK qualityPKObject;
+    private int qualityRating;
+    private int displayRating;
+    private int displayCount;
     
     public hazardView_MB() {
     }
 
     @PostConstruct
     public void init() {
+        activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         setListLocations(dbLocationFacade.findAll());
         setListProjects(dbProjectFacade.findAll());
         setListGradeSeparations(dbgradeSeparationFacade.findAll());
@@ -129,6 +152,14 @@ public class hazardView_MB implements Serializable {
         setListControlHierarchies(dbcontrolHierarchyFacade.findAll());
         setListControlRecommendations(dbcontrolRecommendFacade.findAll());
         enableQueryDescr = false;
+    }
+
+    public DbUser getActiveUser() {
+        return activeUser;
+    }
+
+    public void setActiveUser(DbUser activeUser) {
+        this.activeUser = activeUser;
     }
 
     public String getSearchedCauses() {
@@ -473,6 +504,46 @@ public class hazardView_MB implements Serializable {
 
     public void setEnableQueryDescr(boolean enableQueryDescr) {
         this.enableQueryDescr = enableQueryDescr;
+    }
+
+    public DbQuality getQualityObject() {
+        return qualityObject;
+    }
+
+    public void setQualityObject(DbQuality qualityObject) {
+        this.qualityObject = qualityObject;
+    }
+
+    public DbQualityPK getQualityPKObject() {
+        return qualityPKObject;
+    }
+
+    public void setQualityPKObject(DbQualityPK qualityPKObject) {
+        this.qualityPKObject = qualityPKObject;
+    }
+
+    public int getQualityRating() {
+        return qualityRating;
+    }
+
+    public void setQualityRating(int qualityRating) {
+        this.qualityRating = qualityRating;
+    }
+
+    public int getDisplayRating() {
+        return displayRating;
+    }
+
+    public void setDisplayRating(int displayRating) {
+        this.displayRating = displayRating;
+    }
+
+    public int getDisplayCount() {
+        return displayCount;
+    }
+
+    public void setDisplayCount(int displayCount) {
+        this.displayCount = displayCount;
     }
 
     // This method creates the search object, based on the selected parameters.
@@ -928,5 +999,91 @@ public class hazardView_MB implements Serializable {
         }
         constructHtml(new ArrayList<>(), new ArrayList<>());
         enableQueryDescr = false;
+    }
+    
+    public void rateHazard(String hazardId, int rating) {
+        System.out.println("Rating " + hazardId + " with " + rating);
+        if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
+            qualityObject = dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0);
+            qualityObject.setRating(rating);
+            if (rating == 0) {
+                qualityObject.setWeighting(0);
+            } else { // Remember to implement a role check here for different weightings
+                qualityObject.setWeighting(2);
+            }
+            dbQualityFacade.edit(qualityObject);
+        } else {
+            qualityPKObject = new DbQualityPK();
+            qualityPKObject.setHazardId(hazardId);
+            qualityPKObject.setUserId(getActiveUser().getUserId());
+            qualityObject = new DbQuality();
+            qualityObject.setDbQualityPK(qualityPKObject);
+            qualityObject.setRating(rating);
+            if (rating == 0) {
+                qualityObject.setWeighting(0);
+            } else { // Remember to implement a role check here for different weightings
+                qualityObject.setWeighting(2);
+            }
+            dbQualityFacade.create(qualityObject);
+        }
+    }
+    
+    public double getHazardRating(String hazardId) {
+        return dbQualityFacade.getHazardRating(hazardId);
+    }
+    
+    public long getRatingCount(String hazardId) {
+        return dbQualityFacade.getNumberOfRatings(hazardId);
+    }
+    
+    public int getUserRating(String hazardId) {
+        if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
+            return dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0).getRating();
+        }
+        return 0;
+    }
+    
+    public void sendSuggestion(String suggestionComment) {
+        System.out.println(suggestionComment);
+        if (suggestionComment.length() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your change suggestion."));
+        } else {
+            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
+            DbwfHeader wfObj = new DbwfHeader();
+            wfObj.setWfTypeId(new DbwfType("W3"));
+            wfObj.setWfStatus("O");
+            wfObj.setWfAddedDateTime(new Date());
+            wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
+            wfObj.setWfObjectId(getDetailHazard().getHazardId());
+            wfObj.setWfObjectName("Hazard");
+            wfObj.setWfComment1("A change to this hazard was suggested by a user. Please review and manually edit, then complete this workflow to close off.");
+            wfObj.setWfComment2(suggestionComment);
+            wfObj.setWfCompleteMethod("HazardSuggestionWF");
+            validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-SUG");
+            setDetailHazard(null);
+            init();
+        }
+    }
+    
+    public void sendDeletion(String deletionReason, String deletionComment) {
+        if (deletionComment.length() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your mark for deletion."));
+        } else {
+            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
+            DbwfHeader wfObj = new DbwfHeader();
+            wfObj.setWfTypeId(new DbwfType("W3"));
+            wfObj.setWfStatus("O");
+            wfObj.setWfAddedDateTime(new Date());
+            wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
+            wfObj.setWfObjectId(getDetailHazard().getHazardId());
+            wfObj.setWfObjectName("Hazard");
+            wfObj.setWfComment1("A deletion of this hazard was suggested by a user. Please review and approve this workflow to delete or reject this workflow to cancel.");
+            wfObj.setWfComment2(deletionReason);
+            wfObj.setWfComment2(deletionComment);
+            wfObj.setWfCompleteMethod("HazardDeletionWF");
+            validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-DEL");
+            setDetailHazard(null);
+            init();
+        }
     }
 }

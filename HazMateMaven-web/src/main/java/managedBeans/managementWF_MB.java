@@ -423,29 +423,45 @@ public class managementWF_MB implements Serializable {
         if (approvalComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
         } else {
+            boolean validRequest = true;
+            String wfNotOpenMessage = "";
             for (DbwfHeader wfItem : selectWF) {
                 if (wfItem.getWfStatus().equals("O")) {
                     DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfItem.getWfId(), "")), activeUser.getUserId());
                     tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
                     tmpLine.setWfApprovalComment(approvalComment);
                     tmpLine.setWfDateTimeDecision(new Date());
-                    dbwfLineFacade.edit(tmpLine);
 
                     if (getApprovalDecision().equals("A")) {
+                        dbwfLineFacade.edit(tmpLine);
                         dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approval sent for workflows."));
                     } else if (getApprovalDecision().equals("R")) {
+                        dbwfLineFacade.edit(tmpLine);
                         dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflows."));
                     } else if (getApprovalDecision().equals("I")) {
-                        dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Request for information sent for workflows."));
-                    } else {
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
+                        if (wfItem.getWfCompleteMethod().equals("HazardApprovalWF")) {
+                            dbwfLineFacade.edit(tmpLine);
+                            dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
+                        } else {
+                            validRequest = false;
+                        }
                     }
                 } else {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "Some selected workflows already have actions applied."));
+                    wfNotOpenMessage = ", however, some have already completed";
                 }
+            }
+            if (validRequest) {
+                if (getApprovalDecision().equals("A")) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approvals sent for workflows" + wfNotOpenMessage + "."));
+                } else if (getApprovalDecision().equals("R")) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejections sent for workflows" + wfNotOpenMessage + "."));
+                } else if (getApprovalDecision().equals("I")) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Requests for information sent for workflows" + wfNotOpenMessage + "."));
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
+                }
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "Workflows for suggestions and deletions cannot request information."));
             }
             setApprovalWF(null);
             searchWorkflows();

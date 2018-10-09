@@ -675,7 +675,7 @@ public class hazardsRelation_MB implements Serializable {
     private void triggerWorkFlow() {
         boolean wfTriggered = false;
         if (redirectionSource != null) {
-            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("App. Manager - WF Approver");
+            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
             if (!listApprovers.isEmpty() && redirectionSource.equals("AddHazard")) {
                 createNewWf(listApprovers, hazardObject, "This flow was created to approve a new hazard in the ssd.");
                 wfTriggered = true;
@@ -696,7 +696,7 @@ public class hazardsRelation_MB implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Saving workflow: ", "There are not users with the role 'App. Manager - WF Approver'."));
+                                "Saving workflow: ", "There are not users with the role 'Core user'."));
             }
         }
         if (wfTriggered) {

@@ -242,6 +242,19 @@ span.commandLinkWhite {
     border-bottom-color: rgb(216, 178, 95);
     margin: 2px;
 }
+.ui-state-default.missingButton {
+    background-color: rgba(243, 114, 134, 0.2);
+    background-image: -ms-linear-gradient(top, rgba(252, 196, 205, 0.2), rgba(243, 114, 134, 0.2));
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(rgba(252, 196, 205, 0.2)), to(rgba(243, 114, 134, 0.2)));
+    background-image: -webkit-linear-gradient(top, rgba(252, 196, 205, 0.2), rgba(243, 114, 134, 0.2));
+    background-image: -o-linear-gradient(top, rgba(252, 196, 205, 0.2), rgba(243, 114, 134, 0.2));
+    background-image: linear-gradient(top, rgba(252, 196, 205, 0.2), rgba(243, 114, 134, 0.2));
+    background-image: -moz-linear-gradient(top, rgba(252, 196, 205, 0.2), rgba(243, 114, 134, 0.2));
+    border: 1px solid rgba(201, 39, 65, 0.2);
+    border-color: rgba(243, 114, 134, 0.2) rgba(243, 114, 134, 0.2) rgba(224, 77, 100, 0.2);
+    border-bottom-color: rgba(224, 77, 100, 0.2);
+    margin: 2px;
+}
 
 /**
  * Information Set (for detailed hazard/system information)
@@ -312,7 +325,7 @@ span.commandLinkWhite {
     margin-top: 8px;
     margin-bottom: 8px
 }
-#wfForm\:decisionComments, #wfForm\:decisionMultiple {
+#wfForm\:decisionComments, #wfForm\:decisionMultiple, #hazardsForm\:deletionReason, #hazardsForm\:deletionComments, #hazardsForm\:suggestionComments {
     margin: 10px;
     width: calc(100% - 30px);
 }
