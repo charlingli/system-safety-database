@@ -50,6 +50,9 @@ public class DbRole implements Serializable {
     @NotNull
     @Column(name = "roleStatus")
     private short roleStatus;
+    @Size(max = 1)
+    @Column(name = "roleWFApprover")
+    private String roleWFApprover;
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "dbRole")
     private List<DbRolePage> dbRolePageList;
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "roleId")
@@ -89,6 +92,14 @@ public class DbRole implements Serializable {
 
     public void setRoleStatus(short roleStatus) {
         this.roleStatus = roleStatus;
+    }
+
+    public String getRoleWFApprover() {
+        return roleWFApprover;
+    }
+
+    public void setRoleWFApprover(String roleWFApprover) {
+        this.roleWFApprover = roleWFApprover;
     }
 
     @XmlTransient
@@ -133,5 +144,4 @@ public class DbRole implements Serializable {
     public String toString() {
         return roleName;
     }
-    
 }

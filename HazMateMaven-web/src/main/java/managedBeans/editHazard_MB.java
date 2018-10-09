@@ -635,9 +635,7 @@ public class editHazard_MB implements Serializable {
     public void showEdit(DbHazard hazardObject) {
         editFlag = true;
         deleteButton = true;
-
         this.hazardObject = hazardObject;
-
         activityId = hazardObject.getHazardActivity().getActivityId();
         locationId = hazardObject.getHazardLocation().getLocationId();
         statusId = hazardObject.getHazardStatusId().getHazardStatusId();
@@ -647,7 +645,6 @@ public class editHazard_MB implements Serializable {
         freqId = hazardObject.getRiskFrequencyId().getRiskFrequencyId();
         severityId = hazardObject.getRiskSeverityId().getRiskSeverityId();
         riskClassId = hazardObject.getRiskClassId().getRiskClassId();
-
         treeFlag = false;
         popFlag = true;
     }
@@ -655,48 +652,37 @@ public class editHazard_MB implements Serializable {
     public void editHazard() {
         List<DbriskFrequency> returnedFrequencyList;
         List<DbriskSeverity> returnedSeverityList;
-
         fillHazardObject();
-
         hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
-
         //Setting the audit fields
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         hazardObject.setUpdatedDateTime(new Date());
         hazardObject.setUserIdUpdate(activeUser.getUserId());
-
         dbHazardFacade.edit(hazardObject);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully edited!"));
-        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again
+        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);//update view of hazards table by performing search again
         editFlag = false;
         deleteButton = false;
         redirectToRelations();
     }
 
     public void editSbs(TreeNode[] nodes) {
-
         dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
         displaySelectedMultiple(nodes);
         addSBS();
-
         treeFlag = false;
         popFlag = true;
     }
 
     public void addSBS() {
-
         hazardSbsPKObject.setHazardId(hazardObject.getHazardId());
         hazardFKObject.setHazardId(hazardObject.getHazardId());
         hazardSbsObject.setDbHazard(hazardFKObject);
-
         for (int i = 0; i < treeCheckedNodesList.size(); i++) {
             selectedTreeNodeObject = treeCheckedNodesList.get(i);
-
             hazardSbsPKObject.setSbsId(selectedTreeNodeObject.getNodeId());
             hazardSbsObject.setDbHazardSbsPK(hazardSbsPKObject);
-
             dbHazardSbsFacade.create(hazardSbsObject);
-
         }
     }
 
@@ -714,10 +700,8 @@ public class editHazard_MB implements Serializable {
     public void cancel() {
         editFlag = false;
         deleteButton = false;
-
         treeFlag = false;
         popFlag = true;
-
     }
 
     public void clearSearch() {
@@ -947,16 +931,19 @@ public class editHazard_MB implements Serializable {
     }
 
     //Reditects to the hazard relations whenever the intial call came from a workflow process.
-    private void redirectToRelations() {
+    private String redirectToRelations() {
         if (redirectionSource != null) {
             if (redirectionSource.equals("EditHazard")) {
                 try {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("./../../data/relations/hazardsRelation.xhtml");
-                } catch (IOException ex) {
+                    return "./../../data/relations/hazardsRelation.xhtml";
+                    //FacesContext.getCurrentInstance().getExternalContext().redirect("./../../data/relations/hazardsRelation.xhtml");
+                //} catch (IOException ex) {
+                } catch (Exception ex) {
                     Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
+        return null;
     }
 
     public Date todaysDate() {

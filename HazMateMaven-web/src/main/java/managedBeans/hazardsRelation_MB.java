@@ -671,11 +671,11 @@ public class hazardsRelation_MB implements Serializable {
         }
     }
 
-    //Triggers the work flow whenever a new hazard has been added, edited or simply the hazard relations have changed. 
+    //Triggers the work flow whenever a new hazard has been added or edited. 
     private void triggerWorkFlow() {
         boolean wfTriggered = false;
         if (redirectionSource != null) {
-            List<DbUser> listApprovers = dbUserFacade.getUsersByRole("App. Manager - WF Approver");
+            List<DbUser> listApprovers = dbUserFacade.getWfApproverUsers();
             if (!listApprovers.isEmpty() && redirectionSource.equals("AddHazard")) {
                 createNewWf(listApprovers, hazardObject, "This flow was created to approve a new hazard in the ssd.");
                 wfTriggered = true;

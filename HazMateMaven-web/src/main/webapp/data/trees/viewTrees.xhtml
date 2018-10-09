@@ -66,6 +66,13 @@
                             <h:commandButton value="test" action="#{trees_MB.testCompleteWorkFlow(wfId.value, user.value, trType.value, dcsId.value)}"/>
                         </p:panel>
                     </div>
+
+                    <div class="actionButtonsDiv">
+                        <p:panel>
+                            <p:outputLabel>Testing NEW hazard search: </p:outputLabel>
+                            <h:commandButton value="test" action="#{trees_MB.validateNewHazardSearch}"/>
+                        </p:panel>
+                    </div>
                 </h:form>
             </ui:define>
         </ui:composition>

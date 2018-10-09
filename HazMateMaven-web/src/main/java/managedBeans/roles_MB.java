@@ -12,7 +12,6 @@ import java.util.List;
 import entities.*;
 import javax.ejb.EJB;
 import ejb.DbRoleFacadeLocal;
-import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -28,9 +27,10 @@ public class roles_MB implements Serializable {
     @EJB
     private DbRoleFacadeLocal dbRoleFacade;
     private List<DbRole> listDbRole;
-    private DbRole roleObject = new DbRole();
+    private DbRole roleObject;
     private String strStatus;
     private List listDbUser;
+    private boolean wfApprover;
 
     public roles_MB() {
 
@@ -60,9 +60,20 @@ public class roles_MB implements Serializable {
         this.strStatus = strStatus;
     }
 
+    public boolean isWfApprover() {
+        return wfApprover;
+    }
+
+    public void setWfApprover(boolean wfApprover) {
+        this.wfApprover = wfApprover;
+    }
+    
     @PostConstruct
     public void init() {
         listDbRole = dbRoleFacade.findAll();
+        roleObject = new DbRole();
+        wfApprover = false;
+        
     }
 
     public String add() {
@@ -71,6 +82,7 @@ public class roles_MB implements Serializable {
             return null;
         }
         Short roleStatus = Short.parseShort(strStatus);
+        setWfApprover();
         roleObject.setRoleStatus(roleStatus);
         dbRoleFacade.create(roleObject);
         roleObject = new DbRole();      //re-initialise roleObject for future calls of this method
@@ -102,6 +114,7 @@ public class roles_MB implements Serializable {
         }
         Short roleStatus = 0;
         roleStatus = Short.parseShort(strStatus);
+        setWfApprover();
         roleObject.setRoleStatus(roleStatus);
         dbRoleFacade.edit(roleObject);
         roleObject = new DbRole();
@@ -127,7 +140,15 @@ public class roles_MB implements Serializable {
         }
         return strStatus;
     }
-
+    
+    public void setWfApprover(){
+        if (wfApprover){
+            roleObject.setRoleWFApprover("Y");
+        } else {
+            roleObject.setRoleWFApprover("N");
+        }
+    }
+    
     public boolean duplicateValidations() {
         List<DbRole> validateDuplicates = dbRoleFacade.findByName("roleName", roleObject.getRoleName());
         if (!validateDuplicates.isEmpty() && validateDuplicates.get(0).equals(roleObject)) {

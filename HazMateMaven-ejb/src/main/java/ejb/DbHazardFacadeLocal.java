@@ -78,4 +78,6 @@ public interface DbHazardFacadeLocal {
     List<DbHazard> getHazardsFromConsequence(int consequenceId);
     
     List<DbHazard> getHazardsFromControl(int controlId);
+    
+    List<DbHazard> findHazards(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType);
 }

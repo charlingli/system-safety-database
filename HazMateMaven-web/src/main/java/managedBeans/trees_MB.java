@@ -74,8 +74,6 @@ public class trees_MB implements Serializable {
     private DbtreeLevel2FacadeLocal dbtreeLevel2Facade;
     @EJB
     private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
-    
-    
 
     private List<DbtreeLevel1> listTreeLevel1;
     private String hazardId;
@@ -85,7 +83,7 @@ public class trees_MB implements Serializable {
     private List<treeNodeObject> treeHazardSbsList;
 
     private String gotId;
-    
+
     private String autoConsec;
 
     public trees_MB() {
@@ -155,7 +153,7 @@ public class trees_MB implements Serializable {
     public void setAutoConsec(String autoConsec) {
         this.autoConsec = autoConsec;
     }
-    
+
     @PostConstruct
     public void init() {
         listTreeLevel1 = dbtreeLevel1Facade.findAll();
@@ -454,18 +452,118 @@ public class trees_MB implements Serializable {
         validateIdObject result = dbwfHeaderFacade.newWorkFlow(listUsers, wfObj, autoConsec);
         System.out.println(result.getAnswerString());
     }
-    
+
     public void testCompleteWorkFlow(String wfId, String userId, String trType, String dcsId) {
         DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfId, "")), Integer.parseInt(userId));
         tmpLine.setWfApproverDecisionId(new DbwfDecision(dcsId));
         tmpLine.setWfApprovalComment("Testing approvals");
         tmpLine.setWfDateTimeDecision(new Date());
-        
-        
-        
-        
+
         dbwfLineFacade.edit(tmpLine);
-        
+
         dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfId), trType);
+    }
+
+    public void validateNewHazardSearch() {
+//        List<DbHazard> resultantList = dbHazardFacade.findAllHazards();
+        searchObject tmpObj = new searchObject();
+        List<searchObject> searchList = new ArrayList<>();
+//        tmpObj.setFieldName("hazardComment");
+//        tmpObj.setUserInput("Road");
+//        tmpObj.setFieldType("string");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("like");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+//        tmpObj.setFieldName("locationId");
+//        tmpObj.setUserInput("1");
+//        tmpObj.setFieldType("int");
+//        tmpObj.setEntity2Name("hazardLocation");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("=");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+//        tmpObj.setFieldName("controlId");
+//        tmpObj.setUserInput("1,2,3");
+//        tmpObj.setFieldType("int");
+//        tmpObj.setEntity2Name("dbControlHazardPK");
+//        tmpObj.setEntity1Name("DbControlHazard");
+//        tmpObj.setRelationType("in");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+//        tmpObj.setFieldName("hazardId");
+//        tmpObj.setUserInput("1");
+//        tmpObj.setFieldType("string");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("in");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+
+//        tmpObj.setFieldName("causeDescription");
+//        tmpObj.setUserInput("new");
+//        tmpObj.setFieldType("string");
+//        tmpObj.setEntity1Name("DbCause");
+//        tmpObj.setRelationType("like");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+//        tmpObj.setFieldName("projectName");
+//        tmpObj.setUserInput("Mernda Rail");
+//        tmpObj.setFieldType("string");
+//        tmpObj.setEntity3Name("projectId");
+//        tmpObj.setEntity2Name("hazardLocation");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("like");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+
+//        List<DbHazard> resultantList = dbHazardFacade.findHazards(searchList, new ArrayList<>(), "");
+
+        treeNodeObject tmpTreeObj = new treeNodeObject();
+        List<treeNodeObject> searchListTree = new ArrayList<>();
+//        tmpTreeObj.setNodeId("1.1.7.4.12.");
+//        tmpTreeObj.setNodeName("Abc");
+//        searchListTree.add(tmpTreeObj);
+//        tmpTreeObj = new treeNodeObject();
+//          
+//        tmpTreeObj.setNodeId("1.1.7.4.3.1.");
+//        tmpTreeObj.setNodeName("Def");
+//        searchListTree.add(tmpTreeObj);
+//        tmpTreeObj = new treeNodeObject();
+//          
+//        List<DbHazard> resultantList = dbHazardFacade.findHazardsByFieldsAndSbs(searchList, searchListTree);
+//        searchObject tmpObj = new searchObject();
+//        List<searchObject> searchList = new ArrayList<>();
+//        tmpObj.setFieldName("hazardComment");
+//        tmpObj.setUserInput("Road");
+//        tmpObj.setFieldType("string");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("like");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+//        tmpObj.setFieldName("locationId");
+//        tmpObj.setUserInput("1");
+//        tmpObj.setFieldType("int");
+//        tmpObj.setEntity2Name("hazardLocation");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("=");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+//        tmpObj.setFieldName("hazardId");
+//        tmpObj.setUserInput("1");
+//        tmpObj.setFieldType("string");
+//        tmpObj.setEntity1Name("DbHazard");
+//        tmpObj.setRelationType("in");
+//        searchList.add(tmpObj);
+//        tmpObj = new searchObject();
+//
+        List<DbHazard> resultantList = dbHazardFacade.findHazards(searchList, searchListTree, "C");
+//
+        System.out.println(resultantList.size());
     }
 }

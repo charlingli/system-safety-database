@@ -242,8 +242,8 @@
                         <div class="panelButtons">
                             <c:choose>
                                 <c:when test="#{editHazard_MB.editFlag and not editHazard_MB.treeFlag}">
-                                    <p:commandButton value="Save hazard without SBS">
-                                        <f:ajax listener="#{editHazard_MB.editHazard()}" execute="@form" render="@form"/>
+                                    <p:commandButton value="Save hazard without SBS" action="#{editHazard_MB.editHazard()}" ajax="false">
+                                       
                                     </p:commandButton>
                                 </c:when>
                                 <c:when test="#{editHazard_MB.treeFlag}">

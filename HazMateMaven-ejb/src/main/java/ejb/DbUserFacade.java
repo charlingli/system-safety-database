@@ -74,22 +74,41 @@ public class DbUserFacade extends AbstractFacade<DbUser> implements DbUserFacade
     }
     
     @Override
-    public boolean getPageAccessForUser(int userId, String pageName) {
+    public boolean getPageAccessForUser(int userId, String pageLocation) {
         String querySTR;
         List<DbUser> resultList = new ArrayList<>();
         try {
-            querySTR = "SELECT u FROM DbUser u WHERE EXISTS (SELECT 'x' "
-                    + "FROM DbRolePage rp WHERE u.roleId = rp.dbRole.roleId "
-                    + "AND rp.dbPage.pageName = ?1) AND u.userId = ?2";
+            querySTR = "SELECT u FROM DbUser u, DbRolePage rp, DbPage p "
+                    + "WHERE u.roleId.roleId = rp.dbRolePagePK.roleId "
+                    + "AND rp.dbRolePagePK.pageId = p.pageId "
+                    + "AND u.userId = ?1 "
+                    + "AND p.pageLocation = ?2";
             Query query = em.createQuery(querySTR);
-            query.setParameter(1, pageName);
-            query.setParameter(2, userId);
+            query.setParameter(1, userId);
+            query.setParameter(2, pageLocation);
             
             resultList = query.getResultList();
         } catch (Exception e) {
             throw e;
         }
         return resultList.size() > 0;
+    }
+
+    @Override
+    public List<DbUser> getWfApproverUsers() {
+                String querySTR;
+        List<DbUser> resultList = new ArrayList<>();
+        try {
+            querySTR = "FROM DbUser u WHERE u.roleId.roleWFApprover = 'Y'";
+            Query query = em.createQuery(querySTR);
+             
+            resultList = query.getResultList();
+            
+        } catch (Exception e) {
+            throw  e;
+        }
+        
+        return resultList;     
     }
 
 }

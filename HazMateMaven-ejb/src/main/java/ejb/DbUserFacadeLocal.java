@@ -37,5 +37,7 @@ public interface DbUserFacadeLocal {
     List<DbUser> getUsersByRole(String roleName);
     
     boolean getPageAccessForUser(int userId, String pageName);
+    
+    List<DbUser> getWfApproverUsers();
 
 }

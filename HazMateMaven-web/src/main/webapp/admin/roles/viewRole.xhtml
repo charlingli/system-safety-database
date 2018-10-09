@@ -23,6 +23,9 @@
                         <p:column headerText="Status" class="tableColumn80p">
                             <p:outputLabel value="#{roles_MB.printStatus(item.roleStatus)}"/>
                         </p:column>
+                        <p:column headerText="Workflow Approver" class="tableColumn80p">
+                            <p:outputLabel value="#{item.roleWFApprover}"/>
+                        </p:column>
                         <p:column headerText="Option" class="tableColumn80p">
                             <p:commandLink value="Edit" action="#{roles_MB.edit(item)}" class="linkActions"/> 
                             | 

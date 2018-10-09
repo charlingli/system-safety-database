@@ -6,6 +6,7 @@
 package managedBeans;
 
 import ejb.DbUserFacadeLocal;
+import entities.DbHazard;
 import entities.DbUser;
 import java.io.IOException;
 import javax.inject.Named;
@@ -91,17 +92,21 @@ public class login_MB implements Serializable {
     }
 
     public void validateSession() {
-        if (!FacesContext.getCurrentInstance().isPostback()) {
-            String ctx = FacesContext.getCurrentInstance().getViewRoot().getViewId();
-            try {
-                DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
-                System.out.println("Validation Security -> Page: " + ctx);
-                if (activeUser == null) {
-                    FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+        DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        try {
+            if (activeUser != null) {
+                if (!FacesContext.getCurrentInstance().isPostback()) {
+                    String[] ctx = FacesContext.getCurrentInstance().getViewRoot().getViewId().split("\\.");
+                    if (ctx.length > 0 && !dbUserFacade.getPageAccessForUser(activeUser.getUserId(), ctx[0]) && !ctx[0].equals("/admin/masterMenu")) {
+                        System.out.println("Validation Security, user does not have permission to -> Page: " + ctx[0]);
+                        FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+                    }
                 }
-            } catch (IOException e) {
-                System.out.println("managedBeans.login_MB.validateSession() -> " + e);
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
             }
+        } catch (IOException e) {
+            System.out.println("managedBeans.login_MB.validateSession() -> " + e);
         }
     }
 
