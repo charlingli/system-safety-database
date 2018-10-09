@@ -104,6 +104,8 @@ public class roles_MB implements Serializable {
     public String edit(DbRole roleObject) {
         this.roleObject = roleObject;
         strStatus = Short.toString(this.roleObject.getRoleStatus()); //pre-populate role status field 
+        if (roleObject.getRoleWFApprover().equals("Y")) 
+            wfApprover = true;
         return "editRole";
     }
 
