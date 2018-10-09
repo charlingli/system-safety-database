@@ -24,24 +24,22 @@
                             <c:choose>
                                 <c:when test="#{userWF_MB.isAdminUser}">
                                     <p:menuButton icon="fa fa-tasks" styleClass="#{userWF_MB.listMyWF.size() > 0 || userWF_MB.listOpenWF.size() > 0 ? 'workflow-badge' : ''}" id="workflowAdmin">
-                                        <p:menuitem value="Approve Workflows (#{userWF_MB.listOpenWF.size()})" action="/data/workflow/adminWF" icon="fa fa-check"/>
-                                        <p:menuitem value="Review Workflows (#{userWF_MB.listMyWF.size()})" action="/data/workflow/userWF" icon="fa fa-pencil"/>
+                                        <p:menuitem value="Proposed Changes (#{userWF_MB.listOpenWF.size()})" action="/data/workflow/adminWF" icon="fa fa-check"/>
+                                        <p:menuitem value="Address Suggestions (#{userWF_MB.listMyWF.size()})" action="/data/workflow/userWF" icon="fa fa-pencil"/>
                                     </p:menuButton>
                                     <p:tooltip id="toolTipWorkflowAdmin" for="workflowAdmin" trackMouse="true">
                                         <h:outputText value="#{userWF_MB.listOpenWF.size()} workflows requiring approval"/>
                                         <br />
-                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows requesting review"/>
+                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows with comments"/>
                                     </p:tooltip>
                                 </c:when>
                                 <c:otherwise>
                                     <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.listMyWF.size() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflowUser"/>
                                     <p:tooltip id="toolTipWorkflowUser" for="workflowUser" trackMouse="true">
-                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows requesting review"/>
+                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows with comments"/>
                                     </p:tooltip>
                                 </c:otherwise>
                             </c:choose>
-                            
-                            
                             <p:spacer width="20" height="20"/>
                             <p:commandButton icon="fa fa-home" action="/admin/masterMenu" id="home"/>
                             <p:tooltip id="toolTipHome" for="home" value="Home" trackMouse="true"/>
