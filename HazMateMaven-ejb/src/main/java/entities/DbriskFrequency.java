@@ -110,5 +110,5 @@ public class DbriskFrequency implements Serializable {
     public String toString() {
         return "entities.DbriskFrequency[ riskFrequencyId=" + riskFrequencyId + " ]";
     }
-    
-}
+
+    }

@@ -42,6 +42,10 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "DbHazard.findByHazardReview", query = "SELECT d FROM DbHazard d WHERE d.hazardReview = :hazardReview")})
 public class DbHazard implements Serializable {
 
+    @JoinColumn(name = "hazardSystemStatus", referencedColumnName = "systemStatusId")
+    @ManyToOne(optional = false)
+    private DbhazardSystemStatus hazardSystemStatus;
+
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)
@@ -383,6 +387,14 @@ public class DbHazard implements Serializable {
             return true;
         }
         return false;
+    }
+
+    public DbhazardSystemStatus getHazardSystemStatus() {
+        return hazardSystemStatus;
+    }
+
+    public void setHazardSystemStatus(DbhazardSystemStatus hazardSystemStatus) {
+        this.hazardSystemStatus = hazardSystemStatus;
     }
 
 }
