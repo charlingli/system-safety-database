@@ -116,10 +116,9 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                     + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl "
                     + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
                     + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
-                    + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId";
+                    + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId ";
             Query query = em.createQuery(querySTR);
             resultantList = query.getResultList();
-
         } catch (Exception e) {
             throw e;
         }

@@ -560,7 +560,7 @@
                         </p:column>
                         <f:facet name="footer">
                             <p:outputPanel>
-                                <h:outputText value="Currently showing #{hazardView_MB.hazardSearchedlist.size()} #{hazardView_MB.hazardSearchedlist.size() == 1 ? 'hazard' : hazardView_MB.hazardSearchedlist.size() == 0 ? 'no hazards' : 'hazards'}."/>
+                                <h:outputText value="Currently showing #{hazardView_MB.hazardSearchedlist.size()} #{hazardView_MB.hazardSearchedlist.size() != 1 ? 'hazards' : 'hazard'}."/>
                             </p:outputPanel>
                         </f:facet>
                     </p:dataTable>
