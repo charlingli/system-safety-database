@@ -67,7 +67,7 @@
                             <p:commandButton value="Clear search" action="#{editHazard_MB.clearSearch()}" update="searchTable" rendered="#{!editHazard_MB.editFlag}"/>
                         </div>
                         <p:dataTable id="viewTable" value="#{editHazard_MB.listDbHazard}" var="item" rendered="#{!editHazard_MB.editFlag}" 
-                                     paginator="true" rows="25" paginatorPosition="bottom">
+                                     paginator="true" rows="25" paginatorPosition="bottom" styleClass="resultPanel">
                             <f:facet name="header">
                                 <p:outputPanel>
                                     <h:outputText value="Select from the following hazards: "/>
@@ -141,15 +141,13 @@
                                 </f:facet>
                                 <p:outputLabel value="#{item.legacyId}"/>
                             </p:column>
-                            <p:column>
+                            <p:column styleClass="small">
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" class="commandLink">
+                                <h:commandLink value="Edit" class="commandLink" >
                                     <f:ajax listener="#{editHazard_MB.showEdit(item)}" execute="@form" render="@form"/>
-                                </h:commandLink> |
-                                <h:commandLink value="Delete" action="#{editHazard_MB.deleteHazard(item)}" immediate="true"
-                                               class="commandLink" onclick="return confirm('Are you sure?')" disabled="#{editHazard_MB.deleteButton}"/>
+                                </h:commandLink>
                             </p:column>
                         </p:dataTable>
                         <p:panel styleClass="hazardModifyPanel">
@@ -247,7 +245,7 @@
                                     </p:commandButton>
                                 </c:when>
                                 <c:when test="#{editHazard_MB.treeFlag}">
-                                    <p:commandButton value="Save hazard and SBS">
+                                    <p:commandButton value="Save hazard and SBS" >
                                         <f:ajax listener="#{editHazard_MB.editHazardSBS(editHazard_MB.selectedNodes)}" execute="@form" render="@form"/>
                                     </p:commandButton>
                                 </c:when>
