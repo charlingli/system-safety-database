@@ -128,5 +128,21 @@ public class login_MB implements Serializable {
             spec.clearPassword();
         }
     }
+    
+    public String isAdminUser() {
+        DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        try {
+            if (activeUser != null) {
+                if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+                    return "true";
+                }
+            } else {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+            }
+        } catch (IOException e) {
+            System.out.println("managedBeans.login_MB.isAdminUser() -> " + e);
+        }
+        return "false";
+    }
 
 }

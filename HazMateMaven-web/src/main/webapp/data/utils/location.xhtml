@@ -15,55 +15,37 @@
                         <div class="messageDiv">
                             <p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/>
                         </div>
-                        <p:dataTable id="viewTable" value="#{location_MB.listDbLocation}" var="item" styleClass="parameterTableLarge">
+                        <p:dataTable id="viewTable" value="#{location_MB.listDbLocation}" var="item" styleClass="parameterTableLarge"
+                                     widgetVar="locationTable" emptyMessage="No locations found with given criteria"
+                                     filteredValue="#{location_MB.filteredLocations}"  paginator="true" rows="20" paginatorPosition="bottom">
                             <f:facet name="header">
                                 <p:outputPanel>
                                     <h:outputText value="The current locations are: "/>
+                                    <p:inputText id="globalFilter" onkeyup="PF('locationTable').filter()" placeholder="Enter keyword"/>
                                 </p:outputPanel>
                             </f:facet>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="ID"/>
-                                </f:facet>
+                            <p:column headerText="Location ID" filterBy="#{item.locationId}" filterMatchMode="exact">
                                 <p:outputLabel value="#{item.locationId}"/>
                             </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="Name"/>
-                                </f:facet>
+                            <p:column headerText="Location Name" filterBy="#{item.locationName}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.locationName}"/>
                             </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="Abbreviation"/>
-                                </f:facet>
+                            <p:column headerText="Abbreviation" filterBy="#{item.locationAbbrev}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.locationAbbrev}"/>
                             </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="Description"/>
-                                </f:facet>
+                            <p:column headerText="Description" filterBy="#{item.locationDescription}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.locationDescription}"/>
                             </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="Change Type"/>
-                                </f:facet>
+                            <p:column headerText="Change Type" filterBy="#{item.locationChangeType.changeTypeName}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.locationChangeType.changeTypeName}"/>
                             </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="Construction Type"/>
-                                </f:facet>
+                            <p:column headerText="Construction Type" filterBy="#{item.locationConstructionType.constructionTypeName}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.locationConstructionType.constructionTypeName}"/>
                             </p:column>
-                            <p:column>
-                                <f:facet name="header">
-                                    <p:outputLabel value="Grade Separation"/>
-                                </f:facet>
+                            <p:column headerText="Grade Separation" filterBy="#{item.locationGradeSeparation.gradeSeparationName}" filterMatchMode="contains">
                                 <p:outputLabel value="#{item.locationGradeSeparation.gradeSeparationName}"/>
                             </p:column>
-                            <p:column>
+                            <p:column headerText="Project" filterBy="#{item.projectId.projectName}" filterMatchMode="contains">
                                 <f:facet name="header">
                                     <p:outputLabel value="Project"/>
                                 </f:facet>

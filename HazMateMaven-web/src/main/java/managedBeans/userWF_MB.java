@@ -307,4 +307,12 @@ public class userWF_MB implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("redirectionSource", "EditHazard");
         return "/data/hazards/editHazard";
     }
+    
+    public int getWFProposedListSize() {
+        return listOpenWF.size();
+    }
+    
+    public int getWFAddressListSize() {
+        return listMyWF.size();
+    }
 }

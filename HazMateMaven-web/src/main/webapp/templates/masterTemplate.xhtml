@@ -22,21 +22,21 @@
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
                         <f:facet name="options">
                             <c:choose>
-                                <c:when test="#{userWF_MB.isAdminUser}">
-                                    <p:menuButton icon="fa fa-tasks" styleClass="#{userWF_MB.listMyWF.size() > 0 || userWF_MB.listOpenWF.size() > 0 ? 'workflow-badge' : ''}" id="workflowAdmin">
-                                        <p:menuitem value="Proposed Changes (#{userWF_MB.listOpenWF.size()})" action="/data/workflow/adminWF" icon="fa fa-check"/>
-                                        <p:menuitem value="Address Suggestions (#{userWF_MB.listMyWF.size()})" action="/data/workflow/userWF" icon="fa fa-pencil"/>
+                                <c:when test="#{login_MB.isAdminUser()}">
+                                    <p:menuButton icon="fa fa-tasks" styleClass="#{userWF_MB.getWFProposedListSize() > 0 || userWF_MB.getWFAddressListSize() > 0 ? 'workflow-badge' : ''}" id="workflowAdmin">
+                                        <p:menuitem value="Proposed Changes (#{userWF_MB.getWFProposedListSize()})" action="/data/workflow/adminWF" icon="fa fa-check"/>
+                                        <p:menuitem value="Address Suggestions (#{userWF_MB.getWFAddressListSize()})" action="/data/workflow/userWF" icon="fa fa-pencil"/>
                                     </p:menuButton>
                                     <p:tooltip id="toolTipWorkflowAdmin" for="workflowAdmin" trackMouse="true">
-                                        <h:outputText value="#{userWF_MB.listOpenWF.size()} workflows requiring approval"/>
+                                        <h:outputText value="#{userWF_MB.getWFProposedListSize()} workflows requiring approval"/>
                                         <br />
-                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows with comments"/>
+                                        <h:outputText value="#{userWF_MB.getWFAddressListSize()} workflows with comments"/>
                                     </p:tooltip>
                                 </c:when>
                                 <c:otherwise>
-                                    <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.listMyWF.size() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflowUser"/>
+                                    <p:commandButton icon="fa fa-dashboard" styleClass="#{userWF_MB.getWFAddressListSize() > 0 ? 'workflow-badge' : ''}" action="/data/workflow/userWF" id="workflowUser"/>
                                     <p:tooltip id="toolTipWorkflowUser" for="workflowUser" trackMouse="true">
-                                        <h:outputText value="#{userWF_MB.listMyWF.size()} workflows with comments"/>
+                                        <h:outputText value="#{userWF_MB.getWFAddressListSize()} workflows with comments"/>
                                     </p:tooltip>
                                 </c:otherwise>
                             </c:choose>

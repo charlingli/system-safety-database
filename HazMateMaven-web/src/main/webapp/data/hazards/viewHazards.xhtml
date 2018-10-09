@@ -558,6 +558,11 @@
                             </f:facet>
                             <h:outputText value="#{hazard.ownerId.ownerName}"/>
                         </p:column>
+                        <f:facet name="footer">
+                            <p:outputPanel>
+                                <h:outputText value="Currently showing #{hazardView_MB.hazardSearchedlist.size()} #{hazardView_MB.hazardSearchedlist.size() == 1 ? 'hazard' : hazardView_MB.hazardSearchedlist.size() == 0 ? 'no hazards' : 'hazards'}."/>
+                            </p:outputPanel>
+                        </f:facet>
                     </p:dataTable>
                 </h:form>
                 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.min.js"/>

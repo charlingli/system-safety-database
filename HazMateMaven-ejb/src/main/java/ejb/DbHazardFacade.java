@@ -49,7 +49,6 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         return em.createQuery("FROM DbControlHazard c WHERE c.dbHazard.hazardId = :checkHazardId")
                 .setParameter("checkHazardId", hazardId)
                 .getResultList();
-
     }
 
     @Override
@@ -57,7 +56,6 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         return em.createQuery("FROM DbControlHazard c WHERE c.dbHazard.hazardId = :checkHazardId AND c.controlType = 'M'")
                 .setParameter("checkHazardId", hazardId)
                 .getResultList();
-
     }
 
     @Override
@@ -65,7 +63,6 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         return em.createQuery("FROM DbControlHazard c WHERE c.dbHazard.hazardId = :checkHazardId AND c.controlType = 'P'")
                 .setParameter("checkHazardId", hazardId)
                 .getResultList();
-
     }
 
     @Override
@@ -73,7 +70,6 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         return em.createQuery("FROM DbControl c WHERE c.dbControl.controlId = :checkControlId")
                 .setParameter("checkControlId", controlId)
                 .getResultList();
-
     }
 
     @Override

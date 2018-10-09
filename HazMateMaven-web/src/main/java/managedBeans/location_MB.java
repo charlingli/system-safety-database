@@ -56,6 +56,7 @@ public class location_MB implements Serializable {
     private List<DbHazard> listDbHazard;
     private List<DbLocation> existingAbbrev; 
     private List<DbLocation> existingLocationName; 
+    private List<DbLocation> filteredLocations;
     
     private DbLocation locationObject = new DbLocation();
     private DbconstructionType constructionTypeObject = new DbconstructionType();
@@ -197,6 +198,14 @@ public class location_MB implements Serializable {
 
     public void setProjectId(int projectId) {
         this.projectId = projectId;
+    }
+
+    public List<DbLocation> getFilteredLocations() {
+        return filteredLocations;
+    }
+
+    public void setFilteredLocations(List<DbLocation> filteredLocations) {
+        this.filteredLocations = filteredLocations;
     }
 
     @PostConstruct
