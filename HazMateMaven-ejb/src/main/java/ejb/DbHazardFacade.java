@@ -16,6 +16,7 @@ import entities.DbHazard;
 import entities.DbHazardCause;
 import entities.DbHazardConsequence;
 import entities.DbHazardSbs;
+import entities.DbhazardSystemStatus;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,382 +108,382 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                 .getResultList();
     }
 
-    @Override
-    public List<DbHazard> findAllHazards() {
-        String querySTR;
-        List<DbHazard> resultantList = new ArrayList<>();
-        try {
-            querySTR = "SELECT DISTINCT Haz "
-                    + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl "
-                    + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
-                    + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
-                    + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId";
-            Query query = em.createQuery(querySTR);
-            resultantList = query.getResultList();
-
-        } catch (Exception e) {
-            throw e;
-        }
-        return resultantList;
-    }
-
-    @Override
-    public List<DbHazard> findHazardsByFields(List<searchObject> hazardList) {
-        String querySTR = "SELECT DISTINCT Haz "
-                + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl,"
-                + " DbCause Cau, DbConsequence Coq, DbControl Ctl "
-                + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
-                + "AND HCau.dbHazardCausePK.causeId = Cau.causeId "
-                + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
-                + "AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId "
-                + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId "
-                + "AND HCtl.dbControlHazardPK.controlId = Ctl.controlId ";
-        List<DbHazard> resultantList = new ArrayList<>();
-        boolean flagEntities = true;
-
-        //Adding the alias table according to each object in the list
-        for (int x = 0; x < hazardList.size(); x++) {
-            switch (hazardList.get(x).getEntity1Name()) {
-                case "DbHazard":
-                    hazardList.get(x).setTableAlias("Haz");
-                    break;
-                case "DbHazardCause":
-                    hazardList.get(x).setTableAlias("HCau");
-                    break;
-                case "DbHazardConsequence":
-                    hazardList.get(x).setTableAlias("HCoq");
-                    break;
-                case "DbControlHazard":
-                    hazardList.get(x).setTableAlias("HCtl");
-                    break;
-                case "DbCause":
-                    hazardList.get(x).setTableAlias("Cau");
-                    break;
-                case "DbConsequence":
-                    hazardList.get(x).setTableAlias("Coq");
-                    break;
-                case "DbControl":
-                    hazardList.get(x).setTableAlias("Ctl");
-                    break;
-                default:
-                    flagEntities = false;
-                    break;
-            }
-        }
-
-        //if some unkown entity was introduced in the list, the function will not go to the next step.
-        if (flagEntities) {
-            //creating all the where criterias
-            for (int x = 0; x < hazardList.size(); x++) {
-                StringBuilder tmpString = new StringBuilder();
-
-                tmpString.append("AND ");
-                if (hazardList.get(x).getEntity3Name() != null) {
-                    tmpString.append(hazardList.get(x).getTableAlias());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getEntity2Name());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getEntity3Name());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getFieldName());
-                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
-                    querySTR = querySTR + tmpString.toString();
-                } else if (hazardList.get(x).getEntity2Name() != null) {
-                    tmpString.append(hazardList.get(x).getTableAlias());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getEntity2Name());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getFieldName());
-                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
-                    querySTR = querySTR + tmpString.toString();
-                } else if (hazardList.get(x).getEntity1Name() != null) {
-                    tmpString.append(hazardList.get(x).getTableAlias());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getFieldName());
-                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
-                    querySTR = querySTR + tmpString.toString();
-                }
-            }
-
-            try {
-                boolean flagParameters = true;
-                Query query = em.createQuery(querySTR);
-                for (int x = 0; x < hazardList.size(); x++) {
-                    int paramNo = x + 1;
-                    switch (hazardList.get(x).getFieldType()) {
-                        case "string":
-                            if ("=".equals(hazardList.get(x).getRelationType())
-                                    || "like".equals(hazardList.get(x).getRelationType())) {
-                                query.setParameter(paramNo, hazardList.get(x).getUserInput());
-                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
-                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
-                                if (parts.length > 0) {
-                                    List<String> inString = new ArrayList<>();
-                                    inString.addAll(Arrays.asList(parts));
-                                    query.setParameter(paramNo, inString);
-                                } else {
-                                    flagParameters = false;
-                                }
-                            }
-                            break;
-                        case "int":
-                            if ("=".equals(hazardList.get(x).getRelationType())
-                                    || "like".equals(hazardList.get(x).getRelationType())) {
-                                query.setParameter(paramNo, Integer.parseInt(hazardList.get(x).getUserInput()));
-                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
-                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
-                                if (parts.length > 0) {
-                                    List<Integer> inInt = new ArrayList<>();
-                                    for (String tmpString : parts) {
-                                        Integer tmpVal = Integer.parseInt(tmpString);
-                                        inInt.add(tmpVal);
-                                    }
-                                    query.setParameter(paramNo, inInt);
-                                } else {
-                                    flagParameters = false;
-                                }
-                            }
-                            break;
-                        default:
-                            flagParameters = false;
-                            System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
-                                    + "The fieldType is not allowed.");
-                            break;
-                    }
-                }
-
-                if (flagParameters) {
-                    resultantList = query.getResultList();
-                } else {
-                    System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
-                            + "The function could not find a string separed by commas in a filed marked as IN relationype.");
-                }
-
-            } catch (Exception e) {
-                throw e;
-            }
-
-        } else {
-            System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
-                    + "Some entites could not be matched with the managed by this function.");
-        }
-
-        return resultantList;
-    }
-
-    @Override
-    public List<DbHazard> findHazardsByFieldsAndSbs(List<searchObject> hazardList, List<treeNodeObject> sbsList) {
-        String querySTR = "SELECT DISTINCT Haz "
-                + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl,"
-                + " DbCause Cau, DbConsequence Coq, DbControl Ctl,  DbHazardSbs HSbs "
-                + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
-                + "AND HCau.dbHazardCausePK.causeId = Cau.causeId "
-                + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
-                + "AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId "
-                + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId "
-                + "AND HCtl.dbControlHazardPK.controlId = Ctl.controlId "
-                + "AND Haz.hazardId = HSbs.dbHazardSbsPK.hazardId ";
-        List<DbHazard> resultantList = new ArrayList<>();
-        List<String> inStringTree = new ArrayList<>();
-        boolean flagEntities = true;
-        boolean flagList = true;
-
-        //Adding the alias table according to each object in the list
-        for (int x = 0; x < hazardList.size(); x++) {
-            switch (hazardList.get(x).getEntity1Name()) {
-                case "DbHazard":
-                    hazardList.get(x).setTableAlias("Haz");
-                    break;
-                case "DbHazardCause":
-                    hazardList.get(x).setTableAlias("HCau");
-                    break;
-                case "DbHazardConsequence":
-                    hazardList.get(x).setTableAlias("HCoq");
-                    break;
-                case "DbControlHazard":
-                    hazardList.get(x).setTableAlias("HCtl");
-                    break;
-                case "DbCause":
-                    hazardList.get(x).setTableAlias("Cau");
-                    break;
-                case "DbConsequence":
-                    hazardList.get(x).setTableAlias("Coq");
-                    break;
-                case "DbControl":
-                    hazardList.get(x).setTableAlias("Ctl");
-                    break;
-                default:
-                    flagEntities = false;
-                    break;
-            }
-        }
-
-        //if some unkown entity was introduced in the list, the function will not go to the next step.
-        if (flagEntities) {
-            //creating all the where criterias
-            int curVariableParam = 0;
-            for (int x = 0; x < hazardList.size(); x++) {
-                StringBuilder tmpString = new StringBuilder();
-                curVariableParam = x;
-
-                tmpString.append("AND ");
-                if (hazardList.get(x).getEntity3Name() != null) {
-                    tmpString.append(hazardList.get(x).getTableAlias());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getEntity2Name());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getEntity3Name());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getFieldName());
-                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
-                    querySTR = querySTR + tmpString.toString();
-                } else if (hazardList.get(x).getEntity2Name() != null) {
-                    tmpString.append(hazardList.get(x).getTableAlias());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getEntity2Name());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getFieldName());
-                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
-                    querySTR = querySTR + tmpString.toString();
-                } else if (hazardList.get(x).getEntity1Name() != null) {
-                    tmpString.append(hazardList.get(x).getTableAlias());
-                    tmpString.append(".");
-                    tmpString.append(hazardList.get(x).getFieldName());
-                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
-                    querySTR = querySTR + tmpString.toString();
-                }
-            }
-
-            for (treeNodeObject tmpTreeNode : sbsList) {
-                inStringTree.add(tmpTreeNode.getNodeId());
-            }
-
-            if (inStringTree.size() > 0) {
-                StringBuilder tmpString = new StringBuilder();
-                tmpString.append("AND ");
-                tmpString.append("HSbs.dbHazardSbsPK.sbsId");
-                tmpString.append(logicOperator("in", curVariableParam + 1));
-                querySTR = querySTR + tmpString.toString();
-            } else {
-                flagList = false;
-                System.out.println("ejb.DbHazardFacade.findHazardsBySbs(): "
-                        + "The list received is empty.");
-            }
-
-            try {
-                boolean flagParameters = true;
-                int curParamNo = 0;
-
-                Query query = em.createQuery(querySTR);
-                for (int x = 0; x < hazardList.size(); x++) {
-                    int paramNo = x + 1;
-                    curParamNo = paramNo;
-                    switch (hazardList.get(x).getFieldType()) {
-                        case "string":
-                            if ("=".equals(hazardList.get(x).getRelationType())
-                                    || "like".equals(hazardList.get(x).getRelationType())) {
-                                query.setParameter(paramNo, hazardList.get(x).getUserInput());
-                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
-                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
-                                if (parts.length > 0) {
-                                    List<String> inString = new ArrayList<>();
-                                    inString.addAll(Arrays.asList(parts));
-                                    query.setParameter(paramNo, inString);
-                                } else {
-                                    flagParameters = false;
-                                }
-                            }
-                            break;
-                        case "int":
-                            if ("=".equals(hazardList.get(x).getRelationType())
-                                    || "like".equals(hazardList.get(x).getRelationType())) {
-                                query.setParameter(paramNo, Integer.parseInt(hazardList.get(x).getUserInput()));
-                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
-                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
-                                if (parts.length > 0) {
-                                    List<Integer> inInt = new ArrayList<>();
-                                    for (String tmpString : parts) {
-                                        Integer tmpVal = Integer.parseInt(tmpString);
-                                        inInt.add(tmpVal);
-                                    }
-                                    query.setParameter(paramNo, inInt);
-                                } else {
-                                    flagParameters = false;
-                                }
-                            }
-                            break;
-                        default:
-                            flagParameters = false;
-                            System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
-                                    + "The fieldType is not allowed.");
-                            break;
-                    }
-                }
-
-                if (flagList) {
-                    query.setParameter(curParamNo + 1, inStringTree);
-                }
-
-                if (flagParameters && flagList) {
-                    resultantList = query.getResultList();
-                } else {
-                    System.out.println("ejb.DbHazardFacade.findHazardsByFieldsAndSbs(): "
-                            + "The function could not find a string separed by commas in a filed marked as IN relationype"
-                            + "or The tree list received is empty.");
-                }
-
-            } catch (Exception e) {
-                throw e;
-            }
-        }
-        return resultantList;
-    }
-
-    @Override
-    public List<DbHazard> findHazardsBySbs(List<treeNodeObject> sbsList) {
-        String querySTR = "SELECT DISTINCT Haz "
-                + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl,"
-                + " DbCause Cau, DbConsequence Coq, DbControl Ctl,  DbHazardSbs HSbs "
-                + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
-                + "AND HCau.dbHazardCausePK.causeId = Cau.causeId "
-                + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
-                + "AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId "
-                + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId "
-                + "AND HCtl.dbControlHazardPK.controlId = Ctl.controlId "
-                + "AND Haz.hazardId = HSbs.dbHazardSbsPK.hazardId ";
-        List<DbHazard> resultantList = new ArrayList<>();
-        List<String> inString = new ArrayList<>();
-        boolean flagList = true;
-
-        for (treeNodeObject tmpTreeNode : sbsList) {
-            inString.add(tmpTreeNode.getNodeId());
-        }
-
-        if (inString.size() > 0) {
-            StringBuilder tmpString = new StringBuilder();
-            tmpString.append("AND ");
-            tmpString.append("HSbs.dbHazardSbsPK.sbsId");
-            tmpString.append(logicOperator("in", 0));
-            querySTR = querySTR + tmpString.toString();
-        } else {
-            flagList = false;
-            System.out.println("ejb.DbHazardFacade.findHazardsBySbs(): "
-                    + "The list received is empty.");
-        }
-
-        if (flagList) {
-            try {
-                Query query = em.createQuery(querySTR);
-                query.setParameter(1, inString);
-                resultantList = query.getResultList();
-            } catch (Exception e) {
-                throw e;
-            }
-        }
-
-        return resultantList;
-    }
-
+//    @Override
+//    public List<DbHazard> findAllHazards() {
+//        String querySTR;
+//        List<DbHazard> resultantList = new ArrayList<>();
+//        try {
+//            querySTR = "SELECT DISTINCT Haz "
+//                    + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl "
+//                    + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
+//                    + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
+//                    + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId";
+//            Query query = em.createQuery(querySTR);
+//            resultantList = query.getResultList();
+//
+//        } catch (Exception e) {
+//            throw e;
+//        }
+//        return resultantList;
+//    }
+//
+//    @Override
+//    public List<DbHazard> findHazardsByFields(List<searchObject> hazardList) {
+//        String querySTR = "SELECT DISTINCT Haz "
+//                + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl,"
+//                + " DbCause Cau, DbConsequence Coq, DbControl Ctl "
+//                + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
+//                + "AND HCau.dbHazardCausePK.causeId = Cau.causeId "
+//                + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
+//                + "AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId "
+//                + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId "
+//                + "AND HCtl.dbControlHazardPK.controlId = Ctl.controlId ";
+//        List<DbHazard> resultantList = new ArrayList<>();
+//        boolean flagEntities = true;
+//
+//        //Adding the alias table according to each object in the list
+//        for (int x = 0; x < hazardList.size(); x++) {
+//            switch (hazardList.get(x).getEntity1Name()) {
+//                case "DbHazard":
+//                    hazardList.get(x).setTableAlias("Haz");
+//                    break;
+//                case "DbHazardCause":
+//                    hazardList.get(x).setTableAlias("HCau");
+//                    break;
+//                case "DbHazardConsequence":
+//                    hazardList.get(x).setTableAlias("HCoq");
+//                    break;
+//                case "DbControlHazard":
+//                    hazardList.get(x).setTableAlias("HCtl");
+//                    break;
+//                case "DbCause":
+//                    hazardList.get(x).setTableAlias("Cau");
+//                    break;
+//                case "DbConsequence":
+//                    hazardList.get(x).setTableAlias("Coq");
+//                    break;
+//                case "DbControl":
+//                    hazardList.get(x).setTableAlias("Ctl");
+//                    break;
+//                default:
+//                    flagEntities = false;
+//                    break;
+//            }
+//        }
+//
+//        //if some unkown entity was introduced in the list, the function will not go to the next step.
+//        if (flagEntities) {
+//            //creating all the where criterias
+//            for (int x = 0; x < hazardList.size(); x++) {
+//                StringBuilder tmpString = new StringBuilder();
+//
+//                tmpString.append("AND ");
+//                if (hazardList.get(x).getEntity3Name() != null) {
+//                    tmpString.append(hazardList.get(x).getTableAlias());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getEntity2Name());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getEntity3Name());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getFieldName());
+//                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
+//                    querySTR = querySTR + tmpString.toString();
+//                } else if (hazardList.get(x).getEntity2Name() != null) {
+//                    tmpString.append(hazardList.get(x).getTableAlias());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getEntity2Name());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getFieldName());
+//                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
+//                    querySTR = querySTR + tmpString.toString();
+//                } else if (hazardList.get(x).getEntity1Name() != null) {
+//                    tmpString.append(hazardList.get(x).getTableAlias());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getFieldName());
+//                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
+//                    querySTR = querySTR + tmpString.toString();
+//                }
+//            }
+//
+//            try {
+//                boolean flagParameters = true;
+//                Query query = em.createQuery(querySTR);
+//                for (int x = 0; x < hazardList.size(); x++) {
+//                    int paramNo = x + 1;
+//                    switch (hazardList.get(x).getFieldType()) {
+//                        case "string":
+//                            if ("=".equals(hazardList.get(x).getRelationType())
+//                                    || "like".equals(hazardList.get(x).getRelationType())) {
+//                                query.setParameter(paramNo, hazardList.get(x).getUserInput());
+//                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
+//                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
+//                                if (parts.length > 0) {
+//                                    List<String> inString = new ArrayList<>();
+//                                    inString.addAll(Arrays.asList(parts));
+//                                    query.setParameter(paramNo, inString);
+//                                } else {
+//                                    flagParameters = false;
+//                                }
+//                            }
+//                            break;
+//                        case "int":
+//                            if ("=".equals(hazardList.get(x).getRelationType())
+//                                    || "like".equals(hazardList.get(x).getRelationType())) {
+//                                query.setParameter(paramNo, Integer.parseInt(hazardList.get(x).getUserInput()));
+//                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
+//                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
+//                                if (parts.length > 0) {
+//                                    List<Integer> inInt = new ArrayList<>();
+//                                    for (String tmpString : parts) {
+//                                        Integer tmpVal = Integer.parseInt(tmpString);
+//                                        inInt.add(tmpVal);
+//                                    }
+//                                    query.setParameter(paramNo, inInt);
+//                                } else {
+//                                    flagParameters = false;
+//                                }
+//                            }
+//                            break;
+//                        default:
+//                            flagParameters = false;
+//                            System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
+//                                    + "The fieldType is not allowed.");
+//                            break;
+//                    }
+//                }
+//
+//                if (flagParameters) {
+//                    resultantList = query.getResultList();
+//                } else {
+//                    System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
+//                            + "The function could not find a string separed by commas in a filed marked as IN relationype.");
+//                }
+//
+//            } catch (Exception e) {
+//                throw e;
+//            }
+//
+//        } else {
+//            System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
+//                    + "Some entites could not be matched with the managed by this function.");
+//        }
+//
+//        return resultantList;
+//    }
+//
+//    @Override
+//    public List<DbHazard> findHazardsByFieldsAndSbs(List<searchObject> hazardList, List<treeNodeObject> sbsList) {
+//        String querySTR = "SELECT DISTINCT Haz "
+//                + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl,"
+//                + " DbCause Cau, DbConsequence Coq, DbControl Ctl,  DbHazardSbs HSbs "
+//                + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
+//                + "AND HCau.dbHazardCausePK.causeId = Cau.causeId "
+//                + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
+//                + "AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId "
+//                + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId "
+//                + "AND HCtl.dbControlHazardPK.controlId = Ctl.controlId "
+//                + "AND Haz.hazardId = HSbs.dbHazardSbsPK.hazardId ";
+//        List<DbHazard> resultantList = new ArrayList<>();
+//        List<String> inStringTree = new ArrayList<>();
+//        boolean flagEntities = true;
+//        boolean flagList = true;
+//
+//        //Adding the alias table according to each object in the list
+//        for (int x = 0; x < hazardList.size(); x++) {
+//            switch (hazardList.get(x).getEntity1Name()) {
+//                case "DbHazard":
+//                    hazardList.get(x).setTableAlias("Haz");
+//                    break;
+//                case "DbHazardCause":
+//                    hazardList.get(x).setTableAlias("HCau");
+//                    break;
+//                case "DbHazardConsequence":
+//                    hazardList.get(x).setTableAlias("HCoq");
+//                    break;
+//                case "DbControlHazard":
+//                    hazardList.get(x).setTableAlias("HCtl");
+//                    break;
+//                case "DbCause":
+//                    hazardList.get(x).setTableAlias("Cau");
+//                    break;
+//                case "DbConsequence":
+//                    hazardList.get(x).setTableAlias("Coq");
+//                    break;
+//                case "DbControl":
+//                    hazardList.get(x).setTableAlias("Ctl");
+//                    break;
+//                default:
+//                    flagEntities = false;
+//                    break;
+//            }
+//        }
+//
+//        //if some unkown entity was introduced in the list, the function will not go to the next step.
+//        if (flagEntities) {
+//            //creating all the where criterias
+//            int curVariableParam = 0;
+//            for (int x = 0; x < hazardList.size(); x++) {
+//                StringBuilder tmpString = new StringBuilder();
+//                curVariableParam = x;
+//
+//                tmpString.append("AND ");
+//                if (hazardList.get(x).getEntity3Name() != null) {
+//                    tmpString.append(hazardList.get(x).getTableAlias());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getEntity2Name());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getEntity3Name());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getFieldName());
+//                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
+//                    querySTR = querySTR + tmpString.toString();
+//                } else if (hazardList.get(x).getEntity2Name() != null) {
+//                    tmpString.append(hazardList.get(x).getTableAlias());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getEntity2Name());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getFieldName());
+//                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
+//                    querySTR = querySTR + tmpString.toString();
+//                } else if (hazardList.get(x).getEntity1Name() != null) {
+//                    tmpString.append(hazardList.get(x).getTableAlias());
+//                    tmpString.append(".");
+//                    tmpString.append(hazardList.get(x).getFieldName());
+//                    tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
+//                    querySTR = querySTR + tmpString.toString();
+//                }
+//            }
+//
+//            for (treeNodeObject tmpTreeNode : sbsList) {
+//                inStringTree.add(tmpTreeNode.getNodeId());
+//            }
+//
+//            if (inStringTree.size() > 0) {
+//                StringBuilder tmpString = new StringBuilder();
+//                tmpString.append("AND ");
+//                tmpString.append("HSbs.dbHazardSbsPK.sbsId");
+//                tmpString.append(logicOperator("in", curVariableParam + 1));
+//                querySTR = querySTR + tmpString.toString();
+//            } else {
+//                flagList = false;
+//                System.out.println("ejb.DbHazardFacade.findHazardsBySbs(): "
+//                        + "The list received is empty.");
+//            }
+//
+//            try {
+//                boolean flagParameters = true;
+//                int curParamNo = 0;
+//
+//                Query query = em.createQuery(querySTR);
+//                for (int x = 0; x < hazardList.size(); x++) {
+//                    int paramNo = x + 1;
+//                    curParamNo = paramNo;
+//                    switch (hazardList.get(x).getFieldType()) {
+//                        case "string":
+//                            if ("=".equals(hazardList.get(x).getRelationType())
+//                                    || "like".equals(hazardList.get(x).getRelationType())) {
+//                                query.setParameter(paramNo, hazardList.get(x).getUserInput());
+//                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
+//                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
+//                                if (parts.length > 0) {
+//                                    List<String> inString = new ArrayList<>();
+//                                    inString.addAll(Arrays.asList(parts));
+//                                    query.setParameter(paramNo, inString);
+//                                } else {
+//                                    flagParameters = false;
+//                                }
+//                            }
+//                            break;
+//                        case "int":
+//                            if ("=".equals(hazardList.get(x).getRelationType())
+//                                    || "like".equals(hazardList.get(x).getRelationType())) {
+//                                query.setParameter(paramNo, Integer.parseInt(hazardList.get(x).getUserInput()));
+//                            } else if ("in".equals(hazardList.get(x).getRelationType())) {
+//                                String parts[] = hazardList.get(x).getUserInput().split("\\,");
+//                                if (parts.length > 0) {
+//                                    List<Integer> inInt = new ArrayList<>();
+//                                    for (String tmpString : parts) {
+//                                        Integer tmpVal = Integer.parseInt(tmpString);
+//                                        inInt.add(tmpVal);
+//                                    }
+//                                    query.setParameter(paramNo, inInt);
+//                                } else {
+//                                    flagParameters = false;
+//                                }
+//                            }
+//                            break;
+//                        default:
+//                            flagParameters = false;
+//                            System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
+//                                    + "The fieldType is not allowed.");
+//                            break;
+//                    }
+//                }
+//
+//                if (flagList) {
+//                    query.setParameter(curParamNo + 1, inStringTree);
+//                }
+//
+//                if (flagParameters && flagList) {
+//                    resultantList = query.getResultList();
+//                } else {
+//                    System.out.println("ejb.DbHazardFacade.findHazardsByFieldsAndSbs(): "
+//                            + "The function could not find a string separed by commas in a filed marked as IN relationype"
+//                            + "or The tree list received is empty.");
+//                }
+//
+//            } catch (Exception e) {
+//                throw e;
+//            }
+//        }
+//        return resultantList;
+//    }
+//
+//    @Override
+//    public List<DbHazard> findHazardsBySbs(List<treeNodeObject> sbsList) {
+//        String querySTR = "SELECT DISTINCT Haz "
+//                + "FROM DbHazard Haz, DbHazardCause HCau, DbHazardConsequence HCoq, DbControlHazard HCtl,"
+//                + " DbCause Cau, DbConsequence Coq, DbControl Ctl,  DbHazardSbs HSbs "
+//                + "WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId "
+//                + "AND HCau.dbHazardCausePK.causeId = Cau.causeId "
+//                + "AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId "
+//                + "AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId "
+//                + "AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId "
+//                + "AND HCtl.dbControlHazardPK.controlId = Ctl.controlId "
+//                + "AND Haz.hazardId = HSbs.dbHazardSbsPK.hazardId ";
+//        List<DbHazard> resultantList = new ArrayList<>();
+//        List<String> inString = new ArrayList<>();
+//        boolean flagList = true;
+//
+//        for (treeNodeObject tmpTreeNode : sbsList) {
+//            inString.add(tmpTreeNode.getNodeId());
+//        }
+//
+//        if (inString.size() > 0) {
+//            StringBuilder tmpString = new StringBuilder();
+//            tmpString.append("AND ");
+//            tmpString.append("HSbs.dbHazardSbsPK.sbsId");
+//            tmpString.append(logicOperator("in", 0));
+//            querySTR = querySTR + tmpString.toString();
+//        } else {
+//            flagList = false;
+//            System.out.println("ejb.DbHazardFacade.findHazardsBySbs(): "
+//                    + "The list received is empty.");
+//        }
+//
+//        if (flagList) {
+//            try {
+//                Query query = em.createQuery(querySTR);
+//                query.setParameter(1, inString);
+//                resultantList = query.getResultList();
+//            } catch (Exception e) {
+//                throw e;
+//            }
+//        }
+//
+//        return resultantList;
+//    }
+//
     @Override
     public List<DbHazard> findHazardsByFieldsOnly(List<searchObject> hazardList) {
         String querySTR = "SELECT DISTINCT Haz FROM DbHazard Haz ";
@@ -661,18 +662,21 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
 
     @Override
     //This method consolidates all the previous methods to retrieve hazards data.
-    //The rqstType parameter validates if the answer should be the complete or incomplete data.
-    public List<DbHazard> findHazards(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType) {
-        List<DbHazard> resultantList = new ArrayList<>();
-        List<String> inStringTree = new ArrayList<>();
-        
-        if (rqstType.equals("")) rqstType = "I";
-        validateIdObject queryString = createQueryString(hazardList, sbsList, rqstType);
+    //The rqstType parameter indicates ther type or requiered data. (A-All, C-Complete, I-Incomplete)
+    //The searchType parameter indicates the type of result required. ("Normal" - "DefaultView")
+    public List<Object> findHazards(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType, String srchType) {
+        List<Object> resultantList = new ArrayList<>();
+
+        if (rqstType.equals("")) {
+            rqstType = "A";
+        }
+        validateIdObject queryString = createQueryString(hazardList, sbsList, rqstType, srchType);
 
         if (queryString.isValidationFlag()) {
             try {
                 int curParamNo = 0;
                 boolean flagParameters = true;
+                List<String> inStringTree = new ArrayList<>();
 
                 Query query = em.createQuery(queryString.getAnswerString());
                 if (!hazardList.isEmpty()) {
@@ -729,9 +733,9 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                 }
 
                 if (flagParameters) {
-                   resultantList = query.getResultList(); 
+                    resultantList = query.getResultList();
                 }
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 System.out.println("ejb.DbHazardFacade.findHazards()" + e);
             }
         } else {
@@ -741,10 +745,10 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
     }
 
     //Performs the logic to construct the dynamic query
-    private validateIdObject createQueryString(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType) {
-        String qrySelect = "SELECT DISTINCT Haz ";
+    private validateIdObject createQueryString(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType, String srchType) {
+        String qrySelect = getSelectBySearchType(srchType);
         String qryFrom = "FROM DbHazard Haz ";
-        String qryWhere = "WHERE Haz.hazardId LIKE CONCAT('%',0,'%') "; //THIS LINE SHOULD BE MODIFIED WITH THE HAZARD STATUS
+        String qryWhere = "";
         boolean flagEntities = true;
 
         //Adding the alias table according to each object in the list
@@ -778,7 +782,7 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         }
 
         if (flagEntities) {
-            if (rqstType.equals("I")) {
+            if (rqstType.equals("A")) {
                 if (!hazardList.isEmpty() || !sbsList.isEmpty()) {
                     twoStringObjs tmpResponse = constructFrom(qryFrom, qryWhere, hazardList, sbsList);
                     qryFrom = tmpResponse.fromField;
@@ -800,6 +804,17 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                     qryWhere = constructWhere(qryWhere, hazardList, sbsList);
                 }
                 return new validateIdObject(true, qrySelect + qryFrom + qryWhere);
+            } else if (rqstType.equals("I")) {
+                qryWhere = "WHERE (NOT EXISTS (SELECT 'X' FROM DbHazardCause HCau WHERE Haz.hazardId = HCau.dbHazardCausePK.hazardId) "
+                        + "OR NOT EXISTS (SELECT 'X' FROM DbHazardConsequence HCoq WHERE Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId) "
+                        + "OR NOT EXISTS (SELECT 'X' FROM DbControlHazard HCtl WHERE Haz.hazardId = HCtl.dbControlHazardPK.hazardId)) ";
+                if (!hazardList.isEmpty() || !sbsList.isEmpty()) {
+                    twoStringObjs tmpResponse = constructFrom(qryFrom, qryWhere, hazardList, sbsList);
+                    qryFrom = tmpResponse.fromField;
+                    qryWhere = tmpResponse.whereField;
+                    qryWhere = constructWhere(qryWhere, hazardList, sbsList);
+                }
+                return new validateIdObject(true, qrySelect + qryFrom + qryWhere);
             }
             return new validateIdObject(false, "ejb.DbHazardFacade.createQueryString(): "
                     + "The requested hazard type does not match with complete or incomplete.");
@@ -813,19 +828,26 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         twoStringObjs responseObj = new twoStringObjs();
         StringBuilder fromString = new StringBuilder(qryFrom);
         StringBuilder whereString = new StringBuilder(qryWhere);
+        String initialOper = "";
         boolean causeAdded = false;
         boolean conqsAdded = false;
         boolean controlAdded = false;
 
         if (!hazardList.isEmpty()) {
             for (int x = 0; x < hazardList.size(); x++) {
+                if (whereString.length() == 0) {
+                    initialOper = "WHERE";
+                } else {
+                    initialOper = "AND";
+                }
                 switch (hazardList.get(x).getEntity1Name()) {
                     case "DbCause":
                     case "DbHazardCause":
                         if (!causeAdded) {
                             causeAdded = true;
                             fromString.append(",DbHazardCause HCau ,DbCause Cau ");
-                            whereString.append("AND Haz.hazardId = HCau.dbHazardCausePK.hazardId AND HCau.dbHazardCausePK.causeId = Cau.causeId ");
+                            whereString.append(initialOper);
+                            whereString.append(" Haz.hazardId = HCau.dbHazardCausePK.hazardId AND HCau.dbHazardCausePK.causeId = Cau.causeId ");
                         }
                         break;
                     case "DbConsequence":
@@ -833,7 +855,8 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                         if (!conqsAdded) {
                             conqsAdded = true;
                             fromString.append(",DbHazardConsequence HCoq ,DbConsequence Coq ");
-                            whereString.append("AND Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId ");
+                            whereString.append(initialOper);
+                            whereString.append(" Haz.hazardId = HCoq.dbHazardConsequencePK.hazardId AND HCoq.dbHazardConsequencePK.consequenceId = Coq.consequenceId ");
                         }
                         break;
                     case "DbControl":
@@ -841,7 +864,8 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                         if (!controlAdded) {
                             controlAdded = true;
                             fromString.append(",DbControlHazard HCtl ,DbControl Ctl ");
-                            whereString.append("AND Haz.hazardId = HCtl.dbControlHazardPK.hazardId AND HCtl.dbControlHazardPK.controlId = Ctl.controlId ");
+                            whereString.append(initialOper);
+                            whereString.append(" Haz.hazardId = HCtl.dbControlHazardPK.hazardId AND HCtl.dbControlHazardPK.controlId = Ctl.controlId ");
                         }
                         break;
                 }
@@ -850,7 +874,13 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
 
         if (!sbsList.isEmpty()) {
             fromString.append(",DbHazardSbs HSbs ");
-            whereString.append("AND Haz.hazardId = HSbs.dbHazardSbsPK.hazardId ");
+            if (whereString.length() == 0) {
+                initialOper = "WHERE";
+            } else {
+                initialOper = "AND";
+            }
+            whereString.append(initialOper);
+            whereString.append(" Haz.hazardId = HSbs.dbHazardSbsPK.hazardId ");
         }
 
         responseObj.fromField = fromString.toString();
@@ -859,7 +889,7 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         return responseObj;
     }
 
-    //Performs the lodic to create the WHERE SQL criteria
+    //Performs the logic to create the WHERE SQL criteria
     private String constructWhere(String qryWhere, List<searchObject> hazardList, List<treeNodeObject> sbsList) {
         int curVariableParam = 0;
         StringBuilder whereFields = new StringBuilder(qryWhere);
@@ -868,7 +898,11 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
             for (int x = 0; x < hazardList.size(); x++) {
                 StringBuilder tmpString = new StringBuilder();
                 curVariableParam++;
-                tmpString.append("AND ");
+                if (whereFields.length() == 0) {
+                    tmpString.append("WHERE ");
+                } else {
+                    tmpString.append("AND ");
+                }
                 if (hazardList.get(x).getEntity3Name() != null) {
                     tmpString.append(hazardList.get(x).getTableAlias());
                     tmpString.append(".");
@@ -894,13 +928,17 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                     tmpString.append(logicOperator(hazardList.get(x).getRelationType(), x));
                     whereFields.append(tmpString.toString());
                 }
-                
+
             }
         }
 
         if (!sbsList.isEmpty()) {
             StringBuilder tmpString = new StringBuilder();
-            tmpString.append("AND ");
+            if (whereFields.length() == 0) {
+                tmpString.append("WHERE ");
+            } else {
+                tmpString.append("AND ");
+            }
             tmpString.append("HSbs.dbHazardSbsPK.sbsId");
             tmpString.append(logicOperator("in", curVariableParam));
             whereFields.append(tmpString.toString());
@@ -925,6 +963,58 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                 break;
         }
         return finalSTR;
+    }
+
+    //Returns the select statament for extended view or normal view.
+    private String getSelectBySearchType(String rqstType) {
+        switch (rqstType) {
+            case "Normal":
+                return "SELECT DISTINCT Haz ";
+            case "DefaultView":
+                return "SELECT DISTINCT Haz, (SELECT SUM(Qlt.rating * Qlt.weighting) FROM DbQuality Qlt WHERE Qlt.dbQualityPK.hazardId = Haz.hazardId), "
+                        + "(SELECT SUM(Qlt.weighting) FROM DbQuality Qlt WHERE Qlt.dbQualityPK.hazardId = Haz.hazardId), "
+                        + "(SELECT COUNT(Qlt.weighting) FROM DbQuality Qlt WHERE Qlt.dbQualityPK.hazardId = Haz.hazardId), "
+                        + "(SELECT 'true' FROM DbHazard Haz_1 WHERE (NOT EXISTS (SELECT 'X' FROM DbHazardCause HCau WHERE Haz_1.hazardId = HCau.dbHazardCausePK.hazardId) "
+                        + "OR NOT EXISTS (SELECT 'X' FROM DbHazardConsequence HCoq WHERE Haz_1.hazardId = HCoq.dbHazardConsequencePK.hazardId) "
+                        + "OR NOT EXISTS (SELECT 'X' FROM DbControlHazard HCtl WHERE Haz_1.hazardId = HCtl.dbControlHazardPK.hazardId)) "
+                        + "AND Haz_1.hazardId = Haz.hazardId) ";
+            default:
+                System.out.println("The requested type is not valid! -> " + rqstType);
+                return null;
+        }
+    }
+
+    @Override
+    public void wfApproveHazard(String hazardId, String finalDecision) {
+        try {
+            DbHazard tmpHazard = this.find(hazardId);
+            if (tmpHazard != null) {
+                if (finalDecision.equals("Approved")) {
+                    tmpHazard.setHazardSystemStatus(new DbhazardSystemStatus(2));
+                    tmpHazard.setUpdatedDateTime(new java.util.Date());
+                } else if (finalDecision.equals("Rejected")) {
+                    tmpHazard.setHazardSystemStatus(new DbhazardSystemStatus(3));
+                    tmpHazard.setUpdatedDateTime(new java.util.Date());
+                }
+                this.edit(tmpHazard);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+    }
+
+    @Override
+    public void wfDeleteHazard(String hazardId) {
+        try {
+            DbHazard tmpHazard = this.find(hazardId);
+            if (tmpHazard != null) {
+                tmpHazard.setHazardSystemStatus(new DbhazardSystemStatus(4));
+                tmpHazard.setUpdatedDateTime(new java.util.Date());
+                this.edit(tmpHazard);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
     }
 
     class twoStringObjs {

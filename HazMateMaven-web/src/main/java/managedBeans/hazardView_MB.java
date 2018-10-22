@@ -18,11 +18,12 @@ import ejb.DbgradeSeparationFacadeLocal;
 import ejb.DbhazardActivityFacadeLocal;
 import ejb.DbhazardContextFacadeLocal;
 import ejb.DbhazardStatusFacadeLocal;
+import ejb.DbhazardSystemStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
-import java.io.IOException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -31,13 +32,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.RateEvent;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -48,6 +46,8 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class hazardView_MB implements Serializable {
 
+    @EJB
+    private DbhazardSystemStatusFacadeLocal dbhazardSystemStatusFacade;
     @EJB
     private DbwfHeaderFacadeLocal dbwfHeaderFacade;
     @EJB
@@ -94,6 +94,7 @@ public class hazardView_MB implements Serializable {
     private String detailHazardId;
     private String detailHazardDescription;
     private String detailHazardComment;
+    private String hazardsQuality;
     private List<DbHazardCause> detailCauses;
     private List<DbHazardConsequence> detailConsequences;
     private List<DbControlHazard> detailControls;
@@ -109,7 +110,8 @@ public class hazardView_MB implements Serializable {
     private List<DbOwners> listHazardOwners;
     private List<DbcontrolHierarchy> listControlHierarchies;
     private List<DbcontrolRecommend> listControlRecommendations;
-    private List<DbHazard> hazardSearchedList;
+    private List<DbhazardSystemStatus> listHazardSystemStatus;
+    private List<Object> hazardSearchedList;
     private List<DbHazard> hazardDetailList;
     private String[] selectedLocations;
     private String[] selectedProjects;
@@ -132,7 +134,7 @@ public class hazardView_MB implements Serializable {
     private int qualityRating;
     private int displayRating;
     private int displayCount;
-    
+
     public hazardView_MB() {
     }
 
@@ -151,7 +153,9 @@ public class hazardView_MB implements Serializable {
         setListHazardOwners(dbOwnersFacade.findAll());
         setListControlHierarchies(dbcontrolHierarchyFacade.findAll());
         setListControlRecommendations(dbcontrolRecommendFacade.findAll());
+        setListHazardSystemStatus(dbhazardSystemStatusFacade.findAll());
         enableQueryDescr = false;
+        hazardsQuality = "A";
     }
 
     public DbUser getActiveUser() {
@@ -240,6 +244,14 @@ public class hazardView_MB implements Serializable {
 
     public void setDetailHazardComment(String detailHazardComment) {
         this.detailHazardComment = detailHazardComment;
+    }
+
+    public String getHazardsQuality() {
+        return hazardsQuality;
+    }
+
+    public void setHazardsQuality(String hazardsQuality) {
+        this.hazardsQuality = hazardsQuality;
     }
 
     public List<DbHazardCause> getDetailCauses() {
@@ -362,6 +374,14 @@ public class hazardView_MB implements Serializable {
         this.listControlRecommendations = listControlRecommendations;
     }
 
+    public List<DbhazardSystemStatus> getListHazardSystemStatus() {
+        return listHazardSystemStatus;
+    }
+
+    public void setListHazardSystemStatus(List<DbhazardSystemStatus> listHazardSystemStatus) {
+        this.listHazardSystemStatus = listHazardSystemStatus;
+    }
+
     public String[] getSelectedLocations() {
         return selectedLocations;
     }
@@ -482,11 +502,11 @@ public class hazardView_MB implements Serializable {
         this.htmlCode = htmlCode;
     }
 
-    public List<DbHazard> getHazardSearchedlist() {
+    public List<Object> getHazardSearchedlist() {
         return hazardSearchedList;
     }
 
-    public void setHazardSearchedlist(List<DbHazard> hazardSearchedList) {
+    public void setHazardSearchedlist(List<Object> hazardSearchedList) {
         this.hazardSearchedList = hazardSearchedList;
     }
 
@@ -551,6 +571,9 @@ public class hazardView_MB implements Serializable {
         // Initialising a couple of variables
         List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
         List<searchObject> searchCompositeList = new ArrayList<>();
+
+        //This page method will always present the approved hazards
+        searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "Hazard System Status"));
 
         // Start the grind of finding each entry to each field
         if (!getSearchedHazardDescription().isEmpty()) {
@@ -648,22 +671,14 @@ public class hazardView_MB implements Serializable {
 
         constructHtml(searchCompositeList, treeCheckedNodesList);
 
-        if (!searchCompositeList.isEmpty() && !treeCheckedNodesList.isEmpty()) {
-            hazardSearchedList = dbHazardFacade.findHazardsByFieldsAndSbs(searchCompositeList, treeCheckedNodesList);
-        } else if (!searchCompositeList.isEmpty() && treeCheckedNodesList.isEmpty()) {
-            hazardSearchedList = dbHazardFacade.findHazardsByFields(searchCompositeList);
-        } else if (searchCompositeList.isEmpty() && !treeCheckedNodesList.isEmpty()) {
-            hazardSearchedList = dbHazardFacade.findHazardsBySbs(treeCheckedNodesList);
-        } else {
-            hazardSearchedList = dbHazardFacade.findAllHazards();
-        }
+        hazardSearchedList = dbHazardFacade.findHazards(searchCompositeList, treeCheckedNodesList, hazardsQuality, "DefaultView");
 
         if (!hazardSearchedList.isEmpty()) {
             RequestContext.getCurrentInstance().execute("PF('widget_hazardsForm_fieldset').toggle()");
         }
     }
-    
-    public String showExtended(){
+
+    public String showExtended() {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", hazardSearchedList);
         return "viewHazardExtend";
     }
@@ -694,39 +709,50 @@ public class hazardView_MB implements Serializable {
     }
 
     private void constructHtml(List<searchObject> listFields, List<treeNodeObject> listSbs) {
-        if (listFields.isEmpty() && listSbs.isEmpty()) {
-            enableQueryDescr = true;
-            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards associated to at least one cause, consequence and control.</span></h3>";
-        } else {
-            enableQueryDescr = true;
-            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards meeting the following criteria:</span></h3>";
-            boolean includeAnd = false;
-            if (!listFields.isEmpty()) {
-                for (searchObject tmpSrch : listFields) {
-                    if (tmpSrch.getRelationType().equals("like")) {
-                        if (includeAnd) {
-                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
-                        }
-                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> contains:</h4>";
-                        htmlCode += "<p class=\"queryDescr_field\">" + tmpSrch.getUserInput() + "</p>";
-                    } else if (tmpSrch.getRelationType().equals("in")) {
-                        if (includeAnd) {
-                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
-                        }
-                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to any in the list:</h4>";
-                        htmlCode += "<p class=\"queryDescr_field\">" + convertListIds(tmpSrch.getFieldName(), tmpSrch.getUserInput()) + "</p>";
+        enableQueryDescr = true;
+        htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards meeting the following criteria:</span></h3>";
+        boolean includeAnd = false;
+        if (!listFields.isEmpty()) {
+            for (searchObject tmpSrch : listFields) {
+                if (tmpSrch.getRelationType().equals("like")) {
+                    if (includeAnd) {
+                        htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
                     }
-                    if (!includeAnd) {
-                        includeAnd = true;
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> contains:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + tmpSrch.getUserInput() + "</p>";
+                } else if (tmpSrch.getRelationType().equals("in")) {
+                    if (includeAnd) {
+                        htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
                     }
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to any in the list:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + convertListIds(tmpSrch.getFieldName(), tmpSrch.getUserInput()) + "</p>";
+                }
+                if (!includeAnd) {
+                    includeAnd = true;
                 }
             }
-            if (!listSbs.isEmpty()) {
-                if (includeAnd) {
-                    htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
-                }
-                htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "System Breakdown Structure" + "</span> is associated with the following nodes:</h4>";
-                htmlCode += "<p class=\"queryDescr_field\">" + showTreeToString(listSbs) + "</p>";
+        }
+        if (!listSbs.isEmpty()) {
+            if (includeAnd) {
+                htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+            }
+            htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "System Breakdown Structure" + "</span> is associated with the following nodes:</h4>";
+            htmlCode += "<p class=\"queryDescr_field\">" + showTreeToString(listSbs) + "</p>";
+        }
+        if (!hazardsQuality.equals("")) {
+            if (includeAnd) {
+                htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+            }
+            switch (hazardsQuality) {
+                case "A":
+                    htmlCode += "<p class=\"queryDescr_field\">" + "Inclusive of missing causes, consequences, or controls." + "</p>";
+                    break;
+                case "C":
+                    htmlCode += "<p class=\"queryDescr_field\">" + "Assigned to at least one cause, consequence, and control." + "</p>";
+                    break;
+                case "I":
+                    htmlCode += "<p class=\"queryDescr_field\">" + "Missing causes, consequences, or controls." + "</p>";
+                    break;
             }
         }
     }
@@ -844,6 +870,15 @@ public class hazardView_MB implements Serializable {
                         resultantString.append(", ");
                     }
                     break;
+                case "systemStatusId":
+                    for (String tmpId : stringListIds) {
+                        List<DbhazardSystemStatus> result = listHazardSystemStatus.stream()
+                                .filter(a -> a.getSystemStatusId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getSystemStatusName());
+                        resultantString.append(", ");
+                    }
+                    break;
                 default:
                     break;
             }
@@ -925,7 +960,7 @@ public class hazardView_MB implements Serializable {
         }
         return nodeName;
     }
-    
+
     public void showDetail(String hazardId) {
         setDetailHazardId(hazardId);
         setHazardDetailList(dbHazardFacade.findByName("hazardId", getDetailHazardId()));
@@ -936,9 +971,9 @@ public class hazardView_MB implements Serializable {
         detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
         detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
     }
-    
+
     public void clearField(String id) {
-        switch(id){
+        switch (id) {
             case "HDClear":
                 setSearchedHazardDescription(null);
                 break;
@@ -1000,7 +1035,7 @@ public class hazardView_MB implements Serializable {
         constructHtml(new ArrayList<>(), new ArrayList<>());
         enableQueryDescr = false;
     }
-    
+
     public void rateHazard(String hazardId, int rating) {
         System.out.println("Rating " + hazardId + " with " + rating);
         if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
@@ -1027,22 +1062,39 @@ public class hazardView_MB implements Serializable {
             dbQualityFacade.create(qualityObject);
         }
     }
-    
+
     public double getHazardRating(String hazardId) {
         return dbQualityFacade.getHazardRating(hazardId);
     }
-    
+
     public long getRatingCount(String hazardId) {
         return dbQualityFacade.getNumberOfRatings(hazardId);
     }
-    
+
     public int getUserRating(String hazardId) {
         if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
             return dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0).getRating();
         }
         return 0;
     }
-    
+
+    public String getRatingScore(String ratePerWeighting, String sumOfWeight) {
+        try {
+            if (!ratePerWeighting.equals("0") || !sumOfWeight.equals("0")) {
+                Double ratePerWeight = Double.parseDouble(ratePerWeighting);
+                Double Weight = Double.parseDouble(sumOfWeight);
+                Double rate = ratePerWeight / Weight;
+                DecimalFormat df = new DecimalFormat("#.00");
+                return df.format(rate);
+            } else {
+                return "0.00";
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     public void sendSuggestion(String suggestionComment) {
         System.out.println(suggestionComment);
         if (suggestionComment.length() < 1) {
@@ -1064,7 +1116,7 @@ public class hazardView_MB implements Serializable {
             init();
         }
     }
-    
+
     public void sendDeletion(String deletionReason, String deletionComment) {
         if (deletionComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your mark for deletion."));

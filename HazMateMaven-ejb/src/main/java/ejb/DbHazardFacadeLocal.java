@@ -36,6 +36,8 @@ public interface DbHazardFacadeLocal {
     List<DbHazard> findAll();
 
     List<DbHazard> findRange(int[] range);
+    
+    int count();
 
     List<DbControlHazard> getControlHazard(String hazardId);
     
@@ -49,24 +51,22 @@ public interface DbHazardFacadeLocal {
 
     List<DbHazardSbs> getSbs(String hazardId);
 
-    public List<DbCause> getCauses(String hazardId);
+    List<DbCause> getCauses(String hazardId);
 
     List<DbHazardCause> getHazardCause(String hazardId);
 
     List<DbHazardConsequence> getHazardConsequence(String hazardId);
 
-    int count();
-    
     List<DbHazard> findByName(String fieldName, String fieldValue);
 
-    List<DbHazard> findAllHazards();
-
-    List<DbHazard> findHazardsByFields(List<searchObject> hazardList);
-
-    List<DbHazard> findHazardsByFieldsAndSbs(List<searchObject> hazardList, List<treeNodeObject> sbsList);
-
-    List<DbHazard> findHazardsBySbs(List<treeNodeObject> sbsList);
-    
+//    List<DbHazard> findAllHazards();
+//
+//    List<DbHazard> findHazardsByFields(List<searchObject> hazardList);
+//
+//    List<DbHazard> findHazardsByFieldsAndSbs(List<searchObject> hazardList, List<treeNodeObject> sbsList);
+//
+//    List<DbHazard> findHazardsBySbs(List<treeNodeObject> sbsList);
+//    
     List<DbHazard> findHazardsByFieldsOnly(List<searchObject> hazardList);
     
     List<DbHazard> validateHazardId(String hazardId);
@@ -79,5 +79,10 @@ public interface DbHazardFacadeLocal {
     
     List<DbHazard> getHazardsFromControl(int controlId);
     
-    List<DbHazard> findHazards(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType);
+    List<Object> findHazards(List<searchObject> hazardList, List<treeNodeObject> sbsList, String rqstType, String srchType);
+    
+    void wfApproveHazard(String hazardId, String finalDecision);
+    
+    void wfDeleteHazard(String hazardId);
+    
 }

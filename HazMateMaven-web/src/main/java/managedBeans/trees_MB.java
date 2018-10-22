@@ -81,6 +81,7 @@ public class trees_MB implements Serializable {
     private TreeNode[] selectedNodes;
     private List<treeNodeObject> treeCheckedNodesList;
     private List<treeNodeObject> treeHazardSbsList;
+    private List<Object> experimentList;
 
     private String gotId;
 
@@ -154,6 +155,14 @@ public class trees_MB implements Serializable {
         this.autoConsec = autoConsec;
     }
 
+    public List<Object> getExperimentList() {
+        return experimentList;
+    }
+
+    public void setExperimentList(List<Object> experimentList) {
+        this.experimentList = experimentList;
+    }
+    
     @PostConstruct
     public void init() {
         listTreeLevel1 = dbtreeLevel1Facade.findAll();
@@ -384,7 +393,8 @@ public class trees_MB implements Serializable {
         searchList.add(tmpObj);
         tmpObj = new searchObject();
 
-        List<DbHazard> resultantList = dbHazardFacade.findHazardsByFields(searchList);
+        List<DbHazard> resultantList = (List<DbHazard>) (Object) dbHazardFacade.findHazards(searchList, new ArrayList<>(), "A", "Normal");
+//        List<DbHazard> resultantList = dbHazardFacade.findHazardsByFields(searchList);
 
 //        treeNodeObject tmpTreeObj= new treeNodeObject();
 //        List<treeNodeObject> searchListTree = new ArrayList<>();
@@ -468,71 +478,70 @@ public class trees_MB implements Serializable {
 //        List<DbHazard> resultantList = dbHazardFacade.findAllHazards();
         searchObject tmpObj = new searchObject();
         List<searchObject> searchList = new ArrayList<>();
-//        tmpObj.setFieldName("hazardComment");
-//        tmpObj.setUserInput("Road");
-//        tmpObj.setFieldType("string");
-//        tmpObj.setEntity1Name("DbHazard");
-//        tmpObj.setRelationType("like");
-//        searchList.add(tmpObj);
-//        tmpObj = new searchObject();
-//
-//        tmpObj.setFieldName("locationId");
-//        tmpObj.setUserInput("1");
-//        tmpObj.setFieldType("int");
-//        tmpObj.setEntity2Name("hazardLocation");
-//        tmpObj.setEntity1Name("DbHazard");
-//        tmpObj.setRelationType("=");
-//        searchList.add(tmpObj);
-//        tmpObj = new searchObject();
-//
-//        tmpObj.setFieldName("controlId");
-//        tmpObj.setUserInput("1,2,3");
-//        tmpObj.setFieldType("int");
-//        tmpObj.setEntity2Name("dbControlHazardPK");
-//        tmpObj.setEntity1Name("DbControlHazard");
-//        tmpObj.setRelationType("in");
-//        searchList.add(tmpObj);
-//        tmpObj = new searchObject();
-//
-//        tmpObj.setFieldName("hazardId");
-//        tmpObj.setUserInput("1");
-//        tmpObj.setFieldType("string");
-//        tmpObj.setEntity1Name("DbHazard");
-//        tmpObj.setRelationType("in");
-//        searchList.add(tmpObj);
-//        tmpObj = new searchObject();
+        tmpObj.setFieldName("hazardComment");
+        tmpObj.setUserInput("as");
+        tmpObj.setFieldType("string");
+        tmpObj.setEntity1Name("DbHazard");
+        tmpObj.setRelationType("like");
+        searchList.add(tmpObj);
+        tmpObj = new searchObject();
 
-//        tmpObj.setFieldName("causeDescription");
-//        tmpObj.setUserInput("new");
-//        tmpObj.setFieldType("string");
-//        tmpObj.setEntity1Name("DbCause");
-//        tmpObj.setRelationType("like");
-//        searchList.add(tmpObj);
-//        tmpObj = new searchObject();
-//
-//        tmpObj.setFieldName("projectName");
-//        tmpObj.setUserInput("Mernda Rail");
-//        tmpObj.setFieldType("string");
-//        tmpObj.setEntity3Name("projectId");
-//        tmpObj.setEntity2Name("hazardLocation");
-//        tmpObj.setEntity1Name("DbHazard");
-//        tmpObj.setRelationType("like");
-//        searchList.add(tmpObj);
-//        tmpObj = new searchObject();
+        tmpObj.setFieldName("locationId");
+        tmpObj.setUserInput("1");
+        tmpObj.setFieldType("int");
+        tmpObj.setEntity2Name("hazardLocation");
+        tmpObj.setEntity1Name("DbHazard");
+        tmpObj.setRelationType("=");
+        searchList.add(tmpObj);
+        tmpObj = new searchObject();
+
+        tmpObj.setFieldName("controlId");
+        tmpObj.setUserInput("1,2,3");
+        tmpObj.setFieldType("int");
+        tmpObj.setEntity2Name("dbControlHazardPK");
+        tmpObj.setEntity1Name("DbControlHazard");
+        tmpObj.setRelationType("in");
+        searchList.add(tmpObj);
+        tmpObj = new searchObject();
+
+        tmpObj.setFieldName("hazardId");
+        tmpObj.setUserInput("1");
+        tmpObj.setFieldType("string");
+        tmpObj.setEntity1Name("DbHazard");
+        tmpObj.setRelationType("in");
+        searchList.add(tmpObj);
+        tmpObj = new searchObject();
+
+        tmpObj.setFieldName("causeDescription");
+        tmpObj.setUserInput("new");
+        tmpObj.setFieldType("string");
+        tmpObj.setEntity1Name("DbCause");
+        tmpObj.setRelationType("like");
+        searchList.add(tmpObj);
+        tmpObj = new searchObject();
+
+        tmpObj.setFieldName("projectName");
+        tmpObj.setUserInput("Mernda Rail");
+        tmpObj.setFieldType("string");
+        tmpObj.setEntity3Name("projectId");
+        tmpObj.setEntity2Name("hazardLocation");
+        tmpObj.setEntity1Name("DbHazard");
+        tmpObj.setRelationType("like");
+        searchList.add(tmpObj);
+        tmpObj = new searchObject();
 
 //        List<DbHazard> resultantList = dbHazardFacade.findHazards(searchList, new ArrayList<>(), "");
-
         treeNodeObject tmpTreeObj = new treeNodeObject();
         List<treeNodeObject> searchListTree = new ArrayList<>();
-//        tmpTreeObj.setNodeId("1.1.7.4.12.");
-//        tmpTreeObj.setNodeName("Abc");
-//        searchListTree.add(tmpTreeObj);
-//        tmpTreeObj = new treeNodeObject();
-//          
-//        tmpTreeObj.setNodeId("1.1.7.4.3.1.");
-//        tmpTreeObj.setNodeName("Def");
-//        searchListTree.add(tmpTreeObj);
-//        tmpTreeObj = new treeNodeObject();
+        tmpTreeObj.setNodeId("1.1.7.4.12.");
+        tmpTreeObj.setNodeName("Abc");
+        searchListTree.add(tmpTreeObj);
+        tmpTreeObj = new treeNodeObject();
+
+        tmpTreeObj.setNodeId("1.1.7.4.3.1.");
+        tmpTreeObj.setNodeName("Def");
+        searchListTree.add(tmpTreeObj);
+        tmpTreeObj = new treeNodeObject();
 //          
 //        List<DbHazard> resultantList = dbHazardFacade.findHazardsByFieldsAndSbs(searchList, searchListTree);
 //        searchObject tmpObj = new searchObject();
@@ -562,8 +571,13 @@ public class trees_MB implements Serializable {
 //        searchList.add(tmpObj);
 //        tmpObj = new searchObject();
 //
-        List<DbHazard> resultantList = dbHazardFacade.findHazards(searchList, searchListTree, "C");
+        List<Object> resultantList = dbHazardFacade.findHazards(searchList, searchListTree, "I", "DefaultView");
+//        List<DbHazard> resultantList = (List<DbHazard>) (Object) dbHazardFacade.findHazards(searchList, searchListTree, "I", "DefaultView");
 //
         System.out.println(resultantList.size());
+    }
+
+    public void experimentalTesting() {
+        //experimentList = dbHazardFacade.testMethod();
     }
 }
