@@ -16,12 +16,14 @@ import entities.DbHazard;
 import entities.DbHazardCause;
 import entities.DbHazardConsequence;
 import entities.DbHazardSbs;
+import entities.DbUser;
 import entities.DbhazardSystemStatus;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.ejb.Stateless;
+import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -989,12 +991,15 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
         try {
             DbHazard tmpHazard = this.find(hazardId);
             if (tmpHazard != null) {
+                DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
                 if (finalDecision.equals("Approved")) {
                     tmpHazard.setHazardSystemStatus(new DbhazardSystemStatus(2));
                     tmpHazard.setUpdatedDateTime(new java.util.Date());
+                    tmpHazard.setUserIdUpdate(activeUser.getUserId());
                 } else if (finalDecision.equals("Rejected")) {
                     tmpHazard.setHazardSystemStatus(new DbhazardSystemStatus(3));
                     tmpHazard.setUpdatedDateTime(new java.util.Date());
+                    tmpHazard.setUserIdUpdate(activeUser.getUserId());
                 }
                 this.edit(tmpHazard);
             }

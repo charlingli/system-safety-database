@@ -167,7 +167,6 @@ public class trees_MB implements Serializable {
     public void init() {
         listTreeLevel1 = dbtreeLevel1Facade.findAll();
         createTree();
-        System.out.println("managedBeans.trees_MB.init()");
     }
 
     public void displaySelectedMultiple(TreeNode[] nodes) {

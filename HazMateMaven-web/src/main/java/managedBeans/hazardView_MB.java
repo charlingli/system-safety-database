@@ -1,10 +1,8 @@
 package managedBeans;
 
-import customObjects.searchObject;
-import customObjects.treeNodeObject;
-import customObjects.validateIdObject;
-import ejb.DbHazardFacadeLocal;
+import customObjects.*;
 import entities.*;
+import ejb.DbHazardFacadeLocal;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbProjectFacadeLocal;
@@ -84,12 +82,14 @@ public class hazardView_MB implements Serializable {
     private DbcontrolHierarchyFacadeLocal dbcontrolHierarchyFacade;
 
     private DbUser activeUser;
+    private String searchedHazardId;
+    private String searchedHazardDescription;
     private String searchedCauses;
     private String searchedConsequences;
-    private String searchedHazardDescription;
     private String searchedHazardComments;
     private String searchedControlDescription;
     private String searchedControlJustification;
+    private String searchedLegacyId;
     private DbHazard detailHazard;
     private String detailHazardId;
     private String detailHazardDescription;
@@ -111,7 +111,7 @@ public class hazardView_MB implements Serializable {
     private List<DbcontrolHierarchy> listControlHierarchies;
     private List<DbcontrolRecommend> listControlRecommendations;
     private List<DbhazardSystemStatus> listHazardSystemStatus;
-    private List<Object> hazardSearchedList;
+    private List<defaultViewSrchObject> listSearchedHazards;
     private List<DbHazard> hazardDetailList;
     private String[] selectedLocations;
     private String[] selectedProjects;
@@ -182,6 +182,14 @@ public class hazardView_MB implements Serializable {
         this.searchedConsequences = searchedConsequences;
     }
 
+    public String getSearchedHazardId() {
+        return searchedHazardId;
+    }
+
+    public void setSearchedHazardId(String searchedHazardId) {
+        this.searchedHazardId = searchedHazardId;
+    }
+
     public String getSearchedHazardDescription() {
         return searchedHazardDescription;
     }
@@ -212,6 +220,14 @@ public class hazardView_MB implements Serializable {
 
     public void setSearchedControlJustification(String searchedControlJustification) {
         this.searchedControlJustification = searchedControlJustification;
+    }
+
+    public String getSearchedLegacyId() {
+        return searchedLegacyId;
+    }
+
+    public void setSearchedLegacyId(String searchedLegacyId) {
+        this.searchedLegacyId = searchedLegacyId;
     }
 
     public DbHazard getDetailHazard() {
@@ -502,12 +518,12 @@ public class hazardView_MB implements Serializable {
         this.htmlCode = htmlCode;
     }
 
-    public List<Object> getHazardSearchedlist() {
-        return hazardSearchedList;
+    public List<defaultViewSrchObject> getListSearchedHazards() {
+        return listSearchedHazards;
     }
 
-    public void setHazardSearchedlist(List<Object> hazardSearchedList) {
-        this.hazardSearchedList = hazardSearchedList;
+    public void setListSearchedHazards(List<defaultViewSrchObject> listSearchedHazards) {
+        this.listSearchedHazards = listSearchedHazards;
     }
 
     public List<DbHazard> getHazardDetailList() {
@@ -573,9 +589,12 @@ public class hazardView_MB implements Serializable {
         List<searchObject> searchCompositeList = new ArrayList<>();
 
         //This page method will always present the approved hazards
-        searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "Hazard System Status"));
+        searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "SSD Workflow Status"));
 
         // Start the grind of finding each entry to each field
+        if (!getSearchedHazardId().isEmpty()) {
+            searchCompositeList.add(new searchObject("hazardId", getSearchedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard Id"));
+        }
         if (!getSearchedHazardDescription().isEmpty()) {
             searchCompositeList.add(new searchObject("hazardDescription", getSearchedHazardDescription(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
         }
@@ -587,6 +606,9 @@ public class hazardView_MB implements Serializable {
         }
         if (!getSearchedHazardComments().isEmpty()) {
             searchCompositeList.add(new searchObject("hazardComment", getSearchedHazardComments(), "string", "DbHazard", null, null, null, "like", "Hazard Comments"));
+        }
+        if (!getSearchedLegacyId().isEmpty()) {
+            searchCompositeList.add(new searchObject("legacyId", getSearchedLegacyId(), "string", "DbHazard", null, null, null, "like", "Hazard Legacy Id"));
         }
         if (getSelectedLocations() != null && getSelectedLocations().length > 0) {
             String joined = String.join(",", getSelectedLocations());
@@ -670,24 +692,26 @@ public class hazardView_MB implements Serializable {
         }
 
         constructHtml(searchCompositeList, treeCheckedNodesList);
+        listSearchedHazards = new ArrayList<>();
+        listSearchedHazards = castToDefaultObj((List<Object[]>) (Object) dbHazardFacade.findHazards(searchCompositeList, treeCheckedNodesList, hazardsQuality, "DefaultView"));
 
-        hazardSearchedList = dbHazardFacade.findHazards(searchCompositeList, treeCheckedNodesList, hazardsQuality, "DefaultView");
-
-        if (!hazardSearchedList.isEmpty()) {
+        if (!listSearchedHazards.isEmpty()) {
             RequestContext.getCurrentInstance().execute("PF('widget_hazardsForm_fieldset').toggle()");
         }
     }
 
     public String showExtended() {
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", hazardSearchedList);
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", listSearchedHazards);
         return "viewHazardExtend";
     }
 
     public void resetFields() {
+        setSearchedHazardId(null);
         setSearchedHazardDescription(null);
         setSearchedCauses(null);
         setSearchedConsequences(null);
         setSearchedHazardComments(null);
+        setSearchedLegacyId(null);
         setSelectedLocations(null);
         setSelectedProjects(null);
         setSelectedGradeSeparations(null);
@@ -745,12 +769,15 @@ public class hazardView_MB implements Serializable {
             }
             switch (hazardsQuality) {
                 case "A":
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "Data Quality" + "</span> is:</h4>";
                     htmlCode += "<p class=\"queryDescr_field\">" + "Inclusive of missing causes, consequences, or controls." + "</p>";
                     break;
                 case "C":
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "Data Quality" + "</span> is:</h4>";
                     htmlCode += "<p class=\"queryDescr_field\">" + "Assigned to at least one cause, consequence, and control." + "</p>";
                     break;
                 case "I":
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "Data Quality" + "</span> is:</h4>";
                     htmlCode += "<p class=\"queryDescr_field\">" + "Missing causes, consequences, or controls." + "</p>";
                     break;
             }
@@ -871,13 +898,14 @@ public class hazardView_MB implements Serializable {
                     }
                     break;
                 case "systemStatusId":
-                    for (String tmpId : stringListIds) {
-                        List<DbhazardSystemStatus> result = listHazardSystemStatus.stream()
-                                .filter(a -> a.getSystemStatusId().equals(Integer.parseInt(tmpId)))
-                                .collect(Collectors.toList());
+                    stringListIds.stream().map((tmpId) -> listHazardSystemStatus.stream()
+                            .filter(a -> a.getSystemStatusId().equals(Integer.parseInt(tmpId)))
+                            .collect(Collectors.toList())).map((result) -> {
                         resultantString.append(result.get(0).getSystemStatusName());
+                        return result;
+                    }).forEachOrdered((_item) -> {
                         resultantString.append(", ");
-                    }
+                    });
                     break;
                 default:
                     break;
@@ -974,6 +1002,9 @@ public class hazardView_MB implements Serializable {
 
     public void clearField(String id) {
         switch (id) {
+            case "HiDClear":
+                setSearchedHazardId(null);
+                break;
             case "HDClear":
                 setSearchedHazardDescription(null);
                 break;
@@ -985,6 +1016,9 @@ public class hazardView_MB implements Serializable {
                 break;
             case "HMClear":
                 setSearchedHazardComments(null);
+                break;
+            case "HLiDClear":
+                setSearchedLegacyId(null);
                 break;
             case "HLClear":
                 setSelectedLocations(null);
@@ -1061,6 +1095,7 @@ public class hazardView_MB implements Serializable {
             }
             dbQualityFacade.create(qualityObject);
         }
+        updateSearchList(hazardId);
     }
 
     public double getHazardRating(String hazardId) {
@@ -1078,10 +1113,10 @@ public class hazardView_MB implements Serializable {
         return 0;
     }
 
-    public String getRatingScore(String ratePerWeighting, String sumOfWeight) {
+    public String getRatingScore(String sumOfRateTimesWeighting, String sumOfWeight) {
         try {
-            if (!ratePerWeighting.equals("0") || !sumOfWeight.equals("0")) {
-                Double ratePerWeight = Double.parseDouble(ratePerWeighting);
+            if (!sumOfRateTimesWeighting.equals("0") || !sumOfWeight.equals("0")) {
+                Double ratePerWeight = Double.parseDouble(sumOfRateTimesWeighting);
                 Double Weight = Double.parseDouble(sumOfWeight);
                 Double rate = ratePerWeight / Weight;
                 DecimalFormat df = new DecimalFormat("#.00");
@@ -1138,4 +1173,53 @@ public class hazardView_MB implements Serializable {
             init();
         }
     }
+
+    private List<defaultViewSrchObject> castToDefaultObj(List<Object[]> tmpList) {
+        List<defaultViewSrchObject> tmpListOut = new ArrayList<>();
+        tmpList.stream().map((x) -> {
+            DbHazard tmpHaz = (DbHazard) x[0];
+            Long tmpOne = null;
+            Long tmpTwo = null;
+            Long tmpThree = null;
+            String tmpFour = null;
+            if (x[1] != null) {
+                tmpOne = (Long) x[1];
+            }
+            if (x[2] != null) {
+                tmpTwo = (Long) x[2];
+            }
+            if (x[3] != null) {
+                tmpThree = (Long) x[3];
+            }
+            if (x[4] != null) {
+                tmpFour = x[4].toString();
+            }
+            defaultViewSrchObject tmpDflt = new defaultViewSrchObject(tmpHaz, tmpOne, tmpTwo, tmpThree, tmpFour);
+            return tmpDflt;
+        }).forEachOrdered((tmpDflt) -> {
+            tmpListOut.add(tmpDflt);
+        });
+        return tmpListOut;
+    }
+
+    private void updateSearchList(String hazardId) {
+        List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
+        List<searchObject> searchCompositeList = new ArrayList<>();
+        if (hazardId != null) {
+            searchCompositeList.add(new searchObject("hazardId", hazardId, "string", "DbHazard", null, null, null, "like", "Hazard Id"));
+            List<defaultViewSrchObject> tmpResult = 
+                    castToDefaultObj((List<Object[]>) (Object) dbHazardFacade.findHazards(searchCompositeList, treeCheckedNodesList, hazardsQuality, "DefaultView"));
+            if (!tmpResult.isEmpty()) {
+                for (int i = 0; i < listSearchedHazards.size(); i++) {
+                    if (listSearchedHazards.get(i).getHazardObj().getHazardId().equals(hazardId)) {
+                        listSearchedHazards.get(i).setSumOfRateTimesWeighting(tmpResult.get(0).getSumOfRateTimesWeighting());
+                        listSearchedHazards.get(i).setSumOfWeight(tmpResult.get(0).getSumOfWeight());
+                        listSearchedHazards.get(i).setRateCount(tmpResult.get(0).getRateCount());
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 }
