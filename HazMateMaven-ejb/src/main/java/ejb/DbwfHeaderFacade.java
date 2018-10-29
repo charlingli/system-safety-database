@@ -12,7 +12,6 @@ import entities.DbwfHeader;
 import entities.DbwfLine;
 import entities.DbwfLinePK;
 import java.sql.Date;
-import java.time.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +30,8 @@ import javax.persistence.Query;
 @Stateless
 public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements DbwfHeaderFacadeLocal {
 
+    @EJB
+    private DbHazardFacadeLocal dbHazardFacade;
     @EJB
     private DbwfLineFacadeLocal dbwfLineFacade;
     @EJB
@@ -161,7 +162,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             workObj.setWfUpdatedDateTime(currentDate);
             this.edit(workObj);
             //Send to the completion method
-            wfCompleteAction(workObj, "Review");
+            //wfCompleteAction(workObj, "Review");
             return true;
         } else if (rwvType.equals("userApproval")) {
             //Validate if the wf meets conditions, if so the wf will be sent to the completion method.
@@ -170,7 +171,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                     workObj.setWfStatus("I");
                     this.edit(workObj);
                     //Send to the approval method
-                    wfCompleteAction(workObj, "Review");
+                    //wfCompleteAction(workObj, "Review");
                     return true;
                 }
             }
@@ -241,9 +242,10 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                     if (dbwfLineFacade.validateFirstApprover(wfObj, "A")) {
                         return true;
                     }
+                    break;
                 default:
                     System.out.println("ejb.DbwfHeaderFacade.validateWfConditions() -> The business logic for "
-                            + "the required type " + wfObj.getWfTypeId().getWfTypeName() + "is not implemented!");
+                            + "the required type " + wfObj.getWfTypeId().getWfTypeName() + " is not implemented!");
                     break;
             }
         }
@@ -280,14 +282,10 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
     private void wfCompleteAction(DbwfHeader wfObj, String finalDecision) {
         switch (wfObj.getWfCompleteMethod()) {
             case "HazardApprovalWF":
-                //include the logic to this scenario
-                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item will be approved (logic required).");
-                break;
-            case "HazardSuggestionWF":
-                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item has been edited (no logic required).");
+                dbHazardFacade.wfApproveHazard(wfObj.getWfObjectId(), finalDecision);
                 break;
             case "HazardDeletionWF":
-                System.out.println("ejb.DbwfHeaderFacade.wfApproved() -> The item will be deleted (logic required).");
+                dbHazardFacade.wfDeleteHazard(wfObj.getWfObjectId());
                 break;
         }
     }

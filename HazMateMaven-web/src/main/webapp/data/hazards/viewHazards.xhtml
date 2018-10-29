@@ -14,77 +14,77 @@
                     <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="70vh" width="90vw">
                         <p:panel class="visPanel">
-                        <div class="visCanvas">
-                            <div id="graphic"></div>
-                            <div class="left">
-                                <ui:repeat value="${hazardViewVis_MB.selectedCauses}" var="CA" varStatus="status">
-                                    <div>
-                                        <h:outputText value="${CA.dbCause.causeDescription}"> </h:outputText>
-                                    </div>
-                                </ui:repeat>
-                            </div>
-                            <div class="mid">
-                                <div>
-                                    <h:outputText value="${hazardViewVis_MB.selectedDescription}"> </h:outputText>
-                                    <div>
-                                        <div class="frequency">
-                                            <h:outputText value="${hazardViewVis_MB.selectedHazard.riskFrequencyId.frequencyScore}"> </h:outputText>
-                                        </div>
-                                        <div class="severity">
-                                            <h:outputText value="${hazardViewVis_MB.selectedHazard.riskSeverityId.severityScore}"> </h:outputText>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right">
-                                <ui:repeat value="${hazardViewVis_MB.selectedConsequences}" var="CQ" varStatus="status">
-                                    <div>
-                                        <h:outputText value="${CQ.dbConsequence.consequenceDescription}"> </h:outputText>
-                                    </div>
-                                </ui:repeat>
-                            </div>
-                            <div class="between">
-                                <div class="mid-left">
-                                    <ui:repeat value="${hazardViewVis_MB.selectedPControls}" var="PC" varStatus="status">
+                            <div class="visCanvas">
+                                <div id="graphic"></div>
+                                <div class="left">
+                                    <ui:repeat value="${hazardViewVis_MB.selectedCauses}" var="CA" varStatus="status">
                                         <div>
-                                            <div class="marker"></div>
-                                            <div class="text">
-                                                <h:outputLink id="PCEntry" value="#">
-                                                    <h:outputText value="#{PC.dbControl.controlDescription}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="PCEntry" value="#{PC.dbControl.controlDescription}" trackMouse="true"/>
-                                            </div>
-                                            <div class="status">
-                                                <h:outputLink id="PCJustify" value="#">
-                                                    <h:outputText value="#{PC.controlRecommendId.controlRecommendName}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="PCJustify" value="#{PC.controlJustify}" trackMouse="true"/>
-                                            </div>
+                                            <h:outputText value="${CA.dbCause.causeDescription}"> </h:outputText>
                                         </div>
                                     </ui:repeat>
                                 </div>
-                                <div class="mid-right">
-                                    <ui:repeat value="${hazardViewVis_MB.selectedMControls}" var="MC" varStatus="status">
+                                <div class="mid">
+                                    <div>
+                                        <h:outputText value="${hazardViewVis_MB.selectedDescription}"> </h:outputText>
                                         <div>
-                                            <div class="marker"></div>
-                                            <div class="text">
-                                                <h:outputLink id="MCEntry" value="#">
-                                                    <h:outputText value="#{MC.dbControl.controlDescription}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="MCEntry" value="#{MC.dbControl.controlDescription}" trackMouse="true"/>
+                                            <div class="frequency">
+                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskFrequencyId.frequencyScore}"> </h:outputText>
                                             </div>
-                                            <div class="status">
-                                                <h:outputLink id="MCJustify" value="#">
-                                                    <h:outputText value="#{MC.controlRecommendId.controlRecommendName}"/>
-                                                </h:outputLink>
-                                                <p:tooltip for="MCJustify" value="#{MC.controlJustify}" trackMouse="true"/>
+                                            <div class="severity">
+                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskSeverityId.severityScore}"> </h:outputText>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    <ui:repeat value="${hazardViewVis_MB.selectedConsequences}" var="CQ" varStatus="status">
+                                        <div>
+                                            <h:outputText value="${CQ.dbConsequence.consequenceDescription}"> </h:outputText>
                                         </div>
                                     </ui:repeat>
                                 </div>
+                                <div class="between">
+                                    <div class="mid-left">
+                                        <ui:repeat value="${hazardViewVis_MB.selectedPControls}" var="PC" varStatus="status">
+                                            <div>
+                                                <div class="marker"></div>
+                                                <div class="text">
+                                                    <h:outputLink id="PCEntry" value="#">
+                                                        <h:outputText value="#{PC.dbControl.controlDescription}"/>
+                                                    </h:outputLink>
+                                                    <p:tooltip for="PCEntry" value="#{PC.dbControl.controlDescription}" trackMouse="true"/>
+                                                </div>
+                                                <div class="status">
+                                                    <h:outputLink id="PCJustify" value="#">
+                                                        <h:outputText value="#{PC.controlRecommendId.controlRecommendName}"/>
+                                                    </h:outputLink>
+                                                    <p:tooltip for="PCJustify" value="#{PC.controlJustify}" trackMouse="true"/>
+                                                </div>
+                                            </div>
+                                        </ui:repeat>
+                                    </div>
+                                    <div class="mid-right">
+                                        <ui:repeat value="${hazardViewVis_MB.selectedMControls}" var="MC" varStatus="status">
+                                            <div>
+                                                <div class="marker"></div>
+                                                <div class="text">
+                                                    <h:outputLink id="MCEntry" value="#">
+                                                        <h:outputText value="#{MC.dbControl.controlDescription}"/>
+                                                    </h:outputLink>
+                                                    <p:tooltip for="MCEntry" value="#{MC.dbControl.controlDescription}" trackMouse="true"/>
+                                                </div>
+                                                <div class="status">
+                                                    <h:outputLink id="MCJustify" value="#">
+                                                        <h:outputText value="#{MC.controlRecommendId.controlRecommendName}"/>
+                                                    </h:outputLink>
+                                                    <p:tooltip for="MCJustify" value="#{MC.controlJustify}" trackMouse="true"/>
+                                                </div>
+                                            </div>
+                                        </ui:repeat>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </p:panel>
+                        </p:panel>
                     </p:dialog>
                     <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
@@ -247,12 +247,12 @@
                                 <p:tab title="Hazard Fields">
                                     <p:panel styleClass="searchPanel">
                                         <p:panelGrid columns="3" columnClasses="left,middle,right">
-                                            <p:outputLabel>Hazard ID</p:outputLabel>
-                                            <p:inputText id="HIInput" value="#{hazardView_MB.searchedHazardId}">
-                                                <p:ajax event="keyup" update="HIClear"/>
+                                            <p:outputLabel>Hazard Id:</p:outputLabel>
+                                            <p:inputText id="HiDInput" value="#{hazardView_MB.searchedHazardId}">
+                                                <p:ajax event="keyup" update="HiDClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HIClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardId}">
+                                                <p:commandLink id="HiDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardId}">
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -289,6 +289,15 @@
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
                                                 <p:commandLink id="HMClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardComments}"> 
+                                                    <i class="fa fa-remove"/>
+                                                </p:commandLink>
+                                            </h:panelGroup>
+                                            <p:outputLabel>Hazard Legacy Id:</p:outputLabel>
+                                            <p:inputText id="HLiDInput" value="#{hazardView_MB.searchedLegacyId}">
+                                                <p:ajax event="keyup" update="HLiDClear"/>
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HLiDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedLegacyId}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -382,7 +391,7 @@
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
-                                            </p:panelGrid>
+                                        </p:panelGrid>
                                     </p:panel>
                                 </p:tab>
                                 <p:tab title="System Breakdown Structure Codes">
@@ -445,6 +454,18 @@
                                         </p:panelGrid>
                                     </p:panel>
                                 </p:tab>
+                                <p:tab title="Data Quality">
+                                    <p:panel styleClass="searchPanel">
+                                        <p:panelGrid columns="3" columnClasses="left,middle,right">
+                                            <p:outputLabel for="dataQuality" value="Hazard Quality:" />
+                                            <p:selectOneRadio id="dataQuality" value="#{hazardView_MB.hazardsQuality}" layout="grid" columns="1">
+                                                <f:selectItem itemLabel="All Hazards" itemValue="A" />
+                                                <f:selectItem itemLabel="Complete Hazards" itemValue="C" />
+                                                <f:selectItem itemLabel="Incomplete Hazards" itemValue="I" />
+                                            </p:selectOneRadio>
+                                        </p:panelGrid>  
+                                    </p:panel>
+                                </p:tab>
                             </p:accordionPanel>
                             <p:panel styleClass="queryDescr" visible="#{hazardView_MB.enableQueryDescr}">
                                 <h:outputText value="#{hazardView_MB.htmlCode}" escape="false"/>
@@ -457,45 +478,49 @@
                             <p:resetInput target="hazardsForm"/>
                         </p:commandButton>
                     </div>
-                    <p:dataTable id="hazardsTable" value="#{hazardView_MB.hazardSearchedlist}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
+                    <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
                                  scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex">
                         <f:facet name="header">
                             <p:outputPanel>
                                 <h:outputText value="The current hazards are: "/>
-                                <p:commandButton id="columnToggle" rendered="false" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.showExtended()}" onclick="this.form.target='_blank'" ajax="false">
-                                    <f:param name="hazard.list" value="#{hazardView_MB.hazardSearchedlist}"/>
+                                <p:commandButton id="columnToggle" rendered="false" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.showExtended()}" onclick="this.form.target = '_blank'" ajax="false">
+                                    <f:param name="hazard.list" value="#{hazardView_MB.listSearchedHazards}"/>
                                 </p:commandButton>
                             </p:outputPanel>
                         </f:facet>
-                        <p:column style="width: 5%; text-align:center" headerText="Visualise">
-                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{hazard.hazardId.contains('0001')}"/> <!-- Remember to change this disabled condition! -->
+                        <p:column style="width: 5%; text-align:center">
+                            <f:facet name="header">
+                                <h:outputText value="Visualise"/>
+                            </f:facet>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{empty hazard.missingInfo ? false : hazard.missingInfo}"/>
                         </p:column>
                         <p:column style="width: 7%; text-align:center" headerText="Rate &amp; Tag">
                             <h:outputText>
-                                <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardId))}" />
+                                <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}" />
                             </h:outputText>
                             <p:rating value="#{hazardView_MB.qualityRating}" stars="3" >
-                                <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazard.hazardId, hazardView_MB.qualityRating)}" update="hazardsForm:hazardsTable:#{rowIndex}:hazardRating, hazardsForm:hazardsTable:#{rowIndex}:ratingCount">
-                                    <f:attribute name="hazardId" value="#{hazard}" />
+                                <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, hazardView_MB.qualityRating)}" update="hazardsForm:hazardsTable:#{rowIndex}:hazardRating, hazardsForm:hazardsTable:#{rowIndex}:ratingCount">
+                                    <f:attribute name="hazardId" value="#{hazard.hazardObj}" />
                                 </p:ajax>
-                                <p:ajax event="cancel" listener="#{hazardView_MB.rateHazard(hazard.hazardId, 0)}" update="hazardsForm:hazardsTable:#{rowIndex}:hazardRating, hazardsForm:hazardsTable:#{rowIndex}:ratingCount" />
+                                <p:ajax event="cancel" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, 0)}" update="hazardsForm:hazardsTable:#{rowIndex}:hazardRating, hazardsForm:hazardsTable:#{rowIndex}:ratingCount" />
                             </p:rating>
                             <p:commandLink id="hazardRating">
-                                <h:outputText value="#{hazardView_MB.getHazardRating(hazard.hazardId)}"/>
+                                <h:outputText value="#{empty hazard.sumOfRateTimesWeighting ? null : hazardView_MB.getRatingScore(hazard.sumOfRateTimesWeighting, hazard.sumOfWeight)}"/>
                             </p:commandLink> |
                             <p:commandLink id="ratingCount">
-                                <h:outputText value="#{hazardView_MB.getRatingCount(hazard.hazardId)}"/>
+                                <h:outputText value="#{hazard.rateCount}"/>
                             </p:commandLink>
                             <p:tooltip for="hazardRating">
                                 <h:outputText value="Average rating"/>
-                            </p:tooltip><p:tooltip for="ratingCount">
+                            </p:tooltip>
+                            <p:tooltip for="ratingCount">
                                 <h:outputText value="Number of ratings"/>
                             </p:tooltip>
                             <br />
-                            <p:commandButton id="missingButton" action="#{hazardViewVis_MB.constructObject(hazard.hazardId)}" icon="fa fa-question" styleClass="missingButton"/>
+                            <p:commandButton id="missingButton" action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" rendered="#{empty hazard.missingInfo ? false : hazard.missingInfo}" icon="fa fa-question" styleClass="missingButton"/>
                             <p:menuButton icon="fa fa-tag" id="tagButton">
-                                <p:menuitem value="Suggest Change" actionListener="#{hazardView_MB.setDetailHazard(hazard)}" oncomplete="PF('suggestionOverlay').show()" icon="fa fa-pencil"/>
-                                <p:menuitem value="Mark for Deletion" actionListener="#{hazardView_MB.setDetailHazard(hazard)}" oncomplete="PF('deletionOverlay').show()" icon="fa fa-trash"/>
+                                <p:menuitem value="Suggest Change" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('suggestionOverlay').show()" icon="fa fa-pencil"/>
+                                <p:menuitem value="Mark for Deletion" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('deletionOverlay').show()" icon="fa fa-trash"/>
                             </p:menuButton>
                             <p:tooltip for="missingButton">
                                 <h:outputText value="This hazard is missing information!"/>
@@ -504,47 +529,74 @@
                                 <h:outputText value="Tag a change or mark for deletion"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 7%; text-align:center" headerText="Hazard ID">
-                            <p:commandLink id="ajax" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard)}" oncomplete="PF('detailOverlay').show()">
-                                <h:outputText value="#{hazard.hazardId}"/>
+                        <p:column style="width: 7%; text-align:center">
+                            <f:facet name="header">
+                                <h:outputText value="Hazard ID"/>
+                            </f:facet>
+                            <p:commandLink id="ajax" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard.hazardObj.hazardId)}" oncomplete="PF('detailOverlay').show()">
+                                <h:outputText value="#{hazard.hazardObj.hazardId}"/>
                             </p:commandLink>
                             <p:tooltip for="ajax">
                                 <i class="fa fa-search"/>
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 23%" headerText="Description">
-                            <h:outputText value="#{hazard.hazardDescription}"/>
+                        <p:column style="width: 23%">
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardDescription}"/>
                         </p:column>
-                        <p:column style="width: 23%" headerText="Comment">
-                            <h:outputText value="#{hazard.hazardComment}"/>
+                        <p:column style="width: 23%">
+                            <f:facet name="header">
+                                <h:outputText value="Comment"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardComment}"/>
                         </p:column>
-                        <p:column style="width: 6%" headerText="Context">
-                            <h:outputText value="#{hazard.hazardContextId.hazardContextName}"/>
+                        <p:column style="width: 6%">
+                            <f:facet name="header">
+                                <h:outputText value="Context"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardContextId.hazardContextName}"/>
                         </p:column>
-                        <p:column style="width: 6.5%" headerText="Location">
-                            <h:outputText value="#{hazard.hazardLocation.locationName}"/>
+                        <p:column style="width: 6.5%">
+                            <f:facet name="header">
+                                <h:outputText value="Location"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardLocation.locationName}"/>
                         </p:column>
-                        <p:column style="width: 7%" headerText="Activity">
-                            <h:outputText value="#{hazard.hazardActivity.activityName}"/>
+                        <p:column style="width: 7%">
+                            <f:facet name="header">
+                                <h:outputText value="Activity"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardActivity.activityName}"/>
                         </p:column>
-                        <p:column style="width: 6%" headerText="Type">
-                            <h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/>
+                        <p:column style="width: 6%">
+                            <f:facet name="header">
+                                <h:outputText value="Type"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardTypeId.hazardTypeName}"/>
                         </p:column>
-                        <p:column style="width: 6.5%" headerText="Status">
-                            <h:outputText value="#{hazard.hazardStatusId.hazardStatusName}"/>
+                        <p:column style="width: 6.5%">
+                            <f:facet name="header">
+                                <h:outputText value="Status"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.hazardStatusId.hazardStatusName}"/>
                         </p:column>
-                        <p:column style="width: 7%" headerText="Owner">
-                            <h:outputText value="#{hazard.ownerId.ownerName}"/>
+                        <p:column style="width: 7%">
+                            <f:facet name="header">
+                                <h:outputText value="Owner"/>
+                            </f:facet>
+                            <h:outputText value="#{hazard.hazardObj.ownerId.ownerName}"/>
                         </p:column>
                         <f:facet name="footer">
                             <p:outputPanel>
-                                <h:outputText value="Currently showing #{hazardView_MB.hazardSearchedlist.size()} #{hazardView_MB.hazardSearchedlist.size() != 1 ? 'hazards' : 'hazard'}."/>
+                                <h:outputText value="Currently showing #{hazardView_MB.listSearchedHazards.size()} #{hazardView_MB.listSearchedHazards.size() == 1 ? 'hazard' : hazardView_MB.listSearchedHazards.size() == 0 ? 'no hazards' : 'hazards'}."/>
                             </p:outputPanel>
                         </f:facet>
                     </p:dataTable>
                 </h:form>
-                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.5/svg.min.js"/>
+                <script type="text/javascript" src="../../resources/js/svg.min.js"/>
                 <script type="text/javascript" src="../../resources/js/viewVis.js"/>
             </ui:define>
         </ui:composition>

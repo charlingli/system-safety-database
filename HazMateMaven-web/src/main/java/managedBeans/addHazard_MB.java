@@ -37,6 +37,7 @@ import entities.DbUser;
 import entities.DbhazardActivity;
 import entities.DbhazardContext;
 import entities.DbhazardStatus;
+import entities.DbhazardSystemStatus;
 import entities.DbhazardType;
 import entities.DbriskClass;
 import entities.DbriskFrequency;
@@ -382,6 +383,9 @@ public class addHazard_MB implements Serializable {
         hazardObject.setUpdatedDateTime(new Date());
         hazardObject.setUserIdAdd(activeUser.getUserId());
         hazardObject.setUserIdUpdate(activeUser.getUserId());
+        
+        //Updating the system status on pending
+        hazardObject.setHazardSystemStatus(new DbhazardSystemStatus(1));
 
         dbHazardFacade.create(hazardObject);
         saveHazardObject(hazardObject);

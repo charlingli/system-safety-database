@@ -466,7 +466,6 @@ span.commandLinkWhite {
     border-style: none;
 }
 .hazardModifyPanel {
-    border-style: none;
     width: 600px;
 }
 .hazardModifyPanel .middle input, .hazardModifyPanel .middle textarea,

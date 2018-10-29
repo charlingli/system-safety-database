@@ -1,11 +1,8 @@
 package managedBeans;
 
-import customObjects.searchObject;
-import customObjects.treeNodeObject;
-import customObjects.validateIdObject;
-import ejb.DbHazardFacadeLocal;
-import ejb.DbHazardSbsFacadeLocal;
+import customObjects.*;
 import entities.*;
+import ejb.DbHazardFacadeLocal;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbProjectFacadeLocal;
@@ -19,6 +16,7 @@ import ejb.DbgradeSeparationFacadeLocal;
 import ejb.DbhazardActivityFacadeLocal;
 import ejb.DbhazardContextFacadeLocal;
 import ejb.DbhazardStatusFacadeLocal;
+import ejb.DbhazardSystemStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
 import ejb.DbtreeLevel2FacadeLocal;
@@ -27,8 +25,8 @@ import ejb.DbtreeLevel4FacadeLocal;
 import ejb.DbtreeLevel5FacadeLocal;
 import ejb.DbtreeLevel6FacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
-import java.io.IOException;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
@@ -38,14 +36,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
-import org.primefaces.event.RateEvent;
-import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -56,6 +50,8 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class hazardView_MB implements Serializable {
 
+    @EJB
+    private DbhazardSystemStatusFacadeLocal dbhazardSystemStatusFacade;
     @EJB
     private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
     @EJB
@@ -92,17 +88,19 @@ public class hazardView_MB implements Serializable {
     private DbcontrolHierarchyFacadeLocal dbcontrolHierarchyFacade;
 
     private DbUser activeUser;
-    private String searchedCauses;
-    private String searchedConsequences;
     private String searchedHazardId;
     private String searchedHazardDescription;
+    private String searchedCauses;
+    private String searchedConsequences;
     private String searchedHazardComments;
     private String searchedControlDescription;
     private String searchedControlJustification;
+    private String searchedLegacyId;
     private DbHazard detailHazard;
     private String detailHazardId;
     private String detailHazardDescription;
     private String detailHazardComment;
+    private String hazardsQuality;
     private List<DbHazardCause> detailCauses;
     private List<DbHazardConsequence> detailConsequences;
     private List<DbControlHazard> detailControls;
@@ -118,7 +116,8 @@ public class hazardView_MB implements Serializable {
     private List<DbOwners> listHazardOwners;
     private List<DbcontrolHierarchy> listControlHierarchies;
     private List<DbcontrolRecommend> listControlRecommendations;
-    private List<DbHazard> hazardSearchedList;
+    private List<DbhazardSystemStatus> listHazardSystemStatus;
+    private List<defaultViewSrchObject> listSearchedHazards;
     private List<DbHazard> hazardDetailList;
     private String[] selectedLocations;
     private String[] selectedProjects;
@@ -141,7 +140,7 @@ public class hazardView_MB implements Serializable {
     private int qualityRating;
     private int displayRating;
     private int displayCount;
-    
+
     public hazardView_MB() {
     }
 
@@ -160,7 +159,9 @@ public class hazardView_MB implements Serializable {
         setListHazardOwners(dbOwnersFacade.findAll());
         setListControlHierarchies(dbcontrolHierarchyFacade.findAll());
         setListControlRecommendations(dbcontrolRecommendFacade.findAll());
+        setListHazardSystemStatus(dbhazardSystemStatusFacade.findAll());
         enableQueryDescr = false;
+        hazardsQuality = "A";
     }
 
     public DbUser getActiveUser() {
@@ -227,6 +228,14 @@ public class hazardView_MB implements Serializable {
         this.searchedControlJustification = searchedControlJustification;
     }
 
+    public String getSearchedLegacyId() {
+        return searchedLegacyId;
+    }
+
+    public void setSearchedLegacyId(String searchedLegacyId) {
+        this.searchedLegacyId = searchedLegacyId;
+    }
+
     public DbHazard getDetailHazard() {
         return detailHazard;
     }
@@ -257,6 +266,14 @@ public class hazardView_MB implements Serializable {
 
     public void setDetailHazardComment(String detailHazardComment) {
         this.detailHazardComment = detailHazardComment;
+    }
+
+    public String getHazardsQuality() {
+        return hazardsQuality;
+    }
+
+    public void setHazardsQuality(String hazardsQuality) {
+        this.hazardsQuality = hazardsQuality;
     }
 
     public List<DbHazardCause> getDetailCauses() {
@@ -379,6 +396,14 @@ public class hazardView_MB implements Serializable {
         this.listControlRecommendations = listControlRecommendations;
     }
 
+    public List<DbhazardSystemStatus> getListHazardSystemStatus() {
+        return listHazardSystemStatus;
+    }
+
+    public void setListHazardSystemStatus(List<DbhazardSystemStatus> listHazardSystemStatus) {
+        this.listHazardSystemStatus = listHazardSystemStatus;
+    }
+
     public String[] getSelectedLocations() {
         return selectedLocations;
     }
@@ -499,12 +524,12 @@ public class hazardView_MB implements Serializable {
         this.htmlCode = htmlCode;
     }
 
-    public List<DbHazard> getHazardSearchedlist() {
-        return hazardSearchedList;
+    public List<defaultViewSrchObject> getListSearchedHazards() {
+        return listSearchedHazards;
     }
 
-    public void setHazardSearchedlist(List<DbHazard> hazardSearchedList) {
-        this.hazardSearchedList = hazardSearchedList;
+    public void setListSearchedHazards(List<defaultViewSrchObject> listSearchedHazards) {
+        this.listSearchedHazards = listSearchedHazards;
     }
 
     public List<DbHazard> getHazardDetailList() {
@@ -569,6 +594,9 @@ public class hazardView_MB implements Serializable {
         List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
         List<searchObject> searchCompositeList = new ArrayList<>();
 
+        //This page method will always present the approved hazards
+        searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "SSD Workflow Status"));
+
         // Start the grind of finding each entry to each field
         if (!getSearchedHazardId().isEmpty()) {
             searchCompositeList.add(new searchObject("hazardId", getSearchedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard Id"));
@@ -584,6 +612,9 @@ public class hazardView_MB implements Serializable {
         }
         if (!getSearchedHazardComments().isEmpty()) {
             searchCompositeList.add(new searchObject("hazardComment", getSearchedHazardComments(), "string", "DbHazard", null, null, null, "like", "Hazard Comments"));
+        }
+        if (!getSearchedLegacyId().isEmpty()) {
+            searchCompositeList.add(new searchObject("legacyId", getSearchedLegacyId(), "string", "DbHazard", null, null, null, "like", "Hazard Legacy Id"));
         }
         if (getSelectedLocations() != null && getSelectedLocations().length > 0) {
             String joined = String.join(",", getSelectedLocations());
@@ -667,24 +698,16 @@ public class hazardView_MB implements Serializable {
         }
 
         constructHtml(searchCompositeList, treeCheckedNodesList);
+        listSearchedHazards = new ArrayList<>();
+        listSearchedHazards = castToDefaultObj((List<Object[]>) (Object) dbHazardFacade.findHazards(searchCompositeList, treeCheckedNodesList, hazardsQuality, "DefaultView"));
 
-        if (!searchCompositeList.isEmpty() && !treeCheckedNodesList.isEmpty()) {
-            hazardSearchedList = dbHazardFacade.findHazardsByFieldsAndSbs(searchCompositeList, treeCheckedNodesList);
-        } else if (!searchCompositeList.isEmpty() && treeCheckedNodesList.isEmpty()) {
-            hazardSearchedList = dbHazardFacade.findHazardsByFields(searchCompositeList);
-        } else if (searchCompositeList.isEmpty() && !treeCheckedNodesList.isEmpty()) {
-            hazardSearchedList = dbHazardFacade.findHazardsBySbs(treeCheckedNodesList);
-        } else {
-            hazardSearchedList = dbHazardFacade.findAllHazards();
-        }
-
-        if (!hazardSearchedList.isEmpty()) {
+        if (!listSearchedHazards.isEmpty()) {
             RequestContext.getCurrentInstance().execute("PF('widget_hazardsForm_fieldset').toggle()");
         }
     }
-    
-    public String showExtended(){
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", hazardSearchedList);
+
+    public String showExtended() {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardList", listSearchedHazards);
         return "viewHazardExtend";
     }
 
@@ -694,6 +717,7 @@ public class hazardView_MB implements Serializable {
         setSearchedCauses(null);
         setSearchedConsequences(null);
         setSearchedHazardComments(null);
+        setSearchedLegacyId(null);
         setSelectedLocations(null);
         setSelectedProjects(null);
         setSelectedGradeSeparations(null);
@@ -715,39 +739,53 @@ public class hazardView_MB implements Serializable {
     }
 
     private void constructHtml(List<searchObject> listFields, List<treeNodeObject> listSbs) {
-        if (listFields.isEmpty() && listSbs.isEmpty()) {
-            enableQueryDescr = true;
-            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards associated to at least one cause, consequence and control.</span></h3>";
-        } else {
-            enableQueryDescr = true;
-            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards meeting the following criteria:</span></h3>";
-            boolean includeAnd = false;
-            if (!listFields.isEmpty()) {
-                for (searchObject tmpSrch : listFields) {
-                    if (tmpSrch.getRelationType().equals("like")) {
-                        if (includeAnd) {
-                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
-                        }
-                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> contains:</h4>";
-                        htmlCode += "<p class=\"queryDescr_field\">" + tmpSrch.getUserInput() + "</p>";
-                    } else if (tmpSrch.getRelationType().equals("in")) {
-                        if (includeAnd) {
-                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
-                        }
-                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to any in the list:</h4>";
-                        htmlCode += "<p class=\"queryDescr_field\">" + convertListIds(tmpSrch.getFieldName(), tmpSrch.getUserInput()) + "</p>";
+        enableQueryDescr = true;
+        htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards meeting the following criteria:</span></h3>";
+        boolean includeAnd = false;
+        if (!listFields.isEmpty()) {
+            for (searchObject tmpSrch : listFields) {
+                if (tmpSrch.getRelationType().equals("like")) {
+                    if (includeAnd) {
+                        htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
                     }
-                    if (!includeAnd) {
-                        includeAnd = true;
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> contains:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + tmpSrch.getUserInput() + "</p>";
+                } else if (tmpSrch.getRelationType().equals("in")) {
+                    if (includeAnd) {
+                        htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
                     }
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to any in the list:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + convertListIds(tmpSrch.getFieldName(), tmpSrch.getUserInput()) + "</p>";
+                }
+                if (!includeAnd) {
+                    includeAnd = true;
                 }
             }
-            if (!listSbs.isEmpty()) {
-                if (includeAnd) {
-                    htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
-                }
-                htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "System Breakdown Structure" + "</span> is associated with the following nodes:</h4>";
-                htmlCode += "<p class=\"queryDescr_field\">" + showTreeToString(listSbs) + "</p>";
+        }
+        if (!listSbs.isEmpty()) {
+            if (includeAnd) {
+                htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+            }
+            htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "System Breakdown Structure" + "</span> is associated with the following nodes:</h4>";
+            htmlCode += "<p class=\"queryDescr_field\">" + showTreeToString(listSbs) + "</p>";
+        }
+        if (!hazardsQuality.equals("")) {
+            if (includeAnd) {
+                htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+            }
+            switch (hazardsQuality) {
+                case "A":
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "Data Quality" + "</span> is:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + "Inclusive of missing causes, consequences, or controls." + "</p>";
+                    break;
+                case "C":
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "Data Quality" + "</span> is:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + "Assigned to at least one cause, consequence, and control." + "</p>";
+                    break;
+                case "I":
+                    htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + "Data Quality" + "</span> is:</h4>";
+                    htmlCode += "<p class=\"queryDescr_field\">" + "Missing causes, consequences, or controls." + "</p>";
+                    break;
             }
         }
     }
@@ -865,6 +903,16 @@ public class hazardView_MB implements Serializable {
                         resultantString.append(", ");
                     }
                     break;
+                case "systemStatusId":
+                    stringListIds.stream().map((tmpId) -> listHazardSystemStatus.stream()
+                            .filter(a -> a.getSystemStatusId().equals(Integer.parseInt(tmpId)))
+                            .collect(Collectors.toList())).map((result) -> {
+                        resultantString.append(result.get(0).getSystemStatusName());
+                        return result;
+                    }).forEachOrdered((_item) -> {
+                        resultantString.append(", ");
+                    });
+                    break;
                 default:
                     break;
             }
@@ -947,19 +995,20 @@ public class hazardView_MB implements Serializable {
         return nodeName;
     }
     
-    public void showDetail(DbHazard detailHazard) {
-        setDetailHazard(detailHazard);
-        setDetailHazardId(detailHazard.getHazardId());
+    public void showDetail(String hazardId) {
+        setDetailHazardId(hazardId);
+        setHazardDetailList(dbHazardFacade.findByName("hazardId", getDetailHazardId()));
+        detailHazard = getHazardDetailList().get(0);
         setDetailHazardDescription(detailHazard.getHazardDescription());
         setDetailHazardComment(detailHazard.getHazardComment());
         detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
         detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
         detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
     }
-    
+
     public void clearField(String id) {
-        switch(id){
-            case "HIClear":
+        switch (id) {
+            case "HiDClear":
                 setSearchedHazardId(null);
                 break;
             case "HDClear":
@@ -973,6 +1022,9 @@ public class hazardView_MB implements Serializable {
                 break;
             case "HMClear":
                 setSearchedHazardComments(null);
+                break;
+            case "HLiDClear":
+                setSearchedLegacyId(null);
                 break;
             case "HLClear":
                 setSelectedLocations(null);
@@ -1023,7 +1075,7 @@ public class hazardView_MB implements Serializable {
         constructHtml(new ArrayList<>(), new ArrayList<>());
         enableQueryDescr = false;
     }
-    
+
     public void rateHazard(String hazardId, int rating) {
         if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
             qualityObject = dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0);
@@ -1048,23 +1100,41 @@ public class hazardView_MB implements Serializable {
             }
             dbQualityFacade.create(qualityObject);
         }
+        updateSearchList(hazardId);
     }
-    
+
     public double getHazardRating(String hazardId) {
         return dbQualityFacade.getHazardRating(hazardId);
     }
-    
+
     public long getRatingCount(String hazardId) {
         return dbQualityFacade.getNumberOfRatings(hazardId);
     }
-    
+
     public int getUserRating(String hazardId) {
         if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
             return dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0).getRating();
         }
         return 0;
     }
-    
+
+    public String getRatingScore(String sumOfRateTimesWeighting, String sumOfWeight) {
+        try {
+            if (!sumOfRateTimesWeighting.equals("0") || !sumOfWeight.equals("0")) {
+                Double ratePerWeight = Double.parseDouble(sumOfRateTimesWeighting);
+                Double Weight = Double.parseDouble(sumOfWeight);
+                Double rate = ratePerWeight / Weight;
+                DecimalFormat df = new DecimalFormat("#.00");
+                return df.format(rate);
+            } else {
+                return "0.00";
+            }
+        } catch (NumberFormatException e) {
+            System.out.println(e);
+            return null;
+        }
+    }
+
     public void sendSuggestion(String suggestionComment) {
         System.out.println(suggestionComment);
         if (suggestionComment.length() < 1) {
@@ -1086,7 +1156,7 @@ public class hazardView_MB implements Serializable {
             init();
         }
     }
-    
+
     public void sendDeletion(String deletionReason, String deletionComment) {
         if (deletionComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your mark for deletion."));
@@ -1108,97 +1178,52 @@ public class hazardView_MB implements Serializable {
             init();
         }
     }
-    
-    public List<String> viewSbsCondensed() {
-        List<DbHazardSbs> listDbHazardSbs = dbHazardFacade.getSbs(detailHazard.getHazardId());
 
-        List<String> sbsChildren = new ArrayList<>();
-        List<String> nodeNames = new ArrayList<>();
-        String previousNode = "";
-        String currentNode;
-
-        for (DbHazardSbs check : listDbHazardSbs) {
-            if (sbsChildren.isEmpty()) {
-                previousNode = check.getDbHazardSbsPK().getSbsId();
-                sbsChildren.add(previousNode);
-            } else {
-                currentNode = check.getDbHazardSbsPK().getSbsId();
-                if (!currentNode.startsWith(previousNode)) {
-                    sbsChildren.add(currentNode);
-                    previousNode = currentNode;
-                }
+    private List<defaultViewSrchObject> castToDefaultObj(List<Object[]> tmpList) {
+        List<defaultViewSrchObject> tmpListOut = new ArrayList<>();
+        tmpList.stream().map((x) -> {
+            DbHazard tmpHaz = (DbHazard) x[0];
+            Long tmpOne = null;
+            Long tmpTwo = null;
+            Long tmpThree = null;
+            String tmpFour = null;
+            if (x[1] != null) {
+                tmpOne = (Long) x[1];
             }
-        }
-        
-        for (String nodeId : sbsChildren) {
-            List<treeNodeObject> treeHazardSbsList = new ArrayList<>();
-            String nodeName = "";
-            String parts[] = nodeId.split("\\.");
-            if (nodeId.equals("")) {
-                nodeName = "";
-            } else {
-                for (int i = 1; i <= parts.length; i++) {
-                    switch (i) {
-                        case 1:
-                            DbtreeLevel1 tmpDbLvl1 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]));
-                            if (tmpDbLvl1.getTreeLevel1Name() != null) {
-                                treeHazardSbsList.add(new treeNodeObject(nodeId,
-                                        tmpDbLvl1.getTreeLevel1Name()));
-                                nodeName = treeHazardSbsList.get(0).getNodeName();
-                            }
-                            break;
-                        case 2:
-                            DbtreeLevel2 tmpDbLvl2 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
-                                    Integer.parseInt(parts[1]));
-                            if (tmpDbLvl2.getTreeLevel2Name() != null) {
-                                treeHazardSbsList.add(new treeNodeObject(nodeId,
-                                        tmpDbLvl2.getTreeLevel2Name()));
-                                nodeName = treeHazardSbsList.get(1).getNodeName();
-                            }
-                            break;
-                        case 3:
-                            DbtreeLevel3 tmpDbLvl3 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
-                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
-                            if (tmpDbLvl3.getTreeLevel3Name() != null) {
-                                treeHazardSbsList.add(new treeNodeObject(nodeId,
-                                        tmpDbLvl3.getTreeLevel3Name()));
-                                nodeName = treeHazardSbsList.get(2).getNodeName();
-                            }
-                            break;
-                        case 4:
-                            DbtreeLevel4 tmpDbLvl4 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
-                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-                            if (tmpDbLvl4.getTreeLevel4Name() != null) {
-                                treeHazardSbsList.add(new treeNodeObject(nodeId,
-                                        tmpDbLvl4.getTreeLevel4Name()));
-                                nodeName = treeHazardSbsList.get(3).getNodeName();
-                            }
-                            break;
-                        case 5:
-                            DbtreeLevel5 tmpDbLvl5 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
-                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                                    Integer.parseInt(parts[4]));
-                            if (tmpDbLvl5.getTreeLevel5Name() != null) {
-                                treeHazardSbsList.add(new treeNodeObject(nodeId,
-                                        tmpDbLvl5.getTreeLevel5Name()));
-                                nodeName = treeHazardSbsList.get(4).getNodeName();
-                            }
-                            break;
-                        case 6:
-                            DbtreeLevel6 tmpDbLvl6 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
-                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
-                                    Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
-                            if (tmpDbLvl6.getTreeLevel6Name() != null) {
-                                treeHazardSbsList.add(new treeNodeObject(nodeId,
-                                        tmpDbLvl6.getTreeLevel6Name()));
-                                nodeName = treeHazardSbsList.get(5).getNodeName();
-                            }
-                            break;
+            if (x[2] != null) {
+                tmpTwo = (Long) x[2];
+            }
+            if (x[3] != null) {
+                tmpThree = (Long) x[3];
+            }
+            if (x[4] != null) {
+                tmpFour = x[4].toString();
+            }
+            defaultViewSrchObject tmpDflt = new defaultViewSrchObject(tmpHaz, tmpOne, tmpTwo, tmpThree, tmpFour);
+            return tmpDflt;
+        }).forEachOrdered((tmpDflt) -> {
+            tmpListOut.add(tmpDflt);
+        });
+        return tmpListOut;
+    }
+
+    private void updateSearchList(String hazardId) {
+        List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
+        List<searchObject> searchCompositeList = new ArrayList<>();
+        if (hazardId != null) {
+            searchCompositeList.add(new searchObject("hazardId", hazardId, "string", "DbHazard", null, null, null, "like", "Hazard Id"));
+            List<defaultViewSrchObject> tmpResult = 
+                    castToDefaultObj((List<Object[]>) (Object) dbHazardFacade.findHazards(searchCompositeList, treeCheckedNodesList, hazardsQuality, "DefaultView"));
+            if (!tmpResult.isEmpty()) {
+                for (int i = 0; i < listSearchedHazards.size(); i++) {
+                    if (listSearchedHazards.get(i).getHazardObj().getHazardId().equals(hazardId)) {
+                        listSearchedHazards.get(i).setSumOfRateTimesWeighting(tmpResult.get(0).getSumOfRateTimesWeighting());
+                        listSearchedHazards.get(i).setSumOfWeight(tmpResult.get(0).getSumOfWeight());
+                        listSearchedHazards.get(i).setRateCount(tmpResult.get(0).getRateCount());
+                        break;
                     }
                 }
             }
-            nodeNames.add(nodeName);
         }
-        return nodeNames;
     }
 }

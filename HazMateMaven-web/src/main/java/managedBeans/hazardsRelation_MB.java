@@ -43,7 +43,6 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ComponentSystemEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 
@@ -361,8 +360,6 @@ public class hazardsRelation_MB implements Serializable {
     public void setFinalActionButton(String finalActionButton) {
         this.finalActionButton = finalActionButton;
     }
-    
-    
 
     @PostConstruct
     public void init() {
@@ -381,7 +378,7 @@ public class hazardsRelation_MB implements Serializable {
     }
 
     public void searchHazards() {
-        listHazards = dbHazardFacade.findHazardsByFieldsOnly(createSearchList());
+        listHazards = (List<DbHazard>) (Object) dbHazardFacade.findHazards(createSearchList(), new ArrayList<>(), "A", "Normal");
         dataTable = true;
         cancelBtn = true;
     }
