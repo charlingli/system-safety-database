@@ -42,5 +42,7 @@ public interface DbwfLineFacadeLocal {
     boolean validate50plus1Approvers(DbwfHeader wfObj, String decisionType);
     
     boolean validateFirstApprover(DbwfHeader wfObj, String decisionType);
+    
+    DbwfLine findLatestCommentById(String wfId);
 
 }

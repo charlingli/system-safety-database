@@ -11,7 +11,7 @@
                 <h:form id="wfForm">
                     <p:hotkey bind="esc" handler="PF('detailOverlay').hide(); PF('objectOverlay').hide(); PF('requestOverlay').hide(); PF('multipleOverlay').hide()"></p:hotkey>
                     <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
-                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
+                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the workflow:"/>
@@ -22,7 +22,7 @@
                                 <p:outputLabel value="Comment 1:"/>
                                 <p:outputLabel value="#{userWF_MB.detailWF.wfComment1}"/>
                                 <p:outputLabel value="Workflow Object Type &amp; Id "/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfObjectName} : #{userWF_MB.detailWF.wfObjectId}"/>
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfObjectName}: #{userWF_MB.detailWF.wfObjectId}"/>
                                 <p:outputLabel value="Comment 2:"/>
                                 <p:outputLabel value="#{userWF_MB.detailWF.wfComment2}"/>
                                 <p:outputLabel value="Workflow Status &amp; Last Update:"/>
@@ -36,7 +36,7 @@
                             </p:panelGrid>
                         </p:panel>
                     </p:dialog>
-                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="70vw">
+                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
@@ -56,7 +56,7 @@
                             </div>
                             <p:dataTable value="#{userWF_MB.detailHazard}" emptyMessage="No hazard found.">
                                 <p:column headerText="SBS Code" styleClass="small">
-                                    <p:outputLabel value="Placeholder"/>
+                                    <ui:repeat var="node" value="#{userWF_MB.viewSbsCondensed()}">#{node}</ui:repeat>
                                 </p:column>
                                 <p:column headerText="Activity" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.hazardContextId.hazardContextName}"/>
@@ -66,6 +66,9 @@
                                 </p:column>
                                 <p:column headerText="Type" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Status" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardStatusId.hazardStatusName}"/>
                                 </p:column>
                                 <p:column headerText="Owner" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.ownerId.ownerName}"/>
@@ -205,7 +208,7 @@
                         </p:column>
                         <p:column headerText="Workflow Object Type : ID" style="width: 11%; text-align:center">
                             <p:commandLink id="objAjax" update=":wfForm" actionListener="#{userWF_MB.showHazard(wf.dbwfHeader)}" oncomplete="PF('objectOverlay').show()">
-                                <h:outputText value="#{wf.dbwfHeader.wfObjectName} : #{wf.dbwfHeader.wfObjectId}"/>
+                                <h:outputText value="#{wf.dbwfHeader.wfObjectName}: #{wf.dbwfHeader.wfObjectId}"/>
                             </p:commandLink>
                             <p:tooltip for="objAjax">
                                 <i class="fa fa-search"/>

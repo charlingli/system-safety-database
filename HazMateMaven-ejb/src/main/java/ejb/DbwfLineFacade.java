@@ -173,4 +173,24 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
                 .setParameter("checkwfId", wfId)
                 .getResultList();
     }
+    
+    @Override
+    public DbwfLine findLatestCommentById(String wfId) {
+        String queryStr;
+        DbwfLine result = new DbwfLine();
+        try {
+            queryStr = "FROM DbwfLine l1 WHERE l1.dbwfLinePK.wfId = ?1 "
+                    + "AND l1.wfDateTimeDecision = (SELECT MAX(wfDateTimeDecision) "
+                    + "FROM DbwfLine l2 WHERE l2.dbwfLinePK.wfId = l1.dbwfLinePK.wfId)";
+            Query query = em.createQuery(queryStr);
+            query.setParameter(1, wfId);
+
+            result = (DbwfLine) query.getResultList().get(0);
+
+        } catch (Exception e) {
+
+            throw e;
+        }
+        return result; 
+    }
 }

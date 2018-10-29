@@ -86,7 +86,7 @@
                         </div>
                     </p:panel>
                     </p:dialog>
-                    <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
+                    <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
@@ -104,9 +104,9 @@
                             <div class="p-emphasis-spacer">
                                 <h:outputText styleClass="p-emphasis" value="Hazard Information:"/>
                             </div>
-                            <p:dataTable value="#{hazardView_MB.detailHazard}" emptyMessage="No hazard found.">
+                            <p:dataTable value="#{hazardView_MB.detailHazard}" emptyMessage="No hazards found.">
                                 <p:column headerText="SBS Code" styleClass="small">
-                                    <p:outputLabel value="Placeholder"/>
+                                    <ui:repeat var="node" value="#{hazardView_MB.viewSbsCondensed()}">#{node}</ui:repeat>
                                 </p:column>
                                 <p:column headerText="Activity" styleClass="small">
                                     <p:outputLabel value="#{hazardView_MB.detailHazard.hazardContextId.hazardContextName}"/>
@@ -116,6 +116,9 @@
                                 </p:column>
                                 <p:column headerText="Type" styleClass="small">
                                     <p:outputLabel value="#{hazardView_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Status" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.hazardStatusId.hazardStatusName}"/>
                                 </p:column>
                                 <p:column headerText="Owner" styleClass="small">
                                     <p:outputLabel value="#{hazardView_MB.detailHazard.ownerId.ownerName}"/>
@@ -244,6 +247,15 @@
                                 <p:tab title="Hazard Fields">
                                     <p:panel styleClass="searchPanel">
                                         <p:panelGrid columns="3" columnClasses="left,middle,right">
+                                            <p:outputLabel>Hazard ID</p:outputLabel>
+                                            <p:inputText id="HIInput" value="#{hazardView_MB.searchedHazardId}">
+                                                <p:ajax event="keyup" update="HIClear"/>
+                                            </p:inputText>
+                                            <h:panelGroup styleClass="remove">
+                                                <p:commandLink id="HIClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardId}">
+                                                    <i class="fa fa-remove"/>
+                                                </p:commandLink>
+                                            </h:panelGroup>
                                             <p:outputLabel>Hazard Description:</p:outputLabel>
                                             <p:inputText id="HDInput" value="#{hazardView_MB.searchedHazardDescription}">
                                                 <p:ajax event="keyup" update="HDClear"/>
@@ -455,16 +467,10 @@
                                 </p:commandButton>
                             </p:outputPanel>
                         </f:facet>
-                        <p:column style="width: 5%; text-align:center">
-                            <f:facet name="header">
-                                <h:outputText value="Visualise"/>
-                            </f:facet>
+                        <p:column style="width: 5%; text-align:center" headerText="Visualise">
                             <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{hazard.hazardId.contains('0001')}"/> <!-- Remember to change this disabled condition! -->
                         </p:column>
-                        <p:column style="width: 7%; text-align:center">
-                            <f:facet name="header">
-                                <h:outputText value="Rate &amp; Tag"/>
-                            </f:facet>
+                        <p:column style="width: 7%; text-align:center" headerText="Rate &amp; Tag">
                             <h:outputText>
                                 <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardId))}" />
                             </h:outputText>
@@ -498,11 +504,8 @@
                                 <h:outputText value="Tag a change or mark for deletion"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 7%; text-align:center">
-                            <f:facet name="header">
-                                <h:outputText value="Hazard ID"/>
-                            </f:facet>
-                            <p:commandLink id="ajax" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard.hazardId)}" oncomplete="PF('detailOverlay').show()">
+                        <p:column style="width: 7%; text-align:center" headerText="Hazard ID">
+                            <p:commandLink id="ajax" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{hazard.hazardId}"/>
                             </p:commandLink>
                             <p:tooltip for="ajax">
@@ -510,52 +513,28 @@
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 23%">
-                            <f:facet name="header">
-                                <h:outputText value="Description"/>
-                            </f:facet>
+                        <p:column style="width: 23%" headerText="Description">
                             <h:outputText value="#{hazard.hazardDescription}"/>
                         </p:column>
-                        <p:column style="width: 23%">
-                            <f:facet name="header">
-                                <h:outputText value="Comment"/>
-                            </f:facet>
+                        <p:column style="width: 23%" headerText="Comment">
                             <h:outputText value="#{hazard.hazardComment}"/>
                         </p:column>
-                        <p:column style="width: 6%">
-                            <f:facet name="header">
-                                <h:outputText value="Context"/>
-                            </f:facet>
+                        <p:column style="width: 6%" headerText="Context">
                             <h:outputText value="#{hazard.hazardContextId.hazardContextName}"/>
                         </p:column>
-                        <p:column style="width: 6.5%">
-                            <f:facet name="header">
-                                <h:outputText value="Location"/>
-                            </f:facet>
+                        <p:column style="width: 6.5%" headerText="Location">
                             <h:outputText value="#{hazard.hazardLocation.locationName}"/>
                         </p:column>
-                        <p:column style="width: 7%">
-                            <f:facet name="header">
-                                <h:outputText value="Activity"/>
-                            </f:facet>
+                        <p:column style="width: 7%" headerText="Activity">
                             <h:outputText value="#{hazard.hazardActivity.activityName}"/>
                         </p:column>
-                        <p:column style="width: 6%">
-                            <f:facet name="header">
-                                <h:outputText value="Type"/>
-                            </f:facet>
+                        <p:column style="width: 6%" headerText="Type">
                             <h:outputText value="#{hazard.hazardTypeId.hazardTypeName}"/>
                         </p:column>
-                        <p:column style="width: 6.5%">
-                            <f:facet name="header">
-                                <h:outputText value="Status"/>
-                            </f:facet>
+                        <p:column style="width: 6.5%" headerText="Status">
                             <h:outputText value="#{hazard.hazardStatusId.hazardStatusName}"/>
                         </p:column>
-                        <p:column style="width: 7%">
-                            <f:facet name="header">
-                                <h:outputText value="Owner"/>
-                            </f:facet>
+                        <p:column style="width: 7%" headerText="Owner">
                             <h:outputText value="#{hazard.ownerId.ownerName}"/>
                         </p:column>
                         <f:facet name="footer">

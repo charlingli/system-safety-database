@@ -71,7 +71,7 @@ public interface DbHazardFacadeLocal {
     
     List<DbHazard> validateHazardId(String hazardId);
     
-    int getRiskScore(int frequencyScore, int severityScore);
+    int calculateRiskScore(int frequencyScore, int severityScore);
     
     List<DbHazard> getHazardsFromCause(int causeId);
     

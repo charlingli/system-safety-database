@@ -4,6 +4,7 @@ import customObjects.searchObject;
 import customObjects.treeNodeObject;
 import customObjects.validateIdObject;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbHazardSbsFacadeLocal;
 import entities.*;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
@@ -20,6 +21,11 @@ import ejb.DbhazardContextFacadeLocal;
 import ejb.DbhazardStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
+import ejb.DbtreeLevel2FacadeLocal;
+import ejb.DbtreeLevel3FacadeLocal;
+import ejb.DbtreeLevel4FacadeLocal;
+import ejb.DbtreeLevel5FacadeLocal;
+import ejb.DbtreeLevel6FacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,6 +35,7 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -38,6 +45,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.RateEvent;
+import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
 /**
@@ -49,13 +57,13 @@ import org.primefaces.model.TreeNode;
 public class hazardView_MB implements Serializable {
 
     @EJB
+    private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
+    @EJB
     private DbwfHeaderFacadeLocal dbwfHeaderFacade;
     @EJB
     private DbUserFacadeLocal dbUserFacade;
     @EJB
     private DbQualityFacadeLocal dbQualityFacade;
-    @EJB
-    private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
     @EJB
     private DbProjectFacadeLocal dbProjectFacade;
     @EJB
@@ -86,6 +94,7 @@ public class hazardView_MB implements Serializable {
     private DbUser activeUser;
     private String searchedCauses;
     private String searchedConsequences;
+    private String searchedHazardId;
     private String searchedHazardDescription;
     private String searchedHazardComments;
     private String searchedControlDescription;
@@ -160,6 +169,14 @@ public class hazardView_MB implements Serializable {
 
     public void setActiveUser(DbUser activeUser) {
         this.activeUser = activeUser;
+    }
+
+    public String getSearchedHazardId() {
+        return searchedHazardId;
+    }
+
+    public void setSearchedHazardId(String searchedHazardId) {
+        this.searchedHazardId = searchedHazardId;
     }
 
     public String getSearchedCauses() {
@@ -553,6 +570,9 @@ public class hazardView_MB implements Serializable {
         List<searchObject> searchCompositeList = new ArrayList<>();
 
         // Start the grind of finding each entry to each field
+        if (!getSearchedHazardId().isEmpty()) {
+            searchCompositeList.add(new searchObject("hazardId", getSearchedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard Id"));
+        }
         if (!getSearchedHazardDescription().isEmpty()) {
             searchCompositeList.add(new searchObject("hazardDescription", getSearchedHazardDescription(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
         }
@@ -669,6 +689,7 @@ public class hazardView_MB implements Serializable {
     }
 
     public void resetFields() {
+        setSearchedHazardId(null);
         setSearchedHazardDescription(null);
         setSearchedCauses(null);
         setSearchedConsequences(null);
@@ -926,10 +947,9 @@ public class hazardView_MB implements Serializable {
         return nodeName;
     }
     
-    public void showDetail(String hazardId) {
-        setDetailHazardId(hazardId);
-        setHazardDetailList(dbHazardFacade.findByName("hazardId", getDetailHazardId()));
-        detailHazard = getHazardDetailList().get(0);
+    public void showDetail(DbHazard detailHazard) {
+        setDetailHazard(detailHazard);
+        setDetailHazardId(detailHazard.getHazardId());
         setDetailHazardDescription(detailHazard.getHazardDescription());
         setDetailHazardComment(detailHazard.getHazardComment());
         detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
@@ -939,6 +959,9 @@ public class hazardView_MB implements Serializable {
     
     public void clearField(String id) {
         switch(id){
+            case "HIClear":
+                setSearchedHazardId(null);
+                break;
             case "HDClear":
                 setSearchedHazardDescription(null);
                 break;
@@ -1002,7 +1025,6 @@ public class hazardView_MB implements Serializable {
     }
     
     public void rateHazard(String hazardId, int rating) {
-        System.out.println("Rating " + hazardId + " with " + rating);
         if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
             qualityObject = dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0);
             qualityObject.setRating(rating);
@@ -1085,5 +1107,98 @@ public class hazardView_MB implements Serializable {
             setDetailHazard(null);
             init();
         }
+    }
+    
+    public List<String> viewSbsCondensed() {
+        List<DbHazardSbs> listDbHazardSbs = dbHazardFacade.getSbs(detailHazard.getHazardId());
+
+        List<String> sbsChildren = new ArrayList<>();
+        List<String> nodeNames = new ArrayList<>();
+        String previousNode = "";
+        String currentNode;
+
+        for (DbHazardSbs check : listDbHazardSbs) {
+            if (sbsChildren.isEmpty()) {
+                previousNode = check.getDbHazardSbsPK().getSbsId();
+                sbsChildren.add(previousNode);
+            } else {
+                currentNode = check.getDbHazardSbsPK().getSbsId();
+                if (!currentNode.startsWith(previousNode)) {
+                    sbsChildren.add(currentNode);
+                    previousNode = currentNode;
+                }
+            }
+        }
+        
+        for (String nodeId : sbsChildren) {
+            List<treeNodeObject> treeHazardSbsList = new ArrayList<>();
+            String nodeName = "";
+            String parts[] = nodeId.split("\\.");
+            if (nodeId.equals("")) {
+                nodeName = "";
+            } else {
+                for (int i = 1; i <= parts.length; i++) {
+                    switch (i) {
+                        case 1:
+                            DbtreeLevel1 tmpDbLvl1 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]));
+                            if (tmpDbLvl1.getTreeLevel1Name() != null) {
+                                treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                        tmpDbLvl1.getTreeLevel1Name()));
+                                nodeName = treeHazardSbsList.get(0).getNodeName();
+                            }
+                            break;
+                        case 2:
+                            DbtreeLevel2 tmpDbLvl2 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                                    Integer.parseInt(parts[1]));
+                            if (tmpDbLvl2.getTreeLevel2Name() != null) {
+                                treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                        tmpDbLvl2.getTreeLevel2Name()));
+                                nodeName = treeHazardSbsList.get(1).getNodeName();
+                            }
+                            break;
+                        case 3:
+                            DbtreeLevel3 tmpDbLvl3 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                            if (tmpDbLvl3.getTreeLevel3Name() != null) {
+                                treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                        tmpDbLvl3.getTreeLevel3Name()));
+                                nodeName = treeHazardSbsList.get(2).getNodeName();
+                            }
+                            break;
+                        case 4:
+                            DbtreeLevel4 tmpDbLvl4 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+                            if (tmpDbLvl4.getTreeLevel4Name() != null) {
+                                treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                        tmpDbLvl4.getTreeLevel4Name()));
+                                nodeName = treeHazardSbsList.get(3).getNodeName();
+                            }
+                            break;
+                        case 5:
+                            DbtreeLevel5 tmpDbLvl5 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                                    Integer.parseInt(parts[4]));
+                            if (tmpDbLvl5.getTreeLevel5Name() != null) {
+                                treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                        tmpDbLvl5.getTreeLevel5Name()));
+                                nodeName = treeHazardSbsList.get(4).getNodeName();
+                            }
+                            break;
+                        case 6:
+                            DbtreeLevel6 tmpDbLvl6 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                                    Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                                    Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+                            if (tmpDbLvl6.getTreeLevel6Name() != null) {
+                                treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                        tmpDbLvl6.getTreeLevel6Name()));
+                                nodeName = treeHazardSbsList.get(5).getNodeName();
+                            }
+                            break;
+                    }
+                }
+            }
+            nodeNames.add(nodeName);
+        }
+        return nodeNames;
     }
 }

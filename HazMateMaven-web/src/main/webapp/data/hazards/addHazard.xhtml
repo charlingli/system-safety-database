@@ -17,54 +17,54 @@
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
                                 <f:facet name="header">
                                     <p:outputPanel>
-                                        <h:outputText value="New Hazard Information "/>
+                                        <h:outputText value="Adding New Hazard"/>
                                     </p:outputPanel>
                                 </f:facet>
                                 <p:outputLabel for="hazardId" value="Hazard ID:"/>
                                 <p:inputText id="hazardId" value="#{addHazard_MB.hazardObject.hazardId == null ? '(Auto)' : addHazard_MB.hazardObject.hazardId}" disabled="true"/>
                                 <p:outputLabel for="hazardDate" value="Hazard Date:"/>
                                 <p:calendar id="hazardDate" value="#{addHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{addHazard_MB.todaysDate()}"/>
-                                <p:outputLabel value="Description:" for="hazardDescription"/>
+                                <p:outputLabel value="Hazard Description:" for="hazardDescription"/>
                                 <p:inputTextarea rows="3" id="hazardDescription" value="#{addHazard_MB.hazardObject.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
-                                <p:outputLabel value="Comment:" for="hazardComment"/>
+                                <p:outputLabel value="Hazard Comment:" for="hazardComment"/>
                                 <p:inputTextarea rows="3" id="hazardComment" value="#{addHazard_MB.hazardObject.hazardComment}" title="HazardComment"/>
-                                <p:outputLabel value="Workshop:" for="hazardWorkshop"/>
-                                <p:inputTextarea rows="2" id="hazardWorkshop" value="#{addHazard_MB.hazardObject.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
-                                <p:outputLabel value="Hazard Review:" for="hazardReview"/>
-                                <p:selectOneMenu id="hazardReview" value="#{addHazard_MB.hazardObject.hazardReview}" required="true" requiredMessage="The HazardReview field is required." class="editInput" autoWidth="false">
-                                    <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
-                                    <f:selectItem itemLabel="Yes" itemValue="Y"/>
-                                    <f:selectItem itemLabel="No" itemValue="N"/>
-                                </p:selectOneMenu>
                                 <p:outputLabel value="Hazard Activity:" for="hazardActivity"/>
                                 <p:selectOneMenu id="hazardActivity" value="#{addHazard_MB.activityId}" required="true" requiredMessage="The HazardActivity field is required." class="editInput" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{addHazard_MB.listDbHazardActivity}" var="activityItem" itemLabel="#{activityItem.activityName}" itemValue="#{activityItem.activityId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Location:" for="hazardLocation"/>
-                                <p:selectOneMenu id="hazardLocation" value="#{addHazard_MB.locationId}" required="true" requiredMessage="The HazardLocation field is required." class="editInput" autoWidth="false">
+                                <p:outputLabel value="Hazard Context:" for="hazardContextId"/>
+                                <p:selectOneMenu id="hazardContextId" value="#{addHazard_MB.hazardContextId}" required="true" requiredMessage="The HazardContextId field is required." class="editInput" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
-                                    <f:selectItems value="#{addHazard_MB.listDbLocation}" var="locationItem" itemLabel="#{locationItem.locationName}" itemValue="#{locationItem.locationId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Status:" for="hazardStatusId"/>
-                                <p:selectOneMenu id="hazardStatusId" value="#{addHazard_MB.statusId}" required="true" requiredMessage="The HazardStatusId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
-                                    <f:selectItems value="#{addHazard_MB.listDbHazardStatus}" var="statusItem" itemLabel="#{statusItem.hazardStatusName}" itemValue="#{statusItem.hazardStatusId}"/>
+                                    <f:selectItems value="#{addHazard_MB.listDbHazardContext}" var="hazardContextItem" itemLabel="#{hazardContextItem.hazardContextName}" itemValue="#{hazardContextItem.hazardContextId}"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Hazard Type:" for="hazardTypeId"/>
                                 <p:selectOneMenu id="hazardTypeId" value="#{addHazard_MB.typeId}" required="true" requiredMessage="The HazardTypeId field is required." class="editInput" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{addHazard_MB.listDbhazardType}" var="typeItem" itemLabel="#{typeItem.hazardTypeName}" itemValue="#{typeItem.hazardTypeId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Owner:" for="ownerId"/>
+                                <p:outputLabel value="Hazard Status:" for="hazardStatusId"/>
+                                <p:selectOneMenu id="hazardStatusId" value="#{addHazard_MB.statusId}" required="true" requiredMessage="The HazardStatusId field is required." class="editInput" autoWidth="false">
+                                    <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                    <f:selectItems value="#{addHazard_MB.listDbHazardStatus}" var="statusItem" itemLabel="#{statusItem.hazardStatusName}" itemValue="#{statusItem.hazardStatusId}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Hazard Owner:" for="ownerId"/>
                                 <p:selectOneMenu id="ownerId" value="#{addHazard_MB.ownerId}" required="true" requiredMessage="The OwnerId field is required." class="editInput" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{addHazard_MB.listDbOwners}" var="ownersItem" itemLabel="#{ownersItem.ownerName}" itemValue="#{ownersItem.ownerId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Context:" for="hazardContextId"/>
-                                <p:selectOneMenu id="hazardContextId" value="#{addHazard_MB.hazardContextId}" required="true" requiredMessage="The HazardContextId field is required." class="editInput" autoWidth="false">
+                                <p:outputLabel value="Hazard Location:" for="hazardLocation"/>
+                                <p:selectOneMenu id="hazardLocation" value="#{addHazard_MB.locationId}" required="true" requiredMessage="The HazardLocation field is required." class="editInput" autoWidth="false">
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
-                                    <f:selectItems value="#{addHazard_MB.listDbHazardContext}" var="hazardContextItem" itemLabel="#{hazardContextItem.hazardContextName}" itemValue="#{hazardContextItem.hazardContextId}"/>
+                                    <f:selectItems value="#{addHazard_MB.listDbLocation}" var="locationItem" itemLabel="#{locationItem.locationName}" itemValue="#{locationItem.locationId}"/>
+                                </p:selectOneMenu>
+                                <p:outputLabel value="Hazard Workshop:" for="hazardWorkshop"/>
+                                <p:inputTextarea rows="2" id="hazardWorkshop" value="#{addHazard_MB.hazardObject.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
+                                <p:outputLabel value="Hazard Review:" for="hazardReview"/>
+                                <p:selectOneMenu id="hazardReview" value="#{addHazard_MB.hazardObject.hazardReview}" required="true" requiredMessage="The HazardReview field is required." class="editInput" autoWidth="false">
+                                    <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="Yes" itemValue="Y"/>
+                                    <f:selectItem itemLabel="No" itemValue="N"/>
                                 </p:selectOneMenu>
                                 <p:outputLabel value="Risk Class" for="riskClass"/>
                                 <p:selectOneMenu id="riskClass" value="#{addHazard_MB.riskClassId}" required="true" requiredMessage="The Risk class field is required." class="editInput" autoWidth="false">
@@ -81,9 +81,7 @@
                                     <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                     <f:selectItems value="#{addHazard_MB.listDbRiskSeverity}" var="riskSeverityItem" itemLabel="#{riskSeverityItem.severityScore}" itemValue="#{riskSeverityItem.riskSeverityId}"/>
                                 </p:selectOneMenu>
-                                <p:outputLabel value="Legacy Id:" for="legacyId"/>
-                                <p:inputText id="legacyId" value="#{addHazard_MB.hazardObject.legacyId}" title="Legacy Id"/>
-                                <p:outputLabel value="System Breakdown: *" for="treeSbs"/>
+                                <p:outputLabel value="System Breakdown Structure: *" for="treeSbs"/>
                                 <p:tree id="treeSbs" value="#{addHazard_MB.root}" var="doc"
                                         selectionMode="checkbox" widgetVar="tree"
                                         selection="#{addHazard_MB.selectedNodes}" dynamic="true">
@@ -91,6 +89,8 @@
                                         <p:outputLabel value="#{doc}"/>
                                     </p:treeNode>
                                 </p:tree>
+                                <p:outputLabel value="Legacy Id:" for="legacyId"/>
+                                <p:inputText id="legacyId" value="#{addHazard_MB.hazardObject.legacyId}" title="Legacy Id"/>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons">

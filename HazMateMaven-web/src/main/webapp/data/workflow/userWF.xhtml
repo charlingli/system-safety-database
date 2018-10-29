@@ -11,7 +11,7 @@
                 <h:form id="wfForm">
                     <p:hotkey bind="esc" handler="PF('detailOverlay').hide(); PF('requestOverlay').hide()"></p:hotkey>
                     <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
-                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
+                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the workflow:"/>
@@ -22,7 +22,7 @@
                                 <p:outputLabel value="Comment 1:"/>
                                 <p:outputLabel value="#{userWF_MB.detailWF.wfComment1}"/>
                                 <p:outputLabel value="Workflow Object Type &amp; Id "/>
-                                <p:outputLabel value="#{userWF_MB.detailWF.wfObjectName} : #{userWF_MB.detailWF.wfObjectId}"/>
+                                <p:outputLabel value="#{userWF_MB.detailWF.wfObjectName}: #{userWF_MB.detailWF.wfObjectId}"/>
                                 <p:outputLabel value="Comment 2:"/>
                                 <p:outputLabel value="#{userWF_MB.detailWF.wfComment2}"/>
                                 <p:outputLabel value="Workflow Status &amp; Last Update:"/>
@@ -53,7 +53,7 @@
                             </p:dataTable>
                         </p:panel>
                     </p:dialog>
-                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="70vw">
+                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
@@ -73,7 +73,7 @@
                             </div>
                             <p:dataTable value="#{userWF_MB.detailHazard}">
                                 <p:column headerText="SBS Code" styleClass="small">
-                                    <p:outputLabel value="Placeholder"/>
+                                    <ui:repeat var="node" value="#{userWF_MB.viewSbsCondensed()}">#{node}</ui:repeat>
                                 </p:column>
                                 <p:column headerText="Activity" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.hazardContextId.hazardContextName}"/>
@@ -83,6 +83,9 @@
                                 </p:column>
                                 <p:column headerText="Type" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Status" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardStatusId.hazardStatusName}"/>
                                 </p:column>
                                 <p:column headerText="Owner" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.ownerId.ownerName}"/>
@@ -211,7 +214,7 @@
                         <p:ajax event="rowUnselectCheckbox" update=":wfForm"/>
                         <p:ajax event="toggleSelect" update=":wfForm"/>
                         <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
-                        <p:column headerText="Workflow ID" styleClass="small">
+                        <p:column headerText="Workflow ID" style="width: 7%; text-align:center">
                             <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{userWF_MB.showDetail(wf)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.wfId}"/>
                             </p:commandLink>
@@ -220,16 +223,19 @@
                                 <h:outputText value=" View Workflow"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
+                        <p:column headerText="Workflow Object Type &amp; ID" style="width: 11%; text-align:center">
                             <p:commandLink id="objAjax" update=":wfForm" actionListener="#{userWF_MB.showHazard(wf)}" oncomplete="PF('objectOverlay').show()">
-                                <h:outputText value="#{wf.wfObjectName} : #{wf.wfObjectId}"/>
+                                <h:outputText value="#{wf.wfObjectName}: #{wf.wfObjectId}"/>
                             </p:commandLink>
                             <p:tooltip for="objAjax">
                                 <i class="fa fa-search"/>
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column headerText="Approval Actions" styleClass="small">
+                        <p:column headerText="Latest Comment" style="width: 46%; text-align:left">
+                            <h:outputText value="#{userWF_MB.getLatestComment(wf)}"/>
+                        </p:column>
+                        <p:column headerText="Approval Actions" style="width: 10%; text-align:center">
                             <p:commandButton id="editButton" action="#{userWF_MB.editHazard(wf)}" ajax="false" icon="fa fa-pencil" styleClass="editButton"/> 
                             <p:commandButton id="rejectButton" actionListener="#{userWF_MB.prepareDecisionHeader(wf, 'R')}" oncomplete="PF('requestOverlay').show()" update=":wfForm" icon="fa fa-times" styleClass="rejectButton"/>
                             <p:tooltip for="editButton">

@@ -8,6 +8,9 @@ package managedBeans;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 
 import customObjects.searchObject;
 import customObjects.treeNodeObject;
@@ -15,9 +18,14 @@ import ejb.DbHazardFacadeLocal;
 import ejb.DbHazardSbsFacadeLocal;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
+import ejb.DbProjectFacadeLocal;
+import ejb.DbchangeTypeFacadeLocal;
+import ejb.DbconstructionTypeFacadeLocal;
+import ejb.DbgradeSeparationFacadeLocal;
 import ejb.DbhazardActivityFacadeLocal;
 import ejb.DbhazardContextFacadeLocal;
 import ejb.DbhazardStatusFacadeLocal;
+import ejb.DbhazardSystemStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
 import ejb.DbriskClassFacadeLocal;
 import ejb.DbriskFrequencyFacadeLocal;
@@ -28,25 +36,7 @@ import ejb.DbtreeLevel3FacadeLocal;
 import ejb.DbtreeLevel4FacadeLocal;
 import ejb.DbtreeLevel5FacadeLocal;
 import ejb.DbtreeLevel6FacadeLocal;
-import entities.DbHazard;
-import entities.DbHazardSbs;
-import entities.DbHazardSbsPK;
-import entities.DbLocation;
-import entities.DbOwners;
-import entities.DbUser;
-import entities.DbhazardActivity;
-import entities.DbhazardContext;
-import entities.DbhazardStatus;
-import entities.DbhazardType;
-import entities.DbriskClass;
-import entities.DbriskFrequency;
-import entities.DbriskSeverity;
-import entities.DbtreeLevel1;
-import entities.DbtreeLevel2;
-import entities.DbtreeLevel3;
-import entities.DbtreeLevel4;
-import entities.DbtreeLevel5;
-import entities.DbtreeLevel6;
+import entities.*;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -66,446 +56,434 @@ import org.primefaces.model.TreeNode;
 
 /**
  *
- * @author alan8
+ * @author Charling Li
  */
 @Named(value = "editHazard_MB")
 @ViewScoped
 public class editHazard_MB implements Serializable {
 
     @EJB
+    private DbhazardSystemStatusFacadeLocal dbhazardSystemStatusFacade;
+    
+    @EJB
     private DbHazardSbsFacadeLocal dbHazardSbsFacade;
-    @EJB
-    private DbHazardFacadeLocal dbHazardFacade;
-    @EJB
-    private DbriskClassFacadeLocal dbriskClassFacade;
-    @EJB
-    private DbhazardContextFacadeLocal dbhazardContextFacade;
-    @EJB
-    private DbriskSeverityFacadeLocal dbriskSeverityFacade;
-    @EJB
-    private DbriskFrequencyFacadeLocal dbriskFrequencyFacade;
-    @EJB
-    private DbOwnersFacadeLocal dbOwnersFacade;
-    @EJB
-    private DbhazardTypeFacadeLocal dbhazardTypeFacade;
-    @EJB
-    private DbhazardStatusFacadeLocal dbhazardStatusFacade;
-    @EJB
-    private DbLocationFacadeLocal dbLocationFacade;
-    @EJB
-    private DbhazardActivityFacadeLocal dbhazardActivityFacade;
+
     @EJB
     private DbtreeLevel6FacadeLocal dbtreeLevel6Facade;
+    
     @EJB
     private DbtreeLevel5FacadeLocal dbtreeLevel5Facade;
+    
     @EJB
     private DbtreeLevel4FacadeLocal dbtreeLevel4Facade;
+    
     @EJB
     private DbtreeLevel3FacadeLocal dbtreeLevel3Facade;
+    
     @EJB
     private DbtreeLevel2FacadeLocal dbtreeLevel2Facade;
+    
     @EJB
     private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
+    
+    @EJB
+    private DbriskSeverityFacadeLocal dbriskSeverityFacade;
 
-    private List<DbhazardActivity> listDbHazardActivity;
-    private List<DbLocation> listDbLocation;
-    private List<DbhazardStatus> listDbHazardStatus;
-    private List<DbhazardType> listDbhazardType;
-    private List<DbOwners> listDbOwners;
-    private List<DbhazardContext> listDbHazardContext;
-    private List<DbriskFrequency> listDbRiskFrequency;
-    private List<DbriskSeverity> listDbRiskSeverity;
-    private List<DbriskClass> listDbRiskClass;
+    @EJB
+    private DbriskFrequencyFacadeLocal dbriskFrequencyFacade;
 
-    private DbHazard hazardObject = new DbHazard();
-    private DbhazardActivity activityObject = new DbhazardActivity();
-    private DbLocation locationObject = new DbLocation();
-    private DbhazardStatus statusObject = new DbhazardStatus();
-    private DbhazardType typeObject = new DbhazardType();
-    private DbOwners ownersObject = new DbOwners();
-    private DbhazardContext hazardContextObject = new DbhazardContext();
-    private DbriskFrequency riskFrequencyObject = new DbriskFrequency();
-    private DbriskSeverity riskSeverityObject = new DbriskSeverity();
-    private DbriskClass riskClassObject = new DbriskClass();
+    @EJB
+    private DbriskClassFacadeLocal dbriskClassFacade;
 
-    private int activityId;
-    private int locationId;
-    private int statusId;
-    private int typeId;
-    private int ownerId;
-    private int hazardContextId;
-    private int freqId;
-    private int severityId;
-    private int riskClassId;
+    @EJB
+    private DbHazardFacadeLocal dbHazardFacade;
 
-    String strHazardReview;
+    @EJB
+    private DbOwnersFacadeLocal dbOwnersFacade;
 
-    private boolean editFlag = false;
-//    private boolean deleteButton = false;
+    @EJB
+    private DbhazardStatusFacadeLocal dbhazardStatusFacade;
 
-    /*Variables relating to the Search function*/
+    @EJB
+    private DbhazardTypeFacadeLocal dbhazardTypeFacade;
+
+    @EJB
+    private DbhazardContextFacadeLocal dbhazardContextFacade;
+
+    @EJB
+    private DbhazardActivityFacadeLocal dbhazardActivityFacade;
+
+    @EJB
+    private DbchangeTypeFacadeLocal dbchangeTypeFacade;
+
+    @EJB
+    private DbconstructionTypeFacadeLocal dbconstructionTypeFacade;
+
+    @EJB
+    private DbgradeSeparationFacadeLocal dbgradeSeparationFacade;
+
+    @EJB
+    private DbProjectFacadeLocal dbProjectFacade;
+
+    @EJB
+    private DbLocationFacadeLocal dbLocationFacade;
+    
+    // Construct lists to display as search options
+    private List<DbLocation> listHL;
+    private List<DbProject> listHP;
+    private List<DbgradeSeparation> listGS;
+    private List<DbconstructionType> listCN;
+    private List<DbchangeType> listCH;
+    private List<DbhazardActivity> listHA;
+    private List<DbhazardContext> listHC;
+    private List<DbhazardType> listHT;
+    private List<DbhazardStatus> listHS;
+    private List<DbOwners> listHO;
+    private List<DbhazardSystemStatus> listSS;
+    private List<DbriskClass> listRC;
+    private List<DbriskFrequency> listRF;
+    private List<DbriskSeverity> listRS;
+    
+    // Get the current active user to check for role permissions
+    private DbUser activeUser;
+    private boolean adminUser;
+
+    // Construct query
+    private String htmlCode;
+    private boolean showQuery;
     private List<searchObject> listSearchObject;
-    private List<DbHazard> listDbHazard;
-
-    private searchObject hazardIdObject;
-    private searchObject hazardContextIdObject;
-    private searchObject hazardDescriptionObject;
-    private searchObject hazardLocationObject;
-    private searchObject hazardActivityObject;
-    private searchObject ownerIdObject;
-    private searchObject hazardTypeIdObject;
-    private searchObject hazardStatusIdObject;
-    private searchObject riskClassIdObject;
-    private searchObject legacyIdObject;
-
-    private String selectedHazardId;
-    private Date selectedHazardDate;
-    private String selectedHazardContext;
-    private String selectedHazardDescription;
-    private String selectedHazardLocation;
-    private String selectedHazardActivity;
-    private String selectedOwner;
-    private String selectedHazardType;
-    private String selectedHazardStatus;
-    private String selectedRiskClass;
-    private String selectedLegacyId;
+    
+    // Hazard list
+    private List<DbHazard> listHazards;
+    
+    // Create variables to save search terms
+    private String searchHI;
+    private Date searchD1;
+    private Date searchD2;
+    private String searchHD;
+    private String searchHM;
+    private String[] searchHL;
+    private String[] searchHP;
+    private String[] searchGS;
+    private String[] searchCN;
+    private String[] searchCH;
+    private String[] searchHA;
+    private String[] searchHC;
+    private String[] searchHT;
+    private String[] searchHS;
+    private String[] searchHO;
+    private String[] searchSS;
+    private String[] searchMD;
+    
+    // Check redirection source
     private String redirectionSource;
 
-    /*Variables relating to the SBS tree*/
+    // Create an object to save current hazard being edited
+    private DbHazard currentHazard = new DbHazard();
+    private DbHazard savedHazard = new DbHazard();
+    private boolean showEdit;
+    private TreeNode[] currentTree;
+    private TreeNode[] savedTree;
     private TreeNode root;
-    private TreeNode[] selectedNodes;
-    private List<treeNodeObject> treeCheckedNodesList;
-    private treeNodeObject selectedTreeNodeObject = new treeNodeObject();
-    private DbHazardSbsPK hazardSbsPKObject = new DbHazardSbsPK();
-    private DbHazardSbs hazardSbsObject = new DbHazardSbs();
-    private DbHazard hazardFKObject = new DbHazard();
-
-    private String editHazardId;
-    private boolean treeFlag = false;
-    private boolean popFlag = true;
+    private List<treeNodeObject> newTree;
 
     public editHazard_MB() {
     }
-
-    public DbHazard getHazardObject() {
-        return hazardObject;
-    }
-
-    public void setHazardObject(DbHazard hazardObject) {
-        this.hazardObject = hazardObject;
-    }
-
-    public boolean isEditFlag() {
-        return editFlag;
+public boolean isAdminUser() {
+        return adminUser;
     }
 
-    public void setEditFlag(boolean editFlag) {
-        this.editFlag = editFlag;
+    public void setAdminUser(boolean adminUser) {
+        this.adminUser = adminUser;
     }
 
-    public searchObject getHazardIdObject() {
-        return hazardIdObject;
+    public String getSearchHI() {
+        return searchHI;
     }
 
-    public void setHazardIdObject(searchObject hazardIdObject) {
-        this.hazardIdObject = hazardIdObject;
+    public void setSearchHI(String searchHI) {
+        this.searchHI = searchHI;
     }
 
-    public searchObject getHazardContextIdObject() {
-        return hazardContextIdObject;
+    public Date getSearchD1() {
+        return searchD1;
     }
 
-    public void setHazardContextIdObject(searchObject hazardContextIdObject) {
-        this.hazardContextIdObject = hazardContextIdObject;
+    public void setSearchD1(Date searchD1) {
+        this.searchD1 = searchD1;
     }
 
-    public searchObject getHazardDescriptionObject() {
-        return hazardDescriptionObject;
+    public Date getSearchD2() {
+        return searchD2;
     }
 
-    public void setHazardDescriptionObject(searchObject hazardDescriptionObject) {
-        this.hazardDescriptionObject = hazardDescriptionObject;
+    public void setSearchD2(Date searchD2) {
+        this.searchD2 = searchD2;
     }
 
-    public searchObject getHazardLocationObject() {
-        return hazardLocationObject;
+    public String getSearchHD() {
+        return searchHD;
     }
 
-    public void setHazardLocationObject(searchObject hazardLocationObject) {
-        this.hazardLocationObject = hazardLocationObject;
+    public void setSearchHD(String searchHD) {
+        this.searchHD = searchHD;
     }
 
-    public searchObject getHazardActivityObject() {
-        return hazardActivityObject;
+    public String getSearchHM() {
+        return searchHM;
     }
 
-    public void setHazardActivityObject(searchObject hazardActivityObject) {
-        this.hazardActivityObject = hazardActivityObject;
+    public void setSearchHM(String searchHM) {
+        this.searchHM = searchHM;
     }
 
-    public searchObject getOwnerIdObject() {
-        return ownerIdObject;
+    public String[] getSearchHL() {
+        return searchHL;
     }
 
-    public void setOwnerIdObject(searchObject ownerIdObject) {
-        this.ownerIdObject = ownerIdObject;
+    public void setSearchHL(String[] searchHL) {
+        this.searchHL = searchHL;
     }
 
-    public searchObject getHazardTypeIdObject() {
-        return hazardTypeIdObject;
+    public String[] getSearchHP() {
+        return searchHP;
     }
 
-    public void setHazardTypeIdObject(searchObject hazardTypeIdObject) {
-        this.hazardTypeIdObject = hazardTypeIdObject;
+    public void setSearchHP(String[] searchHP) {
+        this.searchHP = searchHP;
     }
 
-    public searchObject getHazardStatusIdObject() {
-        return hazardStatusIdObject;
+    public String[] getSearchGS() {
+        return searchGS;
     }
 
-    public void setHazardStatusIdObject(searchObject hazardStatusIdObject) {
-        this.hazardStatusIdObject = hazardStatusIdObject;
+    public void setSearchGS(String[] searchGS) {
+        this.searchGS = searchGS;
     }
 
-    public searchObject getRiskClassIdObject() {
-        return riskClassIdObject;
+    public String[] getSearchCN() {
+        return searchCN;
     }
 
-    public void setRiskClassIdObject(searchObject riskClassIdObject) {
-        this.riskClassIdObject = riskClassIdObject;
+    public void setSearchCN(String[] searchCN) {
+        this.searchCN = searchCN;
     }
 
-    public String getSelectedHazardId() {
-        return selectedHazardId;
+    public String[] getSearchCH() {
+        return searchCH;
     }
 
-    public void setSelectedHazardId(String selectedHazardId) {
-        this.selectedHazardId = selectedHazardId;
+    public void setSearchCH(String[] searchCH) {
+        this.searchCH = searchCH;
     }
 
-    public String getSelectedHazardContext() {
-        return selectedHazardContext;
+    public String[] getSearchHA() {
+        return searchHA;
     }
 
-    public void setSelectedHazardContext(String selectedHazardContext) {
-        this.selectedHazardContext = selectedHazardContext;
+    public void setSearchHA(String[] searchHA) {
+        this.searchHA = searchHA;
     }
 
-    public String getSelectedHazardDescription() {
-        return selectedHazardDescription;
+    public String[] getSearchHC() {
+        return searchHC;
     }
 
-    public void setSelectedHazardDescription(String selectedHazardDescription) {
-        this.selectedHazardDescription = selectedHazardDescription;
+    public void setSearchHC(String[] searchHC) {
+        this.searchHC = searchHC;
     }
 
-    public String getSelectedHazardLocation() {
-        return selectedHazardLocation;
+    public String[] getSearchHT() {
+        return searchHT;
     }
 
-    public void setSelectedHazardLocation(String selectedHazardLocation) {
-        this.selectedHazardLocation = selectedHazardLocation;
+    public void setSearchHT(String[] searchHT) {
+        this.searchHT = searchHT;
     }
 
-    public String getSelectedHazardActivity() {
-        return selectedHazardActivity;
+    public String[] getSearchHS() {
+        return searchHS;
     }
 
-    public void setSelectedHazardActivity(String selectedHazardActivity) {
-        this.selectedHazardActivity = selectedHazardActivity;
+    public void setSearchHS(String[] searchHS) {
+        this.searchHS = searchHS;
     }
 
-    public String getSelectedOwner() {
-        return selectedOwner;
+    public String[] getSearchHO() {
+        return searchHO;
     }
 
-    public void setSelectedOwner(String selectedOwner) {
-        this.selectedOwner = selectedOwner;
+    public void setSearchHO(String[] searchHO) {
+        this.searchHO = searchHO;
     }
 
-    public String getSelectedHazardType() {
-        return selectedHazardType;
+    public String[] getSearchSS() {
+        return searchSS;
     }
 
-    public void setSelectedHazardType(String selectedHazardType) {
-        this.selectedHazardType = selectedHazardType;
+    public void setSearchSS(String[] searchSS) {
+        this.searchSS = searchSS;
     }
 
-    public String getSelectedHazardStatus() {
-        return selectedHazardStatus;
+    public String[] getSearchMD() {
+        return searchMD;
     }
 
-    public void setSelectedHazardStatus(String selectedHazardStatus) {
-        this.selectedHazardStatus = selectedHazardStatus;
+    public void setSearchMD(String[] searchMD) {
+        this.searchMD = searchMD;
     }
 
-    public String getSelectedRiskClass() {
-        return selectedRiskClass;
+    public List<DbLocation> getListHL() {
+        return listHL;
     }
 
-    public void setSelectedRiskClass(String selectedRiskClass) {
-        this.selectedRiskClass = selectedRiskClass;
+    public void setListHL(List<DbLocation> listHL) {
+        this.listHL = listHL;
     }
 
-    public List<DbhazardContext> getListDbHazardContext() {
-        return listDbHazardContext;
+    public List<DbProject> getListHP() {
+        return listHP;
     }
 
-    public void setListDbHazardContext(List<DbhazardContext> listDbHazardContext) {
-        this.listDbHazardContext = listDbHazardContext;
+    public void setListHP(List<DbProject> listHP) {
+        this.listHP = listHP;
     }
 
-    public List<DbLocation> getListDbLocation() {
-        return listDbLocation;
+    public List<DbgradeSeparation> getListGS() {
+        return listGS;
     }
 
-    public void setListDbLocation(List<DbLocation> listDbLocation) {
-        this.listDbLocation = listDbLocation;
+    public void setListGS(List<DbgradeSeparation> listGS) {
+        this.listGS = listGS;
     }
 
-    public List<DbhazardActivity> getListDbHazardActivity() {
-        return listDbHazardActivity;
+    public List<DbconstructionType> getListCN() {
+        return listCN;
     }
 
-    public void setListDbHazardActivity(List<DbhazardActivity> listDbHazardActivity) {
-        this.listDbHazardActivity = listDbHazardActivity;
+    public void setListCN(List<DbconstructionType> listCN) {
+        this.listCN = listCN;
     }
 
-    public List<DbhazardStatus> getListDbHazardStatus() {
-        return listDbHazardStatus;
+    public List<DbchangeType> getListCH() {
+        return listCH;
     }
 
-    public void setListDbHazardStatus(List<DbhazardStatus> listDbHazardStatus) {
-        this.listDbHazardStatus = listDbHazardStatus;
+    public void setListCH(List<DbchangeType> listCH) {
+        this.listCH = listCH;
     }
 
-    public List<DbhazardType> getListDbhazardType() {
-        return listDbhazardType;
+    public List<DbhazardActivity> getListHA() {
+        return listHA;
     }
 
-    public void setListDbhazardType(List<DbhazardType> listDbhazardType) {
-        this.listDbhazardType = listDbhazardType;
+    public void setListHA(List<DbhazardActivity> listHA) {
+        this.listHA = listHA;
     }
 
-    public List<DbOwners> getListDbOwners() {
-        return listDbOwners;
+    public List<DbhazardContext> getListHC() {
+        return listHC;
     }
 
-    public void setListDbOwners(List<DbOwners> listDbOwners) {
-        this.listDbOwners = listDbOwners;
+    public void setListHC(List<DbhazardContext> listHC) {
+        this.listHC = listHC;
     }
 
-    public List<DbriskFrequency> getListDbRiskFrequency() {
-        return listDbRiskFrequency;
+    public List<DbhazardType> getListHT() {
+        return listHT;
     }
 
-    public void setListDbRiskFrequency(List<DbriskFrequency> listDbRiskFrequency) {
-        this.listDbRiskFrequency = listDbRiskFrequency;
+    public void setListHT(List<DbhazardType> listHT) {
+        this.listHT = listHT;
     }
 
-    public List<DbriskSeverity> getListDbRiskSeverity() {
-        return listDbRiskSeverity;
+    public List<DbhazardStatus> getListHS() {
+        return listHS;
     }
 
-    public void setListDbRiskSeverity(List<DbriskSeverity> listDbRiskSeverity) {
-        this.listDbRiskSeverity = listDbRiskSeverity;
+    public void setListHS(List<DbhazardStatus> listHS) {
+        this.listHS = listHS;
     }
 
-    public List<DbriskClass> getListDbRiskClass() {
-        return listDbRiskClass;
+    public List<DbOwners> getListHO() {
+        return listHO;
     }
 
-    public void setListDbRiskClass(List<DbriskClass> listDbRiskClass) {
-        this.listDbRiskClass = listDbRiskClass;
+    public void setListHO(List<DbOwners> listHO) {
+        this.listHO = listHO;
     }
 
-    public List<DbHazard> getListDbHazard() {
-        return listDbHazard;
+    public List<DbhazardSystemStatus> getListSS() {
+        return listSS;
     }
 
-    public void setListDbHazard(List<DbHazard> listDbHazard) {
-        this.listDbHazard = listDbHazard;
+    public void setListSS(List<DbhazardSystemStatus> listSS) {
+        this.listSS = listSS;
     }
 
-    public int getActivityId() {
-        return activityId;
+    public List<DbriskClass> getListRC() {
+        return listRC;
     }
 
-    public void setActivityId(int activityId) {
-        this.activityId = activityId;
+    public void setListRC(List<DbriskClass> listRC) {
+        this.listRC = listRC;
     }
 
-    public int getLocationId() {
-        return locationId;
+    public List<DbriskFrequency> getListRF() {
+        return listRF;
     }
 
-    public void setLocationId(int locationId) {
-        this.locationId = locationId;
+    public void setListRF(List<DbriskFrequency> listRF) {
+        this.listRF = listRF;
     }
 
-    public int getStatusId() {
-        return statusId;
+    public List<DbriskSeverity> getListRS() {
+        return listRS;
     }
 
-    public void setStatusId(int statusId) {
-        this.statusId = statusId;
+    public void setListRS(List<DbriskSeverity> listRS) {
+        this.listRS = listRS;
     }
 
-    public int getTypeId() {
-        return typeId;
+    public String getHtmlCode() {
+        return htmlCode;
     }
 
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
+    public void setHtmlCode(String htmlCode) {
+        this.htmlCode = htmlCode;
     }
 
-    public int getOwnerId() {
-        return ownerId;
+    public boolean isShowQuery() {
+        return showQuery;
     }
 
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
+    public void setShowQuery(boolean showQuery) {
+        this.showQuery = showQuery;
     }
-
-    public int getHazardContextId() {
-        return hazardContextId;
-    }
-
-    public void setHazardContextId(int hazardContextId) {
-        this.hazardContextId = hazardContextId;
+    
+    public DbHazard getCurrentHazard() {
+        return currentHazard;
     }
 
-    public int getFreqId() {
-        return freqId;
+    public void setCurrentHazard(DbHazard currentHazard) {    
+        this.currentHazard = currentHazard;
     }
 
-    public void setFreqId(int freqId) {
-        this.freqId = freqId;
+    public boolean isShowEdit() {
+        return showEdit;
     }
 
-    public int getSeverityId() {
-        return severityId;
+    public void setShowEdit(boolean showEdit) {
+        this.showEdit = showEdit;
     }
 
-    public void setSeverityId(int severityId) {
-        this.severityId = severityId;
+    public TreeNode[] getCurrentTree() {
+        return currentTree;
     }
 
-    public int getRiskClassId() {
-        return riskClassId;
+    public void setCurrentTree(TreeNode[] currentTree) {
+        this.currentTree = currentTree;
     }
-
-    public void setRiskClassId(int riskClassId) {
-        this.riskClassId = riskClassId;
-    }
-//
-//    public boolean isDeleteButton() {
-//        return deleteButton;
-//    }
-
-//    public void setDeleteButton(boolean deleteButton) {
-//        this.deleteButton = deleteButton;
-//    }
 
     public TreeNode getRoot() {
         return root;
@@ -514,286 +492,401 @@ public class editHazard_MB implements Serializable {
     public void setRoot(TreeNode root) {
         this.root = root;
     }
-
-    public TreeNode[] getSelectedNodes() {
-        return selectedNodes;
+    
+    public List<DbHazard> getListHazards() {
+        return listHazards;
     }
 
-    public void setSelectedNodes(TreeNode[] selectedNodes) {
-        this.selectedNodes = selectedNodes;
+    public void setListHazards(List<DbHazard> listHazards) {    
+        this.listHazards = listHazards;
     }
-
-    public boolean isTreeFlag() {
-        return treeFlag;
-    }
-
-    public void setTreeFlag(boolean treeFlag) {
-        this.treeFlag = treeFlag;
-    }
-
-    public boolean isPopFlag() {
-        return popFlag;
-    }
-
-    public void setPopFlag(boolean popFlag) {
-        this.popFlag = popFlag;
-    }
-
-    public String getSelectedLegacyId() {
-        return selectedLegacyId;
-    }
-
-    public void setSelectedLegacyId(String selectedLegacyId) {
-        this.selectedLegacyId = selectedLegacyId;
-    }
-
-    public Date getSelectedHazardDate() {
-        return selectedHazardDate;
-    }
-
-    public void setSelectedHazardDate(Date selectedHazardDate) {
-        this.selectedHazardDate = selectedHazardDate;
-    }
-
+    
     @PostConstruct
     public void init() {
-        listDbHazardActivity = dbhazardActivityFacade.findAll();
-        listDbLocation = dbLocationFacade.findAll();
-        listDbHazardStatus = dbhazardStatusFacade.findAll();
-        listDbhazardType = dbhazardTypeFacade.findAll();
-        listDbOwners = dbOwnersFacade.findAll();
-        listDbHazardContext = dbhazardContextFacade.findAll();
-        listDbRiskFrequency = dbriskFrequencyFacade.findAll();
-        listDbRiskSeverity = dbriskSeverityFacade.findAll();
-        listDbRiskClass = dbriskClassFacade.findAll();
-        redirectedPage();
+        activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+            setAdminUser(true);
+        } else {
+            setAdminUser(false);
+        }
+        setListHL(dbLocationFacade.findAll());
+        setListHP(dbProjectFacade.findAll());
+        setListGS(dbgradeSeparationFacade.findAll());
+        setListCN(dbconstructionTypeFacade.findAll());
+        setListCH(dbchangeTypeFacade.findAll());
+        setListHA(dbhazardActivityFacade.findAll());
+        setListHC(dbhazardContextFacade.findAll());
+        setListHT(dbhazardTypeFacade.findAll());
+        setListHS(dbhazardStatusFacade.findAll());
+        setListHO(dbOwnersFacade.findAll());
+        setListRC(dbriskClassFacade.findAll());
+        setListRF(dbriskFrequencyFacade.findAll());
+        setListRS(dbriskSeverityFacade.findAll());
+        setListSS(dbhazardSystemStatusFacade.findAll());
+        setShowEdit(false);
+        getRedirectionSource();
     }
-
-    public void constructSearchObject() {
-
-        listSearchObject = new ArrayList<>();
-        listDbHazard = new ArrayList<>();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-        if (!getSelectedHazardId().isEmpty()) {
-            listSearchObject.add(new searchObject("hazardId", getSelectedHazardId(), "string", "DbHazard", null, null, null, "like", "Hazard ID"));
-        }
-        if (getSelectedHazardDate() != null) {
-            listSearchObject.add(new searchObject("hazardDate", df.format(getSelectedHazardDate()), "date", "DbHazard", null, null, null, "=", "Hazard Date"));
-        }
-        if (getSelectedHazardContext() != null) {
-            listSearchObject.add(new searchObject("hazardContextId", getSelectedHazardContext(), "int", "DbHazard", "hazardContextId", null, null, "=", "Hazard Context"));
-        }
-        if ( getSelectedHazardDescription() != null) {
-            listSearchObject.add(new searchObject("hazardDescription", getSelectedHazardDescription(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
-        }
-        if (getSelectedHazardLocation() != null) {
-            listSearchObject.add(new searchObject("locationId", getSelectedHazardLocation(), "int", "DbHazard", "hazardLocation", null, null, "=", "Hazard Location"));
-        }
-        if (getSelectedHazardActivity() != null) {
-            listSearchObject.add(new searchObject("activityId", getSelectedHazardActivity(), "int", "DbHazard", "hazardActivity", null, null, "=", "Hazard Activity"));
-        }
-        if (getSelectedOwner() != null) {
-            listSearchObject.add(new searchObject("ownerId", getSelectedOwner(), "int", "DbHazard", "ownerId", null, null, "=", "Hazard Owner"));
-        }
-        if (getSelectedHazardType() != null) {
-            listSearchObject.add(new searchObject("hazardTypeId", getSelectedHazardType(), "int", "DbHazard", "hazardTypeId", null, null, "=", "Hazard Type"));
-        }
-        if (getSelectedHazardStatus() != null) {
-            listSearchObject.add(new searchObject("hazardStatusId", getSelectedHazardStatus(), "int", "DbHazard", "hazardStatusId", null, null, "=", "Hazard Staus"));
-        }
-        if (getSelectedRiskClass() != null) {
-            listSearchObject.add(new searchObject("riskClassId", getSelectedRiskClass(), "int", "DbHazard", "riskClassId", null, null, "=", "Hazard Risk"));
-        }
-        if (getSelectedLegacyId() != null) {
-            listSearchObject.add(new searchObject("legacyId", getSelectedLegacyId(), "string", "DbHazard", null, null, null, "like", "Legacy Id"));
-        }
-
-        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
-        editFlag = false;   //Close modifyTable and enable 'deleteButton' when 'Search' is pressed 
-//        deleteButton = false;
-        treeFlag = false; //Close the SBS tree and set the 'Edit SBS' button to generate tree 
-        popFlag = true;
-        //init(); //Update search dropdown lists for subsequent searches
-
-    }
-
-    public void editHazardSBS(TreeNode[] nodes) {
-        try {
-            if (nodes != null && nodes.length > 0) {
-                editHazard();
-                editSbs(nodes);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The associated SBS has been successfully edited!"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node"));
-            }
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+    
+    private void getRedirectionSource() {
+        DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
+        if (initialHazard != null) {
+            editHazard(currentHazard);
+            redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
         }
     }
-
-    public void showEdit(DbHazard hazardObject) {
-        editFlag = true;
-//        deleteButton = true;
-        this.hazardObject = hazardObject;
-        activityId = hazardObject.getHazardActivity().getActivityId();
-        locationId = hazardObject.getHazardLocation().getLocationId();
-        statusId = hazardObject.getHazardStatusId().getHazardStatusId();
-        typeId = hazardObject.getHazardTypeId().getHazardTypeId();
-        ownerId = hazardObject.getOwnerId().getOwnerId();
-        hazardContextId = hazardObject.getHazardContextId().getHazardContextId();
-        freqId = hazardObject.getRiskFrequencyId().getRiskFrequencyId();
-        severityId = hazardObject.getRiskSeverityId().getRiskSeverityId();
-        riskClassId = hazardObject.getRiskClassId().getRiskClassId();
-        treeFlag = false;
-        popFlag = true;
+    
+    public void editHazard(DbHazard hazardObject) {
+        showEdit = true;
+        currentHazard = hazardObject;
+        savedHazard = new DbHazard();
+        savedHazard.setHazardDate(currentHazard.getHazardDate());
+        savedHazard.setHazardDescription(currentHazard.getHazardDescription());
+        savedHazard.setHazardComment(currentHazard.getHazardComment());
+        savedHazard.setHazardActivity(currentHazard.getHazardActivity());
+        savedHazard.setHazardContextId(currentHazard.getHazardContextId());
+        savedHazard.setHazardTypeId(currentHazard.getHazardTypeId());
+        savedHazard.setHazardStatusId(currentHazard.getHazardStatusId());
+        savedHazard.setOwnerId(currentHazard.getOwnerId());
+        savedHazard.setHazardWorkshop(currentHazard.getHazardWorkshop());
+        savedHazard.setHazardReview(currentHazard.getHazardReview());
+        savedHazard.setRiskClassId(currentHazard.getRiskClassId());
+        savedHazard.setRiskFrequencyId(currentHazard.getRiskFrequencyId());
+        savedHazard.setRiskSeverityId(currentHazard.getRiskSeverityId());
+        savedHazard.setLegacyId(currentHazard.getLegacyId());
+        savedHazard.setHazardSystemStatus(currentHazard.getHazardSystemStatus());
+        populateTree();
     }
 
-    public void editHazard() {
-        List<DbriskFrequency> returnedFrequencyList;
-        List<DbriskSeverity> returnedSeverityList;
-        fillHazardObject();
-        hazardObject.setRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue() * dbriskSeverityFacade.find(severityId).getSeverityValue());
-        //Setting the audit fields
-        DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
-        hazardObject.setUpdatedDateTime(new Date());
-        hazardObject.setUserIdUpdate(activeUser.getUserId());
-        dbHazardFacade.edit(hazardObject);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully edited!"));
-        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);//update view of hazards table by performing search again
-        editFlag = false;
-//        deleteButton = false;
-        redirectToRelations();
-    }
-
-    public void editSbs(TreeNode[] nodes) {
-        dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
-        displaySelectedMultiple(nodes);
-        addSBS();
-        treeFlag = false;
-        popFlag = true;
-    }
-
-    public void addSBS() {
-        hazardSbsPKObject.setHazardId(hazardObject.getHazardId());
-        hazardFKObject.setHazardId(hazardObject.getHazardId());
-        hazardSbsObject.setDbHazard(hazardFKObject);
-        for (int i = 0; i < treeCheckedNodesList.size(); i++) {
-            selectedTreeNodeObject = treeCheckedNodesList.get(i);
-            hazardSbsPKObject.setSbsId(selectedTreeNodeObject.getNodeId());
-            hazardSbsObject.setDbHazardSbsPK(hazardSbsPKObject);
-            dbHazardSbsFacade.create(hazardSbsObject);
-        }
-    }
-
-//    public void deleteHazard(DbHazard hazardObject) {
-//        dbHazardFacade.remove(hazardObject);
-//        listDbHazard = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);    //update view of hazards table by performing search again 
-//        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The Hazard has been successfully deleted!"));
+    //This method controls the behaviour when the hazard relations has been called due to a redirection page from add or edit hazard.
+//    private void redirectedPage() {
+//        DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
+//        if (initialHazard != null) {
+//            setSelectedHazardId(initialHazard.getHazardId());
+//            constructSearchObject();
+//            showEdit(initialHazard);
+//            redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
+//        } else {
+//            redirectionSource = "EditHazard";
+//        }
 //    }
-
-    public void closeTree() {
-        treeFlag = false;
-        popFlag = true; //render button that calls populateTree()
-    }
-
-    public void cancel() {
-        editFlag = false;
-//        deleteButton = false;
-        treeFlag = false;
-        popFlag = true;
-    }
-
-    public void clearSearch() {
-        selectedHazardId = null;
-        selectedHazardContext = null;
-        selectedHazardDescription = null;
-        selectedHazardLocation = null;
-        selectedHazardActivity = null;
-        selectedOwner = null;
-        selectedHazardType = null;
-        selectedHazardStatus = null;
-        selectedRiskClass = null;
-        selectedLegacyId = null;
-    }
-
-    public void fillHazardObject() {
-
-        activityObject.setActivityId(activityId);
-        locationObject.setLocationId(locationId);
-        statusObject.setHazardStatusId(statusId);
-        typeObject.setHazardTypeId(typeId);
-        ownersObject.setOwnerId(ownerId);
-        hazardContextObject.setHazardContextId(hazardContextId);
-        riskFrequencyObject.setRiskFrequencyId(freqId);
-        riskSeverityObject.setRiskSeverityId(severityId);
-        riskClassObject.setRiskClassId(riskClassId);
-
-        hazardObject.setHazardActivity(activityObject);
-        hazardObject.setHazardLocation(locationObject);
-        hazardObject.setHazardStatusId(statusObject);
-        hazardObject.setHazardTypeId(typeObject);
-        hazardObject.setOwnerId(ownersObject);
-        hazardObject.setHazardContextId(hazardContextObject);
-        hazardObject.setRiskFrequencyId(riskFrequencyObject);
-        hazardObject.setRiskSeverityId(riskSeverityObject);
-        hazardObject.setRiskClassId(riskClassObject);
-    }
-
-    public String printHazardReview(String hazardReview) {
-
-        switch (hazardReview) {
-            case "Y":
-                strHazardReview = "Yes";
-                break;
-            case "N":
-                strHazardReview = "No";
-                break;
-            default:
-                strHazardReview = "NULL";
-                break;
-
+    
+    public void constructSearchObject() {
+        listSearchObject = new ArrayList<>();
+        listHazards = new ArrayList<>();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        if (!getSearchHI().isEmpty()) {
+            listSearchObject.add(new searchObject("hazardId", getSearchHI(), "string", "DbHazard", null, null, null, "like", "Hazard ID"));
         }
-        return strHazardReview;
+//        if (getSearchD1() != null) {
+//            listSearchObject.add(new searchObject("hazardDate", df.format(getSearchD1()), "date", "DbHazard", null, null, null, "like", "Hazard Date"));
+//        }
+//        if (getSearchD2() != null) {
+//            listSearchObject.add(new searchObject("hazardDate", df.format(getSearchD2()), "date", "DbHazard", null, null, null, "like", "Hazard Date"));
+//        }
+        if (getSearchHD() != null && getSearchHD().length() > 0) {
+            listSearchObject.add(new searchObject("hazardDescription", getSearchHD(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
+        }
+        if (getSearchHM() != null && getSearchHM().length() > 0) {
+            listSearchObject.add(new searchObject("hazardComment", getSearchHM(), "string", "DbHazard", null, null, null, "like", "Hazard Comment"));
+        }
+        if (getSearchHL() != null && getSearchHL().length > 0) {
+            String terms = String.join(",", getSearchHL());
+            listSearchObject.add(new searchObject("locationId", terms, "int", "DbHazard", "hazardLocation", null, null, "in", "Hazard Location"));
+        }
+        if (getSearchHP() != null && getSearchHP().length > 0) {
+            String terms = String.join(",", getSearchHP());
+            listSearchObject.add(new searchObject("projectId", terms, "int", "DbHazard", "hazardLocation", "projectId", null, "in", "Hazard Project"));
+        }
+        if (getSearchGS() != null && getSearchGS().length > 0) {
+            String terms = String.join(",", getSearchGS());
+            listSearchObject.add(new searchObject("gradeSeparationId", terms, "int", "DbHazard", "hazardLocation", "locationGradeSeparation", null, "in", "Grade Separation"));
+        }
+        if (getSearchCN() != null && getSearchCN().length > 0) {
+            String terms = String.join(",", getSearchCN());
+            listSearchObject.add(new searchObject("constructionTypeId", terms, "int", "DbHazard", "hazardLocation", "locationConstructionType", null, "in", "Construction Type"));
+        }
+        if (getSearchCH() != null && getSearchCH().length > 0) {
+            String terms = String.join(",", getSearchCH());
+            listSearchObject.add(new searchObject("changeTypeId", terms, "int", "DbHazard", "hazardLocation", "locationChangeType", null, "in", "Change Type"));
+        }
+        if (getSearchHA() != null && getSearchHA().length > 0) {
+            String terms = String.join(",", getSearchHA());
+            listSearchObject.add(new searchObject("activityId", terms, "int", "DbHazard", "hazardActivity", null, null, "in", "Hazard Activity"));
+        }
+        if (getSearchHC() != null && getSearchHC().length > 0) {
+            String terms = String.join(",", getSearchHC());
+            listSearchObject.add(new searchObject("hazardContextId", terms, "int", "DbHazard", "hazardContextId", null, null, "in", "Hazard Context"));
+        }
+        if (getSearchHT() != null && getSearchHT().length > 0) {
+            String terms = String.join(",", getSearchHT());
+            listSearchObject.add(new searchObject("hazardTypeId", terms, "int", "DbHazard", "hazardTypeId", null, null, "in", "Hazard Type"));
+        }
+        if (getSearchHS() != null && getSearchHS().length > 0) {
+            String terms = String.join(",", getSearchHS());
+            listSearchObject.add(new searchObject("hazardStatusId", terms, "int", "DbHazard", "hazardStatusId", null, null, "in", "Hazard Staus"));
+        }
+        if (getSearchHO() != null && getSearchHO().length > 0) {
+            String terms = String.join(",", getSearchHO());
+            listSearchObject.add(new searchObject("ownerId", terms, "int", "DbHazard", "ownerId", null, null, "in", "Hazard Owner"));
+        }
+        if (getSearchSS() != null && getSearchSS().length > 0) {
+            String terms = String.join(",", getSearchSS());
+            listSearchObject.add(new searchObject("systemStatusId", terms, "int", "DbHazard", "hazardSystemStatus", null, null, "in", "Hazard System Status"));
+        }
+        constructHtml(listSearchObject);
+        listHazards = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
     }
-
-    public void displaySelectedMultiple(TreeNode[] nodes) {
-        if (nodes != null && nodes.length > 0) {
-            treeCheckedNodesList = new ArrayList<>();
-            DbtreeLevel1 tmpTreeNode = dbtreeLevel1Facade.findByName(root.getChildren().get(0).toString());
-            Integer rootId = tmpTreeNode.getTreeLevel1Index();
-
-            for (TreeNode node : nodes) {
-                if (node.getParent().toString().equals("Root")) {
-                    //Add the tree Node and include the root index in each child node
-                    rootId = tmpTreeNode.getTreeLevel1Index();
-                    treeNodeObject tmpNode = new treeNodeObject();
-                    tmpNode.setNodeId(rootId.toString() + ".");
-                    tmpNode.setNodeName(node.getData().toString());
-                    treeCheckedNodesList.add(tmpNode);
-                } else {
-                    String parts[] = node.getData().toString().split(" ", 2);
-                    treeNodeObject tmpNode = new treeNodeObject();
-                    tmpNode.setNodeId(rootId.toString() + "." + parts[0]);
-                    tmpNode.setNodeName(parts[1]);
-                    treeCheckedNodesList.add(tmpNode);
+    
+    public void cancelEdit() {
+        setShowEdit(false);
+    }
+    
+    private boolean checkEdit() {
+        if (currentHazard.getHazardDate().equals(savedHazard.getHazardDate()) && 
+                currentHazard.getHazardDescription().equals(savedHazard.getHazardDescription()) &&
+                currentHazard.getHazardComment().equals(savedHazard.getHazardComment()) &&
+                currentHazard.getHazardActivity().getActivityName().equals(savedHazard.getHazardActivity().getActivityName()) &&
+                currentHazard.getHazardContextId().getHazardContextName().equals(savedHazard.getHazardContextId().getHazardContextName()) &&
+                currentHazard.getHazardTypeId().getHazardTypeName().equals(savedHazard.getHazardTypeId().getHazardTypeName()) &&
+                currentHazard.getHazardStatusId().getHazardStatusName().equals(savedHazard.getHazardStatusId().getHazardStatusName()) &&
+                currentHazard.getOwnerId().getOwnerName().equals(savedHazard.getOwnerId().getOwnerName()) &&
+                currentHazard.getHazardWorkshop().equals(savedHazard.getHazardWorkshop()) &&
+                currentHazard.getRiskClassId().getRiskClassName().equals(savedHazard.getRiskClassId().getRiskClassName()) &&
+                currentHazard.getRiskFrequencyId().getFrequencyScore().equals(savedHazard.getRiskFrequencyId().getFrequencyScore()) &&
+                currentHazard.getRiskSeverityId().getSeverityScore().equals(savedHazard.getRiskSeverityId().getSeverityScore()) &&
+                currentHazard.getLegacyId().equals(savedHazard.getLegacyId()) &&
+                currentHazard.getHazardSystemStatus().equals(savedHazard.getHazardSystemStatus())) {
+            return true;
+        }
+        return false;
+    }
+    
+    public void editHazard() {
+        System.out.println("Hazard changed: " + checkEdit());
+        System.out.println("Tree changed: " + !Arrays.equals(currentTree, savedTree));
+        if (!Arrays.equals(currentTree, savedTree)) {
+            dbHazardSbsFacade.removeHazardSbs(currentHazard.getHazardId());
+            if (currentTree != null && currentTree.length > 0) {
+                collectSbs();
+                addSbs();
+                currentHazard.setUpdatedDateTime(new Date());
+                currentHazard.setUserIdUpdate(activeUser.getUserId());
+                dbHazardFacade.edit(currentHazard);
+            }
+        }
+        if (!currentHazard.equalsContent(savedHazard) || checkEdit()) {
+            currentHazard.setRiskScore(dbHazardFacade.calculateRiskScore(currentHazard.getRiskFrequencyId().getFrequencyValue(), currentHazard.getRiskSeverityId().getSeverityValue()));
+            currentHazard.setUpdatedDateTime(new Date());
+            currentHazard.setUserIdUpdate(activeUser.getUserId());
+            dbHazardFacade.edit(currentHazard);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard has been successfully edited!"));
+            listHazards = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
+        }
+        // Code to handle redirections and 
+    }
+    
+    public void collectSbs() {
+        newTree = new ArrayList<>();
+        DbtreeLevel1 tmpTreeNode = dbtreeLevel1Facade.findByName(root.getChildren().get(0).toString());
+        Integer rootId = tmpTreeNode.getTreeLevel1Index();
+        for (TreeNode node : currentTree) {
+            if (node.getParent().toString().equals("Root")) {
+                //Add the tree Node and include the root index in each child node
+                rootId = tmpTreeNode.getTreeLevel1Index();
+                treeNodeObject tmpNode = new treeNodeObject();
+                tmpNode.setNodeId(rootId.toString() + ".");
+                tmpNode.setNodeName(node.getData().toString());
+                newTree.add(tmpNode);
+            } else {
+                String parts[] = node.getData().toString().split(" ", 2);
+                treeNodeObject tmpNode = new treeNodeObject();
+                tmpNode.setNodeId(rootId.toString() + "." + parts[0]);
+                tmpNode.setNodeName(parts[1]);
+                newTree.add(tmpNode);
+            }
+        }
+    } 
+    
+    public void addSbs() {
+        DbHazardSbsPK tempSbsPKObject = new DbHazardSbsPK();
+        DbHazardSbs tempSbsObject = new DbHazardSbs();
+        DbHazard tempFKObject = new DbHazard();
+        
+        tempSbsPKObject.setHazardId(currentHazard.getHazardId());
+        tempFKObject.setHazardId(currentHazard.getHazardId());
+        tempSbsObject.setDbHazard(tempFKObject);
+        for (int i = 0; i < newTree.size(); i++) {
+            treeNodeObject selectedTreeNodeObject = newTree.get(i);
+            tempSbsPKObject.setSbsId(selectedTreeNodeObject.getNodeId());
+            tempSbsObject.setDbHazardSbsPK(tempSbsPKObject);
+            dbHazardSbsFacade.create(tempSbsObject);
+        }
+    }
+    
+    private void constructHtml(List<searchObject> listFields) {
+        if (listFields.isEmpty()) {
+            showQuery = true;
+            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards associated to at least one cause, consequence and control.</span></h3>";
+        } else {
+            showQuery = true;
+            htmlCode = "<h3><span class=\"queryDescr\">Showing all hazards meeting the following criteria:</span></h3>";
+            boolean includeAnd = false;
+            if (!listFields.isEmpty()) {
+                for (searchObject tmpSrch : listFields) {
+                    if (tmpSrch.getRelationType().equals("like")) {
+                        if (includeAnd) {
+                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+                        }
+                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> contains:</h4>";
+                        htmlCode += "<p class=\"queryDescr_field\">" + tmpSrch.getUserInput() + "</p>";
+                    } else if (tmpSrch.getRelationType().equals("in")) {
+                        if (includeAnd) {
+                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+                        }
+                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to any in the list:</h4>";
+                        htmlCode += "<p class=\"queryDescr_field\">" + convertListIds(tmpSrch.getFieldName(), tmpSrch.getUserInput()) + "</p>";
+                    }
+                    if (!includeAnd) {
+                        includeAnd = true;
+                    }
                 }
             }
         }
     }
+    
+    private String convertListIds(String listName, String stringIds) {
+        StringBuilder resultantString = new StringBuilder();
+        List<String> stringListIds = Arrays.asList(stringIds.split(","));
+        if (null != listName) {
+            switch (listName) {
+                case "locationId":
+                    for (String tmpId : stringListIds) {
+                        List<DbLocation> result = listHL.stream()
+                                .filter(a -> a.getLocationId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getLocationName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "projectId":
+                    for (String tmpId : stringListIds) {
+                        List<DbProject> result = listHP.stream()
+                                .filter(a -> a.getProjectId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getProjectName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "gradeSeparationId":
+                    for (String tmpId : stringListIds) {
+                        List<DbgradeSeparation> result = listGS.stream()
+                                .filter(a -> a.getGradeSeparationId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getGradeSeparationName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "constructionTypeId":
+                    for (String tmpId : stringListIds) {
+                        List<DbconstructionType> result = listCN.stream()
+                                .filter(a -> a.getConstructionTypeId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getConstructionTypeName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "changeTypeId":
+                    for (String tmpId : stringListIds) {
+                        List<DbchangeType> result = listCH.stream()
+                                .filter(a -> a.getChangeTypeId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getChangeTypeName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "activityId":
+                    for (String tmpId : stringListIds) {
+                        List<DbhazardActivity> result = listHA.stream()
+                                .filter(a -> a.getActivityId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getActivityName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "hazardContextId":
+                    for (String tmpId : stringListIds) {
+                        List<DbhazardContext> result = listHC.stream()
+                                .filter(a -> a.getHazardContextId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getHazardContextName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "hazardTypeId":
+                    for (String tmpId : stringListIds) {
+                        List<DbhazardType> result = listHT.stream()
+                                .filter(a -> a.getHazardTypeId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getHazardTypeName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "hazardStatusId":
+                    for (String tmpId : stringListIds) {
+                        List<DbhazardStatus> result = listHS.stream()
+                                .filter(a -> a.getHazardStatusId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getHazardStatusName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                case "ownerId":
+                    for (String tmpId : stringListIds) {
+                        List<DbOwners> result = listHO.stream()
+                                .filter(a -> a.getOwnerId().equals(Integer.parseInt(tmpId)))
+                                .collect(Collectors.toList());
+                        resultantString.append(result.get(0).getOwnerName());
+                        resultantString.append(", ");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return resultantString.toString().substring(0, resultantString.toString().length() - 2);
+    }
+    
+    public void cancel() {
+        showEdit = false;
+    }
+
+    public void resetFields() {
+        setSearchHI(null);
+        setSearchHD(null);
+        setSearchD1(null);
+        setSearchD2(null);
+        setSearchHM(null);
+        setSearchHL(null);
+        setSearchHP(null);
+        setSearchGS(null);
+        setSearchCN(null);
+        setSearchCH(null);
+        setSearchHA(null);
+        setSearchHC(null);
+        setSearchHT(null);
+        setSearchHS(null);
+        setSearchHO(null);
+        constructHtml(new ArrayList<>());
+        showQuery = false;
+    }
 
     public void populateTree() {
-
-        treeFlag = true; //render SBS tree
-        editHazardId = hazardObject.getHazardId();
+        String editHazardId = currentHazard.getHazardId();
         String sbsId;
         int counterLevel4 = 1;
         int counterLevel5 = 1;
         int counterLevel6 = 1;
 
-        
-        
-        
         List<TreeNode> listTreeNode = new ArrayList<>();
 
         DbtreeLevel1 tmpResultObjLevel1 = dbtreeLevel1Facade.find(1); //This line might modified to get a dynamic tree
@@ -918,38 +1011,11 @@ public class editHazard_MB implements Serializable {
             }
 
         }
-        selectedNodes = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
-        popFlag = false; //command button that calls this function is no longer rendered 
+        currentTree = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
+        savedTree = currentTree;
     }
 
-    //This method controls the behaviour when the hazard relations has been called due to a redirection page from add or edit hazard.
-    private void redirectedPage() {
-        DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
-        if (initialHazard != null) {
-            setSelectedHazardId(initialHazard.getHazardId());
-            constructSearchObject();
-            showEdit(initialHazard);
-            redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
-        }
-    }
-
-    //Reditects to the hazard relations whenever the intial call came from a workflow process.
-    private String redirectToRelations() {
-        if (redirectionSource != null) {
-            if (redirectionSource.equals("EditHazard")) {
-                try {
-                    return "./../../data/relations/hazardsRelation.xhtml";
-                    //FacesContext.getCurrentInstance().getExternalContext().redirect("./../../data/relations/hazardsRelation.xhtml");
-                //} catch (IOException ex) {
-                } catch (Exception ex) {
-                    Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        return null;
-    }
-
-    public Date todaysDate() {
+    public Date currentDate() {
         Calendar c = Calendar.getInstance();
         return c.getTime();
     }

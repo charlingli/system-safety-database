@@ -12,7 +12,7 @@
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:hotkey bind="esc" handler="PF('detailOverlay').hide(); PF('requestOverlay').hide()"></p:hotkey>
                     <div class="messageDiv"><p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/></div>
-                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="70vw">
+                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="90vw">
                         <p:panel id="workflowPanel" styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the workflow:"/>
@@ -54,7 +54,7 @@
                             </p:dataTable>
                         </p:panel>
                     </p:dialog>
-                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="70vw">
+                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="90vw">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
@@ -74,7 +74,7 @@
                             </div>
                             <p:dataTable value="#{managementWF_MB.detailHazard}" emptyMessage="No hazard found.">
                                 <p:column headerText="SBS Code" styleClass="small">
-                                    <p:outputLabel value="Placeholder"/>
+                                    <ui:repeat var="node" value="#{managementWF_MB.viewSbsCondensed()}">#{node}</ui:repeat>
                                 </p:column>
                                 <p:column headerText="Activity" styleClass="small">
                                     <p:outputLabel value="#{managementWF_MB.detailHazard.hazardContextId.hazardContextName}"/>
@@ -84,6 +84,9 @@
                                 </p:column>
                                 <p:column headerText="Type" styleClass="small">
                                     <p:outputLabel value="#{managementWF_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                                </p:column>
+                                <p:column headerText="Status" styleClass="small">
+                                    <p:outputLabel value="#{managementWF_MB.detailHazard.hazardStatusId.hazardStatusName}"/>
                                 </p:column>
                                 <p:column headerText="Owner" styleClass="small">
                                     <p:outputLabel value="#{managementWF_MB.detailHazard.ownerId.ownerName}"/>
@@ -253,7 +256,7 @@
                         </p:column>
                         <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
                             <p:commandLink id="objAjax" update=":wfForm" actionListener="#{managementWF_MB.showHazard(wf)}" oncomplete="PF('objectOverlay').show()">
-                                <h:outputText value="#{wf.wfObjectName} : #{wf.wfObjectId}"/>
+                                <h:outputText value="#{wf.wfObjectName}: #{wf.wfObjectId}"/>
                             </p:commandLink>
                             <p:tooltip for="objAjax">
                                 <i class="fa fa-search"/>

@@ -620,7 +620,7 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
     }
 
     @Override
-    public int getRiskScore(int frequencyScore, int severityScore) {
+    public int calculateRiskScore(int frequencyScore, int severityScore) {
         int riskScore = frequencyScore * severityScore;
         if (riskScore == 0) {
             riskScore = frequencyScore - 1;
