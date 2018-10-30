@@ -26,7 +26,10 @@
                                 <div class="mid">
                                     <div>
                                         <h:outputText value="${hazardViewVis_MB.selectedDescription}"> </h:outputText>
-                                        <div>
+                                        <div class="label">
+                                            Targeted Risk:
+                                        </div>
+                                        <div class="risk">
                                             <div class="frequency">
                                                 <h:outputText value="${hazardViewVis_MB.selectedHazard.riskFrequencyId.frequencyScore}"> </h:outputText>
                                             </div>
@@ -105,9 +108,6 @@
                                 <h:outputText styleClass="p-emphasis" value="Hazard Information:"/>
                             </div>
                             <p:dataTable value="#{hazardView_MB.detailHazard}" emptyMessage="No hazards found.">
-                                <p:column headerText="SBS Code" styleClass="small">
-                                    <ui:repeat var="node" value="#{hazardView_MB.viewSbsCondensed()}">#{node}</ui:repeat>
-                                </p:column>
                                 <p:column headerText="Activity" styleClass="small">
                                     <p:outputLabel value="#{hazardView_MB.detailHazard.hazardContextId.hazardContextName}"/>
                                 </p:column>

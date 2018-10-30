@@ -37,7 +37,6 @@ import ejb.DbtreeLevel4FacadeLocal;
 import ejb.DbtreeLevel5FacadeLocal;
 import ejb.DbtreeLevel6FacadeLocal;
 import entities.*;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,8 +44,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -158,8 +155,7 @@ public class editHazard_MB implements Serializable {
     
     // Create variables to save search terms
     private String searchHI;
-    private Date searchD1;
-    private Date searchD2;
+    private Date searchDT;
     private String searchHD;
     private String searchHM;
     private String[] searchHL;
@@ -186,10 +182,30 @@ public class editHazard_MB implements Serializable {
     private TreeNode[] savedTree;
     private TreeNode root;
     private List<treeNodeObject> newTree;
+    
+    // Create display variables since objects within the hazard object cannot be edited directly
+    private int editingHA;
+    private int editingHC;
+    private int editingHT;
+    private int editingHS;
+    private int editingHO;
+    private int editingRC;
+    private int editingRF;
+    private int editingRS;
+    private int editingSS;
 
     public editHazard_MB() {
     }
-public boolean isAdminUser() {
+
+    public String getRedirectionSource() {
+        return redirectionSource;
+    }
+
+    public void setRedirectionSource(String redirectionSource) {
+        this.redirectionSource = redirectionSource;
+    }
+    
+    public boolean isAdminUser() {
         return adminUser;
     }
 
@@ -205,20 +221,12 @@ public boolean isAdminUser() {
         this.searchHI = searchHI;
     }
 
-    public Date getSearchD1() {
-        return searchD1;
+    public Date getSearchDT() {
+        return searchDT;
     }
 
-    public void setSearchD1(Date searchD1) {
-        this.searchD1 = searchD1;
-    }
-
-    public Date getSearchD2() {
-        return searchD2;
-    }
-
-    public void setSearchD2(Date searchD2) {
-        this.searchD2 = searchD2;
+    public void setSearchDT(Date searchDT) {
+        this.searchDT = searchDT;
     }
 
     public String getSearchHD() {
@@ -492,6 +500,78 @@ public boolean isAdminUser() {
     public void setRoot(TreeNode root) {
         this.root = root;
     }
+
+    public int getEditingHA() {
+        return editingHA;
+    }
+
+    public void setEditingHA(int editingHA) {
+        this.editingHA = editingHA;
+    }
+
+    public int getEditingHC() {
+        return editingHC;
+    }
+
+    public void setEditingHC(int editingHC) {
+        this.editingHC = editingHC;
+    }
+
+    public int getEditingHT() {
+        return editingHT;
+    }
+
+    public void setEditingHT(int editingHT) {
+        this.editingHT = editingHT;
+    }
+
+    public int getEditingHS() {
+        return editingHS;
+    }
+
+    public void setEditingHS(int editingHS) {
+        this.editingHS = editingHS;
+    }
+
+    public int getEditingHO() {
+        return editingHO;
+    }
+
+    public void setEditingHO(int editingHO) {
+        this.editingHO = editingHO;
+    }
+
+    public int getEditingRC() {
+        return editingRC;
+    }
+
+    public void setEditingRC(int editingRC) {
+        this.editingRC = editingRC;
+    }
+
+    public int getEditingRF() {
+        return editingRF;
+    }
+
+    public void setEditingRF(int editingRF) {
+        this.editingRF = editingRF;
+    }
+
+    public int getEditingRS() {
+        return editingRS;
+    }
+
+    public void setEditingRS(int editingRS) {
+        this.editingRS = editingRS;
+    }
+
+    public int getEditingSS() {
+        return editingSS;
+    }
+
+    public void setEditingSS(int editingSS) {
+        this.editingSS = editingSS;
+    }
     
     public List<DbHazard> getListHazards() {
         return listHazards;
@@ -524,13 +604,15 @@ public boolean isAdminUser() {
         setListRS(dbriskSeverityFacade.findAll());
         setListSS(dbhazardSystemStatusFacade.findAll());
         setShowEdit(false);
-        getRedirectionSource();
+        checkRedirectionSource();
     }
     
-    private void getRedirectionSource() {
+    private void checkRedirectionSource() {
         DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
+        redirectionSource = "";
         if (initialHazard != null) {
-            editHazard(currentHazard);
+            editHazard(initialHazard);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");
             redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
         }
     }
@@ -538,22 +620,36 @@ public boolean isAdminUser() {
     public void editHazard(DbHazard hazardObject) {
         showEdit = true;
         currentHazard = hazardObject;
+        
+        setEditingHA(currentHazard.getHazardActivity().getActivityId());
+        setEditingHC(currentHazard.getHazardContextId().getHazardContextId());
+        setEditingHT(currentHazard.getHazardTypeId().getHazardTypeId());
+        setEditingHS(currentHazard.getHazardStatusId().getHazardStatusId());
+        setEditingHO(currentHazard.getOwnerId().getOwnerId());
+        setEditingRC(currentHazard.getRiskClassId().getRiskClassId());
+        setEditingRF(currentHazard.getRiskFrequencyId().getRiskFrequencyId());
+        setEditingRS(currentHazard.getRiskSeverityId().getRiskSeverityId());
+        setEditingSS(currentHazard.getHazardSystemStatus().getSystemStatusId());
+        
         savedHazard = new DbHazard();
+        savedHazard.setHazardId(currentHazard.getHazardId());
         savedHazard.setHazardDate(currentHazard.getHazardDate());
         savedHazard.setHazardDescription(currentHazard.getHazardDescription());
         savedHazard.setHazardComment(currentHazard.getHazardComment());
+        savedHazard.setHazardWorkshop(currentHazard.getHazardWorkshop());
+        savedHazard.setHazardReview(currentHazard.getHazardReview());
+        savedHazard.setLegacyId(currentHazard.getLegacyId());
+        
         savedHazard.setHazardActivity(currentHazard.getHazardActivity());
         savedHazard.setHazardContextId(currentHazard.getHazardContextId());
         savedHazard.setHazardTypeId(currentHazard.getHazardTypeId());
         savedHazard.setHazardStatusId(currentHazard.getHazardStatusId());
         savedHazard.setOwnerId(currentHazard.getOwnerId());
-        savedHazard.setHazardWorkshop(currentHazard.getHazardWorkshop());
-        savedHazard.setHazardReview(currentHazard.getHazardReview());
         savedHazard.setRiskClassId(currentHazard.getRiskClassId());
         savedHazard.setRiskFrequencyId(currentHazard.getRiskFrequencyId());
         savedHazard.setRiskSeverityId(currentHazard.getRiskSeverityId());
-        savedHazard.setLegacyId(currentHazard.getLegacyId());
         savedHazard.setHazardSystemStatus(currentHazard.getHazardSystemStatus());
+        
         populateTree();
     }
 
@@ -577,12 +673,9 @@ public boolean isAdminUser() {
         if (!getSearchHI().isEmpty()) {
             listSearchObject.add(new searchObject("hazardId", getSearchHI(), "string", "DbHazard", null, null, null, "like", "Hazard ID"));
         }
-//        if (getSearchD1() != null) {
-//            listSearchObject.add(new searchObject("hazardDate", df.format(getSearchD1()), "date", "DbHazard", null, null, null, "like", "Hazard Date"));
-//        }
-//        if (getSearchD2() != null) {
-//            listSearchObject.add(new searchObject("hazardDate", df.format(getSearchD2()), "date", "DbHazard", null, null, null, "like", "Hazard Date"));
-//        }
+        if (getSearchDT() != null) {
+        listSearchObject.add(new searchObject("hazardDate", df.format(getSearchDT()), "date", "DbHazard", null, null, null, "=", "Hazard Date"));
+        }
         if (getSearchHD() != null && getSearchHD().length() > 0) {
             listSearchObject.add(new searchObject("hazardDescription", getSearchHD(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
         }
@@ -641,29 +734,30 @@ public boolean isAdminUser() {
         setShowEdit(false);
     }
     
-    private boolean checkEdit() {
-        if (currentHazard.getHazardDate().equals(savedHazard.getHazardDate()) && 
+    private boolean hazardChanged() {
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy.MM.dd");
+        if (ft.format(currentHazard.getHazardDate()).equals(ft.format(savedHazard.getHazardDate())) && 
                 currentHazard.getHazardDescription().equals(savedHazard.getHazardDescription()) &&
                 currentHazard.getHazardComment().equals(savedHazard.getHazardComment()) &&
-                currentHazard.getHazardActivity().getActivityName().equals(savedHazard.getHazardActivity().getActivityName()) &&
-                currentHazard.getHazardContextId().getHazardContextName().equals(savedHazard.getHazardContextId().getHazardContextName()) &&
-                currentHazard.getHazardTypeId().getHazardTypeName().equals(savedHazard.getHazardTypeId().getHazardTypeName()) &&
-                currentHazard.getHazardStatusId().getHazardStatusName().equals(savedHazard.getHazardStatusId().getHazardStatusName()) &&
-                currentHazard.getOwnerId().getOwnerName().equals(savedHazard.getOwnerId().getOwnerName()) &&
+                currentHazard.getHazardActivity().getActivityId().equals(savedHazard.getHazardActivity().getActivityId()) &&
+                currentHazard.getHazardContextId().getHazardContextId().equals(savedHazard.getHazardContextId().getHazardContextId()) &&
+                currentHazard.getHazardTypeId().getHazardTypeId().equals(savedHazard.getHazardTypeId().getHazardTypeId()) &&
+                currentHazard.getHazardStatusId().getHazardStatusId().equals(savedHazard.getHazardStatusId().getHazardStatusId()) &&
+                currentHazard.getOwnerId().getOwnerId().equals(savedHazard.getOwnerId().getOwnerId()) &&
                 currentHazard.getHazardWorkshop().equals(savedHazard.getHazardWorkshop()) &&
-                currentHazard.getRiskClassId().getRiskClassName().equals(savedHazard.getRiskClassId().getRiskClassName()) &&
-                currentHazard.getRiskFrequencyId().getFrequencyScore().equals(savedHazard.getRiskFrequencyId().getFrequencyScore()) &&
-                currentHazard.getRiskSeverityId().getSeverityScore().equals(savedHazard.getRiskSeverityId().getSeverityScore()) &&
+                currentHazard.getRiskClassId().getRiskClassId().equals(savedHazard.getRiskClassId().getRiskClassId()) &&
+                currentHazard.getRiskFrequencyId().getRiskFrequencyId().equals(savedHazard.getRiskFrequencyId().getRiskFrequencyId()) &&
+                currentHazard.getRiskSeverityId().getRiskSeverityId().equals(savedHazard.getRiskSeverityId().getRiskSeverityId()) &&
                 currentHazard.getLegacyId().equals(savedHazard.getLegacyId()) &&
-                currentHazard.getHazardSystemStatus().equals(savedHazard.getHazardSystemStatus())) {
-            return true;
+                currentHazard.getHazardSystemStatus().getSystemStatusId().equals(savedHazard.getHazardSystemStatus().getSystemStatusId())) {
+            return false;
         }
-        return false;
+        return true;
     }
     
-    public void editHazard() {
-        System.out.println("Hazard changed: " + checkEdit());
-        System.out.println("Tree changed: " + !Arrays.equals(currentTree, savedTree));
+    public String editHazard() {
+        fillCurrentHazard();
+        String responseStr = "No changes have been made.";
         if (!Arrays.equals(currentTree, savedTree)) {
             dbHazardSbsFacade.removeHazardSbs(currentHazard.getHazardId());
             if (currentTree != null && currentTree.length > 0) {
@@ -672,17 +766,63 @@ public boolean isAdminUser() {
                 currentHazard.setUpdatedDateTime(new Date());
                 currentHazard.setUserIdUpdate(activeUser.getUserId());
                 dbHazardFacade.edit(currentHazard);
+                responseStr = "The sbs tree has been edited for " + currentHazard.getHazardId() + ".";
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node!"));
+                return null;
             }
         }
-        if (!currentHazard.equalsContent(savedHazard) || checkEdit()) {
+        if (hazardChanged()) {
             currentHazard.setRiskScore(dbHazardFacade.calculateRiskScore(currentHazard.getRiskFrequencyId().getFrequencyValue(), currentHazard.getRiskSeverityId().getSeverityValue()));
             currentHazard.setUpdatedDateTime(new Date());
             currentHazard.setUserIdUpdate(activeUser.getUserId());
             dbHazardFacade.edit(currentHazard);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard has been successfully edited!"));
-            listHazards = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
+            responseStr = "The hazard object has been edited for " + currentHazard.getHazardId() + ".";
+            if (!Arrays.equals(currentTree, savedTree) && currentTree != null && currentTree.length > 0) {
+                responseStr = "The hazard object and sbs tree have been edited for " + currentHazard.getHazardId() + ".";
+            }
         }
-        // Code to handle redirections and 
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", responseStr));
+        if (redirectionSource.equals("UserWorkflow")) {
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelObj", getCurrentHazard());
+            return "/data/relations/hazardsRelation";
+        }
+        constructSearchObject();
+        setShowEdit(false);
+        return "";
+    }
+    
+    public void fillCurrentHazard() {
+        DbhazardActivity activityObject = new DbhazardActivity();
+        DbhazardContext contextObject = new DbhazardContext();
+        DbhazardType typeObject = new DbhazardType();
+        DbhazardStatus statusObject = new DbhazardStatus();
+        DbOwners ownerObject = new DbOwners();
+        DbriskClass classObject = new DbriskClass();
+        DbriskFrequency frequencyObject = new DbriskFrequency();
+        DbriskSeverity severityObject = new DbriskSeverity();
+        DbhazardSystemStatus systemObject = new DbhazardSystemStatus();
+        
+        activityObject.setActivityId(editingHA);
+        contextObject.setHazardContextId(editingHC);
+        typeObject.setHazardTypeId(editingHT);
+        statusObject.setHazardStatusId(editingHS);
+        ownerObject.setOwnerId(editingHO);
+        classObject.setRiskClassId(editingRC);
+        frequencyObject.setRiskFrequencyId(editingRF);
+        severityObject.setRiskSeverityId(editingRS);
+        systemObject.setSystemStatusId(editingSS);
+        
+        currentHazard.setHazardActivity(activityObject);
+        currentHazard.setHazardContextId(contextObject);
+        currentHazard.setHazardTypeId(typeObject);
+        currentHazard.setHazardStatusId(statusObject);
+        currentHazard.setOwnerId(ownerObject);
+        currentHazard.setRiskClassId(classObject);
+        currentHazard.setRiskFrequencyId(frequencyObject);
+        currentHazard.setRiskSeverityId(severityObject);
+        currentHazard.setHazardSystemStatus(systemObject);
+        
     }
     
     public void collectSbs() {
@@ -745,6 +885,12 @@ public boolean isAdminUser() {
                         }
                         htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to any in the list:</h4>";
                         htmlCode += "<p class=\"queryDescr_field\">" + convertListIds(tmpSrch.getFieldName(), tmpSrch.getUserInput()) + "</p>";
+                    } else if (tmpSrch.getRelationType().equals("=")) {
+                        if (includeAnd) {
+                            htmlCode += "<p class=\"queryDescr_and\"><span>AND</span></p>";
+                        }
+                        htmlCode += "<h4 class=\"queryDescr\"><span class=\"queryDescr\">" + tmpSrch.getFieldDescription() + "</span> is equal to:</h4>";
+                        htmlCode += "<p class=\"queryDescr_field\">" + tmpSrch.getUserInput() + "</p>";
                     }
                     if (!includeAnd) {
                         includeAnd = true;
@@ -863,8 +1009,7 @@ public boolean isAdminUser() {
     public void resetFields() {
         setSearchHI(null);
         setSearchHD(null);
-        setSearchD1(null);
-        setSearchD2(null);
+        setSearchDT(null);
         setSearchHM(null);
         setSearchHL(null);
         setSearchHP(null);
@@ -1012,11 +1157,58 @@ public boolean isAdminUser() {
 
         }
         currentTree = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
-        savedTree = currentTree;
+        savedTree = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
     }
 
     public Date currentDate() {
         Calendar c = Calendar.getInstance();
         return c.getTime();
+    }
+    
+    public void clearField(String id) {
+        switch (id) {
+            case "HIClear":
+                setSearchHI(null);
+                break;
+            case "HDClear":
+                setSearchHD(null);
+                break;
+            case "HMClear":
+                setSearchHM(null);
+                break;
+            case "DTClear":
+                setSearchDT(null);
+                break;
+            case "HLClear":
+                setSearchHL(null);
+                break;
+            case "HPClear":
+                setSearchHP(null);
+                break;
+            case "GSClear":
+                setSearchGS(null);
+                break;
+            case "CNClear":
+                setSearchCN(null);
+                break;
+            case "CHClear":
+                setSearchCH(null);
+                break;
+            case "HAClear":
+                setSearchHA(null);
+                break;
+            case "HCClear":
+                setSearchHC(null);
+                break;
+            case "HTClear":
+                setSearchHT(null);
+                break;
+            case "HSClear":
+                setSearchHS(null);
+                break;
+            case "HOClear":
+                setSearchHO(null);
+                break;
+        }
     }
 }

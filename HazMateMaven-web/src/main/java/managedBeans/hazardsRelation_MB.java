@@ -674,16 +674,16 @@ public class hazardsRelation_MB implements Serializable {
         if (redirectionSource != null) {
             List<DbUser> listApprovers = dbUserFacade.getWfApproverUsers();
             if (!listApprovers.isEmpty() && redirectionSource.equals("AddHazard")) {
-                createNewWf(listApprovers, hazardObject, "This flow was created to approve a new hazard in the ssd.");
+                createNewWf(listApprovers, hazardObject, "A new hazard was created by a user. Please review and approve, reject, or request more information.");
                 wfTriggered = true;
-            } else if (!listApprovers.isEmpty() && redirectionSource.equals("EditHazard")) {
+            } else if (!listApprovers.isEmpty() && redirectionSource.equals("UserWorkflow")) {
                 //first, edit the current workflow
                 DbwfHeader currentWF = (DbwfHeader) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelWF");
-                currentWF.setWfComment2("This flow was closed due to the user updated the requiere information, hence a new workflow will triggered.");
+                currentWF.setWfComment2("A user has updated this hazard in response to a request for information, thus closing this workflow.");
                 currentWF.setWfStatus("C");
                 dbwfHeaderFacade.edit(currentWF);
                 //second, create a new workflow
-                String Comment = "This flow was created to approve a new hazard in the ssd, this flow contains the latest requested changes, refer to workflow Id " + currentWF.getWfId();
+                String Comment = "A user has updated this hazard in response to a request for information, refer to workflow ID " + currentWF.getWfId();
                 createNewWf(listApprovers, hazardObject, Comment);
                 //Third, delete variables
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");
@@ -693,7 +693,7 @@ public class hazardsRelation_MB implements Serializable {
             } else {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Saving workflow: ", "There are not users with the role 'Core user'."));
+                                "", "There are no users able to approve this workflow."));
             }
         }
         if (wfTriggered) {

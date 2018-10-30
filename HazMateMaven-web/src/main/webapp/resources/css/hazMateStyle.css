@@ -518,7 +518,7 @@ span.commandLinkWhite {
     background: linear-gradient(to bottom, #FFE2D3, #FFCAAD);
     font-weight: bold;
 }
-.visCanvas .mid >div >div {
+.visCanvas .mid .risk {
     display: flex;
     flex-direction: row;
 }
