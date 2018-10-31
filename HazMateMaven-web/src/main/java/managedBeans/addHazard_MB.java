@@ -380,9 +380,7 @@ public class addHazard_MB implements Serializable {
         //Setting the audit fields
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         hazardObject.setAddedDateTime(new Date());
-        hazardObject.setUpdatedDateTime(new Date());
         hazardObject.setUserIdAdd(activeUser.getUserId());
-        hazardObject.setUserIdUpdate(activeUser.getUserId());
         
         //Updating the system status on pending
         hazardObject.setHazardSystemStatus(new DbhazardSystemStatus(1));

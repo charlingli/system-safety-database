@@ -52,7 +52,6 @@ public class DbwfLineFacade extends AbstractFacade<DbwfLine> implements DbwfLine
             }
 
         } catch (Exception e) {
-
             throw e;
         }
         return resultLine;       
