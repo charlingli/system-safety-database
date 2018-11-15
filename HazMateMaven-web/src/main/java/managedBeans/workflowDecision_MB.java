@@ -105,12 +105,12 @@ public class workflowDecision_MB implements Serializable {
     }
 
     public void addwfDecision() {
-        existingWfDecision = dbwfDecisionFacade.findByName("wfDecisionName", wfDecisionObject.getWfDecisionName());
+        existingWfDecision = dbwfDecisionFacade.findByName("wfDecisionId", wfDecisionObject.getWfDecisionId());
         
         if (existingWfDecision.isEmpty()) {
             dbwfDecisionFacade.create(wfDecisionObject);
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow decision ID exists already."));
             return;
         }
         
@@ -125,7 +125,7 @@ public class workflowDecision_MB implements Serializable {
         if (existingWfDecision.isEmpty() || existingWfDecision.get(0).getWfDecisionName().equals(prevWfDecisionName)) {
             dbwfDecisionFacade.edit(wfDecisionObject);
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow decision ID exists already."));
             return;
         }
         wfDecisionObject = new DbwfDecision();
@@ -174,7 +174,7 @@ public class workflowDecision_MB implements Serializable {
     }
     
     public void error() {
-         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class is currently assigned to one or more hazards."));
+         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow decision is currently assigned to one or more workflows."));
     }
     
 }

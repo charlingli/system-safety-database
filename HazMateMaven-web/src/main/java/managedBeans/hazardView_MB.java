@@ -1082,8 +1082,10 @@ public class hazardView_MB implements Serializable {
             qualityObject.setRating(rating);
             if (rating == 0) {
                 qualityObject.setWeighting(0);
-            } else { // Remember to implement a role check here for different weightings
+            } else if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
                 qualityObject.setWeighting(2);
+            } else {
+                qualityObject.setWeighting(1);
             }
             dbQualityFacade.edit(qualityObject);
         } else {
@@ -1095,8 +1097,10 @@ public class hazardView_MB implements Serializable {
             qualityObject.setRating(rating);
             if (rating == 0) {
                 qualityObject.setWeighting(0);
-            } else { // Remember to implement a role check here for different weightings
+            } else if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
                 qualityObject.setWeighting(2);
+            } else {
+                qualityObject.setWeighting(1);
             }
             dbQualityFacade.create(qualityObject);
         }
@@ -1136,10 +1140,10 @@ public class hazardView_MB implements Serializable {
     }
 
     public void sendSuggestion(String suggestionComment) {
-        System.out.println(suggestionComment);
         if (suggestionComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your change suggestion."));
         } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The suggestion has been sent for review."));
             List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
             DbwfHeader wfObj = new DbwfHeader();
             wfObj.setWfTypeId(new DbwfType("W3"));
@@ -1148,12 +1152,11 @@ public class hazardView_MB implements Serializable {
             wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
             wfObj.setWfObjectId(getDetailHazard().getHazardId());
             wfObj.setWfObjectName("Hazard");
-            wfObj.setWfComment1("A change to this hazard was suggested by a user. Please review and manually edit, then complete this workflow to close off.");
+            wfObj.setWfComment1("A change to this hazard was suggested by a user. Please review and manually edit, then accept this workflow to complete.");
             wfObj.setWfComment2(suggestionComment);
             wfObj.setWfCompleteMethod("HazardSuggestionWF");
             validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-SUG");
             setDetailHazard(null);
-            init();
         }
     }
 
@@ -1161,6 +1164,7 @@ public class hazardView_MB implements Serializable {
         if (deletionComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your mark for deletion."));
         } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The deletion mark has been sent for review."));
             List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
             DbwfHeader wfObj = new DbwfHeader();
             wfObj.setWfTypeId(new DbwfType("W3"));
@@ -1169,13 +1173,12 @@ public class hazardView_MB implements Serializable {
             wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
             wfObj.setWfObjectId(getDetailHazard().getHazardId());
             wfObj.setWfObjectName("Hazard");
-            wfObj.setWfComment1("A deletion of this hazard was suggested by a user. Please review and approve this workflow to delete or reject this workflow to cancel.");
+            wfObj.setWfComment1("This hazard was marked for deletion by a user. Please review and approve this workflow to delete or reject this workflow to cancel.");
             wfObj.setWfComment2(deletionReason);
             wfObj.setWfComment2(deletionComment);
             wfObj.setWfCompleteMethod("HazardDeletionWF");
             validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-DEL");
             setDetailHazard(null);
-            init();
         }
     }
 

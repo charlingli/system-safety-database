@@ -397,24 +397,18 @@ public class managementWF_MB implements Serializable {
     }
     
     public void sendDecision(String approvalComment) {
-        DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(getApprovalWF().getWfId(), "")), activeUser.getUserId());
-        tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
-        tmpLine.setWfApprovalComment(approvalComment);
-        tmpLine.setWfDateTimeDecision(new Date());
-        dbwfLineFacade.edit(tmpLine);
-        
-        if (tmpLine.getWfApprovalComment().length() < 1) {
+        if (approvalComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
         } else {
             if (getApprovalDecision().equals("A")) {
                 dbwfHeaderFacade.approvalProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info:", "Approval sent for workflow " + getApprovalWF().getWfId() + "."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approval sent for workflow " + getApprovalWF().getWfId() + "."));
             } else if (getApprovalDecision().equals("R")) {
                 dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info:", "Rejection sent for workflow " + getApprovalWF().getWfId() + "."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflow " + getApprovalWF().getWfId() + "."));
             } else if (getApprovalDecision().equals("I")) {
                 dbwfHeaderFacade.reviewProcess(new DbwfHeader(getApprovalWF().getWfId()), "adminApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Info:", "Request for information sent for workflow " + getApprovalWF().getWfId() + "."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Request for information sent for workflow " + getApprovalWF().getWfId() + "."));
             } else {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
             }
@@ -439,20 +433,12 @@ public class managementWF_MB implements Serializable {
             String wfNotOpenMessage = "";
             for (DbwfHeader wfItem : selectWF) {
                 if (wfItem.getWfStatus().equals("O")) {
-                    DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(wfItem.getWfId(), "")), activeUser.getUserId());
-                    tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
-                    tmpLine.setWfApprovalComment(approvalComment);
-                    tmpLine.setWfDateTimeDecision(new Date());
-
                     if (getApprovalDecision().equals("A")) {
-                        dbwfLineFacade.edit(tmpLine);
                         dbwfHeaderFacade.approvalProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
                     } else if (getApprovalDecision().equals("R")) {
-                        dbwfLineFacade.edit(tmpLine);
                         dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
                     } else if (getApprovalDecision().equals("I")) {
                         if (wfItem.getWfCompleteMethod().equals("HazardApprovalWF")) {
-                            dbwfLineFacade.edit(tmpLine);
                             dbwfHeaderFacade.reviewProcess(new DbwfHeader(wfItem.getWfId()), "adminApproval");
                         } else {
                             validRequest = false;
@@ -572,5 +558,9 @@ public class managementWF_MB implements Serializable {
             nodeNames.add(nodeName);
         }
         return nodeNames;
+    }
+    
+    public boolean checkRequest() {
+        return selectWF.stream().noneMatch(h -> h.getWfCompleteMethod().equals("HazardApprovalWF"));
     }
 }

@@ -387,7 +387,7 @@ public class addHazard_MB implements Serializable {
 
         dbHazardFacade.create(hazardObject);
         saveHazardObject(hazardObject);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
     }
 
     //Filling and asociating all the related objects into the Hazard Object.

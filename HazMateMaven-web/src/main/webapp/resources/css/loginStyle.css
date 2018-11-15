@@ -80,7 +80,7 @@ body{
 .box .inputBox input:focus ~ label,
 .box .inputBox input:valid ~ label
 {
-    top: -18px;
+    top: -24px;
     left: 0;
     color: #03a9f4;
     font-size: 12px;
@@ -95,4 +95,15 @@ body{
     padding: 10px 20px;
     cursor: pointer;
     border-radius: 5px;
+}
+@-webkit-keyframes autofill {
+    to {
+        color: #A6A6A6;
+        background: transparent;
+    }
+}
+
+input:-webkit-autofill {
+    -webkit-animation-name: autofill;
+    -webkit-animation-fill-mode: both;
 }

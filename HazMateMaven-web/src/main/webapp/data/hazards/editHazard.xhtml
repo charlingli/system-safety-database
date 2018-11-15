@@ -12,7 +12,8 @@
                 <f:view>
                     <h:form id="form">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="true"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:fieldset id="fieldset" rendered="#{not editHazard_MB.showEdit}" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
                             <h:panelGrid columns="2" columnClasses="fields,explanation">
                                 <p:panel styleClass="searchPanel" style="width: 500px;">

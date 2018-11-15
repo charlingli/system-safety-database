@@ -112,8 +112,14 @@ public class workflowType_MB implements Serializable {
     }
 
     public void addwfType() {
+        existingwfType = dbwfTypeFacade.findByName("wfTypeId", wfTypeObject.getWfTypeId());
+        if (!existingwfType.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow type ID exists already."));
+            return;
+        }
+        
         if (!dbwfHeaderFacade.wfTypesValidation(wfTypeObject.getWfTypeName())) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "There is no business logic associated with this workflow type."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "Workflow type added, but there is no business logic associated with yet."));
         }
         dbwfTypeFacade.create(wfTypeObject);
         
@@ -123,12 +129,12 @@ public class workflowType_MB implements Serializable {
     }
 
     public void editwfType() {
-        existingwfType = dbwfTypeFacade.findByName("wfTypeName", wfTypeObject.getWfTypeName());
+        existingwfType = dbwfTypeFacade.findByName("wfTypeId", wfTypeObject.getWfTypeId());
         
         if (existingwfType.isEmpty() || existingwfType.get(0).getWfTypeName().equals(prevwfTypeName)) {
             dbwfTypeFacade.edit(wfTypeObject);
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow type name exists already."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow type ID exists already."));
             return;
         }
         wfTypeObject = new DbwfType();
@@ -177,7 +183,7 @@ public class workflowType_MB implements Serializable {
     }
     
     public void error() {
-         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow type is currently assigned to one or more hazards."));
+         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow type is currently assigned to one or more workflows."));
     }
     
 }

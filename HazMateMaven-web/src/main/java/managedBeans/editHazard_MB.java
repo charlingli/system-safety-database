@@ -782,7 +782,7 @@ public class editHazard_MB implements Serializable {
                 responseStr = "The hazard object and sbs tree have been edited for " + currentHazard.getHazardId() + ".";
             }
         }
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", responseStr));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", responseStr));
         if (redirectionSource.equals("UserWorkflow")) {
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelObj", getCurrentHazard());
             return "/data/relations/hazardsRelation";
