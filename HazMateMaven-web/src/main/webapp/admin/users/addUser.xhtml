@@ -11,7 +11,8 @@
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Add User')}" escape="false"/></div>
                     <p:panel class="managementModifyPanel">
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:panelGrid id="addUsers" columns="2" columnClasses="left,middle">
                             <p:outputLabel value="First Name:"/>
                             <p:inputText id="FNInput" value="#{users_MB.user.firstName}" title="First Name" required="true" styleClass="inputField200px" validatorMessage="The first name must be 60 characters or less." requiredMessage="A first name is required."/>

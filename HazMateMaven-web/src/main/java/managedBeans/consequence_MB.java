@@ -156,22 +156,18 @@ public class consequence_MB implements Serializable {
 
     public void addConsequence() {
         try {
-            if (hazardObject.getHazardId().equals("null")) {
-                consequenceObject.setHazardId(null);
-                dbConsequenceFacade.create(consequenceObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully added"));
-            } else if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
-                consequenceObject.setHazardId(hazardObject.getHazardId());
-                dbConsequenceFacade.create(consequenceObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully added"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The hazardId does not exist"));
-                return;
+            if (hazardObject.getHazardId() != null) {
+                if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
+                    consequenceObject.setHazardId(hazardObject.getHazardId());
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "This hazard does not exist!"));
+                    return;
+                }
             }
+            dbConsequenceFacade.create(consequenceObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The consequence has been successfully added."));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         consequenceObject = new DbConsequence();
         init();
@@ -180,22 +176,18 @@ public class consequence_MB implements Serializable {
 
     public void editConsequence() {
         try {
-            if (hazardObject.getHazardId().equals("null")) {
-                consequenceObject.setHazardId(null);
-                dbConsequenceFacade.edit(consequenceObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully edited"));
-            } else if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
-                consequenceObject.setHazardId(hazardObject.getHazardId());
-                dbConsequenceFacade.edit(consequenceObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully edited"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The hazardId does not exist"));
-                return;
+            if (hazardObject.getHazardId() != null) {
+                if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
+                    consequenceObject.setHazardId(hazardObject.getHazardId());
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "This hazard does not exist!"));
+                    return;
+                }
             }
+            dbConsequenceFacade.edit(consequenceObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The consequence has been successfully edited."));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         consequenceObject = new DbConsequence();
         init();
@@ -208,9 +200,9 @@ public class consequence_MB implements Serializable {
     public void deleteConsequence(DbConsequence consequenceObject) {
         try {
             dbConsequenceFacade.remove(consequenceObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Removed", "The consequence has been successfully removed"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The consequence has been successfully removed."));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         } finally {
             init();
         }

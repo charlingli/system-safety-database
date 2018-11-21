@@ -7,6 +7,7 @@ package managedBeans;
 
 import ejb.DbwfDecisionFacadeLocal;
 import entities.DbwfDecision;
+import entities.DbwfLine;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -28,7 +29,8 @@ public class workflowDecision_MB implements Serializable {
     private DbwfDecisionFacadeLocal dbwfDecisionFacade;
 
     private List<DbwfDecision> listDbWfDecision;
-    private List<DbwfDecision> existingWfDecision; 
+    private List<DbwfDecision> existingWfDecision;
+    private List<DbwfLine> existingWfLines;
     
     private DbwfDecision wfDecisionObject = new DbwfDecision();
 
@@ -114,6 +116,7 @@ public class workflowDecision_MB implements Serializable {
             return;
         }
         
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The workflow decision has been added, but will not be used anywhere."));
         wfDecisionObject = new DbwfDecision();
         init();
 
@@ -136,9 +139,9 @@ public class workflowDecision_MB implements Serializable {
     }
 
     public void deletewfDecision(DbwfDecision wfDecisionObject) {
-        existingWfDecision = dbwfDecisionFacade.checkWfDecision(wfDecisionObject.getWfDecisionId());
+        existingWfLines = dbwfDecisionFacade.checkWfDecision(wfDecisionObject.getWfDecisionId());
 
-        if (existingWfDecision.isEmpty()) {
+        if (existingWfLines.isEmpty()) {
             dbwfDecisionFacade.remove(wfDecisionObject);
         } else {
             error();

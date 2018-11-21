@@ -86,12 +86,14 @@ public class hazardsRelation_MB implements Serializable {
     private List<DbControlHazard> listHazardControls;
     private List<DbControl> listUnrelatedControls;
     private List<DbControl> listSelectedControls;
+    private List<DbHazardCause> listCurrentCauses;
+    private List<DbHazardConsequence> listCurrentConsqs;
+    private List<DbControlHazard> listCurrentControls;
     private List<DbcontrolRecommend> listControlRecommends;
     private DbHazard hazardObject = new DbHazard();
     private DbControlHazard controlHazardObject;
     private boolean searchBox;
     private boolean dataTable;
-    private boolean cancelBtn;
     private boolean infoBox;
     private boolean addCause;
     private boolean addConq;
@@ -217,6 +219,30 @@ public class hazardsRelation_MB implements Serializable {
         this.listControlRecommends = listControlRecommends;
     }
 
+    public List<DbHazardCause> getListCurrentCauses() {
+        return listCurrentCauses;
+    }
+
+    public void setListCurrentCauses(List<DbHazardCause> listCurrentCauses) {
+        this.listCurrentCauses = listCurrentCauses;
+    }
+
+    public List<DbHazardConsequence> getListCurrentConsqs() {
+        return listCurrentConsqs;
+    }
+
+    public void setListCurrentConsqs(List<DbHazardConsequence> listCurrentConsqs) {
+        this.listCurrentConsqs = listCurrentConsqs;
+    }
+
+    public List<DbControlHazard> getListCurrentControls() {
+        return listCurrentControls;
+    }
+
+    public void setListCurrentControls(List<DbControlHazard> listCurrentControls) {
+        this.listCurrentControls = listCurrentControls;
+    }
+
     public boolean isSearchBox() {
         return searchBox;
     }
@@ -231,14 +257,6 @@ public class hazardsRelation_MB implements Serializable {
 
     public void setDataTable(boolean dataTable) {
         this.dataTable = dataTable;
-    }
-
-    public boolean isCancelBtn() {
-        return cancelBtn;
-    }
-
-    public void setCancelBtn(boolean cancelBtn) {
-        this.cancelBtn = cancelBtn;
     }
 
     public boolean isInfoBox() {
@@ -365,7 +383,6 @@ public class hazardsRelation_MB implements Serializable {
     public void init() {
         searchBox = true;
         dataTable = false;
-        cancelBtn = false;
         infoBox = false;
         addCause = false;
         addConq = false;
@@ -380,7 +397,6 @@ public class hazardsRelation_MB implements Serializable {
     public void searchHazards() {
         listHazards = (List<DbHazard>) (Object) dbHazardFacade.findHazards(createSearchList(), new ArrayList<>(), "A", "Normal");
         dataTable = true;
-        cancelBtn = true;
     }
 
     public void includeRelations(DbHazard hazardIn) {
@@ -388,6 +404,9 @@ public class hazardsRelation_MB implements Serializable {
         listHazardCauses = dbHazardCauseFacade.findByHazardId(hazardObject.getHazardId());
         listHazardConsqs = dbHazardConsequenceFacade.findByHazardId(hazardObject.getHazardId());
         listHazardControls = dbControlHazardFacade.findByHazardId(hazardObject.getHazardId());
+        listCurrentCauses = dbHazardCauseFacade.findByHazardId(hazardObject.getHazardId());
+        listCurrentConsqs = dbHazardConsequenceFacade.findByHazardId(hazardObject.getHazardId());
+        listCurrentControls = dbControlHazardFacade.findByHazardId(hazardObject.getHazardId());
         searchBox = false;
         dataTable = false;
         infoBox = true;
@@ -589,7 +608,19 @@ public class hazardsRelation_MB implements Serializable {
         listUnrelatedControls = dbControlFacade.findUnrelatedByHazardId(hazardObject.getHazardId());
     }
 
+    private boolean checkRelationsChanged() {
+        if (listCurrentCauses.equals(listHazardCauses) && listCurrentConsqs.equals(listHazardConsqs) && listCurrentControls.equals(listHazardControls)) {
+            return false;
+        }
+        return true;
+    }
+    
     public void sendToApproval() {
+        if (checkRelationsChanged()) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard relations have been successfully edited."));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "No changes have been made."));
+        }
         hazardId = "";
         hazardDescríption = "";
         hazardComment = "";
@@ -597,7 +628,6 @@ public class hazardsRelation_MB implements Serializable {
         searchBox = true;
         dataTable = false;
         infoBox = false;
-        cancelBtn = false;
         addCause = false;
         addConq = false;
         addControl = false;

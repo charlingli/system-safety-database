@@ -34,7 +34,7 @@ public class passwordValidator implements Validator {
 
         if (!password.equals(confirmPassword)) {
             uiInputConfirmPassword.setValid(false);
-            throw new ValidatorException(new FacesMessage("Passwords must match!"));
+            throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR, null, "The new passwords you entered do not match!"));
         }
     }
 }

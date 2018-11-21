@@ -140,6 +140,9 @@ public class hazardView_MB implements Serializable {
     private int qualityRating;
     private int displayRating;
     private int displayCount;
+    private String suggestionComment;
+    private String deletionComment;
+    private String deletionReason;
 
     public hazardView_MB() {
     }
@@ -588,14 +591,40 @@ public class hazardView_MB implements Serializable {
         this.displayCount = displayCount;
     }
 
+    public String getSuggestionComment() {
+        return suggestionComment;
+    }
+
+    public void setSuggestionComment(String suggestionComment) {
+        this.suggestionComment = suggestionComment;
+    }
+
+    public String getDeletionComment() {
+        return deletionComment;
+    }
+
+    public void setDeletionComment(String deletionComment) {
+        this.deletionComment = deletionComment;
+    }
+
+    public String getDeletionReason() {
+        return deletionReason;
+    }
+
+    public void setDeletionReason(String deletionReason) {
+        this.deletionReason = deletionReason;
+    }
+
     // This method creates the search object, based on the selected parameters.
     public void constructSearchObject() {
         // Initialising a couple of variables
         List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
         List<searchObject> searchCompositeList = new ArrayList<>();
 
-        //This page method will always present the approved hazards
-        searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "SSD Workflow Status"));
+        //This page method will present the approved hazards if the user is an approver
+        if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+            searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "SSD Workflow Status"));
+        }
 
         // Start the grind of finding each entry to each field
         if (!getSearchedHazardId().isEmpty()) {
@@ -734,6 +763,7 @@ public class hazardView_MB implements Serializable {
         setSelectedControlOwners(null);
         setSelectedControlRecommendations(null);
         setTNSelectedNodes(null);
+        setHazardsQuality("A");
         constructHtml(new ArrayList<>(), new ArrayList<>());
         enableQueryDescr = false;
     }
@@ -1139,8 +1169,9 @@ public class hazardView_MB implements Serializable {
         }
     }
 
-    public void sendSuggestion(String suggestionComment) {
-        if (suggestionComment.length() < 1) {
+    public void sendSuggestion() {
+        System.out.println(getSuggestionComment());
+        if (getSuggestionComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your change suggestion."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The suggestion has been sent for review."));
@@ -1153,15 +1184,16 @@ public class hazardView_MB implements Serializable {
             wfObj.setWfObjectId(getDetailHazard().getHazardId());
             wfObj.setWfObjectName("Hazard");
             wfObj.setWfComment1("A change to this hazard was suggested by a user. Please review and manually edit, then accept this workflow to complete.");
-            wfObj.setWfComment2(suggestionComment);
+            wfObj.setWfComment2(getSuggestionComment());
             wfObj.setWfCompleteMethod("HazardSuggestionWF");
             validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-SUG");
+            setSuggestionComment(null);
             setDetailHazard(null);
         }
     }
 
-    public void sendDeletion(String deletionReason, String deletionComment) {
-        if (deletionComment.length() < 1) {
+    public void sendDeletion() {
+        if (getDeletionComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your mark for deletion."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The deletion mark has been sent for review."));
@@ -1174,10 +1206,12 @@ public class hazardView_MB implements Serializable {
             wfObj.setWfObjectId(getDetailHazard().getHazardId());
             wfObj.setWfObjectName("Hazard");
             wfObj.setWfComment1("This hazard was marked for deletion by a user. Please review and approve this workflow to delete or reject this workflow to cancel.");
-            wfObj.setWfComment2(deletionReason);
-            wfObj.setWfComment2(deletionComment);
+            wfObj.setWfComment2(getDeletionReason());
+            wfObj.setWfComment2(getDeletionComment());
             wfObj.setWfCompleteMethod("HazardDeletionWF");
             validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-DEL");
+            setDeletionComment(null);
+            setDeletionReason(null);
             setDetailHazard(null);
         }
     }

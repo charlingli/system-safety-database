@@ -91,6 +91,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             //Because the workflow was approved by the admin the header control fields will change
             workObj.setWfStatusBefUpdate(workObj.getWfStatus());
             workObj.setWfStatus("A");
+            workObj.setWfComment3(wfHeaderObj.getWfComment3());
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
             java.util.Date currentDate = new java.util.Date();
@@ -124,6 +125,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             //Because the workflow was rejected by the admin the header control fields will change
             workObj.setWfStatusBefUpdate(workObj.getWfStatus());
             workObj.setWfStatus("R");
+            workObj.setWfComment3(wfHeaderObj.getWfComment3());
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
             java.util.Date currentDate = new java.util.Date();
@@ -155,6 +157,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
         //The transaction will directly rejected.
         workObj.setWfStatusBefUpdate(workObj.getWfStatus());
         workObj.setWfStatus("C");
+        workObj.setWfComment3(wfHeaderObj.getWfComment3());
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         workObj.setWfUserIdUpdate(activeUser);
         java.util.Date currentDate = new java.util.Date();
@@ -173,6 +176,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             //Because the workflow was rejected by the admin the header control fields will change
             workObj.setWfStatusBefUpdate(workObj.getWfStatus());
             workObj.setWfStatus("I");
+            workObj.setWfComment3(wfHeaderObj.getWfComment3());
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
             java.util.Date currentDate = new java.util.Date();

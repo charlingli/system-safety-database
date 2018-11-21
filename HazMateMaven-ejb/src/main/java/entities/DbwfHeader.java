@@ -121,6 +121,11 @@ public class DbwfHeader implements Serializable {
         this.wfAddedDateTime = wfAddedDateTime;
         this.wfCompleteMethod = wfCompleteMethod;
     }
+    
+    public DbwfHeader(String wfId, String wfComment3) {
+        this.wfId = wfId;
+        this.wfComment3 = wfComment3;
+    }
 
     public String getWfId() {
         return wfId;

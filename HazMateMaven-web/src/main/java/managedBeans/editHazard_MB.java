@@ -649,22 +649,8 @@ public class editHazard_MB implements Serializable {
         savedHazard.setRiskFrequencyId(currentHazard.getRiskFrequencyId());
         savedHazard.setRiskSeverityId(currentHazard.getRiskSeverityId());
         savedHazard.setHazardSystemStatus(currentHazard.getHazardSystemStatus());
-        
         populateTree();
     }
-
-    //This method controls the behaviour when the hazard relations has been called due to a redirection page from add or edit hazard.
-//    private void redirectedPage() {
-//        DbHazard initialHazard = (DbHazard) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("hazardRelObj");
-//        if (initialHazard != null) {
-//            setSelectedHazardId(initialHazard.getHazardId());
-//            constructSearchObject();
-//            showEdit(initialHazard);
-//            redirectionSource = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("redirectionSource");
-//        } else {
-//            redirectionSource = "EditHazard";
-//        }
-//    }
     
     public void constructSearchObject() {
         listSearchObject = new ArrayList<>();
@@ -749,6 +735,7 @@ public class editHazard_MB implements Serializable {
                 currentHazard.getRiskFrequencyId().getRiskFrequencyId().equals(savedHazard.getRiskFrequencyId().getRiskFrequencyId()) &&
                 currentHazard.getRiskSeverityId().getRiskSeverityId().equals(savedHazard.getRiskSeverityId().getRiskSeverityId()) &&
                 currentHazard.getLegacyId().equals(savedHazard.getLegacyId()) &&
+                currentHazard.getHazardReview().equals(savedHazard.getHazardReview()) &&
                 currentHazard.getHazardSystemStatus().getSystemStatusId().equals(savedHazard.getHazardSystemStatus().getSystemStatusId())) {
             return false;
         }
@@ -766,9 +753,9 @@ public class editHazard_MB implements Serializable {
                 currentHazard.setUpdatedDateTime(new Date());
                 currentHazard.setUserIdUpdate(activeUser.getUserId());
                 dbHazardFacade.edit(currentHazard);
-                responseStr = "The sbs tree has been edited for " + currentHazard.getHazardId() + ".";
+                responseStr = "The sbs tree has been edited successfully.";
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node!"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Please select at least one SBS node!"));
                 return null;
             }
         }
@@ -777,15 +764,16 @@ public class editHazard_MB implements Serializable {
             currentHazard.setUpdatedDateTime(new Date());
             currentHazard.setUserIdUpdate(activeUser.getUserId());
             dbHazardFacade.edit(currentHazard);
-            responseStr = "The hazard object has been edited for " + currentHazard.getHazardId() + ".";
+            responseStr = "The hazard object has been edited successfully.";
             if (!Arrays.equals(currentTree, savedTree) && currentTree != null && currentTree.length > 0) {
-                responseStr = "The hazard object and sbs tree have been edited for " + currentHazard.getHazardId() + ".";
+                responseStr = "The hazard object and sbs tree have been edited successfully.";
             }
         }
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", responseStr));
         if (redirectionSource.equals("UserWorkflow")) {
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelObj", getCurrentHazard());
             return "/data/relations/hazardsRelation";
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", responseStr));
         }
         constructSearchObject();
         setShowEdit(false);
@@ -810,7 +798,9 @@ public class editHazard_MB implements Serializable {
         ownerObject.setOwnerId(editingHO);
         classObject.setRiskClassId(editingRC);
         frequencyObject.setRiskFrequencyId(editingRF);
+        frequencyObject.setFrequencyValue(dbriskFrequencyFacade.getRiskFrequency(editingRF).get(0).getFrequencyValue());
         severityObject.setRiskSeverityId(editingRS);
+        severityObject.setSeverityValue(dbriskSeverityFacade.getRiskSeverity(editingRS).get(0).getSeverityValue());
         systemObject.setSystemStatusId(editingSS);
         
         currentHazard.setHazardActivity(activityObject);
@@ -821,7 +811,7 @@ public class editHazard_MB implements Serializable {
         currentHazard.setRiskClassId(classObject);
         currentHazard.setRiskFrequencyId(frequencyObject);
         currentHazard.setRiskSeverityId(severityObject);
-        currentHazard.setHazardSystemStatus(systemObject);
+        savedHazard.setHazardSystemStatus(systemObject);
         
     }
     

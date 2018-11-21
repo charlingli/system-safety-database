@@ -13,7 +13,8 @@
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <div class="messageDiv">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/>
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
+                            <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         </div>
                         <p:dataTable id="viewTable" value="#{project_MB.listDbProject}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
@@ -74,6 +75,7 @@
                                 <p:outputLabel value="Project Abbreviation:" for="projectAbbrev"/>
                                 <p:inputText id="projectAbbrev" value="#{project_MB.projectObject.projectAbbrev}" maxlength="3" title="This code will be used to uniquely identify hazards belonging to this project" required="true" requiredMessage="The Project Abbreviation field is required"/>
                             </p:panelGrid>
+                            <p:tooltip for="projectAbbrev" value="A 3-letter abbreviation to uniquely identify hazards associated with this project" />
                         </p:panel>
                         <div class="panelButtons">
                             <c:choose>

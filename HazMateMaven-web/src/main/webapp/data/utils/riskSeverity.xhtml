@@ -13,7 +13,8 @@
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <div class="messageDiv">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/>
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
+                            <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         </div>
                         <p:dataTable id="viewTable" value="#{riskSeverity_MB.listDbRiskSeverity}" var="item" styleClass="parameterTable">
                             <f:facet name="header">

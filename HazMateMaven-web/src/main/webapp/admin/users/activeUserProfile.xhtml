@@ -10,7 +10,8 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                    <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                     <h:panelGrid columns="1" class="profilePanel">
                         <p:panel>
                             <p class="p-heading">My Profile</p>
@@ -22,9 +23,9 @@
                                 <p:outputLabel value="Position:"/>
                                 <h:outputText value="#{activeUser_MB.activeUserPosition}"/>
                                 <p:outputLabel value="Mobile Number:"/>
-                                <h:outputText value="#{activeUser_MB.activeUserPosition}"/>
+                                <h:outputText value="#{activeUser_MB.activeUserMobile}"/>
                                 <p:outputLabel value="Email:"/>
-                                <h:outputText value="#{activeUser_MB.activeUserPosition}"/>
+                                <h:outputText value="#{activeUser_MB.activeUserEmail}"/>
                             </p:panelGrid>
                         </p:panel>
                         <p:accordionPanel id="profileFields" multiple="true" activeIndex="null">
@@ -45,7 +46,7 @@
                                     <h:inputSecret id="confirmPassword" binding="#{confirmPassword}" title="Confirm Password" required="true" requiredMessage="The Confirm Password field is required."/>
                                 </p:panelGrid>
                                 <div class="panelButtons">
-                                    <p:commandButton value="Update" action="#{activeUser_MB.activeChange()}"/>
+                                    <p:commandButton value="Update" action="#{activeUser_MB.activeChange()}" update="confirmPassword, activePassword, currentPassword"/>
                                 </div>
                             </p:tab>
                             <p:tab title="My Permissions">

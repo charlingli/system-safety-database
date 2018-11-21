@@ -585,28 +585,25 @@
                                 <h:outputText value="Suggest a change"/>
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
-                            <p:inputTextarea id="suggestionComments" binding="#{suggestionComment}"/>
-                            <p:commandButton value="Send" action="#{hazardView_MB.sendSuggestion(suggestionComment.value)}">
-                                <f:ajax listener="#{suggestionComment.resetValue()}" execute="@form" render="@form"/>
-                            </p:commandButton>
+                            <p:inputTextarea id="suggestionComments" value="#{hazardView_MB.suggestionComment}"/>
+                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendSuggestion()}" update="suggestionComments" oncomplete="PF('suggestionOverlay').hide()" />
                         </p:panelGrid>
                     </p:overlayPanel>
                     <p:overlayPanel widgetVar="deletionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
                         <p:panelGrid columns="1" class="suggestionPanel">
                             <f:facet name="header">
-                                <h:outputText value="Leave a comment and choose a reason:"/>
+                                <h:outputText value="Mark for deletion"/>
                             </f:facet>
-                            <p:inputTextarea id="deletionComments" binding="#{deletionComment}"/>
+                            <h:outputText value="Leave a comment:"/>
+                            <p:inputTextarea id="deletionComments" value="#{hazardView_MB.deletionComment}"/>
                         </p:panelGrid>
                         <p:panelGrid columns="2" class="suggestionPanel">
-                            <p:selectOneMenu id="deletionReason" binding="#{deletionReason}">
+                            <p:selectOneMenu id="deletionReason" value="#{hazardView_MB.deletionReason}">
                                 <f:selectItem itemLabel="Duplicate" itemValue="Duplicate" />
                                 <f:selectItem itemLabel="Poor Quality" itemValue="Poor Quality" />
-                                <f:selectItem itemLabel="Other" itemValue="Other (see comment)" />
+                                <f:selectItem itemLabel="Other (see comment)" itemValue="Other (see comment)" />
                             </p:selectOneMenu>
-                            <p:commandButton value="Send">
-                                <f:ajax listener="#{hazardView_MB.sendDeletion(deletionReason.value, deletionComment.value)}" execute="@form" render="@form"/>
-                            </p:commandButton>
+                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendDeletion()}" update="deletionComments, deletionReason" oncomplete="PF('deletionOverlay').hide()" />
                         </p:panelGrid>
                     </p:overlayPanel>
                 </h:form>

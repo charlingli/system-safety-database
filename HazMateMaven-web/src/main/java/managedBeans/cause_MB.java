@@ -154,26 +154,20 @@ public class cause_MB implements Serializable {
         causeObject = new DbCause();
     }
 
-    public void addCause() {
+    public void addCause() { 
         try {
-            if (hazardObject.getHazardId().equals("null")) {
-                causeObject.setHazardId(null);
-                dbCauseFacade.create(causeObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully added"));
-            } else if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
-                causeObject.setHazardId(hazardObject.getHazardId());
-                dbCauseFacade.create(causeObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully added"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The hazardId does not exist"));
-                return;
+            if (hazardObject.getHazardId() != null) {
+                if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
+                    causeObject.setHazardId(hazardObject.getHazardId());
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "This hazard does not exist!"));
+                    return;
+                }
             }
-
+            dbCauseFacade.create(causeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The cause has been successfully added."));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         causeObject = new DbCause();
         hazardObject = new DbHazard();
@@ -182,24 +176,18 @@ public class cause_MB implements Serializable {
 
     public void editCause() {
         try {
-            if (hazardObject.getHazardId().equals("null")) {
-                causeObject.setHazardId(null);
-                dbCauseFacade.edit(causeObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully edited"));
-            } else if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
-                causeObject.setHazardId(hazardObject.getHazardId());
-                dbCauseFacade.edit(causeObject);
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage("Added", "The cause has been successfully edited"));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The hazardId does not exist"));
-                return;
+            if (hazardObject.getHazardId() != null) {
+                if (!dbHazardFacade.validateHazardId(hazardObject.getHazardId()).isEmpty()) {
+                    causeObject.setHazardId(hazardObject.getHazardId());
+                } else {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "This hazard does not exist!"));
+                    return;
+                }
             }
+            dbCauseFacade.edit(causeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The cause has been successfully edited."));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         causeObject = new DbCause();
         hazardObject = new DbHazard();
@@ -212,9 +200,9 @@ public class cause_MB implements Serializable {
     public void deleteCause(DbCause causeObject) {
         try {
             dbCauseFacade.remove(causeObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Removed", "The cause has been successfully removed"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The cause has been successfully removed"));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error:" + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         } finally {
             init();
         }

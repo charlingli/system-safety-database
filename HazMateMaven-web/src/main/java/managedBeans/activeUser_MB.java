@@ -59,6 +59,8 @@ public class activeUser_MB implements Serializable {
     private String activeUserName;
     private String activeUserCompany;
     private String activeUserPosition;
+    private String activeUserMobile;
+    private String activeUserEmail;
     private String activeUserPassword;
     private String currentPassword;
     private List<DbuserPreferencesPK> userPreferencesPK;
@@ -130,6 +132,22 @@ public class activeUser_MB implements Serializable {
         this.activeUserPosition = activeUserPosition;
     }
 
+    public String getActiveUserMobile() {
+        return activeUserMobile;
+    }
+
+    public void setActiveUserMobile(String activeUserMobile) {
+        this.activeUserMobile = activeUserMobile;
+    }
+
+    public String getActiveUserEmail() {
+        return activeUserEmail;
+    }
+
+    public void setActiveUserEmail(String activeUserEmail) {
+        this.activeUserEmail = activeUserEmail;
+    }
+
     public String getActiveUserPassword() {
         return activeUserPassword;
     }
@@ -187,6 +205,8 @@ public class activeUser_MB implements Serializable {
         setActiveUserName(activeUser.getFirstName() + " " + activeUser.getLastName());
         setActiveUserCompany(activeUser.getCompany());
         setActiveUserPosition(activeUser.getRoleId().getRoleName());
+        setActiveUserMobile(activeUser.getMobileNumber());
+        setActiveUserEmail(activeUser.getUserEmail());
 
         setUserPreferences(dbuserPreferencesFacade.getUserPreferences(activeUser.getUserId()));
 
@@ -215,11 +235,12 @@ public class activeUser_MB implements Serializable {
             String hashedPassword = hashPassword(activeUserPassword);
             activeUser.setPassword(hashedPassword);
             dbUserFacade.edit(activeUser);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Your password has been changed."));
+            setCurrentPassword(null);
+            setActiveUserPassword(null);
             init();
-            return "viewUsers";
-        } else {
-            return "";
         }
+        return "";
     }
 
     private static final int ITERATIONS = 4096;
@@ -246,7 +267,7 @@ public class activeUser_MB implements Serializable {
         if (hashedPassword.equals(activeUser.getPassword())) {
             return true;
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Current password is incorrect!"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The current password you entered is incorrect!"));
             return false;
         }
     }

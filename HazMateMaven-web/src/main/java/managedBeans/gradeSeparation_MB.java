@@ -112,8 +112,9 @@ public class gradeSeparation_MB implements Serializable {
         
         if (existingGradeSeparation.isEmpty()) {
             dbgradeSeparationFacade.create(gradeSeparationObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The grade separation has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The grade separation name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The grade separation name already exists!"));
             return;
         }
 
@@ -127,8 +128,9 @@ public class gradeSeparation_MB implements Serializable {
 
         if (existingGradeSeparation.isEmpty() || existingGradeSeparation.get(0).getGradeSeparationName().equals(prevSeparationName)) {
             dbgradeSeparationFacade.edit(gradeSeparationObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The grade separation has been successfully edited."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The grade separation name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The grade separation name already exists!"));
             return;
         }
         gradeSeparationObject = new DbgradeSeparation();
@@ -143,6 +145,7 @@ public class gradeSeparation_MB implements Serializable {
 
         if (listDbLocation.isEmpty()) {
             dbgradeSeparationFacade.remove(gradeSeparationObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The grade separation has been successfully removed."));
         }
         else    {
             error();

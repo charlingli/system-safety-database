@@ -111,8 +111,9 @@ public class controlHierarchy_MB implements Serializable {
         
         if (existingHierarchy.isEmpty()) {
             dbcontrolHierarchyFacade.create(controlHierarchyObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control hierarchy has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control hierarchy name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control hierarchy name already exists!"));
             return; 
         }
             
@@ -126,8 +127,9 @@ public class controlHierarchy_MB implements Serializable {
         
         if (existingHierarchy.isEmpty() || existingHierarchy.get(0).getControlHierarchyName().equals(prevHierarchyName)) {
             dbcontrolHierarchyFacade.edit(controlHierarchyObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control hierarchy has been successfully edited."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control hierarchy name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control hierarchy name already exists!"));
             return; 
         }
         controlHierarchyObject = new DbcontrolHierarchy();
@@ -142,6 +144,7 @@ public class controlHierarchy_MB implements Serializable {
 
         if (listDbControl.isEmpty()) {
             dbcontrolHierarchyFacade.remove(controlHierarchyObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control hierarchy has been successfully removed."));
         } else {
             error();
             return;

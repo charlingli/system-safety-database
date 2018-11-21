@@ -115,12 +115,13 @@ public class project_MB implements Serializable {
         if (existingAbbrev.isEmpty()) {
             if (existingProjectName.isEmpty()) {
                 dbProjectFacade.create(projectObject);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The project has been successfully added."));
             } else { 
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project name already exists"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project name already exists!"));
                 return;
             }
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project abbreviation is already in use. Please select an alternative."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project abbreviation is already in use."));
             return; 
         }
         
@@ -134,8 +135,9 @@ public class project_MB implements Serializable {
         
         if (existingProjectName.isEmpty() || existingProjectName.get(0).getProjectName().equals(prevProjectName)) {
             dbProjectFacade.edit(projectObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The project has been successfully edited."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project name already exists!"));
             return;
         }
         projectObject = new DbProject(); 
@@ -152,6 +154,7 @@ public class project_MB implements Serializable {
         
         if (listDbLocation.isEmpty()) {
             dbProjectFacade.remove(projectObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The project has been successfully removed."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project is currently assigned to one or more locations."));
             return; 

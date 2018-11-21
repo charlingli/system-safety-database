@@ -112,8 +112,9 @@ public class hazardStatus_MB implements Serializable{
         
         if (existingName.isEmpty()) {
             dbhazardStatusFacade.create(hazardStatusObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard status has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard status name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard status name already exists!"));
             return;
         }
         hazardStatusObject = new DbhazardStatus();
@@ -126,8 +127,9 @@ public class hazardStatus_MB implements Serializable{
         
         if (existingName.isEmpty() || (existingName.get(0).getHazardStatusName().equals(prevStatusName))) {
             dbhazardStatusFacade.edit(hazardStatusObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard status has been successfully edited."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard status name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard status name already exists!"));
             return;
         }
         
@@ -143,7 +145,8 @@ public class hazardStatus_MB implements Serializable{
         listDbHazard = dbhazardStatusFacade.checkHazardStatus(hazardStatusObject.getHazardStatusId());
         
         if (listDbHazard.isEmpty()) {
-        dbhazardStatusFacade.remove(hazardStatusObject);
+            dbhazardStatusFacade.remove(hazardStatusObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard status has been successfully removed."));
         }
         else    {
             error(); 

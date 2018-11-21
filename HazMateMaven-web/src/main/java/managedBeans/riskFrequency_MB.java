@@ -112,8 +112,9 @@ public class riskFrequency_MB implements Serializable {
         
         if (existingRiskFreq.isEmpty()) {
             dbriskFrequencyFacade.create(riskFrequencyObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency already exists!"));
             return;
         }
 
@@ -127,8 +128,9 @@ public class riskFrequency_MB implements Serializable {
         
         if (existingRiskFreq.isEmpty() || existingRiskFreq.get(0).getFrequencyScore().equals(prevFreqScore)) {
             dbriskFrequencyFacade.edit(riskFrequencyObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully edited."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency already exists!"));
             return;
         }
         riskFrequencyObject = new DbriskFrequency();
@@ -143,6 +145,7 @@ public class riskFrequency_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbriskFrequencyFacade.remove(riskFrequencyObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully removed."));
         } else {
             error();
             return;

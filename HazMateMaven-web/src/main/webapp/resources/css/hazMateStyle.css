@@ -188,16 +188,23 @@ footer {
 .p-emphasis-spacer {
     margin: 4px 0 2px 0;
 }
-a.commandLink, .ui-widget-content a {
+a.commandLink, .ui-widget-content a, .ui-commandlink {
     color: #008080;
     text-decoration: underline;
     font-weight: bold;
 }
-a.commandLink:hover, .ui-widget-content a:hover {
+a.commandLink:hover, .ui-widget-content a:hover, .ui-commandlink {
     color: #00d0d0;
 }
 span.commandLink {
     color: #008080;
+}
+.ui-state-disabled.commandLink {
+    color: #008080;
+    opacity: 1;
+    background-color: transparent;
+    font-weight: normal;
+    text-decoration: none;
 }
 a.commandLinkWhite {
     color: #ffffff;
@@ -510,9 +517,12 @@ span.commandLinkWhite {
 .hazardModifyPanel .middle .editInput,
 .parameterModifyPanel .middle input, .parameterModifyPanel .middle textarea, 
 .parameterModifyPanel .middle .editInput, .managementModifyPanel .middle input, 
-.managementModifyPanel .middle textarea, .managementModifyPanel .middle .editInput,
-.relationModifyPanel textarea, .relationModifyPanel input, .relationModifyPanel select {
+.managementModifyPanel .middle textarea, .managementModifyPanel .middle .editInput {
     width: 80%;
+}
+.relationModifyPanel textarea, .relationModifyPanel input, .relationModifyPanel select,
+.relationTable {
+    width: 100%;
 }
 .hiddenField {
     display: none;

@@ -12,7 +12,8 @@
                 <f:view>
                     <h:form id="causeForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
@@ -122,7 +123,7 @@
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
                                 <p:panel rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle" rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" styleClass="relationTable" columns="2" columnClasses="left,middle" rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
@@ -137,10 +138,10 @@
                                         </f:facet>
                                         <c:if test="#{cause_MB.editFlag}">
                                             <p:outputLabel value="Cause Id:" for="causeId"/>
-                                            <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The CauseId field is required."/>
+                                            <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The Cause Id field is required."/>
                                         </c:if>
                                         <p:outputLabel value="Cause Description:" for="causeDescription"/>
-                                        <p:inputTextarea rows="4" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The CauseDescription field is required."/>
+                                        <p:inputTextarea rows="4" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The Cause Description field is required."/>
                                     </p:panelGrid>
                                 </p:panel>
                                 <div class="panelButtons">

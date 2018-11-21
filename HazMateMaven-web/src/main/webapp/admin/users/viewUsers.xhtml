@@ -10,7 +10,8 @@
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                    <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                     <p:dataTable styleClass="managementTableLarge" id="userTable" value="#{users_MB.listUsers}" var="user" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}">
                         <f:facet name="header">
                             <p:outputPanel>

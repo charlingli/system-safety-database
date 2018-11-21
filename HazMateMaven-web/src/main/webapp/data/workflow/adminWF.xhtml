@@ -180,7 +180,7 @@
                         <p:ajax event="toggleSelect" update=":wfForm"/>
                         <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
                         <p:column headerText="Workflow ID" style="width: 7%; text-align:center">
-                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{userWF_MB.showDetail(wf.dbwfHeader)}" oncomplete="PF('detailOverlay').show()">
+                            <p:commandLink id="wfAjax" update="wfForm" actionListener="#{userWF_MB.showDetail(wf.dbwfHeader)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.dbwfHeader.wfId}"/>
                             </p:commandLink>
                             <p:tooltip for="wfAjax">
@@ -232,7 +232,7 @@
                                     <h:outputText value="Bulk actions: " />
                                     <p:commandButton id="approveAllButton" action="#{userWF_MB.prepareDecisions('A')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : false}" icon="fa fa-check" styleClass="approveButton"/> 
                                     <p:commandButton id="rejectAllButton" action="#{userWF_MB.prepareDecisions('R')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : false}" icon="fa fa-ban" styleClass="rejectButton"/> 
-                                    <p:commandButton id="reviewAllButton" action="#{userWF_MB.prepareDecisions('I')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : false}" icon="fa fa-info" styleClass="requestButton"/>
+                                    <p:commandButton id="reviewAllButton" action="#{userWF_MB.prepareDecisions('I')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : userWF_MB.checkRequest() ? true : false}" icon="fa fa-info" styleClass="requestButton"/>
                                     <p:tooltip for="approveAllButton">
                                         <h:outputText value="Approve selected workflows"/>
                                     </p:tooltip>
@@ -253,7 +253,7 @@
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
                             <p:inputTextarea id="decisionComments" value="#{userWF_MB.approvalComment}"/>
-                            <p:commandButton value="#{userWF_MB.approvalDecision == 'A' ? 'Approve' : userWF_MB.approvalDecision == 'R' ? 'Reject' : userWF_MB.approvalDecision == 'I' ? 'Request information' : userWF_MB.approvalDecision}" action="#{userWF_MB.sendDecision()}" update="@form"/>
+                            <p:commandButton value="#{userWF_MB.approvalDecision == 'A' ? 'Approve' : userWF_MB.approvalDecision == 'R' ? 'Reject' : userWF_MB.approvalDecision == 'I' ? 'Request information' : userWF_MB.approvalDecision}" action="#{userWF_MB.sendDecision()}" update="wfForm"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                     <p:overlayPanel widgetVar="multipleOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
@@ -262,8 +262,8 @@
                                 <h:outputText value="#{userWF_MB.approvalDecision == 'A' ? 'Approve all with comments' : userWF_MB.approvalDecision == 'R' ? 'Reject all with comments' : userWF_MB.approvalDecision == 'I' ? 'Request for information' : userWF_MB.approvalDecision}"/>
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
-                            <p:inputTextarea id="decisionMultiple" value="#{userWF_MB.approvalComment}"/>
-                            <p:commandButton value="#{userWF_MB.approvalDecision == 'A' ? 'Approve all' : userWF_MB.approvalDecision == 'R' ? 'Reject all' : userWF_MB.approvalDecision == 'I' ? 'Request information' : userWF_MB.approvalDecision}" action="#{userWF_MB.sendDecisions()}" update="@form"/>
+                            <p:inputTextarea id="decisionMultiple" value="#{userWF_MB.multipleComment}"/>
+                            <p:commandButton value="#{userWF_MB.approvalDecision == 'A' ? 'Approve all' : userWF_MB.approvalDecision == 'R' ? 'Reject all' : userWF_MB.approvalDecision == 'I' ? 'Request information' : userWF_MB.approvalDecision}" action="#{userWF_MB.sendDecisions()}" update="wfForm"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                 </h:form>

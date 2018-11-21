@@ -119,7 +119,7 @@ public class workflowType_MB implements Serializable {
         }
         
         if (!dbwfHeaderFacade.wfTypesValidation(wfTypeObject.getWfTypeName())) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "Workflow type added, but there is no business logic associated with yet."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The workflow type has been added, but will not be used anywhere."));
         }
         dbwfTypeFacade.create(wfTypeObject);
         

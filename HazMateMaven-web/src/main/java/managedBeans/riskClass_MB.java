@@ -111,8 +111,9 @@ public class riskClass_MB implements Serializable {
         
         if (existingRiskClass.isEmpty()) {
             dbriskClassFacade.create(riskClassObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk class has been successfully added."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already!"));
             return;
         }
         
@@ -126,8 +127,9 @@ public class riskClass_MB implements Serializable {
         
         if (existingRiskClass.isEmpty() || existingRiskClass.get(0).getRiskClassName().equals(prevRiskClassName)) {
             dbriskClassFacade.edit(riskClassObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk class has been successfully edited."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk class name exists already!"));
             return;
         }
         riskClassObject = new DbriskClass();
@@ -142,6 +144,7 @@ public class riskClass_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbriskClassFacade.remove(riskClassObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk class has been successfully removed."));
         } else {
             error();
             return;

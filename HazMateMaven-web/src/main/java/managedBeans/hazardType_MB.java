@@ -111,8 +111,9 @@ public class hazardType_MB implements Serializable {
         
         if (existingType.isEmpty()) {
             dbhazardTypeFacade.create(hazardTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard type has been successfully added."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard type name already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard type name already exists!"));
             return; 
         }
         hazardTypeObject = new DbhazardType();
@@ -125,8 +126,9 @@ public class hazardType_MB implements Serializable {
         
         if ( existingType.isEmpty() || existingType.get(0).getHazardTypeName().equals(prevTypeName)) {
             dbhazardTypeFacade.edit(hazardTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard type has been successfully edited."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard type name already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard type name already exists!"));
             return;
         }
         hazardTypeObject = new DbhazardType(); 
@@ -142,6 +144,7 @@ public class hazardType_MB implements Serializable {
         
         if (listDbHazard.isEmpty()) {
             dbhazardTypeFacade.remove(hazardTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard type has been successfully removed."));
         }
         else    {
             error();

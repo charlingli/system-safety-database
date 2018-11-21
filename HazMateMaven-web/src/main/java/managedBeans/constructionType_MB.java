@@ -112,8 +112,9 @@ public class constructionType_MB implements Serializable {
         
         if (existingConstructType.isEmpty()) {
             dbconstructionTypeFacade.create(constructionTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The construction type has been successfully added."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The construction type name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The construction type name already exists!"));
             return;
 
         }
@@ -128,8 +129,9 @@ public class constructionType_MB implements Serializable {
         
         if (existingConstructType.isEmpty() || existingConstructType.get(0).getConstructionTypeName().equals(prevConstructTypeName)) {
             dbconstructionTypeFacade.edit(constructionTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The construction type has been successfully edited."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The construction type name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The construction type name already exists!"));
             return;
         }
         constructionTypeObject = new DbconstructionType(); 
@@ -145,6 +147,7 @@ public class constructionType_MB implements Serializable {
         
         if (listDbLocation.isEmpty())   {
             dbconstructionTypeFacade.remove(constructionTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The construction type has been successfully removed."));
         }
         else {
             error(); 

@@ -6,6 +6,7 @@
 package ejb;
 
 import entities.DbwfDecision;
+import entities.DbwfLine;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,8 +32,8 @@ public class DbwfDecisionFacade extends AbstractFacade<DbwfDecision> implements 
     }
     
     @Override
-    public List<DbwfDecision> checkWfDecision(String wfDecisionId)   {
-        return em.createQuery("FROM DbwfHeader w WHERE w.wfApproverDecisionId.wfDecisionId = :checkwfDecisionId")
+    public List<DbwfLine> checkWfDecision(String wfDecisionId)   {
+        return em.createQuery("FROM DbwfLine l WHERE l.wfApproverDecisionId.wfDecisionId = :checkwfDecisionId")
                 .setParameter("checkwfDecisionId", wfDecisionId)
                 .setMaxResults(10)
                 .getResultList(); 

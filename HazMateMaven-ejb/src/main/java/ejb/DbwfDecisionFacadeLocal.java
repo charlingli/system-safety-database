@@ -6,6 +6,7 @@
 package ejb;
 
 import entities.DbwfDecision;
+import entities.DbwfLine;
 import java.util.List;
 import javax.ejb.Local;
 
@@ -32,5 +33,5 @@ public interface DbwfDecisionFacadeLocal {
     
     List<DbwfDecision> findByName(String fieldName, String fieldValue);
     
-    List<DbwfDecision> checkWfDecision(String riskClassId);
+    List<DbwfLine> checkWfDecision(String riskClassId);
 }

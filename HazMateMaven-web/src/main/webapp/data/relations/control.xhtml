@@ -12,11 +12,12 @@
                 <f:view>
                     <h:form id="controlForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
-                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with control ##{control_MB.controlObject.controlId}:"/>
+                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with control ##{control_MB.selectedControl.controlId}:"/>
                                     <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
                                         <p:outputLabel value="Control Description: "/>
                                         <p:outputLabel value="#{control_MB.selectedControl.controlDescription}"/>
@@ -102,7 +103,7 @@
                                 </p:column>
                                 <p:column headerText="Control Hierarchy" filterBy="#{item.controlHierarchyId.controlHierarchyName}" filterMatchMode="in" styleClass="small">
                                     <f:facet name="filter">
-                                        <p:selectCheckboxMenu label="Hierarchies" onchange="PF('controlTable').filter()" scrollHeight="150"  >
+                                        <p:selectCheckboxMenu label="Select" onchange="PF('controlTable').filter()" scrollHeight="150"  >
                                             <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="searchHierarchy" itemLabel="#{searchHierarchy.controlHierarchyName}" itemValue="#{searchHierarchy.controlHierarchyName}"  />
                                         </p:selectCheckboxMenu>
                                     </f:facet>
@@ -121,14 +122,14 @@
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" disabled="#{control_MB.editButton}" class="commandLink">
+                                    <h:commandLink value="Edit" disabled="#{control_MB.addFlag}" class="commandLink">
                                         <f:ajax listener="#{control_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
                                     <p:commandLink value="Delete" action="#{control_MB.deleteControl(item)}" oncomplete="PF('controlTable').filter()"
                                                    onclick="if (!confirm('This action may also disassociate hazards from their control. Do you wish to proceed?')) {
                                                                return;
                                                            }
-                                                           ;" disabled="#{control_MB.deleteButton}" class="commandLink"/> 
+                                                           ;" disabled="#{control_MB.editFlag or control_MB.addFlag}" class="commandLink"/> 
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
@@ -188,7 +189,7 @@
                             </p:panel>
                         </h:panelGrid>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Controls" disabled="#{control_MB.addButton}"> 
+                            <p:commandButton value="Add Controls" disabled="#{control_MB.addFlag}"> 
                                 <f:ajax listener="#{control_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>

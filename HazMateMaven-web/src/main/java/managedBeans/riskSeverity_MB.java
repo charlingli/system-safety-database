@@ -111,8 +111,9 @@ public class riskSeverity_MB implements Serializable {
         
         if (existingSeverity.isEmpty()) {
             dbriskSeverityFacade.create(riskSeverityObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity already exists!"));
             return;
         }
 
@@ -126,8 +127,9 @@ public class riskSeverity_MB implements Serializable {
         
         if (existingSeverity.isEmpty() || existingSeverity.get(0).getSeverityScore().equals(prevSeverityScore)) {
             dbriskSeverityFacade.edit(riskSeverityObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully edited."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity already exists!"));
             return;
         }
         riskSeverityObject = new DbriskSeverity();
@@ -142,6 +144,7 @@ public class riskSeverity_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbriskSeverityFacade.remove(riskSeverityObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully removed."));
         } else {
             error();
             return;
