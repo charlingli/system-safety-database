@@ -59,16 +59,6 @@ public interface DbHazardFacadeLocal {
 
     List<DbHazard> findByName(String fieldName, String fieldValue);
 
-//    List<DbHazard> findAllHazards();
-//
-//    List<DbHazard> findHazardsByFields(List<searchObject> hazardList);
-//
-//    List<DbHazard> findHazardsByFieldsAndSbs(List<searchObject> hazardList, List<treeNodeObject> sbsList);
-//
-//    List<DbHazard> findHazardsBySbs(List<treeNodeObject> sbsList);
-//    
-    List<DbHazard> findHazardsByFieldsOnly(List<searchObject> hazardList);
-    
     List<DbHazard> validateHazardId(String hazardId);
     
     int calculateRiskScore(int frequencyScore, int severityScore);
@@ -84,5 +74,7 @@ public interface DbHazardFacadeLocal {
     void wfApproveHazard(String hazardId, String finalDecision);
     
     void wfDeleteHazard(String hazardId);
+    
+    List<Object[]> exportHazards(List<String> searchedHazards);
     
 }

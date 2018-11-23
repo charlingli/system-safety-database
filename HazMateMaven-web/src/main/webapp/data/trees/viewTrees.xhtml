@@ -95,6 +95,13 @@
                             </p:column>
                         </p:dataTable>
                     </div>
+                    
+                    <div class="actionButtonsDiv">
+                        <p:panel>
+                            <p:outputLabel>Exporting testing: </p:outputLabel>
+                            <p:commandButton value="Export file" action="#{trees_MB.exportExcel}" ajax="false"/>
+                        </p:panel>
+                    </div>                    
                 </h:form>
             </ui:define>
         </ui:composition>

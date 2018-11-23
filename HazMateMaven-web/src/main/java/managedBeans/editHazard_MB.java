@@ -727,7 +727,7 @@ public class editHazard_MB implements Serializable {
             listSearchObject.add(new searchObject("systemStatusId", terms, "int", "DbHazard", "hazardSystemStatus", null, null, "in", "Hazard System Status"));
         }
         constructHtml(listSearchObject);
-        listHazards = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
+//        listHazards = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
     }
     
     public void cancelEdit() {
