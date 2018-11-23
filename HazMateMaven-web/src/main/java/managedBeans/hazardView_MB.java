@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
@@ -143,6 +144,7 @@ public class hazardView_MB implements Serializable {
     private String suggestionComment;
     private String deletionComment;
     private String deletionReason;
+    private List<defaultViewSrchObject> checkedHazards;
 
     public hazardView_MB() {
     }
@@ -613,6 +615,14 @@ public class hazardView_MB implements Serializable {
 
     public void setDeletionReason(String deletionReason) {
         this.deletionReason = deletionReason;
+    }
+
+    public List<defaultViewSrchObject> getCheckedHazards() {
+        return checkedHazards;
+    }
+
+    public void setCheckedHazards(List<defaultViewSrchObject> checkedHazards) {
+        this.checkedHazards = checkedHazards;
     }
 
     // This method creates the search object, based on the selected parameters.
@@ -1262,5 +1272,10 @@ public class hazardView_MB implements Serializable {
                 }
             }
         }
+    }
+    
+    public List<String> getIdsForExport() {
+        System.out.println(getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList()));
+        return getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
     }
 }

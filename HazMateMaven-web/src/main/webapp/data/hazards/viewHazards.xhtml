@@ -463,15 +463,25 @@
                         </p:commandButton>
                     </div>
                     <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
-                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex">
+                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox">
                         <f:facet name="header">
-                            <p:outputPanel>
-                                <h:outputText value="The current hazards are: "/>
-                                <p:commandButton id="columnToggle" rendered="false" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.showExtended()}" onclick="this.form.target = '_blank'" ajax="false">
-                                    <f:param name="hazard.list" value="#{hazardView_MB.listSearchedHazards}"/>
-                                </p:commandButton>
+                            <p:outputPanel styleClass="tableHeader">
+                                <div class="left"></div>
+                                <div class="center">
+                                    <h:outputText value="The current hazards are: "/>
+                                </div>
+                                <div class="right">
+                                    <h:outputText value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
+                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.getIdsForExport()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
+                                </div>
                             </p:outputPanel>
                         </f:facet>
+                        <p:ajax event="rowSelect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowUnselect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowSelectCheckbox" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowUnselectCheckbox" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="toggleSelect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
                         <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>

@@ -95,19 +95,25 @@ footer {
 .tableColumn300p {
     width: 300px;
 }
-.tableFooter {
+.tableFooter, .tableHeader {
     display: flex; 
     flex-wrap: wrap;
 }
-.tableFooter .left {
+.tableFooter .left, .tableHeader .left {
     flex-grow: 1; 
-    flex-basis: 50%; 
+    flex-basis: 33%; 
     text-align: left; 
     transform: translateY(20%);
 }
-.tableFooter .right {
+.tableFooter .center, .tableHeader .center {
     flex-grow: 1; 
-    flex-basis: 50%; 
+    flex-basis: 33%; 
+    text-align: center; 
+    transform: translateY(20%);
+}
+.tableFooter .right, .tableHeader .right {
+    flex-grow: 1; 
+    flex-basis: 33%; 
     text-align: right;
 }
 /**
