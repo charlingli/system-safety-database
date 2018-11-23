@@ -334,17 +334,18 @@ public class addHazard_MB implements Serializable {
                     displaySelectedMultiple1(selectedNodes);
                     if (hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("The content of both is the SAME");
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "No changes have been made."));
                     } else if (!hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("The content of the object CHANGED but the tree is still the SAME.");
                         dbHazardFacade.edit(hazardObject);
                         saveHazardObject(hazardObject);
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard was edited succesufully!"));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been edited successfully."));
                     } else if (hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("The content of the object is the SAME but the tree CHANGED.");
                         dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
                         addSBS();
                         savedCheckedNodesList = treeCheckedNodesList;
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard was edited succesufully!"));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The sbs tree has been edited successfully."));
                     } else if (!hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("Both Changed.");
                         dbHazardFacade.edit(hazardObject);
@@ -352,14 +353,14 @@ public class addHazard_MB implements Serializable {
                         addSBS();
                         saveHazardObject(hazardObject);
                         savedCheckedNodesList = treeCheckedNodesList;
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Success", "The hazard was edited succesufully!"));
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard object and sbs tree have been edited successfully."));
                     }
                 }
             } catch (Exception e) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", e.getMessage()));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
             }
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Please select at least one SBS node"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Please select at least one SBS node"));
         }
     }
 
@@ -387,7 +388,7 @@ public class addHazard_MB implements Serializable {
 
         dbHazardFacade.create(hazardObject);
         saveHazardObject(hazardObject);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
     }
 
     //Filling and asociating all the related objects into the Hazard Object.

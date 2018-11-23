@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
@@ -140,6 +141,10 @@ public class hazardView_MB implements Serializable {
     private int qualityRating;
     private int displayRating;
     private int displayCount;
+    private String suggestionComment;
+    private String deletionComment;
+    private String deletionReason;
+    private List<defaultViewSrchObject> checkedHazards;
 
     public hazardView_MB() {
     }
@@ -588,14 +593,48 @@ public class hazardView_MB implements Serializable {
         this.displayCount = displayCount;
     }
 
+    public String getSuggestionComment() {
+        return suggestionComment;
+    }
+
+    public void setSuggestionComment(String suggestionComment) {
+        this.suggestionComment = suggestionComment;
+    }
+
+    public String getDeletionComment() {
+        return deletionComment;
+    }
+
+    public void setDeletionComment(String deletionComment) {
+        this.deletionComment = deletionComment;
+    }
+
+    public String getDeletionReason() {
+        return deletionReason;
+    }
+
+    public void setDeletionReason(String deletionReason) {
+        this.deletionReason = deletionReason;
+    }
+
+    public List<defaultViewSrchObject> getCheckedHazards() {
+        return checkedHazards;
+    }
+
+    public void setCheckedHazards(List<defaultViewSrchObject> checkedHazards) {
+        this.checkedHazards = checkedHazards;
+    }
+
     // This method creates the search object, based on the selected parameters.
     public void constructSearchObject() {
         // Initialising a couple of variables
         List<treeNodeObject> treeCheckedNodesList = new ArrayList<>();
         List<searchObject> searchCompositeList = new ArrayList<>();
 
-        //This page method will always present the approved hazards
-        searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "SSD Workflow Status"));
+        //This page method will present the approved hazards if the user is an approver
+        if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+            searchCompositeList.add(new searchObject("systemStatusId", "2", "int", "DbHazard", "hazardSystemStatus", null, null, "in", "SSD Workflow Status"));
+        }
 
         // Start the grind of finding each entry to each field
         if (!getSearchedHazardId().isEmpty()) {
@@ -734,6 +773,7 @@ public class hazardView_MB implements Serializable {
         setSelectedControlOwners(null);
         setSelectedControlRecommendations(null);
         setTNSelectedNodes(null);
+        setHazardsQuality("A");
         constructHtml(new ArrayList<>(), new ArrayList<>());
         enableQueryDescr = false;
     }
@@ -1082,8 +1122,10 @@ public class hazardView_MB implements Serializable {
             qualityObject.setRating(rating);
             if (rating == 0) {
                 qualityObject.setWeighting(0);
-            } else { // Remember to implement a role check here for different weightings
+            } else if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
                 qualityObject.setWeighting(2);
+            } else {
+                qualityObject.setWeighting(1);
             }
             dbQualityFacade.edit(qualityObject);
         } else {
@@ -1095,8 +1137,10 @@ public class hazardView_MB implements Serializable {
             qualityObject.setRating(rating);
             if (rating == 0) {
                 qualityObject.setWeighting(0);
-            } else { // Remember to implement a role check here for different weightings
+            } else if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
                 qualityObject.setWeighting(2);
+            } else {
+                qualityObject.setWeighting(1);
             }
             dbQualityFacade.create(qualityObject);
         }
@@ -1135,11 +1179,12 @@ public class hazardView_MB implements Serializable {
         }
     }
 
-    public void sendSuggestion(String suggestionComment) {
-        System.out.println(suggestionComment);
-        if (suggestionComment.length() < 1) {
+    public void sendSuggestion() {
+        System.out.println(getSuggestionComment());
+        if (getSuggestionComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your change suggestion."));
         } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The suggestion has been sent for review."));
             List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
             DbwfHeader wfObj = new DbwfHeader();
             wfObj.setWfTypeId(new DbwfType("W3"));
@@ -1148,19 +1193,20 @@ public class hazardView_MB implements Serializable {
             wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
             wfObj.setWfObjectId(getDetailHazard().getHazardId());
             wfObj.setWfObjectName("Hazard");
-            wfObj.setWfComment1("A change to this hazard was suggested by a user. Please review and manually edit, then complete this workflow to close off.");
-            wfObj.setWfComment2(suggestionComment);
+            wfObj.setWfComment1("A change to this hazard was suggested by a user. Please review and manually edit, then accept this workflow to complete.");
+            wfObj.setWfComment2(getSuggestionComment());
             wfObj.setWfCompleteMethod("HazardSuggestionWF");
             validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-SUG");
+            setSuggestionComment(null);
             setDetailHazard(null);
-            init();
         }
     }
 
-    public void sendDeletion(String deletionReason, String deletionComment) {
-        if (deletionComment.length() < 1) {
+    public void sendDeletion() {
+        if (getDeletionComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your mark for deletion."));
         } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The deletion mark has been sent for review."));
             List<DbUser> listApprovers = dbUserFacade.getUsersByRole("Core user");
             DbwfHeader wfObj = new DbwfHeader();
             wfObj.setWfTypeId(new DbwfType("W3"));
@@ -1169,13 +1215,14 @@ public class hazardView_MB implements Serializable {
             wfObj.setWfUserIdAdd((DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser"));
             wfObj.setWfObjectId(getDetailHazard().getHazardId());
             wfObj.setWfObjectName("Hazard");
-            wfObj.setWfComment1("A deletion of this hazard was suggested by a user. Please review and approve this workflow to delete or reject this workflow to cancel.");
-            wfObj.setWfComment2(deletionReason);
-            wfObj.setWfComment2(deletionComment);
+            wfObj.setWfComment1("This hazard was marked for deletion by a user. Please review and approve this workflow to delete or reject this workflow to cancel.");
+            wfObj.setWfComment2(getDeletionReason());
+            wfObj.setWfComment2(getDeletionComment());
             wfObj.setWfCompleteMethod("HazardDeletionWF");
             validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApprovers, wfObj, "WKF-DEL");
+            setDeletionComment(null);
+            setDeletionReason(null);
             setDetailHazard(null);
-            init();
         }
     }
 
@@ -1225,5 +1272,10 @@ public class hazardView_MB implements Serializable {
                 }
             }
         }
+    }
+    
+    public List<String> getIdsForExport() {
+        System.out.println(getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList()));
+        return getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
     }
 }

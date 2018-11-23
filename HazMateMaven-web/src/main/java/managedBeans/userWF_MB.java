@@ -70,6 +70,8 @@ public class userWF_MB implements Serializable {
     private List<DbControlHazard> detailControls;
     private DbwfHeader approvalWF;
     private String approvalDecision;
+    private String approvalComment;
+    private String multipleComment;
     private DbUser activeUser;
     private boolean isAdminUser;
 
@@ -172,6 +174,22 @@ public class userWF_MB implements Serializable {
         this.approvalDecision = approvalDecision;
     }
 
+    public String getApprovalComment() {
+        return approvalComment;
+    }
+
+    public void setApprovalComment(String approvalComment) {
+        this.approvalComment = approvalComment;
+    }
+
+    public String getMultipleComment() {
+        return multipleComment;
+    }
+
+    public void setMultipleComment(String multipleComment) {
+        this.multipleComment = multipleComment;
+    }
+
     public boolean isIsAdminUser() {
         return isAdminUser;
     }
@@ -208,63 +226,63 @@ public class userWF_MB implements Serializable {
         setApprovalDecision(decisionId);
     }
     
-    public void prepareDecisionHeader(DbwfHeader wfItem, String decisionId) {
-        setApprovalWF(wfItem);
-        setApprovalDecision(decisionId);
-    }
-    
-    public void sendDecision(String approvalComment) {
-        if (approvalComment.length() < 1) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
-        } else {
-            DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(getApprovalWF().getWfId(), "")), activeUser.getUserId());
-            tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
-            tmpLine.setWfApprovalComment(approvalComment);
-            tmpLine.setWfDateTimeDecision(new Date());
-
-            if (getApprovalDecision().equals("A")) {
-                dbwfHeaderFacade.approvalProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approval sent for workflows."));
-            } else if (getApprovalDecision().equals("R")) {
-                dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflows."));
-            } else if (getApprovalDecision().equals("I")) {
-                dbwfHeaderFacade.reviewProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Request for information sent for workflows."));
-            } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
-            }
-            setApprovalWF(null);
-            init();
-        }
-    }
-    
-    public void sendRejection(String approvalComment) {
-        if (approvalComment.length() < 1) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
-        } else {
-            dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflows."));
-            setApprovalWF(null);
-            init();
-        }
-    }
-    
-    public void prepareDecisionsHeader(List<DbwfHeader> wfItems, String decisionId) {
-        if (wfItems.size() < 1) {
+    public void prepareDecisions(String decisionId) {
+        if (getSelectWF().size() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No items selected for approval."));
         }
         setApprovalDecision(decisionId);
     }
     
-    public void sendDecisions(String approvalComment) {
-        if (approvalComment.length() < 1) {
+    public void prepareDecisionHeader(DbwfHeader wfItem, String decisionId) {
+        setApprovalWF(wfItem);
+        setApprovalDecision(decisionId);
+    }
+    
+    public void prepareDecisionsHeader(String decisionId) {
+        if (getSelectWFHeader().size() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No items selected for approval."));
+        }
+        setApprovalDecision(decisionId);
+    }
+    public void sendDecision() {
+        if (getApprovalComment().length() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
+        } else {
+            DbwfLine tmpLine = dbwfLineFacade.findByIdAndUser(new DbwfLine(new DbwfLinePK(getApprovalWF().getWfId(), "")), activeUser.getUserId());
+            tmpLine.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
+            tmpLine.setWfApprovalComment(getApprovalComment());
+            tmpLine.setWfDateTimeDecision(new Date());
+
+            if (getApprovalDecision().equals("A")) {
+                dbwfLineFacade.edit(tmpLine);
+                dbwfHeaderFacade.approvalProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Approval sent for workflow."));
+            } else if (getApprovalDecision().equals("R")) {
+                dbwfLineFacade.edit(tmpLine);
+                dbwfHeaderFacade.rejectionProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflow."));
+            } else if (getApprovalDecision().equals("I")) {
+                dbwfLineFacade.edit(tmpLine);
+                dbwfHeaderFacade.reviewProcess(new DbwfHeader(getApprovalWF().getWfId()), "userApproval");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Request for information sent for workflow."));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "No logic associated with this decision type."));
+            }
+            setApprovalWF(null);
+            setApprovalDecision(null);
+            setApprovalComment(null);
+            init();
+        }
+    }
+    
+    public void sendDecisions() {
+        if (getMultipleComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
         } else {
             boolean validRequest = true;
-            for (DbwfLine wfItem : selectWF) {
+            for (DbwfLine wfItem : getSelectWF()) {
                 wfItem.setWfApproverDecisionId(new DbwfDecision(getApprovalDecision()));
-                wfItem.setWfApprovalComment(approvalComment);
+                wfItem.setWfApprovalComment(getMultipleComment());
                 wfItem.setWfDateTimeDecision(new Date());
 
                 if (getApprovalDecision().equals("A")) {
@@ -296,19 +314,36 @@ public class userWF_MB implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "Workflows for suggestions and deletions cannot request information."));
             }
             setApprovalWF(null);
+            setApprovalDecision(null);
+            setMultipleComment(null);
             init();
         }
     }
     
-    public void sendRejections(String approvalComment) {
-        if (approvalComment.length() < 1) {
+    public void sendCancellation() {
+        if (getApprovalComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
         } else {
-            for (DbwfHeader wfItem : selectWFHeader) {
-                dbwfHeaderFacade.rejectionProcess(new DbwfHeader(wfItem.getWfId()), "userApproval");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Rejection sent for workflows."));
+            dbwfHeaderFacade.cancellationProcess(new DbwfHeader(getApprovalWF().getWfId(), getApprovalComment()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Cancellation sent for workflow."));
+            setApprovalWF(null);
+            setApprovalDecision(null);
+            setApprovalComment(null);
+            init();
+        }
+    }
+    
+    public void sendCancellations() {
+        if (getMultipleComment().length() < 1) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
+        } else {
+            for (DbwfHeader wfItem : getSelectWFHeader()) {
+                dbwfHeaderFacade.cancellationProcess(new DbwfHeader(wfItem.getWfId(), getMultipleComment()));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Cancellation sent for workflows."));
             }
             setApprovalWF(null);
+            setApprovalDecision(null);
+            setMultipleComment(null);
             init();
         }
     }
@@ -330,8 +365,11 @@ public class userWF_MB implements Serializable {
     }
     
     public String getLatestComment(DbwfHeader wfHeader) {
-        DbwfLine wfLine = dbwfLineFacade.findLatestCommentById(wfHeader.getWfId());
-        return wfLine.getWfUserIdApprover().getFirstName() + " " + wfLine.getWfUserIdApprover().getLastName() + ": " + wfLine.getWfApprovalComment();
+        if (wfHeader.getWfStatus().equals("I")) {
+            DbwfLine wfLine = dbwfLineFacade.findLatestCommentById(wfHeader.getWfId());
+            return wfLine.getWfUserIdApprover().getFirstName() + " " + wfLine.getWfUserIdApprover().getLastName() + ": " + wfLine.getWfApprovalComment();
+        }
+        return "";
     }
     
     public List<String> viewSbsCondensed() {
@@ -425,5 +463,9 @@ public class userWF_MB implements Serializable {
             nodeNames.add(nodeName);
         }
         return nodeNames;
+    }
+    
+    public boolean checkRequest() {
+        return selectWF.stream().noneMatch(h -> h.getDbwfHeader().getWfCompleteMethod().equals("HazardApprovalWF"));
     }
 }

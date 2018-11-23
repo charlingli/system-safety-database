@@ -119,15 +119,14 @@ public class owners_MB implements Serializable {
     }
 
     public void addOwners() {
-
         try {
             existingOwnerName = dbOwnersFacade.findByName("ownerName", ownersObject.getOwnerName());
             
             if (existingOwnerName.isEmpty()) {
-            dbOwnersFacade.create(ownersObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Added", "The owner has been successfully added"));
+                dbOwnersFacade.create(ownersObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The owner has been successfully added."));
             } else { 
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The owner name already exists"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The owner name already exists!"));
                 return;
             }
         } catch (Exception e) {
@@ -135,18 +134,15 @@ public class owners_MB implements Serializable {
         } 
         ownersObject = new DbOwners();
         init();
-        
-
     }
 
     public void editOwners() {
-
         try {
             existingOwnerName = dbOwnersFacade.findByName("ownerName", ownersObject.getOwnerName());
             
             if (existingOwnerName.isEmpty() || existingOwnerName.get(0).getOwnerName().equals(prevOwnerName)) {
                 dbOwnersFacade.edit(ownersObject);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Modified", "The owner has been successfully modified"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The owner has been successfully edited."));
             } else { 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The owner name already exists"));
                 return;
@@ -166,14 +162,13 @@ public class owners_MB implements Serializable {
     }
 
     public void deleteOwners(DbOwners ownersObject) {
-
         try {
             listDbHazard = dbOwnersFacade.checkHazardOwners(ownersObject.getOwnerId());
             listDbControl = dbOwnersFacade.checkControlOwners(ownersObject.getOwnerId());
 
             if (listDbHazard.isEmpty() && listDbControl.isEmpty()) {
                 dbOwnersFacade.remove(ownersObject);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Removed", "The owner has been successfully removed"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The owner has been successfully removed."));
             } else {
                 error();
             }
@@ -189,7 +184,6 @@ public class owners_MB implements Serializable {
         addFlag = true;
         addButton = true;
         editButton = true; 
-        
     }
 
     public void showEdit(DbOwners ownersObject) {
@@ -214,6 +208,5 @@ public class owners_MB implements Serializable {
 
     public void error() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The owner is currently assigned to one or more hazards and/or controls."));
-
     }
 }

@@ -112,8 +112,9 @@ public class controlRecommend_MB implements Serializable {
         
         if (existingRecommend.isEmpty()) {
             dbcontrolRecommendFacade.create(controlRecommendObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control recommendation has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control recommendation name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control recommendation name already exists!"));
             return;
         }
 
@@ -127,8 +128,9 @@ public class controlRecommend_MB implements Serializable {
         
         if (existingRecommend.isEmpty() || existingRecommend.get(0).getControlRecommendName().equals(prevRecommendName)) {
             dbcontrolRecommendFacade.edit(controlRecommendObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control recommendation has been successfully edited."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control recommendation name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The control recommendation name already exists!"));
             return;
         }
         controlRecommendObject = new DbcontrolRecommend();
@@ -143,6 +145,7 @@ public class controlRecommend_MB implements Serializable {
 
         if (listDbControlHazard.isEmpty()) {
             dbcontrolRecommendFacade.remove(controlRecommendObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control recommendation has been successfully removed."));
         } else {
             error();
             return;

@@ -11,7 +11,8 @@
                 <f:view>
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="true"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:panel styleClass="hazardModifyPanel">
                             <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
                                 <f:facet name="header">
@@ -22,7 +23,7 @@
                                 <p:outputLabel for="hazardId" value="Hazard ID:"/>
                                 <p:inputText id="hazardId" value="#{addHazard_MB.hazardObject.hazardId == null ? '(Auto)' : addHazard_MB.hazardObject.hazardId}" disabled="true"/>
                                 <p:outputLabel for="hazardDate" value="Hazard Date:"/>
-                                <p:calendar id="hazardDate" value="#{addHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{addHazard_MB.todaysDate()}"/>
+                                <p:calendar autocomplete="off" id="hazardDate" value="#{addHazard_MB.hazardObject.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{addHazard_MB.todaysDate()}"/>
                                 <p:outputLabel value="Hazard Description:" for="hazardDescription"/>
                                 <p:inputTextarea rows="3" id="hazardDescription" value="#{addHazard_MB.hazardObject.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
                                 <p:outputLabel value="Hazard Comment:" for="hazardComment"/>

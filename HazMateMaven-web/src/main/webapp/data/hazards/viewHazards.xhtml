@@ -9,10 +9,18 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="hazardsForm">
-                    <p:hotkey bind="esc" handler="PF('detailOverlay').hide()"></p:hotkey>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="70vh" width="90vw">
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                    <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
+                    <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" style="min-width: 8em; min-height: 8em">
+                        <div class="progress-back">
+                            <div class="progress-front-1"></div>
+                            <div class="progress-front-2"></div>
+                            <div class="progress-front-3"></div>
+                            <div class="progress-front-4"></div>
+                        </div>
+                    </p:dialog>
+                    <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel class="visPanel">
                             <div class="visCanvas">
                                 <div id="graphic"></div>
@@ -89,17 +97,17 @@
                             </div>
                         </p:panel>
                     </p:dialog>
-                    <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="90vw">
+                    <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
                             </div>
                             <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
-                                <p:outputLabel value="Hazard ID: "/>
+                                <p:outputLabel value="ID: "/>
                                 <p:outputLabel value="#{hazardView_MB.detailHazardId}"/>
-                                <p:outputLabel value="Hazard Description: "/>
+                                <p:outputLabel value="Description: "/>
                                 <p:outputLabel value="#{hazardView_MB.detailHazardDescription}"/>
-                                <p:outputLabel value="Hazard Comments: "/>
+                                <p:outputLabel value="Comments: "/>
                                 <p:outputLabel value="#{hazardView_MB.detailHazardComment}"/>
                             </p:panelGrid>
                         </p:panel>
@@ -167,10 +175,10 @@
                                 <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
                             </div>
                             <p:dataTable value="#{hazardView_MB.detailCauses}" var="CA" emptyMessage="No causes are associated with this hazard.">
-                                <p:column headerText="Cause ID" styleClass="small">
+                                <p:column headerText="ID" styleClass="small">
                                     <p:outputLabel value="#{CA.dbCause.causeId}"/>
                                 </p:column>
-                                <p:column headerText="Cause Description">
+                                <p:column headerText="Description" styleClass="normal">
                                     <p:outputLabel value="#{CA.dbCause.causeDescription}"/>
                                 </p:column>
                             </p:dataTable>
@@ -179,10 +187,10 @@
                             <h:outputText value="The following consequences are associated with the current hazard:" class="p-emphasis"/>
                             <p:dataTable value="#{hazardView_MB.detailConsequences}" var="CQ" emptyMessage="No consequences are associated with this hazard.">
 
-                                <p:column headerText="Consequence ID" styleClass="small">
+                                <p:column headerText="ID" styleClass="small">
                                     <p:outputLabel value="#{CQ.dbConsequence.consequenceId}"/>
                                 </p:column>
-                                <p:column headerText="Consequence Description" styleClass="detailThick">
+                                <p:column headerText="Description" styleClass="normal">
                                     <p:outputLabel value="#{CQ.dbConsequence.consequenceDescription}"/>
                                 </p:column>
                             </p:dataTable>
@@ -190,55 +198,31 @@
                         <p:panel id="controlPanel" styleClass="detailHazardPanel">
                             <h:outputText value="The following controls are associated with the current hazard:" class="p-emphasis"/>
                             <p:dataTable value="#{hazardView_MB.detailControls}" var="CO" emptyMessage="No controls are associated with this hazard.">
-                                <p:column headerText="Control Id" styleClass="small">
+                                <p:column headerText="ID" styleClass="small">
                                     <p:outputLabel value="#{CO.dbControl.controlId}"/>
                                 </p:column>
-                                <p:column headerText="Control Description">
+                                <p:column headerText="Description" styleClass="normal">
                                     <p:outputLabel value="#{CO.dbControl.controlDescription}"/>
                                 </p:column>
-                                <p:column headerText="Control Owner" styleClass="small">
+                                <p:column headerText="Owner" styleClass="small">
                                     <p:outputLabel value="#{CO.dbControl.ownerId.ownerName}"/>
                                 </p:column>
-                                <p:column headerText="Control Hierarchy" styleClass="small">
+                                <p:column headerText="Hierarchy" styleClass="small">
                                     <p:outputLabel value="#{CO.dbControl.controlHierarchyId.controlHierarchyName}"/>
                                 </p:column>
-                                <p:column headerText="Control Type" styleClass="small">
+                                <p:column headerText="Type" styleClass="small">
                                     <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : CO.controlType == 'M' ? 'Mitigative' : CO.controlType}"/>
                                 </p:column>
-                                <p:column headerText="Control Recommendation" styleClass="small">
+                                <p:column headerText="Recommendation" styleClass="small">
                                     <p:outputLabel value="#{CO.controlRecommendId.controlRecommendName}"/>
                                 </p:column>
-                                <p:column headerText="Justification">
+                                <p:column headerText="Justification" styleClass="normal">
                                     <p:outputLabel value="#{CO.controlJustify}"/>
                                 </p:column>
-                                <p:column headerText="Control Status" styleClass="small">
+                                <p:column headerText="Status" styleClass="small">
                                     <p:outputLabel value="#{CO.controlExistingOrProposed == 'P' ? 'Proposed' : CO.controlExistingOrProposed == 'E' ? 'Existing' : CO.controlExistingOrProposed}"/>
                                 </p:column>
                             </p:dataTable>
-                        </p:panel>
-                    </p:dialog>
-                    <p:dialog id="suggestionDialog" header="Suggest a change" widgetVar="suggestionOverlay" height="18vh" width="24vw">
-                        <p:panel styleClass="detailHazardPanel">
-                            <h:outputText value="Suggestion comments:" class="p-emphasis"/>
-                            <p:inputTextarea id="suggestionComments" binding="#{suggestionComment}"/>
-                            <p:commandButton value="Send">
-                                <f:ajax listener="#{hazardView_MB.sendSuggestion(suggestionComment.value)}" execute="@form" render="@form"/>
-                            </p:commandButton>
-                        </p:panel>
-                    </p:dialog>
-                    <p:dialog id="deletionDialog" header="Delete a hazard" widgetVar="deletionOverlay" height="18vh" width="24vw">
-                        <p:panel styleClass="detailHazardPanel">
-                            <h:outputText value="Deletion reason:" class="p-emphasis"/>
-                            <p:selectOneMenu id="deletionReason" binding="#{deletionReason}">
-                                <f:selectItem itemLabel="Duplicate" itemValue="Duplicate" />
-                                <f:selectItem itemLabel="Poor Quality" itemValue="Poor Quality" />
-                                <f:selectItem itemLabel="Other" itemValue="Other (see comment)" />
-                            </p:selectOneMenu>
-                            <h:outputText value="Comments:" class="p-emphasis"/>
-                            <p:inputTextarea id="deletionComments" binding="#{deletionComment}"/>
-                            <p:commandButton value="Send">
-                                <f:ajax listener="#{hazardView_MB.sendDeletion(deletionReason.value, deletionComment.value)}" execute="@form" render="@form"/>
-                            </p:commandButton>
                         </p:panel>
                     </p:dialog>
                     <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
@@ -459,9 +443,9 @@
                                         <p:panelGrid columns="3" columnClasses="left,middle,right">
                                             <p:outputLabel for="dataQuality" value="Hazard Quality:" />
                                             <p:selectOneRadio id="dataQuality" value="#{hazardView_MB.hazardsQuality}" layout="grid" columns="1">
-                                                <f:selectItem itemLabel="All Hazards" itemValue="A" />
-                                                <f:selectItem itemLabel="Complete Hazards" itemValue="C" />
-                                                <f:selectItem itemLabel="Incomplete Hazards" itemValue="I" />
+                                                <f:selectItem id="allHazardsOption" itemLabel="All hazards" itemValue="A" />
+                                                <f:selectItem id="completeHazardsOption" itemLabel="Complete hazards" itemValue="C" />
+                                                <f:selectItem id="incompleteHazardsOption" itemLabel="Incomplete hazards" itemValue="I" />
                                             </p:selectOneRadio>
                                         </p:panelGrid>  
                                     </p:panel>
@@ -473,70 +457,80 @@
                         </h:panelGrid>
                     </p:fieldset>
                     <div class="panelButtons">
-                        <p:commandButton value="Search Hazards" action="#{hazardView_MB.constructSearchObject()}" update="hazardsForm"/>
+                        <p:commandButton value="Search Hazards" action="#{hazardView_MB.constructSearchObject()}" update="hazardsForm" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()" />
                         <p:commandButton value="Reset Fields" update="hazardsForm" process="@this" action="#{hazardView_MB.resetFields()}">
                             <p:resetInput target="hazardsForm"/>
                         </p:commandButton>
                     </div>
-                    <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
-                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex">
+                    <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
+                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox">
                         <f:facet name="header">
-                            <p:outputPanel>
-                                <h:outputText value="The current hazards are: "/>
-                                <p:commandButton id="columnToggle" rendered="false" value="Extended View" icon="ui-icon-calculator" action="#{hazardView_MB.showExtended()}" onclick="this.form.target = '_blank'" ajax="false">
-                                    <f:param name="hazard.list" value="#{hazardView_MB.listSearchedHazards}"/>
-                                </p:commandButton>
+                            <p:outputPanel styleClass="tableHeader">
+                                <div class="left"></div>
+                                <div class="center">
+                                    <h:outputText value="The current hazards are: "/>
+                                </div>
+                                <div class="right">
+                                    <h:outputText value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
+                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.getIdsForExport()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
+                                </div>
                             </p:outputPanel>
                         </f:facet>
+                        <p:ajax event="rowSelect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowUnselect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowSelectCheckbox" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowUnselectCheckbox" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="toggleSelect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
                         <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>
                             </f:facet>
-                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm" oncomplete="PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{empty hazard.missingInfo ? false : hazard.missingInfo}"/>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{empty hazard.missingInfo ? false : hazard.missingInfo}"/>
                         </p:column>
                         <p:column style="width: 7%; text-align:center" headerText="Rate &amp; Tag">
                             <h:outputText>
                                 <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}" />
                             </h:outputText>
                             <p:rating value="#{hazardView_MB.qualityRating}" stars="3" >
-                                <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, hazardView_MB.qualityRating)}" update="hazardsForm:hazardsTable:#{rowIndex}:hazardRating, hazardsForm:hazardsTable:#{rowIndex}:ratingCount">
+                                <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, hazardView_MB.qualityRating)}" update="hazardsForm:hazardsTable:#{rowIndex}:averageRating, hazardsForm:hazardsTable:#{rowIndex}:countRating, hazardsForm:hazardsTable:#{rowIndex}:averageTooltip, hazardsForm:hazardsTable:#{rowIndex}:countTooltip">
                                     <f:attribute name="hazardId" value="#{hazard.hazardObj}" />
                                 </p:ajax>
-                                <p:ajax event="cancel" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, 0)}" update="hazardsForm:hazardsTable:#{rowIndex}:hazardRating, hazardsForm:hazardsTable:#{rowIndex}:ratingCount" />
+                                <p:ajax event="cancel" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, 0)}" update="hazardsForm:hazardsTable:#{rowIndex}:averageRating, hazardsForm:hazardsTable:#{rowIndex}:countRating" />
                             </p:rating>
-                            <p:commandLink id="hazardRating">
-                                <h:outputText value="#{empty hazard.sumOfRateTimesWeighting ? null : hazardView_MB.getRatingScore(hazard.sumOfRateTimesWeighting, hazard.sumOfWeight)}"/>
+                            <p:commandLink id="averageRating">
+                                <h:outputText value="#{empty hazard.sumOfRateTimesWeighting ? 'N/A' : hazardView_MB.getRatingScore(hazard.sumOfRateTimesWeighting, hazard.sumOfWeight)}"/>
                             </p:commandLink> |
-                            <p:commandLink id="ratingCount">
+                            <p:commandLink id="countRating">
                                 <h:outputText value="#{hazard.rateCount}"/>
                             </p:commandLink>
-                            <p:tooltip for="hazardRating">
-                                <h:outputText value="Average rating"/>
-                            </p:tooltip>
-                            <p:tooltip for="ratingCount">
-                                <h:outputText value="Number of ratings"/>
-                            </p:tooltip>
                             <br />
                             <p:commandButton id="missingButton" action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" rendered="#{empty hazard.missingInfo ? false : hazard.missingInfo}" icon="fa fa-question" styleClass="missingButton"/>
                             <p:menuButton icon="fa fa-tag" id="tagButton">
-                                <p:menuitem value="Suggest Change" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('suggestionOverlay').show()" icon="fa fa-pencil"/>
-                                <p:menuitem value="Mark for Deletion" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('deletionOverlay').show()" icon="fa fa-trash"/>
+                                <p:menuitem id="suggestionButton" value="Suggest a change" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('suggestionOverlay').show('#{component.clientId}')" icon="fa fa-pencil"/>
+                                <p:menuitem id="deletionButton" value="Mark for deletion" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('deletionOverlay').show('#{component.clientId}')" icon="fa fa-trash"/>
                             </p:menuButton>
-                            <p:tooltip for="missingButton">
-                                <h:outputText value="This hazard is missing information!"/>
+                            <p:tooltip id="averageTooltip" for="averageRating">
+                                <h:outputText value="Average rating"/>
+                            </p:tooltip>
+                            <p:tooltip id="countTooltip" for="countRating">
+                                <h:outputText value="Number of ratings"/>
                             </p:tooltip>
                             <p:tooltip for="tagButton">
                                 <h:outputText value="Tag a change or mark for deletion"/>
+                            </p:tooltip>
+                            <p:tooltip for="missingButton">
+                                <h:outputText value="This hazard is missing information!"/>
                             </p:tooltip>
                         </p:column>
                         <p:column style="width: 7%; text-align:center">
                             <f:facet name="header">
                                 <h:outputText value="Hazard ID"/>
                             </f:facet>
-                            <p:commandLink id="ajax" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard.hazardObj.hazardId)}" oncomplete="PF('detailOverlay').show()">
+                            <p:commandLink id="viewLink" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard.hazardObj.hazardId)}" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('detailOverlay').show()">
                                 <h:outputText value="#{hazard.hazardObj.hazardId}"/>
                             </p:commandLink>
-                            <p:tooltip for="ajax">
+                            <p:tooltip for="viewLink">
                                 <i class="fa fa-search"/>
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
@@ -591,10 +585,37 @@
                         </p:column>
                         <f:facet name="footer">
                             <p:outputPanel>
-                                <h:outputText value="Currently showing #{hazardView_MB.listSearchedHazards.size()} #{hazardView_MB.listSearchedHazards.size() == 1 ? 'hazard' : hazardView_MB.listSearchedHazards.size() == 0 ? 'no hazards' : 'hazards'}."/>
+                                <h:outputText value="Showing #{hazardView_MB.listSearchedHazards.size()} #{hazardView_MB.listSearchedHazards.size() == 1 ? 'hazard' : hazardView_MB.listSearchedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.listSearchedHazards ? 'no hazards' : 'hazards'}"/>
                             </p:outputPanel>
                         </f:facet>
                     </p:dataTable>
+                    <p:overlayPanel widgetVar="suggestionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                        <p:panelGrid columns="1" class="suggestionPanel">
+                            <f:facet name="header">
+                                <h:outputText value="Suggest a change"/>
+                            </f:facet>
+                            <h:outputText value="Leave a comment:"/>
+                            <p:inputTextarea id="suggestionComments" value="#{hazardView_MB.suggestionComment}"/>
+                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendSuggestion()}" update="suggestionComments" oncomplete="PF('suggestionOverlay').hide()" />
+                        </p:panelGrid>
+                    </p:overlayPanel>
+                    <p:overlayPanel widgetVar="deletionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                        <p:panelGrid columns="1" class="suggestionPanel">
+                            <f:facet name="header">
+                                <h:outputText value="Mark for deletion"/>
+                            </f:facet>
+                            <h:outputText value="Leave a comment:"/>
+                            <p:inputTextarea id="deletionComments" value="#{hazardView_MB.deletionComment}"/>
+                        </p:panelGrid>
+                        <p:panelGrid columns="2" class="suggestionPanel">
+                            <p:selectOneMenu id="deletionReason" value="#{hazardView_MB.deletionReason}">
+                                <f:selectItem itemLabel="Duplicate" itemValue="Duplicate" />
+                                <f:selectItem itemLabel="Poor Quality" itemValue="Poor Quality" />
+                                <f:selectItem itemLabel="Other (see comment)" itemValue="Other (see comment)" />
+                            </p:selectOneMenu>
+                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendDeletion()}" update="deletionComments, deletionReason" oncomplete="PF('deletionOverlay').hide()" />
+                        </p:panelGrid>
+                    </p:overlayPanel>
                 </h:form>
                 <script type="text/javascript" src="../../resources/js/svg.min.js"/>
                 <script type="text/javascript" src="../../resources/js/viewVis.js"/>

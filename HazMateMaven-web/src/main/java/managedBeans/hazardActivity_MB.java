@@ -112,8 +112,9 @@ public class hazardActivity_MB implements Serializable {
          
         if (existingName.isEmpty()) {
             dbhazardActivityFacade.create(hazardActivityObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard activity has been successfully added."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The activity name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The activity name already exists!"));
             return;
         }
         
@@ -127,8 +128,9 @@ public class hazardActivity_MB implements Serializable {
         
         if (existingName.isEmpty() || existingName.get(0).getActivityName().equals(prevActivityName) ) {
             dbhazardActivityFacade.edit(hazardActivityObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard activity has been successfully edited."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard activity name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard activity name already exists!"));
             return;
         }
         hazardActivityObject = new DbhazardActivity(); 
@@ -143,7 +145,8 @@ public class hazardActivity_MB implements Serializable {
         listDbHazard = dbhazardActivityFacade.checkHazardActivity(hazardActivityObject.getActivityId());
         
         if (listDbHazard.isEmpty()) {
-        dbhazardActivityFacade.remove(hazardActivityObject);
+            dbhazardActivityFacade.remove(hazardActivityObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard activity has been successfully removed."));
         }
         else    {
             error(); 

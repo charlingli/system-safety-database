@@ -13,7 +13,8 @@
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <div class="messageDiv">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" styleClass="messageDiv"/>
+                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
+                            <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         </div>
                         <p:dataTable id="viewTable" value="#{location_MB.listDbLocation}" var="item" styleClass="parameterTableLarge"
                                      widgetVar="locationTable" emptyMessage="No locations found with given criteria"
@@ -55,15 +56,15 @@
                                 <f:facet name="header">
                                     <p:outputLabel value="Options"/>
                                 </f:facet>
-                                <h:commandLink value="Edit" disabled="#{location_MB.editButton}" class="commandLink">
+                                <h:commandLink value="Edit" disabled="#{location_MB.addFlag}" class="commandLink">
                                     <f:ajax listener="#{location_MB.showEdit(item)}" execute="@form" render="@form"/>
                                 </h:commandLink> | 
                                 <h:commandLink value="Delete" action="#{location_MB.deleteLocation(item)}" immediate="true" 
-                                               onclick="return confirm('Are you sure?')" disabled="#{location_MB.deleteButton}" class="commandLink"/> 
+                                               onclick="return confirm('Are you sure?')" disabled="#{location_MB.editFlag}" class="commandLink"/> 
                             </p:column>
                         </p:dataTable>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Location" disabled="#{location_MB.addButton}"> 
+                            <p:commandButton value="Add Location" disabled="#{location_MB.editFlag or location_MB.addFlag}"> 
                                 <f:ajax listener="#{location_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
@@ -108,6 +109,7 @@
                                     <f:selectItems value="#{location_MB.listDbProject}" var="projectItem" itemLabel="#{projectItem.projectName}" itemValue="#{projectItem.projectId}"/>
                                 </p:selectOneMenu>
                             </p:panelGrid>
+                            <p:tooltip for="locationAbbrev" value="A 3-letter abbreviation to uniquely identify hazards associated with this location" />
                         </p:panel>
                         <div class="panelButtons">
                             <c:choose>

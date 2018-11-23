@@ -111,8 +111,9 @@ public class changeType_MB implements Serializable {
         
         if (existingChangeType.isEmpty()) {
             dbchangeTypeFacade.create(changeTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The change type has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The change type name already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The change type name already exists!"));
             return;
         }
         changeTypeObject = new DbchangeType();
@@ -125,8 +126,9 @@ public class changeType_MB implements Serializable {
         
         if (existingChangeType.isEmpty() || existingChangeType.get(0).getChangeTypeName().equals(prevChangeTypeName)) {
             dbchangeTypeFacade.edit(changeTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The change type has been successfully edited."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The change type name already exists."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The change type name already exists!"));
             return;
         }
         changeTypeObject = new DbchangeType();
@@ -141,6 +143,7 @@ public class changeType_MB implements Serializable {
         
         if (listDbLocation.isEmpty())   {
             dbchangeTypeFacade.remove(changeTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The change type has been successfully removed."));
         }
         else    {
             error(); 

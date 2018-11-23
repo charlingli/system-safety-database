@@ -39,6 +39,8 @@ public interface DbwfHeaderFacadeLocal {
     
     boolean rejectionProcess(DbwfHeader wfHeaderObj, String rjtcdType);
     
+    boolean cancellationProcess(DbwfHeader wfHeaderObj);
+    
     boolean reviewProcess(DbwfHeader wfHeaderObj, String rwvType);
     
     boolean wfTypesValidation(String wfTypeName);

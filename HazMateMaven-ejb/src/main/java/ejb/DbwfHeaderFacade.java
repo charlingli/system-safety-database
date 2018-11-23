@@ -91,6 +91,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             //Because the workflow was approved by the admin the header control fields will change
             workObj.setWfStatusBefUpdate(workObj.getWfStatus());
             workObj.setWfStatus("A");
+            workObj.setWfComment3(wfHeaderObj.getWfComment3());
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
             java.util.Date currentDate = new java.util.Date();
@@ -124,6 +125,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             //Because the workflow was rejected by the admin the header control fields will change
             workObj.setWfStatusBefUpdate(workObj.getWfStatus());
             workObj.setWfStatus("R");
+            workObj.setWfComment3(wfHeaderObj.getWfComment3());
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
             java.util.Date currentDate = new java.util.Date();
@@ -147,6 +149,24 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
     }
 
     @Override
+    //Calls when a user cancels their own workflow, bypassing all other approvers, unlike rejection.
+    public boolean cancellationProcess(DbwfHeader wfHeaderObj) {
+        //Because the obj could be just populated with the id field, the function will bring from the db.
+        List<DbwfHeader> workObjList = this.findByName("wfId", wfHeaderObj.getWfId());
+        DbwfHeader workObj = workObjList.get(0);
+        //The transaction will directly rejected.
+        workObj.setWfStatusBefUpdate(workObj.getWfStatus());
+        workObj.setWfStatus("C");
+        workObj.setWfComment3(wfHeaderObj.getWfComment3());
+        DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+        workObj.setWfUserIdUpdate(activeUser);
+        java.util.Date currentDate = new java.util.Date();
+        workObj.setWfUpdatedDateTime(currentDate);
+        this.edit(workObj);
+        return true;
+    }
+
+    @Override
     //Validates if the transaction should be reviewed. Returns true in case the final revision have been given.
     public boolean reviewProcess(DbwfHeader wfHeaderObj, String rwvType) {
         //Because the obj could be just populated with the id field, the function will bring from the db.
@@ -156,6 +176,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             //Because the workflow was rejected by the admin the header control fields will change
             workObj.setWfStatusBefUpdate(workObj.getWfStatus());
             workObj.setWfStatus("I");
+            workObj.setWfComment3(wfHeaderObj.getWfComment3());
             DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
             workObj.setWfUserIdUpdate(activeUser);
             java.util.Date currentDate = new java.util.Date();
@@ -285,7 +306,9 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                 dbHazardFacade.wfApproveHazard(wfObj.getWfObjectId(), finalDecision);
                 break;
             case "HazardDeletionWF":
-                dbHazardFacade.wfDeleteHazard(wfObj.getWfObjectId());
+                if (finalDecision.equals("Approved")) {
+                    dbHazardFacade.wfDeleteHazard(wfObj.getWfObjectId());
+                }
                 break;
         }
     }
@@ -444,7 +467,7 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
 
         try {
             queryStr = "SELECT h FROM DbwfHeader h WHERE h.wfStatus = 'I' "
-                    + "AND h.wfUserIdAdd.userId = ?1";
+                    + " AND h.wfUserIdAdd.userId = ?1";
             Query query = em.createQuery(queryStr);
             query.setParameter(1, userId);
 

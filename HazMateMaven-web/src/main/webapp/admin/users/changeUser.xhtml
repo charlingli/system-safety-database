@@ -12,7 +12,8 @@
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Users Definition,Change Password')}" escape="false"/></div>
                     <p:panel class="parameterModifyPanel">
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="User Email:"/>
                             <p:inputText value="#{users_MB.checkEmail}" styleClass="inputField200px" disabled="true"/>

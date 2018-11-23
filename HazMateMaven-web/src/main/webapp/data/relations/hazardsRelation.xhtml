@@ -9,7 +9,8 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
-                    <p:messages autoUpdate="true" showSummary="true"/>
+                    <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                    <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:panel rendered="#{hazardsRelation_MB.searchBox}" styleClass="searchPanel">
                         <h:panelGrid columns="2" rendered="#{hazardsRelation_MB.searchBox}" columnClasses="left,middle">
@@ -239,7 +240,7 @@
                             </p:commandButton>
                         </div>
                     </p:panel>
-                    <div class="panelButtons" style="display:#{(hazardsRelation_MB.cancelBtn)?'block':'none'}">
+                    <div class="panelButtons" style="display:#{(hazardsRelation_MB.infoBox)?'block':'none'}">
                         <p:commandButton value="#{hazardsRelation_MB.finalActionButton}">
                             <f:ajax listener="#{hazardsRelation_MB.sendToApproval()}" execute="@form" render="@form"/>
                         </p:commandButton>

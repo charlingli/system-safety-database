@@ -120,9 +120,9 @@ public class hazardContext_MB implements Serializable{
         
         if (existingContextName.isEmpty()) {
             dbhazardContextFacade.create(hazardContextObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Added", "The context has been successfully added"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard context has been successfully added."));
         } else { 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context name already exists!"));
             return;
         }
         hazardContextObject = new DbhazardContext();
@@ -135,9 +135,9 @@ public class hazardContext_MB implements Serializable{
         
         if (existingContextName.isEmpty() || (existingContextName.get(0).getHazardContextName().equals(prevContextName))) {
             dbhazardContextFacade.edit(hazardContextObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Added", "The context has been successfully modified"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard context has been successfully added."));
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context name already exists"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context name already exists!"));
             return;
         }
         
@@ -154,8 +154,8 @@ public class hazardContext_MB implements Serializable{
         listDbHazard = dbhazardContextFacade.checkHazardContext(hazardContextObject.getHazardContextId());
         
         if (listDbHazard.isEmpty()) {
-        dbhazardContextFacade.remove(hazardContextObject);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Added", "The context has been successfully removed"));
+            dbhazardContextFacade.remove(hazardContextObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard context has been successfully removed."));
         }
         else    {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context is currently assigned to one or more hazards.")); 

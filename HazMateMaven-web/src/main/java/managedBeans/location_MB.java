@@ -71,9 +71,6 @@ public class location_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
-    private boolean addButton = false;
-    private boolean editButton = false; 
-    private boolean deleteButton = false;  
     
     String prevLocationName; 
     
@@ -160,30 +157,6 @@ public class location_MB implements Serializable {
         this.editFlag = editFlag;
     }
 
-    public boolean isAddButton() {
-        return addButton;
-    }
-
-    public void setAddButton(boolean addButton) {
-        this.addButton = addButton;
-    }
-
-    public boolean isEditButton() {
-        return editButton;
-    }
-
-    public void setEditButton(boolean editButton) {
-        this.editButton = editButton;
-    }
-
-    public boolean isDeleteButton() {
-        return deleteButton;
-    }
-
-    public void setDeleteButton(boolean deleteButton) {
-        this.deleteButton = deleteButton;
-    }
-
     public List<DbProject> getListDbProject() {
         return listDbProject;
     }
@@ -225,13 +198,14 @@ public class location_MB implements Serializable {
         if (existingAbbrev.isEmpty()) {
             if (existingLocationName.isEmpty()) {
                 dbLocationFacade.create(locationObject);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The location has been successfully added."));
             }
             else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The Location name already exists."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The location name already exists!"));
                 return; 
             }
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The location abbreviation is already in use. Please select an alternative."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The location abbreviation is already in use!"));
             return;
         }
         
@@ -246,6 +220,7 @@ public class location_MB implements Serializable {
         
         if (existingLocationName.isEmpty() || existingLocationName.get(0).getLocationName().equals(prevLocationName)) {
             dbLocationFacade.edit(locationObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The location has been successfully edited."));
         } else { 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The location name already exists."));
             return; 
@@ -255,8 +230,6 @@ public class location_MB implements Serializable {
         init();
 
         editFlag = false;
-        addButton = false;
-        deleteButton = false; 
     }
 
     public void deleteLocation(DbLocation locationObject) {
@@ -264,28 +237,22 @@ public class location_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbLocationFacade.remove(locationObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The location has been successfully removed."));
         } else {
             error();
             return;
         }
         init();
-        addButton = false; 
-        editButton = false; 
-        deleteButton = false; 
     }
 
     public void showAdd() {
         addFlag = true;
-        addButton = true;
-        editButton = true; 
         clearLocationObject();
         
     }
 
     public void showEdit(DbLocation locationObject) {
         editFlag = true;
-        addButton = true; 
-        deleteButton = true; 
 
         this.locationObject = locationObject;
         prevLocationName = locationObject.getLocationName(); 
@@ -300,10 +267,6 @@ public class location_MB implements Serializable {
     public void cancel() {
         addFlag = false;
         editFlag = false;
-        
-        addButton = false; 
-        editButton = false; 
-        deleteButton = false; 
         
         locationObject = new DbLocation();
     }

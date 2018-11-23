@@ -12,7 +12,8 @@
                 <f:view>
                     <h:form id="consequenceForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:growl id="growl" showDetail="true" showSummary="false" autoUpdate="false"/>
+                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
+                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
@@ -122,7 +123,7 @@
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
                                 <p:panel rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" columns="2" class="editPanel" columnClasses="left,middle" rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" styleClass="relationTable" columns="2" class="editPanel" columnClasses="left,middle" rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
