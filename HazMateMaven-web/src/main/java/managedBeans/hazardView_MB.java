@@ -1,8 +1,10 @@
 package managedBeans;
 
 import customObjects.*;
+import ejb.DbFilesFacadeLocal;
 import entities.*;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbHazardFilesFacadeLocal;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbProjectFacadeLocal;
@@ -19,12 +21,9 @@ import ejb.DbhazardStatusFacadeLocal;
 import ejb.DbhazardSystemStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
-import ejb.DbtreeLevel2FacadeLocal;
-import ejb.DbtreeLevel3FacadeLocal;
-import ejb.DbtreeLevel4FacadeLocal;
-import ejb.DbtreeLevel5FacadeLocal;
-import ejb.DbtreeLevel6FacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import javax.annotation.PostConstruct;
@@ -33,12 +32,11 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.TreeNode;
@@ -51,6 +49,10 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class hazardView_MB implements Serializable {
 
+    @EJB
+    private DbFilesFacadeLocal dbFilesFacade;
+    @EJB
+    private DbHazardFilesFacadeLocal dbHazardFilesFacade;
     @EJB
     private DbhazardSystemStatusFacadeLocal dbhazardSystemStatusFacade;
     @EJB
@@ -145,6 +147,7 @@ public class hazardView_MB implements Serializable {
     private String deletionComment;
     private String deletionReason;
     private List<defaultViewSrchObject> checkedHazards;
+    private List<fileHeaderObject> fileHeaders;
 
     public hazardView_MB() {
     }
@@ -625,6 +628,14 @@ public class hazardView_MB implements Serializable {
         this.checkedHazards = checkedHazards;
     }
 
+    public List<fileHeaderObject> getFileHeaders() {
+        return fileHeaders;
+    }
+
+    public void setFileHeaders(List<fileHeaderObject> fileHeaders) {
+        this.fileHeaders = fileHeaders;
+    }
+
     // This method creates the search object, based on the selected parameters.
     public void constructSearchObject() {
         // Initialising a couple of variables
@@ -743,6 +754,7 @@ public class hazardView_MB implements Serializable {
         if (!listSearchedHazards.isEmpty()) {
             RequestContext.getCurrentInstance().execute("PF('widget_hazardsForm_fieldset').toggle()");
         }
+        checkedHazards = new ArrayList<>();
     }
 
     public String showExtended() {
@@ -1044,6 +1056,7 @@ public class hazardView_MB implements Serializable {
         detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
         detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
         detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
+        fileHeaders = dbHazardFilesFacade.findHeadersForHazard(hazardId);
     }
 
     public void clearField(String id) {
@@ -1275,7 +1288,42 @@ public class hazardView_MB implements Serializable {
     }
     
     public List<String> getIdsForExport() {
-        System.out.println(getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList()));
         return getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
     }
+    
+    public String parseSize(int fileSize) {
+        // Return a string for readability of the size field in tables
+        int order = 0;
+        String[] suffix = new String[3];
+        suffix[0] = "B";
+        suffix[1] = "kB";
+        suffix[2] = "MB";
+        double formatSize = fileSize;
+        while (formatSize / 1000 > 1) {
+            formatSize = formatSize / 1000;
+            order++;
+        }
+        DecimalFormat df = new DecimalFormat("#.###");
+        return Double.valueOf(df.format(formatSize)).toString() + " " + suffix[order];
+    }
+    
+    public void handleDownload(fileHeaderObject file) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        
+        ec.responseReset();
+        ec.setResponseContentType(ec.getMimeType(file.getFileName() + "." + file.getFileExtension()));
+        ec.setResponseContentLength(file.getFileSize());
+        ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "." + file.getFileExtension() + "\"");
+        
+        try {
+            byte[] fileBlob = dbFilesFacade.findFileFromId(file.getFileId()).get(0).getFileBlob();
+            OutputStream os = ec.getResponseOutputStream();
+            os.write(fileBlob);
+        } catch (IOException e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
+        }
+        fc.responseComplete();
+    }
+    
 }

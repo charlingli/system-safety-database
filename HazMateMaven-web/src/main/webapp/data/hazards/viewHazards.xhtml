@@ -224,6 +224,26 @@
                                 </p:column>
                             </p:dataTable>
                         </p:panel>
+                        <p:panel id="filesPanel" styleClass="detailHazardPanel">
+                            <h:outputText value="The following files are linked to the current hazard:" class="p-emphasis"/>
+                            <p:dataTable value="#{hazardView_MB.fileHeaders}" var="file" emptyMessage="No files are linked to this hazard.">
+                                <p:column headerText="ID" styleClass="small">
+                                    <p:outputLabel value="#{file.fileId}"/>
+                                </p:column>
+                                <p:column headerText="Name" styleClass="normal">
+                                    <p:outputLabel value="#{file.fileName}"/>
+                                </p:column>
+                                <p:column headerText="Extension" styleClass="small">
+                                    <p:outputLabel value="#{file.fileExtension}"/>
+                                </p:column>
+                                <p:column headerText="Size" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.parseSize(file.fileSize)}"/>
+                                </p:column>
+                                <p:column headerText="Download" styleClass="small">
+                                    <p:commandButton action="#{hazardView_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
                     </p:dialog>
                     <p:fieldset id="fieldset" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
                         <h:panelGrid columns="2" columnClasses="fields,explanation">
@@ -463,7 +483,7 @@
                         </p:commandButton>
                     </div>
                     <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
-                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox">
+                                 scrollable="true" scrollHeight="600" scrollRows="400" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox" >
                         <f:facet name="header">
                             <p:outputPanel styleClass="tableHeader">
                                 <div class="left"></div>
@@ -471,16 +491,16 @@
                                     <h:outputText value="The current hazards are: "/>
                                 </div>
                                 <div class="right">
-                                    <h:outputText value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
+                                    <h:outputText id="exportMessage" value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
                                     <p:commandButton id="exportButton" actionListener="#{hazardView_MB.getIdsForExport()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
                                 </div>
                             </p:outputPanel>
                         </f:facet>
-                        <p:ajax event="rowSelect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
-                        <p:ajax event="rowUnselect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
-                        <p:ajax event="rowSelectCheckbox" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
-                        <p:ajax event="rowUnselectCheckbox" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
-                        <p:ajax event="toggleSelect" update="hazardsForm:hazardsTable" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:ajax event="rowSelect"  update="exportMessage, exportButton" process="@this" />
+                        <p:ajax event="rowUnselect" update="exportMessage, exportButton" process="@this" />
+                        <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" process="@this" />
+                        <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" process="@this" />
+                        <p:ajax event="toggleSelect" update="exportMessage, exportButton" process="@this" />
                         <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
                         <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">

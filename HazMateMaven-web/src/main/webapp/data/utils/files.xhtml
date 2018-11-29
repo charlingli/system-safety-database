@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <f:view>
+                    <h:form>
+                        <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <h:panelGrid columns="2" class="relationPanel" columnClasses="results,actions">
+                            <p:dataTable id="viewTable" widgetVar="fileTable" value="#{files_MB.listHeaders}" var="file" styleClass="parameterTable" scrollable="true" scrollHeight="600">
+                                <f:facet name="header">
+                                    <p:outputPanel>
+                                        <h:outputText value="The current files uploaded are: "/>
+                                    </p:outputPanel>
+                                </f:facet>
+                                <p:column headerText="ID" style="width: 12%">
+                                    <p:outputLabel value="#{file.fileId}"/>
+                                </p:column>
+                                <p:column headerText="Name" style="width: 26%">
+                                    <p:outputLabel value="#{file.fileName}"/>
+                                </p:column>
+                                <p:column headerText="Extension" style="width: 15%">
+                                    <p:outputLabel value="#{file.fileExtension}"/>
+                                </p:column>
+                                <p:column headerText="Size"  style="width: 17%">
+                                    <p:outputLabel value="#{files_MB.parseSize(file.fileSize)}"/>
+                                </p:column>
+                                <p:column headerText="Download"  style="width: 12%">
+                                    <p:commandButton action="#{files_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
+                                </p:column>
+                                <p:column headerText="Options" style="width: 16%">
+                                    <h:commandLink value="Rename" disabled="#{files_MB.addFlag}" class="commandLink">
+                                        <f:ajax listener="#{files_MB.showEdit(file)}" execute="@form" render="@form"/>
+                                    </h:commandLink> | 
+                                    <h:commandLink value="Delete" action="#{files_MB.deleteFile(file.fileId)}" immediate="true" 
+                                                   onclick="return confirm('Are you sure?')" disabled="#{files_MB.addFlag || files_MB.editFlag}" class="commandLink"/> 
+                                </p:column>
+                            </p:dataTable>
+                            <p:panel class="parameterModifyPanel" rendered="#{files_MB.addFlag}">
+                                <p:panelGrid styleClass="searchPanel">
+                                    <f:facet name="header">
+                                        <p:outputPanel>
+                                            <h:outputText value="Upload a new file:"/>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                    <p:fileUpload fileUploadListener="#{files_MB.handleUpload}" oncomplete="PF('fileTable').filter()" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                    <div class="panelButtons">
+                                        <p:commandButton value="Cancel" immediate="true">
+                                            <f:ajax listener="#{files_MB.cancel()}" execute="@form" render="@form"/>
+                                        </p:commandButton>
+                                    </div>
+                                </p:panelGrid>
+                            </p:panel>
+                            <p:panel class="parameterModifyPanel" rendered="#{files_MB.editFlag}">
+                                <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                                    <f:facet name="header">
+                                        <p:outputPanel>
+                                            <h:outputText value="Rename an existing file:"/>
+                                        </p:outputPanel>
+                                    </f:facet>
+                                    <p:outputLabel value="File Name:" for="fileName"/>
+                                    <p:inputText id="fileName" value="#{files_MB.fileObject.fileName}" title="FileName" required="true" requiredMessage="The FileName field is required."/>
+                                </p:panelGrid>
+                                <div class="panelButtons">
+                                    <p:commandButton value="Save">
+                                        <f:ajax listener="#{files_MB.renameFile()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true">
+                                        <f:ajax listener="#{files_MB.cancel()}" execute="@form" render="@form"/>
+                                    </p:commandButton>
+                                </div>
+                            </p:panel>
+                        </h:panelGrid>
+                        <div class="panelButtons">
+                            <p:commandButton value="Upload File" disabled="#{files_MB.editFlag}"> 
+                                <f:ajax listener="#{files_MB.showAdd()}" execute="@form" render="@form"/>
+                            </p:commandButton>
+                        </div>
+                    </h:form>
+                </f:view>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

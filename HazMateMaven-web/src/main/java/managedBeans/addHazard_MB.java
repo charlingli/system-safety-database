@@ -5,12 +5,15 @@
  */
 package managedBeans;
 
+import customObjects.fileHeaderObject;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 
 import customObjects.treeNodeObject;
+import ejb.DbFilesFacadeLocal;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbHazardFilesFacadeLocal;
 import ejb.DbHazardSbsFacadeLocal;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
@@ -28,7 +31,10 @@ import ejb.DbtreeLevel3FacadeLocal;
 import ejb.DbtreeLevel4FacadeLocal;
 import ejb.DbtreeLevel5FacadeLocal;
 import ejb.DbtreeLevel6FacadeLocal;
+import entities.DbFiles;
 import entities.DbHazard;
+import entities.DbHazardFiles;
+import entities.DbHazardFilesPK;
 import entities.DbHazardSbs;
 import entities.DbHazardSbsPK;
 import entities.DbLocation;
@@ -48,6 +54,14 @@ import entities.DbtreeLevel3;
 import entities.DbtreeLevel4;
 import entities.DbtreeLevel5;
 import entities.DbtreeLevel6;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
@@ -57,9 +71,14 @@ import javax.annotation.PostConstruct;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import org.apache.commons.io.FilenameUtils;
+import static org.apache.commons.io.IOUtils.toByteArray;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -69,6 +88,10 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class addHazard_MB implements Serializable {
 
+    @EJB
+    private DbHazardFilesFacadeLocal dbHazardFilesFacade;
+    @EJB
+    private DbFilesFacadeLocal dbFilesFacade;
     @EJB
     private DbglobalIdFacadeLocal dbglobalIdFacade;
     @EJB
@@ -135,6 +158,12 @@ public class addHazard_MB implements Serializable {
     private List<treeNodeObject> treeCheckedNodesList;
     private List<treeNodeObject> savedCheckedNodesList;
 
+    /*Variables relevant to files*/
+    private List<fileHeaderObject> listFiles;
+    private List<fileHeaderObject> checkedFiles;
+    private List<fileHeaderObject> savedFiles;
+    private boolean filesChanged;
+    
     public addHazard_MB() {
     }
 
@@ -306,6 +335,22 @@ public class addHazard_MB implements Serializable {
         this.selectedNodes = selectedNodes;
     }
 
+    public List<fileHeaderObject> getListFiles() {
+        return listFiles;
+    }
+
+    public void setListFiles(List<fileHeaderObject> listFiles) {
+        this.listFiles = listFiles;
+    }
+
+    public List<fileHeaderObject> getCheckedFiles() {
+        return checkedFiles;
+    }
+
+    public void setCheckedFiles(List<fileHeaderObject> checkedFiles) {
+        this.checkedFiles = checkedFiles;
+    }
+    
     @PostConstruct
     public void init() {
         createTree();
@@ -320,6 +365,10 @@ public class addHazard_MB implements Serializable {
         listDbRiskFrequency = dbriskFrequencyFacade.findAll();
         listDbRiskSeverity = dbriskSeverityFacade.findAll();
         listDbRiskClass = dbriskClassFacade.findAll();
+        listFiles = dbFilesFacade.listAllHeaders();
+        savedFiles = new ArrayList<>();
+        checkedFiles = new ArrayList<>();
+        
     }
 
     //Processing the complete page, when the hazard is new it will be created otherwise it will be edited.
@@ -329,23 +378,37 @@ public class addHazard_MB implements Serializable {
                 if (hazardObject.getHazardId() == null) {
                     addHazard();
                     addSBS();
+                    addFiles();
                 } else {
                     fillHazardObject();
                     displaySelectedMultiple1(selectedNodes);
+                    addFiles();
                     if (hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("The content of both is the SAME");
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "No changes have been made."));
+                        if (filesChanged) {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Files have been linked to the hazard."));
+                        } else {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "No changes have been made."));
+                        }
                     } else if (!hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("The content of the object CHANGED but the tree is still the SAME.");
                         dbHazardFacade.edit(hazardObject);
                         saveHazardObject(hazardObject);
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been edited successfully."));
+                        if (filesChanged) {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been edited and files have been linked successfully."));
+                        } else {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been edited successfully."));
+                        }
                     } else if (hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("The content of the object is the SAME but the tree CHANGED.");
                         dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
                         addSBS();
                         savedCheckedNodesList = treeCheckedNodesList;
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The sbs tree has been edited successfully."));
+                        if (filesChanged) {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The sbs tree has been edited and files have been linked successfully."));
+                        } else {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The sbs tree has been edited successfully."));
+                        }
                     } else if (!hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
                         //System.out.println("Both Changed.");
                         dbHazardFacade.edit(hazardObject);
@@ -353,7 +416,11 @@ public class addHazard_MB implements Serializable {
                         addSBS();
                         saveHazardObject(hazardObject);
                         savedCheckedNodesList = treeCheckedNodesList;
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard object and sbs tree have been edited successfully."));
+                        if (filesChanged) {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard object and sbs tree have been edited, and files have been linked successfully."));
+                        } else {
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard object and sbs tree have been edited successfully."));
+                        }
                     }
                 }
             } catch (Exception e) {
@@ -388,7 +455,7 @@ public class addHazard_MB implements Serializable {
 
         dbHazardFacade.create(hazardObject);
         saveHazardObject(hazardObject);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The Hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
     }
 
     //Filling and asociating all the related objects into the Hazard Object.
@@ -647,5 +714,113 @@ public class addHazard_MB implements Serializable {
             n.setExpanded(option);
             n.setSelected(false);
         }
+    }
+    
+    public void handleUpload(FileUploadEvent event) {
+        try {
+            UploadedFile rawFile = event.getFile();
+            InputStream fileStream = rawFile.getInputstream();
+            String[] rawName = rawFile.getFileName().split("\\.");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < rawName.length - 1; i++) {
+                sb.append(rawName[i]);
+            }
+            String fileName = sb.toString();
+            String fileExtension = rawName[rawName.length - 1];
+            
+            if (dbFilesFacade.findHeadersForDuplicate(fileName, fileExtension).size() >= 1) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "'" + fileName + "." + fileExtension + "' already exists in the database!"));
+            } else {
+                DbFiles newFile = new DbFiles();
+                newFile.setFileName(fileName);
+                newFile.setFileExtension(fileExtension);
+                newFile.setFileSize(rawFile.getContents().length);
+                newFile.setFileBlob(toByteArray(fileStream));
+                dbFilesFacade.create(newFile);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "'" + fileName + "." + fileExtension + "' has been successfully uploaded."));
+            }
+            
+        listFiles = (List<fileHeaderObject>) (Object) dbFilesFacade.listAllHeaders(); 
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
+        }
+    }
+    
+    public void handleDownload(fileHeaderObject file) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        
+        ec.responseReset();
+        ec.setResponseContentType(ec.getMimeType(file.getFileName() + "." + file.getFileExtension()));
+        ec.setResponseContentLength(file.getFileSize());
+        ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "." + file.getFileExtension() + "\"");
+        
+        try {
+            byte[] fileBlob = dbFilesFacade.findFileFromId(file.getFileId()).get(0).getFileBlob();
+            OutputStream os = ec.getResponseOutputStream();
+            os.write(fileBlob);
+        } catch (IOException e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
+        }
+        fc.responseComplete();
+    }
+    
+    public String parseSize(int fileSize) {
+        // Return a string for readability of the size field in tables
+        int order = 0;
+        String[] suffix = new String[3];
+        suffix[0] = "B";
+        suffix[1] = "kB";
+        suffix[2] = "MB";
+        double formatSize = fileSize;
+        while (formatSize / 1000 > 1) {
+            formatSize = formatSize / 1000;
+            order++;
+        }
+        DecimalFormat df = new DecimalFormat("#.###");
+        return Double.valueOf(df.format(formatSize)).toString() + " " + suffix[order];
+    }
+    
+    private void addFiles() {
+        filesChanged = false;
+        if (!checkedFiles.containsAll(savedFiles) || !savedFiles.containsAll(checkedFiles)) {
+            filesChanged = true;
+            if (checkedFiles.isEmpty() && !savedFiles.isEmpty()) {
+                System.out.println("All saved files to be unlinked.");
+                for (fileHeaderObject tmpFile: savedFiles) {
+                    unlinkFile(tmpFile);
+                }
+            } else if (!checkedFiles.isEmpty() && savedFiles.isEmpty()) {
+                System.out.println("All checked files to be linked.");
+                for (fileHeaderObject tmpFile: checkedFiles) {
+                    linkFile(tmpFile);
+                }
+            } else if (!checkedFiles.isEmpty() && !savedFiles.isEmpty()) {
+                System.out.println("Files to be checked against both lists.");
+                for (fileHeaderObject tmpFile: savedFiles) { 
+                    if (!checkedFiles.contains(tmpFile)) {
+                        unlinkFile(tmpFile);
+                    }
+                }
+                for (fileHeaderObject tmpFile: checkedFiles) {
+                    if (!savedFiles.contains(tmpFile)) {
+                        linkFile(tmpFile);
+                    }
+                }
+            }
+            savedFiles = dbHazardFilesFacade.findHeadersForHazard(hazardObject.getHazardId());
+        }
+    }
+    
+    private void linkFile(fileHeaderObject fileHeader) {
+        DbHazardFiles tmpHazardFiles = new DbHazardFiles();
+        DbHazardFilesPK tmpHazardFilesPK = new DbHazardFilesPK(hazardObject.getHazardId(), fileHeader.getFileId());
+        tmpHazardFiles.setDbHazardFilesPK(tmpHazardFilesPK);
+        tmpHazardFiles.setDbHazardFilesDummyvar(null);
+        dbHazardFilesFacade.create(tmpHazardFiles);
+    }
+    
+    private void unlinkFile(fileHeaderObject fileHeader) {
+        dbHazardFilesFacade.customRemove(hazardObject.getHazardId(), fileHeader.getFileId());
     }
 }

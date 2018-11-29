@@ -6,7 +6,6 @@
 package managedBeans;
 
 import ejb.DbUserFacadeLocal;
-import entities.DbHazard;
 import entities.DbUser;
 import java.io.IOException;
 import javax.inject.Named;
@@ -83,7 +82,7 @@ public class login_MB implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("activeUser", loggedUser);
                 Redirection = "/admin/masterMenu?faces-redirect=true";
             } else {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Incorrect User or Password"));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Incorrect email or password"));
             }
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_FATAL, "Warning", "Technical error"));
@@ -103,7 +102,7 @@ public class login_MB implements Serializable {
                     }
                 }
             } else {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/timeout.xhtml");
             }
         } catch (IOException e) {
             System.out.println("managedBeans.login_MB.validateSession() -> " + e);
@@ -131,18 +130,20 @@ public class login_MB implements Serializable {
     
     public String isAdminUser() {
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
-        try {
-            if (activeUser != null) {
-                if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
-                    return "true";
-                }
-            } else {
-                FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
+        if (activeUser != null) {
+            if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+                return "true";
             }
-        } catch (IOException e) {
-            System.out.println("managedBeans.login_MB.isAdminUser() -> " + e);
         }
         return "false";
+    }
+    
+    public void onIdle5() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 5 minutes. Click anywhere to avoid timing out."));
+    }
+    
+    public void onIdle8() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 2 minutes.  Click anywhere to avoid timing out."));
     }
 
 }

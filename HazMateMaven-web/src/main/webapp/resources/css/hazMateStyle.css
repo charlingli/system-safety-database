@@ -123,11 +123,22 @@ footer {
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
     font-size: 14px;
 }
+.ui-tabs .ui-tabs-nav.ui-widget-header li a {
+    color: #008080;
+}
+.ui-datatable-header.ui-widget-header.ui-corner-top {
+    border: 1px solid #008080;
+}
+.ui-tabs.ui-tabs-top .ui-tabs-nav.ui-widget-header li:not(.ui-state-active) {
+  background: #EEEEEEEE;
+}
+.ui-tabs.ui-tabs-top {
+    border-bottom: none;
+}
 .ui-accordion .ui-accordion-header .ui-icon { 
     display: block;
 }
 .ui-widget-header {
-    border:1px solid #008080;
     color: #ffffff;
     background:#008080;
 }
@@ -167,6 +178,11 @@ footer {
 }
 .ui-panelgrid .ui-panelgrid-cell {
     border: none;
+}
+.ui-fileupload-content {
+  height: 112px;
+  overflow: scroll;
+  overflow: overlay;
 }
 
 /**
@@ -532,6 +548,12 @@ span.commandLinkWhite {
 }
 .hiddenField {
     display: none;
+}
+.hazardTabs .ui-helper-reset.ui-widget-header.ui-corner-all {
+    border: none;
+}
+.hazardTabs li a {
+    color: #008080;
 }
 /**
  * Visualisation

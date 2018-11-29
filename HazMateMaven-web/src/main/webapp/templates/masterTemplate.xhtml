@@ -12,13 +12,24 @@
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
         <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon" />
         <title>System Safety Database</title>
-        <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0" />  
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0" />
         <f:event type="preRenderView" listener="#{login_MB.validateSession()}" />
+        
     </h:head>
     <h:body class="body">
         <header id="top">
             <ui:insert name="top">
                 <h:form>
+                    <div class="messageDiv">
+                        <p:messages id="messages" autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
+                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
+                    </div>
+                    <p:idleMonitor timeout="300000">
+                        <p:ajax event="idle" listener="#{login_MB.onIdle5}" update="growl" />
+                    </p:idleMonitor>
+                    <p:idleMonitor timeout="480000">
+                        <p:ajax event="idle" listener="#{login_MB.onIdle8}" update="growl" />
+                    </p:idleMonitor>
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
                         <f:facet name="options">
                             <c:choose>
