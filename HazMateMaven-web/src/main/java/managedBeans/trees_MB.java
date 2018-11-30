@@ -32,7 +32,6 @@ import entities.DbwfDecision;
 import entities.DbwfLine;
 import entities.DbwfLinePK;
 import entities.DbwfType;
-import java.awt.Event;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
@@ -43,8 +42,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -52,19 +51,15 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -606,14 +601,17 @@ public class trees_MB implements Serializable {
     }
 
     public void exportExcel() {
+        // List<DbHazard> listOfHazards = dbHazardFacade.findAll();
+        List<String> hazardsToExport = dbHazardFacade.findAll().stream().map(h -> h.getHazardId()).collect(Collectors.toList());
+        System.out.println(hazardsToExport.size());
         // Setting up the file
         boolean complete = false;
         String filename = "SSD_Export.xls";
 
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Register");
-        CreationHelper createHelper = workbook.getCreationHelper();
-
+        sheet.setZoom(80);
+        
         String[][] columnsHeaders = {{"Risk ID", "Blue", "14"},
         {"Drawing Package", "Yellow", "14"},
         {"Location", "Blue", "26"},
@@ -621,11 +619,11 @@ public class trees_MB implements Serializable {
         {"Cause / Precursor / Events", "Blue", "26"},
         {"Risk Description", "Blue", "14"},
         {"Risk Owner", "Blue", "14"},
-        {"Historic Impacts ", "Blue", "14"},
-        {"Potential Impacts ", "Blue", "14"},
+        {"Historic Impacts", "Blue", "14"},
+        {"Potential Impacts", "Blue", "14"},
         {"Project Risk Owner", "Yellow", "14"},
         {"Risk Type", "Yellow", "14"},
-        {"Current Controls / Treatments ", "Blue", "29"},
+        {"Current Controls / Treatments", "Blue", "29"},
         {"Requirement ID", "Pink", "14"},
         {"Control / Treatment Owner", "Blue", "28"},
         {"Control Implementation Status", "Yellow", "15"},
@@ -645,7 +643,7 @@ public class trees_MB implements Serializable {
         {"Target / Desired Residual Severity", "Red", "14"},
         {"Target / Desired Residual Frequency", "Red", "14"},
         {"Target / Desired Calculated Risk Score ", "Red", "14"},
-        {"Comments / Assumptions ", "Blue", "30"},
+        {"Comments / Assumptions", "Blue", "30"},
         {"Date Raised ", "Yellow", "14"},
         {"Workshop/Source ", "Yellow", "25"},
         {"Close Out Commentary", "Grey", "14"},
@@ -674,12 +672,14 @@ public class trees_MB implements Serializable {
         }
 
         // Getting all the data from the database
-        List<Object[]> exportedInfo = dbHazardFacade.exportHazards(null);
+        List<Object[]> exportedInfo = dbHazardFacade.exportHazards(hazardsToExport);
 
         // This is the row from where the hazards information will be written
         int currentRow = 6;
         CellStyle bodyCellStyle = workbook.createCellStyle();
         Font bodyFont = workbook.createFont();
+        int charColExsCntl = getCharPerLine("Current Controls / Treatments", columnsHeaders);
+        int charColProCntl = getCharPerLine("Proposed / Possible Controls", columnsHeaders);
 
         for (int i = 0; i < exportedInfo.size(); i++) {
             //Calculate what is the required number of rows
@@ -723,10 +723,13 @@ public class trees_MB implements Serializable {
                     }
                 }
 
-                // This section writes the information on Excel sheet.
+                // -------------------------------> This section writes the information in the Microsoft Excel file. <---------------------------------------
                 Row bodyRow = sheet.createRow(currentRow);
                 int numberOfRowsperHazard = calcNumberOfRowsPerHazard(numberOfExsControls, numberOfProControls);
                 String column;
+
+                // Getting the calculated size per row
+                int sizePerRow = calculateSizePerRow(columnsHeaders, curHazard, numberOfRowsperHazard);
 
                 // Defining the style of the hazards
                 bodyFont.setFontHeightInPoints((short) 10);
@@ -735,7 +738,7 @@ public class trees_MB implements Serializable {
                 bodyCellStyle.setAlignment(HorizontalAlignment.CENTER);
                 bodyCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-                // --> First, writing the hazards cells. <--
+                // -------------------------------> First step, writing the hazards cells without controls. <---------------------------------------
                 // Hazard id is in column A
                 column = "A";
                 Cell BodyCell = bodyRow.createCell(0);
@@ -758,7 +761,7 @@ public class trees_MB implements Serializable {
                 column = "D";
                 BodyCell = bodyRow.createCell(3);
                 BodyCell.setCellValue(curHazard.hazardContextName);
-                 BodyCell.setCellStyle(bodyCellStyle);
+                BodyCell.setCellStyle(bodyCellStyle);
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
@@ -882,15 +885,26 @@ public class trees_MB implements Serializable {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
 
-                // --> Second, writing the controls. <--
+                // -------------------------------> Second step, writing the controls. <---------------------------------------
                 Iterator<exportedExsControl> exsIterator = listExsCtl.iterator();
                 Iterator<exportedProControl> proIterator = listProCtl.iterator();
                 boolean firstCycle = true;
 
+                // In case there are not existing and proposed controls, the row will be increment by 1
+                if (!exsIterator.hasNext() && !proIterator.hasNext()) {
+                    currentRow++;
+                    // Autosize the row height 
+                    bodyRow.setHeight((short) sizePerRow);
+                }
+
+                // This loop writes the existing and proposed controls
                 while (exsIterator.hasNext() || proIterator.hasNext()) {
                     exportedExsControl tmpExtCtl = new exportedExsControl();
                     exportedProControl tmpProCtl = new exportedProControl();
-
+                    int finalHeight = sizePerRow;
+                    int heightExsCtl = 0;
+                    int heightProCtl = 0;
+                    
                     // From the second iteration we will create a new row per cycle
                     if (firstCycle) {
                         firstCycle = false;
@@ -910,6 +924,8 @@ public class trees_MB implements Serializable {
                         BodyCell = bodyRow.createCell(13);
                         BodyCell.setCellValue(tmpExtCtl.controlOwnerName);
                         BodyCell.setCellStyle(bodyCellStyle);
+                        
+                        heightExsCtl = (int) Math.ceil((double) tmpExtCtl.controlDescription.length() / charColExsCntl) * 300;
                     }
 
                     if (proIterator.hasNext()) {
@@ -934,14 +950,25 @@ public class trees_MB implements Serializable {
                         BodyCell = bodyRow.createCell(26);
                         BodyCell.setCellValue(tmpProCtl.controlRecommendName);
                         BodyCell.setCellStyle(bodyCellStyle);
+                        
+                        heightProCtl = (int) Math.ceil((double) tmpProCtl.controlDescription.length() / charColProCntl) * 300;
                     }
+
+                    // After each iteration the row number will incresed by 1
                     currentRow++;
-                    bodyRow.setHeight((short) -1);
+                    
+                    // Setting the row height 
+                    if (heightExsCtl > finalHeight){
+                        finalHeight = heightExsCtl;
+                    }
+                    if (heightProCtl > finalHeight){
+                        finalHeight = heightProCtl;
+                    }
+                    bodyRow.setHeight((short) finalHeight);
                 }
-                bodyRow.setHeight((short) -1);
+
                 // We move i to the next hazard, we reduce it on -1 because in the next for cycle will increased it on 1
                 i = i + numberOfRows - 1;
-                // currentRow = currentRow + numberOfRowsperHazard;
             } else {
                 System.out.println("managedBeans.trees_MB.exportExcel() -> There is an error calculating the number of rows based on the existing and proposed controls.");
                 break;
@@ -1027,7 +1054,6 @@ public class trees_MB implements Serializable {
             return Math.max(exsControls, proControls);
         }
         return 0;
-
     }
 
     private String checkNullString(Object valueToCheck) {
@@ -1044,6 +1070,44 @@ public class trees_MB implements Serializable {
         } else {
             return new SimpleDateFormat("yyyy-MM-dd").format(valueToCheck);
         }
+    }
+
+    private int calculateSizePerRow(String[][] listOfHeaders, exportedHazard hazardInfo, int numberOfRows) {
+        int maxNoLines = (int) Math.ceil((double) hazardInfo.hazardCauses.length() / getCharPerLine("Cause / Precursor / Events", listOfHeaders));
+        int tmpNoLines;
+        
+        tmpNoLines = (int) Math.ceil((double)hazardInfo.hazardDescription.length() / getCharPerLine("Risk Description", listOfHeaders));
+        if (tmpNoLines > maxNoLines) {
+            maxNoLines = tmpNoLines;
+        }
+        
+        tmpNoLines = (int) Math.ceil((double)hazardInfo.hazardConsequences.length() / getCharPerLine("Potential Impacts", listOfHeaders));
+        if (tmpNoLines > maxNoLines) {
+            maxNoLines = tmpNoLines;
+        }
+        
+        tmpNoLines = (int) Math.ceil((double)hazardInfo.hazardComment.length() / getCharPerLine("Comments / Assumptions", listOfHeaders));
+        if (tmpNoLines > maxNoLines) {
+            maxNoLines = tmpNoLines;
+        }
+        
+        // Each line Height is around 300 so the number of lines required multiplied by 300 divided by the required rows for controls
+        int minHeightRequired = (int) Math.round((maxNoLines * 300) / numberOfRows);
+        
+        if (minHeightRequired > 600){
+            return minHeightRequired;
+        } else {
+            return 600;
+        }
+    }
+    
+    private int getCharPerLine(String lookedValue, String[][] listOfHeaders){
+        for (String[] listOfHeader : listOfHeaders) {
+            if (listOfHeader[0].equals(lookedValue)) {
+                return Integer.parseInt(listOfHeader[2]);
+            }
+        }
+        return 1;
     }
 
     class exportedHazard {

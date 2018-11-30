@@ -463,7 +463,7 @@
                         </p:commandButton>
                     </div>
                     <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
-                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox">
+                                 scrollable="true" scrollHeight="600" scrollRows="400" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox">
                         <f:facet name="header">
                             <p:outputPanel styleClass="tableHeader">
                                 <div class="left"></div>
@@ -472,7 +472,7 @@
                                 </div>
                                 <div class="right">
                                     <h:outputText value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
-                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.getIdsForExport()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
+                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.exportExcel()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" ajax="false"/> 
                                 </div>
                             </p:outputPanel>
                         </f:facet>

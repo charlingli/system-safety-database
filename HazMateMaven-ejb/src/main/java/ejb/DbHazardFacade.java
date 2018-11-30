@@ -525,11 +525,11 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                         + "Haz.hazardId, "
                         + "Loc.locationName, "
                         + "Ctx.hazardContextName, "
-                        + "(SELECT GROUP_CONCAT(Cau.causeDescription ORDER BY Cau.causeId SEPARATOR '; ') FROM ssd.db_hazard_cause HCau, ssd.db_cause Cau "
+                        + "(SELECT GROUP_CONCAT('(-) ', Cau.causeDescription ORDER BY Cau.causeId SEPARATOR '\n') FROM ssd.db_hazard_cause HCau, ssd.db_cause Cau "
                             + "WHERE HCau.causeId = Cau.causeId AND HCau.hazardId = Haz.hazardId GROUP BY HCau.hazardId), "
                         + "Haz.hazardDescription, "
                         + "Own.ownerName, "
-                        + "(SELECT GROUP_CONCAT(Coq.consequenceDescription ORDER BY Coq.consequenceId SEPARATOR ', ') FROM ssd.db_hazard_consequence HCoq, ssd.db_consequence Coq "
+                        + "(SELECT GROUP_CONCAT('(-) ', Coq.consequenceDescription ORDER BY Coq.consequenceId SEPARATOR '\n') FROM ssd.db_hazard_consequence HCoq, ssd.db_consequence Coq "
                             + "WHERE HCoq.consequenceId = Coq.consequenceId AND HCoq.hazardId = Haz.hazardId GROUP BY HCoq.hazardId), "
                         + "Typ.hazardTypeName, "
                         + "CtlExs.controlId as CtlIdExs, "
@@ -583,10 +583,10 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                             + "ON CtlPro.controlHierarchyId = CtlProHir.controlHierarchyId "
                         + "INNER JOIN db_hazardStatus HazSts "
                             + "ON Haz.hazardStatusId = HazSts.hazardStatusId "
-                     //+ "WHERE Haz.hazardId IN ('MRE-TRK-0013','MRE-TRK-0001','MRE-ABS-0001','MRE-TRK-0006') "
+                     + "WHERE Haz.hazardId IN ?1 "
                      + "ORDER BY 3";
             Query query = em.createNativeQuery(querySTR);
-            //query.setParameter(1, searchedHazards);
+            query.setParameter(1, searchedHazards);
 
             resultList = query.getResultList();
 
