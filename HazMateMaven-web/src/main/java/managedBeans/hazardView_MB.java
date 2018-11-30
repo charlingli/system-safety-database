@@ -1934,6 +1934,7 @@ public class hazardView_MB implements Serializable {
 //    public List<String> getIdsForExport() {
 //        return getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
 //    }
+    }
     
     public String parseSize(int fileSize) {
         // Return a string for readability of the size field in tables
@@ -1969,5 +1970,4 @@ public class hazardView_MB implements Serializable {
         }
         fc.responseComplete();
     }  
-  }
 }

@@ -20,10 +20,6 @@
         <header id="top">
             <ui:insert name="top">
                 <h:form>
-                    <div class="messageDiv">
-                        <p:messages id="messages" autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
-                    </div>
                     <p:idleMonitor timeout="300000">
                         <p:ajax event="idle" listener="#{login_MB.onIdle5}" update="growl" />
                     </p:idleMonitor>
@@ -63,6 +59,10 @@
                             <p:spacer width="20" height="20"/>
                         </f:facet>
                     </p:menubar>
+                    <div class="messageDiv">
+                        <p:messages id="messages" autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
+                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
+                    </div>
                 </h:form>
             </ui:insert>
         </header>
