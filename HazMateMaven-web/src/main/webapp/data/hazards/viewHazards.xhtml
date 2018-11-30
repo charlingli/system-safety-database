@@ -492,9 +492,7 @@
                                 </div>
                                 <div class="right">
                                     <h:outputText id="exportMessage" value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
-                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.getIdsForExport()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
-                                    <h:outputText value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
-                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.exportExcel()}" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" ajax="false"/> 
+                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.exportExcel()}" ajax="false" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
                                 </div>
                             </p:outputPanel>
                         </f:facet>
