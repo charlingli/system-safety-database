@@ -5,8 +5,11 @@
  */
 package managedBeans;
 
+import customObjects.fileHeaderObject;
 import customObjects.treeNodeObject;
+import ejb.DbFilesFacadeLocal;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbHazardFilesFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
 import ejb.DbwfLineFacadeLocal;
@@ -26,13 +29,17 @@ import entities.DbtreeLevel6;
 import entities.DbwfDecision;
 import entities.DbwfLine;
 import entities.DbwfLinePK;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -45,6 +52,12 @@ import javax.faces.view.ViewScoped;
 @Named(value = "userWF_MB")
 @ViewScoped
 public class userWF_MB implements Serializable {
+
+    @EJB
+    private DbHazardFilesFacadeLocal dbHazardFilesFacade;
+
+    @EJB
+    private DbFilesFacadeLocal dbFilesFacade;
 
     @EJB
     private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
@@ -74,6 +87,7 @@ public class userWF_MB implements Serializable {
     private String multipleComment;
     private DbUser activeUser;
     private boolean isAdminUser;
+    private List<fileHeaderObject> fileHeaders;
 
     public userWF_MB() {
     }
@@ -198,6 +212,14 @@ public class userWF_MB implements Serializable {
         this.isAdminUser = isAdminUser;
     }
 
+    public List<fileHeaderObject> getFileHeaders() {
+        return fileHeaders;
+    }
+
+    public void setFileHeaders(List<fileHeaderObject> fileHeaders) {
+        this.fileHeaders = fileHeaders;
+    }
+
     @PostConstruct
     public void init() {
         activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
@@ -219,6 +241,7 @@ public class userWF_MB implements Serializable {
         detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
         detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
         detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
+        fileHeaders = dbHazardFilesFacade.findHeadersForHazard(detailHazard.getHazardId());
     }
     
     public void prepareDecision(DbwfLine wfItem, String decisionId) {
@@ -467,5 +490,40 @@ public class userWF_MB implements Serializable {
     
     public boolean checkRequest() {
         return selectWF.stream().noneMatch(h -> h.getDbwfHeader().getWfCompleteMethod().equals("HazardApprovalWF"));
+    }
+    
+    public String parseSize(int fileSize) {
+        // Return a string for readability of the size field in tables
+        int order = 0;
+        String[] suffix = new String[3];
+        suffix[0] = "B";
+        suffix[1] = "kB";
+        suffix[2] = "MB";
+        double formatSize = fileSize;
+        while (formatSize / 1000 > 1) {
+            formatSize = formatSize / 1000;
+            order++;
+        }
+        DecimalFormat df = new DecimalFormat("#.###");
+        return Double.valueOf(df.format(formatSize)).toString() + " " + suffix[order];
+    }
+    
+    public void handleDownload(fileHeaderObject file) {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ExternalContext ec = fc.getExternalContext();
+        
+        ec.responseReset();
+        ec.setResponseContentType(ec.getMimeType(file.getFileName() + "." + file.getFileExtension()));
+        ec.setResponseContentLength(file.getFileSize());
+        ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "." + file.getFileExtension() + "\"");
+        
+        try {
+            byte[] fileBlob = dbFilesFacade.findFileFromId(file.getFileId()).get(0).getFileBlob();
+            OutputStream os = ec.getResponseOutputStream();
+            os.write(fileBlob);
+        } catch (IOException e) {
+            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
+        }
+        fc.responseComplete();
     }
 }

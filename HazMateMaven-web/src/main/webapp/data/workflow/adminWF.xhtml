@@ -166,6 +166,26 @@
                                 </p:column>
                             </p:dataTable>
                         </p:panel>
+                        <p:panel id="filesPanel" styleClass="detailHazardPanel">
+                            <h:outputText value="The following files are linked to the current hazard:" class="p-emphasis"/>
+                            <p:dataTable value="#{userWF_MB.fileHeaders}" var="file" emptyMessage="No files are linked to this hazard.">
+                                <p:column headerText="ID" styleClass="small">
+                                    <p:outputLabel value="#{file.fileId}"/>
+                                </p:column>
+                                <p:column headerText="Name" styleClass="normal">
+                                    <p:outputLabel value="#{file.fileName}"/>
+                                </p:column>
+                                <p:column headerText="Extension" styleClass="small">
+                                    <p:outputLabel value="#{file.fileExtension}"/>
+                                </p:column>
+                                <p:column headerText="Size" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.parseSize(file.fileSize)}"/>
+                                </p:column>
+                                <p:column headerText="Download" styleClass="small">
+                                    <p:commandButton action="#{userWF_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
                     </p:dialog>
                     <p:dataTable value="#{userWF_MB.listOpenWF}" id="openwfTable" widgetVar="wfTable" var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{userWF_MB.selectWF}" rowSelectMode="checkbox" disabledSelection="#{wf.dbwfHeader.wfStatus == 'A' || wf.dbwfHeader.wfStatus == 'R'}" rowKey="#{wf.dbwfHeader.wfId}" scrollable="true" scrollHeight="400">
                         <f:facet name="header">

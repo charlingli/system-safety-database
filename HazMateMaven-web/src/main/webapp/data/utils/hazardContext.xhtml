@@ -12,10 +12,6 @@
                 <f:view>
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <div class="messageDiv">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                            <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
-                        </div>
                         <p:dataTable id="viewTable" value="#{hazardContext_MB.listDbHazardContext}" var="item" styleClass="parameterTable"
                                      widgetVar="contextTable" emptyMessage="No contexts found with given criteria"
                                      filteredValue="#{hazardContext_MB.filteredContexts}"  paginator="true" rows="20" paginatorPosition="bottom">

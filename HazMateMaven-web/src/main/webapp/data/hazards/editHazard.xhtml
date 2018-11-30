@@ -26,7 +26,7 @@
                                             </p:commandLink>
                                         </h:panelGroup>
                                         <p:outputLabel>Hazard Date</p:outputLabel>
-                                        <p:calendar id="DTInput" inputStyleClass="searchInput" value="#{editHazard_MB.searchDT}" title="HazardDate1" maxdate="#{addHazard_MB.todaysDate()}" />
+                                        <p:calendar id="DTInput" inputStyleClass="searchInput" value="#{editHazard_MB.searchDT}" title="HazardDate1" maxdate="#{editHazard_MB.todaysDate()}" />
                                         <h:panelGroup styleClass="remove">
                                             <p:commandLink id="DTClear" update="form" action="#{editHazard_MB.clearField(component.id)}" process="@this" rendered="#{not empty editHazard_MB.searchDT}">
                                                 <i class="fa fa-remove"/>
@@ -206,63 +206,117 @@
                                         <h:outputText value="Editing Hazard #{editHazard_MB.currentHazard.hazardId}"/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:outputLabel value="Hazard Date:"/>
-                                <p:calendar value="#{editHazard_MB.currentHazard.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{editHazard_MB.currentDate()}"/>
-                                <p:outputLabel value="Hazard Description:"  />
-                                <p:inputTextarea rows="3" cols="60"  value="#{editHazard_MB.currentHazard.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
-                                <p:outputLabel value="Hazard Comment:"/>
-                                <p:inputTextarea rows="3" cols="60" value="#{editHazard_MB.currentHazard.hazardComment}" title="HazardComment"/>
-                                <p:outputLabel value="Hazard Activity:"  />
-                                <p:selectOneMenu value="#{editHazard_MB.editingHA}" required="true" requiredMessage="The Hazard Activity field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listHA}" var="ha" itemLabel="#{ha.activityName}" itemValue="#{ha.activityId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Context:"  />
-                                <p:selectOneMenu  value="#{editHazard_MB.editingHC}"  required="true" requiredMessage="The HazardContextId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listHC}" var="hc" itemLabel="#{hc.hazardContextName}" itemValue="#{hc.hazardContextId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Type:"/>
-                                <p:selectOneMenu value="#{editHazard_MB.editingHT}" required="true" requiredMessage="The HazardTypeId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listHT}" var="ht" itemLabel="#{ht.hazardTypeName}" itemValue="#{ht.hazardTypeId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Status:"/>
-                                <p:selectOneMenu  value="#{editHazard_MB.editingHS}" required="true" requiredMessage="The HazardStatusId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listHS}" var="hs" itemLabel="#{hs.hazardStatusName}" itemValue="#{hs.hazardStatusId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Owner:"  />
-                                <p:selectOneMenu  value="#{editHazard_MB.editingHO}" required="true" requiredMessage="The OwnerId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listHO}" var="ho" itemLabel="#{ho.ownerName}" itemValue="#{ho.ownerId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Hazard Workshop:"/>
-                                <p:inputTextarea rows="2" cols="60"  value="#{editHazard_MB.currentHazard.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
-                                <p:outputLabel value="Hazard Review:"  />
-                                <p:selectOneMenu  value="#{editHazard_MB.currentHazard.hazardReview}" required="true" requiredMessage="The Hazard Review field is required." class="editInput" autoWidth="false">
-                                    <f:selectItem itemLabel="Yes" itemValue="Y"/>
-                                    <f:selectItem itemLabel="No" itemValue="N"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Risk Class"/>
-                                <p:selectOneMenu value="#{editHazard_MB.editingRC}" required="true" requiredMessage="The Risk class field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listRC}" var="rc" itemLabel="#{rc.riskClassName}" itemValue="#{rc.riskClassId}"/> 
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Risk Frequency:"/>
-                                <p:selectOneMenu  value="#{editHazard_MB.editingRF}" required="true" requiredMessage="The RiskFrequencyId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listRF}" var="rf" itemLabel="#{rf.frequencyScore}" itemValue="#{rf.riskFrequencyId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="Risk Severity:"/>
-                                <p:selectOneMenu  value="#{editHazard_MB.editingRS}" required="true" requiredMessage="The RiskSeverityId field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listRS}" var="rs" itemLabel="#{rs.severityScore}" itemValue="#{rs.riskSeverityId}"/>
-                                </p:selectOneMenu>
-                                <p:outputLabel value="System Breakdown Structure:"/>
-                                <p:tree id="sbsTree" value="#{editHazard_MB.root}" var="node" selectionMode="checkbox" selection="#{editHazard_MB.currentTree}">
-                                    <p:treeNode>
-                                        <p:outputLabel value="#{node}"/>
-                                    </p:treeNode>
-                                </p:tree>
-                                <p:outputLabel value="Legacy ID:"/>
-                                <p:inputText value="#{editHazard_MB.currentHazard.legacyId}" title="Legacy Id"/>
-                                <p:outputLabel value="SSD Hazard Status" rendered="#{editHazard_MB.adminUser}"/>
-                                <p:selectOneMenu value="#{editHazard_MB.currentHazard.hazardSystemStatus.systemStatusId}" rendered="#{editHazard_MB.adminUser}" required="true" requiredMessage="The SSD Hazard Status field is required." class="editInput" autoWidth="false">
-                                    <f:selectItems value="#{editHazard_MB.listSS}" var="ss" itemLabel="#{ss.systemStatusName}" itemValue="#{ss.systemStatusId}"/>
-                                </p:selectOneMenu>
+                                <p:tabView styleClass="hazardTabs">
+                                    <p:tab title="Insert hazard information">
+                                        <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                                            <p:outputLabel value="Hazard Date:"/>
+                                            <p:calendar value="#{editHazard_MB.currentHazard.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{editHazard_MB.currentDate()}"/>
+                                            <p:outputLabel value="Hazard Description:"  />
+                                            <p:inputTextarea rows="3" cols="60"  value="#{editHazard_MB.currentHazard.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
+                                            <p:outputLabel value="Hazard Comment:"/>
+                                            <p:inputTextarea rows="3" cols="60" value="#{editHazard_MB.currentHazard.hazardComment}" title="HazardComment"/>
+                                            <p:outputLabel value="Hazard Activity:"  />
+                                            <p:selectOneMenu value="#{editHazard_MB.editingHA}" required="true" requiredMessage="The Hazard Activity field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listHA}" var="ha" itemLabel="#{ha.activityName}" itemValue="#{ha.activityId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Hazard Context:"  />
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingHC}"  required="true" requiredMessage="The HazardContextId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listHC}" var="hc" itemLabel="#{hc.hazardContextName}" itemValue="#{hc.hazardContextId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Hazard Type:"/>
+                                            <p:selectOneMenu value="#{editHazard_MB.editingHT}" required="true" requiredMessage="The HazardTypeId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listHT}" var="ht" itemLabel="#{ht.hazardTypeName}" itemValue="#{ht.hazardTypeId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Hazard Status:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingHS}" required="true" requiredMessage="The HazardStatusId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listHS}" var="hs" itemLabel="#{hs.hazardStatusName}" itemValue="#{hs.hazardStatusId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Hazard Owner:"  />
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingHO}" required="true" requiredMessage="The OwnerId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listHO}" var="ho" itemLabel="#{ho.ownerName}" itemValue="#{ho.ownerId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Hazard Workshop:"/>
+                                            <p:inputTextarea rows="2" cols="60"  value="#{editHazard_MB.currentHazard.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
+                                            <p:outputLabel value="Hazard Review:"  />
+                                            <p:selectOneMenu  value="#{editHazard_MB.currentHazard.hazardReview}" required="true" requiredMessage="The Hazard Review field is required." class="editInput" autoWidth="false">
+                                                <f:selectItem itemLabel="Yes" itemValue="Y"/>
+                                                <f:selectItem itemLabel="No" itemValue="N"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Risk Class"/>
+                                            <p:selectOneMenu value="#{editHazard_MB.editingRC}" required="true" requiredMessage="The Risk class field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRC}" var="rc" itemLabel="#{rc.riskClassName}" itemValue="#{rc.riskClassId}"/> 
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Risk Frequency:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingRF}" required="true" requiredMessage="The RiskFrequencyId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRF}" var="rf" itemLabel="#{rf.frequencyScore}" itemValue="#{rf.riskFrequencyId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Risk Severity:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingRS}" required="true" requiredMessage="The RiskSeverityId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRS}" var="rs" itemLabel="#{rs.severityScore}" itemValue="#{rs.riskSeverityId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="System Breakdown Structure:"/>
+                                            <p:tree id="sbsTree" value="#{editHazard_MB.root}" var="node" selectionMode="checkbox" selection="#{editHazard_MB.currentTree}">
+                                                <p:treeNode>
+                                                    <p:outputLabel value="#{node}"/>
+                                                </p:treeNode>
+                                            </p:tree>
+                                            <p:outputLabel value="Legacy ID:"/>
+                                            <p:inputText value="#{editHazard_MB.currentHazard.legacyId}" title="Legacy Id"/>
+                                            <p:outputLabel value="SSD Hazard Status" rendered="#{editHazard_MB.adminUser}"/>
+                                            <p:selectOneMenu value="#{editHazard_MB.currentHazard.hazardSystemStatus.systemStatusId}" rendered="#{editHazard_MB.adminUser}" required="true" requiredMessage="The SSD Hazard Status field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listSS}" var="ss" itemLabel="#{ss.systemStatusName}" itemValue="#{ss.systemStatusId}"/>
+                                            </p:selectOneMenu>
+                                        </p:panelGrid>
+                                    </p:tab>
+                                    <p:tab title="Upload/link supporting files">
+                                        <h:panelGrid styleClass="searchPanel">
+                                            <f:facet name="header">
+                                                <p:outputPanel>
+                                                    <h:outputText value="Upload a new file:"/>
+                                                </p:outputPanel>
+                                            </f:facet>
+                                            <p:fileUpload fileUploadListener="#{editHazard_MB.handleUpload}" oncomplete="PF('fileTable').filter()" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                        </h:panelGrid>
+                                        <h:panelGrid>
+                                            <f:facet name="header">
+                                                <p:outputPanel>
+                                                    <h:outputText value="Link to existing files:"/>
+                                                </p:outputPanel>
+                                            </f:facet>
+                                            <p:dataTable id="fileTable" widgetVar="fileTable" value="#{editHazard_MB.listFiles}" var="file" scrollable="true" scrollHeight="400" styleClass="resultPanel" emptyMessage="No files found." rowKey="#{file.fileId}" selection="#{editHazard_MB.checkedFiles}" rowSelectMode="checkbox">
+                                                <f:facet name="header">
+                                                    <p:outputPanel>
+                                                        <h:outputText value="Select from the following files: "/>
+                                                    </p:outputPanel>
+                                                </f:facet>
+                                                <p:ajax event="rowSelect" update="fileTable"/>
+                                                <p:ajax event="rowUnselect" update="fileTable"/>
+                                                <p:ajax event="rowSelectCheckbox" update="fileTable"/>
+                                                <p:ajax event="rowUnselectCheckbox" update="fileTable"/>
+                                                <p:ajax event="toggleSelect" update="fileTable"/>
+                                                <p:column selectionMode="multiple" style="width: 10%; text-align:center"/>
+                                                <p:column style="width: 14%; text-align:center" headerText="File ID">
+                                                    <h:outputText value="#{file.fileId}"/>
+                                                </p:column>
+                                                <p:column style="width: 36%; text-align:center" headerText="File Name">
+                                                    <h:outputText value="#{file.fileName}"/>
+                                                </p:column>
+                                                <p:column style="width: 17%; text-align:center" headerText="File Type">
+                                                    <h:outputText value="#{file.fileExtension}"/>
+                                                </p:column>
+                                                <p:column style="width: 17%; text-align:center" headerText="File Size">
+                                                    <h:outputText value="#{editHazard_MB.parseSize(file.fileSize)}"/>
+                                                </p:column>
+                                                <p:column style="width: 16%; text-align:center" headerText="Download">
+                                                    <p:commandButton action="#{editHazard_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
+                                                </p:column>
+                                                <f:facet name="footer">
+                                                    <h:outputText value="Selected #{editHazard_MB.checkedFiles.size()} #{editHazard_MB.checkedFiles.size() == 1 ? 'file' : editHazard_MB.checkedFiles.size() == 0 ? 'files' : empty editHazard_MB.checkedFiles ? 'no files' : 'files'} to be linked"/>
+                                                </f:facet>
+                                            </p:dataTable>
+                                        </h:panelGrid>
+                                    </p:tab>
+                                </p:tabView>
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons" style="display: #{(editHazard_MB.showEdit) ? 'block' : 'none'}">

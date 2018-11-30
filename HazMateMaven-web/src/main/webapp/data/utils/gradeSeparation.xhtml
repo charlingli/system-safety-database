@@ -12,10 +12,6 @@
                 <f:view>
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <div class="messageDiv">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                            <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
-                        </div>
                         <p:dataTable id="viewTable" value="#{gradeSeparation_MB.listDbGradeSeparation}" var="item" styleClass="parameterTable">
                             <f:facet name="header">
                                 <p:outputPanel>

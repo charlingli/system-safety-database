@@ -12,10 +12,6 @@
                 <f:view>
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <div class="messageDiv">
-                            <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                            <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
-                        </div>
                         <p:dataTable id="viewTable" value="#{location_MB.listDbLocation}" var="item" styleClass="parameterTableLarge"
                                      widgetVar="locationTable" emptyMessage="No locations found with given criteria"
                                      filteredValue="#{location_MB.filteredLocations}"  paginator="true" rows="20" paginatorPosition="bottom">
