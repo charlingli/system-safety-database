@@ -449,7 +449,7 @@ public class addHazard_MB implements Serializable {
         hazardObject.setHazardId(dbglobalIdFacade.nextConsecutive(key1, key2, "-", 4).getAnswerString());
 
         //Calculating the risk score and persisting the object in the database.
-        hazardObject.setRiskScore(dbHazardFacade.calculateRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue(), dbriskSeverityFacade.find(severityId).getSeverityValue()));
+        hazardObject.setRiskTargetScore(dbHazardFacade.calculateRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue(), dbriskSeverityFacade.find(severityId).getSeverityValue()));
 
         //Setting the audit fields
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
@@ -472,8 +472,8 @@ public class addHazard_MB implements Serializable {
         hazardObject.setHazardTypeId(new DbhazardType(typeId));
         hazardObject.setOwnerId(new DbOwners(ownerId));
         hazardObject.setHazardContextId(new DbhazardContext(hazardContextId));
-        hazardObject.setRiskFrequencyId(new DbriskFrequency(freqId));
-        hazardObject.setRiskSeverityId(new DbriskSeverity(severityId));
+        hazardObject.setRiskTargetFrequencyId(new DbriskFrequency(freqId));
+        hazardObject.setRiskTargetSeverityId(new DbriskSeverity(severityId));
         hazardObject.setRiskClassId(new DbriskClass(riskClassId));
     }
 
@@ -681,9 +681,9 @@ public class addHazard_MB implements Serializable {
         savedHazardObject.setHazardTypeId(inputObj.getHazardTypeId());
         savedHazardObject.setHazardStatusId(inputObj.getHazardStatusId());
         savedHazardObject.setRiskClassId(inputObj.getRiskClassId());
-        savedHazardObject.setRiskFrequencyId(inputObj.getRiskFrequencyId());
-        savedHazardObject.setRiskSeverityId(inputObj.getRiskSeverityId());
-        savedHazardObject.setRiskScore(inputObj.getRiskScore());
+        savedHazardObject.setRiskTargetFrequencyId(inputObj.getRiskTargetFrequencyId());
+        savedHazardObject.setRiskTargetSeverityId(inputObj.getRiskTargetSeverityId());
+        savedHazardObject.setRiskTargetScore(inputObj.getRiskTargetScore());
         savedHazardObject.setHazardComment(inputObj.getHazardComment());
         savedHazardObject.setHazardDate(inputObj.getHazardDate());
         savedHazardObject.setHazardWorkshop(inputObj.getHazardWorkshop());

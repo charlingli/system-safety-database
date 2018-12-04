@@ -548,7 +548,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Hazard ID"/>
                             </f:facet>
-                            <p:commandLink id="viewLink" update="hazardsForm" actionListener="#{hazardView_MB.showDetail(hazard.hazardObj.hazardId)}" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('detailOverlay').show()">
+                            <p:commandLink id="viewLink" update="hazardsForm:detailDialog" actionListener="#{hazardView_MB.showDetail(hazard.hazardObj.hazardId)}" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('detailOverlay').show()">
                                 <h:outputText value="#{hazard.hazardObj.hazardId}"/>
                             </p:commandLink>
                             <p:tooltip for="viewLink">
