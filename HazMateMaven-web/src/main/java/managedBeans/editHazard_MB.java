@@ -764,7 +764,7 @@ public class editHazard_MB implements Serializable {
             listSearchObject.add(new searchObject("systemStatusId", terms, "int", "DbHazard", "hazardSystemStatus", null, null, "in", "Hazard System Status"));
         }
         constructHtml(listSearchObject);
-//        listHazards = dbHazardFacade.findHazardsByFieldsOnly(listSearchObject);
+        listHazards = (List<DbHazard>) (Object) dbHazardFacade.findHazards(listSearchObject, new ArrayList<>(), "A", "Normal");
     }
     
     public void cancelEdit() {
@@ -803,8 +803,8 @@ public class editHazard_MB implements Serializable {
             responseStr = "No changes have been made.";
         }
         if (!Arrays.equals(currentTree, savedTree)) {
-            dbHazardSbsFacade.removeHazardSbs(currentHazard.getHazardId());
             if (currentTree != null && currentTree.length > 0) {
+                dbHazardSbsFacade.removeHazardSbs(currentHazard.getHazardId());
                 collectSbs();
                 addSbs();
                 currentHazard.setUpdatedDateTime(new Date());

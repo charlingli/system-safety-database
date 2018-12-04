@@ -68,6 +68,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -371,6 +372,11 @@ public class addHazard_MB implements Serializable {
         
     }
 
+    @PreDestroy
+    public void validateCompletion() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been saved. Please assign causes, consequences, and controls."));
+    }
+    
     //Processing the complete page, when the hazard is new it will be created otherwise it will be edited.
     public void processPage() {
         if (selectedNodes != null && selectedNodes.length > 0) {
@@ -427,7 +433,7 @@ public class addHazard_MB implements Serializable {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
             }
         } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Please select at least one SBS node"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Please select at least one SBS node!"));
         }
     }
 
@@ -455,7 +461,7 @@ public class addHazard_MB implements Serializable {
 
         dbHazardFacade.create(hazardObject);
         saveHazardObject(hazardObject);
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard " + hazardObject.getHazardId() + " has been sucessfully added!"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard " + hazardObject.getHazardId() + " has been sucessfully added! You may edit it further or move to assign causes, consequences, and controls."));
     }
 
     //Filling and asociating all the related objects into the Hazard Object.
