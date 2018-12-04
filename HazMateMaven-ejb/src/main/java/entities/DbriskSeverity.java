@@ -51,8 +51,10 @@ public class DbriskSeverity implements Serializable {
     @NotNull
     @Column(name = "severityValue")
     private int severityValue;
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskSeverityId")
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskCurrentSeverityId")
     private List<DbHazard> dbHazardList;
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskTargetSeverityId")
+    private List<DbHazard> dbHazardList1;
 
     public DbriskSeverity() {
     }
@@ -90,7 +92,7 @@ public class DbriskSeverity implements Serializable {
     public void setDbHazardList(List<DbHazard> dbHazardList) {
         this.dbHazardList = dbHazardList;
     }
-    
+
     public int getSeverityValue() {
         return severityValue;
     }

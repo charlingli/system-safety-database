@@ -674,8 +674,8 @@ public class editHazard_MB implements Serializable {
         setEditingHS(currentHazard.getHazardStatusId().getHazardStatusId());
         setEditingHO(currentHazard.getOwnerId().getOwnerId());
         setEditingRC(currentHazard.getRiskClassId().getRiskClassId());
-        setEditingRF(currentHazard.getRiskFrequencyId().getRiskFrequencyId());
-        setEditingRS(currentHazard.getRiskSeverityId().getRiskSeverityId());
+        setEditingRF(currentHazard.getRiskTargetFrequencyId().getRiskFrequencyId());
+        setEditingRS(currentHazard.getRiskTargetSeverityId().getRiskSeverityId());
         setEditingSS(currentHazard.getHazardSystemStatus().getSystemStatusId());
         
         savedHazard = new DbHazard();
@@ -693,8 +693,8 @@ public class editHazard_MB implements Serializable {
         savedHazard.setHazardStatusId(currentHazard.getHazardStatusId());
         savedHazard.setOwnerId(currentHazard.getOwnerId());
         savedHazard.setRiskClassId(currentHazard.getRiskClassId());
-        savedHazard.setRiskFrequencyId(currentHazard.getRiskFrequencyId());
-        savedHazard.setRiskSeverityId(currentHazard.getRiskSeverityId());
+        savedHazard.setRiskTargetFrequencyId(currentHazard.getRiskTargetFrequencyId());
+        savedHazard.setRiskTargetSeverityId(currentHazard.getRiskTargetSeverityId());
         savedHazard.setHazardSystemStatus(currentHazard.getHazardSystemStatus());
         checkedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
         savedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
@@ -783,8 +783,8 @@ public class editHazard_MB implements Serializable {
                 currentHazard.getOwnerId().getOwnerId().equals(savedHazard.getOwnerId().getOwnerId()) &&
                 currentHazard.getHazardWorkshop().equals(savedHazard.getHazardWorkshop()) &&
                 currentHazard.getRiskClassId().getRiskClassId().equals(savedHazard.getRiskClassId().getRiskClassId()) &&
-                currentHazard.getRiskFrequencyId().getRiskFrequencyId().equals(savedHazard.getRiskFrequencyId().getRiskFrequencyId()) &&
-                currentHazard.getRiskSeverityId().getRiskSeverityId().equals(savedHazard.getRiskSeverityId().getRiskSeverityId()) &&
+                currentHazard.getRiskTargetFrequencyId().getRiskFrequencyId().equals(savedHazard.getRiskTargetFrequencyId().getRiskFrequencyId()) &&
+                currentHazard.getRiskTargetSeverityId().getRiskSeverityId().equals(savedHazard.getRiskTargetSeverityId().getRiskSeverityId()) &&
                 currentHazard.getLegacyId().equals(savedHazard.getLegacyId()) &&
                 currentHazard.getHazardReview().equals(savedHazard.getHazardReview()) &&
                 currentHazard.getHazardSystemStatus().getSystemStatusId().equals(savedHazard.getHazardSystemStatus().getSystemStatusId())) {
@@ -821,7 +821,7 @@ public class editHazard_MB implements Serializable {
             }
         }
         if (hazardChanged()) {
-            currentHazard.setRiskScore(dbHazardFacade.calculateRiskScore(currentHazard.getRiskFrequencyId().getFrequencyValue(), currentHazard.getRiskSeverityId().getSeverityValue()));
+            currentHazard.setRiskTargetScore(dbHazardFacade.calculateRiskScore(currentHazard.getRiskTargetFrequencyId().getFrequencyValue(), currentHazard.getRiskTargetSeverityId().getSeverityValue()));
             currentHazard.setUpdatedDateTime(new Date());
             currentHazard.setUserIdUpdate(activeUser.getUserId());
             dbHazardFacade.edit(currentHazard);
@@ -878,8 +878,8 @@ public class editHazard_MB implements Serializable {
         currentHazard.setHazardStatusId(statusObject);
         currentHazard.setOwnerId(ownerObject);
         currentHazard.setRiskClassId(classObject);
-        currentHazard.setRiskFrequencyId(frequencyObject);
-        currentHazard.setRiskSeverityId(severityObject);
+        currentHazard.setRiskTargetFrequencyId(frequencyObject);
+        currentHazard.setRiskTargetSeverityId(severityObject);
         savedHazard.setHazardSystemStatus(systemObject);
         
     }

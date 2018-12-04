@@ -863,13 +863,13 @@ public class hazardViewExtend_MB implements Serializable {
                         tList.add(hazardSearchedList.get(j).getRiskClassId().getRiskClassName());
                         break;
                     case 15:
-                        tList.add(hazardSearchedList.get(j).getRiskFrequencyId().getFrequencyScore());
+                        tList.add(hazardSearchedList.get(j).getRiskTargetFrequencyId().getFrequencyScore());
                         break;
                     case 16:
-                        tList.add(hazardSearchedList.get(j).getRiskSeverityId().getSeverityScore());
+                        tList.add(hazardSearchedList.get(j).getRiskTargetSeverityId().getSeverityScore());
                         break;
                     case 17:
-                        tList.add(Integer.toString(hazardSearchedList.get(j).getRiskScore()));
+                        tList.add(Integer.toString(hazardSearchedList.get(j).getRiskTargetScore()));
                         break;
                     case 18:
                         List<String> cdList = viewControlDescription(hazardSearchedList.get(j).getHazardId());
