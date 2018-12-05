@@ -33,10 +33,11 @@ public class DbriskFrequencyFacade extends AbstractFacade<DbriskFrequency> imple
     
     @Override
     public List<DbHazard> checkRiskFrequency(int riskFrequencyId)   {
-        return em.createQuery("FROM DbHazard h WHERE h.riskFrequencyId.riskFrequencyId = :checkRiskFrequencyId")
+        return em.createQuery("FROM DbHazard h WHERE h.riskCurrentFrequencyId.riskFrequencyId = :checkRiskFrequencyId "
+                + "OR h.riskTargetFrequencyId.riskFrequencyId = :checkRiskFrequencyId")
                 .setParameter("checkRiskFrequencyId", riskFrequencyId)
                 .setMaxResults(10)
-                .getResultList(); 
+                .getResultList();
     }
     
     @Override

@@ -384,7 +384,7 @@ public class DbHazard implements Serializable {
                 && this.ownerId.equals(other.ownerId) && this.hazardTypeId.equals(other.hazardTypeId) && this.hazardStatusId.equals(other.hazardStatusId)
                 && this.riskClassId.equals(other.riskClassId) && this.riskCurrentFrequencyId.equals(other.riskCurrentFrequencyId)
                 && this.riskCurrentSeverityId.equals(other.riskCurrentSeverityId) && this.riskCurrentScore == other.riskCurrentScore
-                && this.riskTargetFrequencyId.equals(other.riskTargetFrequencyId) && this.riskCurrentSeverityId.equals(other.riskCurrentSeverityId)
+                && this.riskTargetFrequencyId.equals(other.riskTargetFrequencyId) && this.riskTargetSeverityId.equals(other.riskTargetSeverityId)
                 && this.riskTargetScore == other.riskTargetScore && this.hazardComment.equals(other.hazardComment) && this.hazardDate.equals(other.hazardDate)
                 && this.hazardWorkshop.equals(other.hazardWorkshop) && this.hazardReview.equals(other.hazardReview) && this.legacyId.equals(other.legacyId);
     }
