@@ -32,6 +32,9 @@ public interface DbRolePageFacadeLocal {
 
     int count();
     
+    List<String> listPermissions();
+    
     List<DbRolePage> findByName(String fieldName, String fieldValue);
+    
     
 }

@@ -139,11 +139,15 @@ public class login_MB implements Serializable {
     }
     
     public void onIdle5() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 5 minutes. Click anywhere to avoid timing out."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 5 minutes. Click here to refresh the session."));
     }
     
     public void onIdle8() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 2 minutes.  Click anywhere to avoid timing out."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 2 minutes. Click here to refresh the session."));
+    }
+    
+    public void keepAlive() {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session has been extended."));
     }
 
 }

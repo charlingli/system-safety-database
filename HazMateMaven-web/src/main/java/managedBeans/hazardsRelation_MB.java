@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -393,7 +394,7 @@ public class hazardsRelation_MB implements Serializable {
         //Validate if this component has been called due to another page redirection.
         redirectedPage();
     }
-
+    
     public void searchHazards() {
         listHazards = (List<DbHazard>) (Object) dbHazardFacade.findHazards(createSearchList(), new ArrayList<>(), "A", "Normal");
         dataTable = true;
@@ -747,5 +748,12 @@ public class hazardsRelation_MB implements Serializable {
         wfObj.setWfComment1(Comment1);
         wfObj.setWfCompleteMethod("HazardApprovalWF");
         validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApp, wfObj, "WKF-HRD");
+    }
+    
+    public boolean hasRelations() {
+        int nCauses = dbHazardCauseFacade.findByHazardId(hazardObject.getHazardId()).size();
+        int nConsqs = dbHazardConsequenceFacade.findByHazardId(hazardObject.getHazardId()).size();
+        int nControls = dbControlHazardFacade.findByHazardId(hazardObject.getHazardId()).size();
+        return !(nCauses < 1 || nConsqs < 1 || nControls < 1);
     }
 }

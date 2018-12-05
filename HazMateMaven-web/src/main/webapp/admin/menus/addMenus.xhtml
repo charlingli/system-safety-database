@@ -12,7 +12,6 @@
                 <h:form id="addMenus">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Menus Structure,Add Menu')}" escape="false"/></div>
                     <p:panel class="managementModifyPanel">
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <h:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="Menu Name:" for="menuName"/>
                             <p:inputText id="menuName" value="#{menus_MB.menuObjectVariable.menuName}" required="true" requiredMessage="Menu name is required."/>

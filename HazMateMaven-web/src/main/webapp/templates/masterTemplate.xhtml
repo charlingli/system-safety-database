@@ -20,6 +20,7 @@
         <header id="top">
             <ui:insert name="top">
                 <h:form>
+                    <p:remoteCommand name="keepAlive" actionListener="#{login_MB.keepAlive()}" />
                     <p:idleMonitor timeout="300000">
                         <p:ajax event="idle" listener="#{login_MB.onIdle5}" update="growl" />
                     </p:idleMonitor>
@@ -61,7 +62,7 @@
                     </p:menubar>
                     <div class="messageDiv">
                         <p:messages id="messages" autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
+                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" class="timeout" />
                     </div>
                 </h:form>
             </ui:insert>
@@ -75,11 +76,23 @@
             <ui:insert name="footer">
                 <p:separator />
                 <h:form>
-                    <h:outputText value="SSD is licensed using the MIT licence. You can find the complete file "/>
-                    <h:commandLink styleClass="commandLink" value="here" action="/license/hazMateLicense"/>
+                    <h:outputText value="System Safety Database is proprietary software owned and operated by Level Crossing Removal Authority. Status: "/>
+                    <h:outputText style="font-weight: bold; color: rgb(179, 139, 52)" value="in development"/>
+                    <h:outputText value=". Track our changes on our "/>
+                    <a class="commandLink" href="https://trello.com/b/MkVdC6k7/system-safety-database">Trello board</a>
+                    <h:outputText value=" and find release notes on our "/>
+                    <a class="commandLink" href="https://dtpli.sharepoint.com/sites/lxra-team/ssd">SharePoint subsite</a>
+                    <h:outputText value=". Please send all feedback to "/>
+                    <a class="commandLink" href="mailto:system.safety@levelcrossings.vic.gov.au">the developers</a>
                     <h:outputText value="."/>
                 </h:form>
             </ui:insert>
         </footer>
+        <script language="JavaScript">
+            document.getElementsByClassName(timeout).onclick = myClickHandler;
+            function myClickHandler() {
+                keepAlive();
+            }
+        </script>
     </h:body>
 </html>

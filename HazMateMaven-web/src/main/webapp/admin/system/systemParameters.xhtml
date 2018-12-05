@@ -11,7 +11,6 @@
             <ui:define name="content">
                 <h:form id="viewForm">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:panelGrid columns="2" class="detailTable" rendered="#{systemParams_MB.infoBox}" columnClasses="label"> 
                         <p:outputLabel value="Email Manager: "/>
                         <p:outputLabel value="#{systemParams_MB.managerEmail}"/>

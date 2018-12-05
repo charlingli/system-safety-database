@@ -12,8 +12,6 @@
                 <f:view>
                     <h:form id="form">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
-                        <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                         <p:fieldset id="fieldset" rendered="#{not editHazard_MB.showEdit}" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
                             <h:panelGrid columns="2" columnClasses="fields,explanation">
                                 <p:panel styleClass="searchPanel" style="width: 500px;">
@@ -295,20 +293,23 @@
                                                 <p:ajax event="rowUnselectCheckbox" update="fileTable"/>
                                                 <p:ajax event="toggleSelect" update="fileTable"/>
                                                 <p:column selectionMode="multiple" style="width: 10%; text-align:center"/>
-                                                <p:column style="width: 14%; text-align:center" headerText="File ID">
+                                                <p:column style="width: 8%; text-align:center" headerText="File ID">
                                                     <h:outputText value="#{file.fileId}"/>
                                                 </p:column>
-                                                <p:column style="width: 36%; text-align:center" headerText="File Name">
+                                                <p:column style="width: 15%; text-align:center" headerText="File Name">
                                                     <h:outputText value="#{file.fileName}"/>
                                                 </p:column>
-                                                <p:column style="width: 17%; text-align:center" headerText="File Type">
+                                                <p:column style="width: 20%; text-align:center" headerText="File Description">
+                                                    <h:outputText value="#{file.fileDescription}"/>
+                                                </p:column>
+                                                <p:column style="width: 14%; text-align:center" headerText="File Type">
                                                     <h:outputText value="#{file.fileExtension}"/>
                                                 </p:column>
-                                                <p:column style="width: 17%; text-align:center" headerText="File Size">
-                                                    <h:outputText value="#{editHazard_MB.parseSize(file.fileSize)}"/>
+                                                <p:column style="width: 16%; text-align:center" headerText="File Size">
+                                                    <h:outputText value="#{addHazard_MB.parseSize(file.fileSize)}"/>
                                                 </p:column>
-                                                <p:column style="width: 16%; text-align:center" headerText="Download">
-                                                    <p:commandButton action="#{editHazard_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
+                                                <p:column style="width: 15%; text-align:center" headerText="Download">
+                                                    <p:commandButton action="#{addHazard_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
                                                 </p:column>
                                                 <f:facet name="footer">
                                                     <h:outputText value="Selected #{editHazard_MB.checkedFiles.size()} #{editHazard_MB.checkedFiles.size() == 1 ? 'file' : editHazard_MB.checkedFiles.size() == 0 ? 'files' : empty editHazard_MB.checkedFiles ? 'no files' : 'files'} to be linked"/>

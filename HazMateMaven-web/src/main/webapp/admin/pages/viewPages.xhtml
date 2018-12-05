@@ -10,7 +10,6 @@
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:dataTable var="p" value="#{pages_MB.listDbPage}" styleClass="managementTableLarge" widgetVar="PagesTable" 
                                  emptyMessage="No rows found with given criteria" filteredValue="#{pages_MB.filteredDbPage}" scrollable="true" scrollHeight="680">
                         <f:facet name="header">

@@ -9,8 +9,6 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="wfForm">
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" />
-                    <p:growl autoUpdate="true" showDetail="true" showSummary="false" severity="info" />
                     <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
@@ -174,6 +172,9 @@
                                 </p:column>
                                 <p:column headerText="Name" styleClass="normal">
                                     <p:outputLabel value="#{file.fileName}"/>
+                                </p:column>
+                                <p:column headerText="Description" styleClass="normal">
+                                    <p:outputLabel value="#{file.fileDescription}"/>
                                 </p:column>
                                 <p:column headerText="Extension" styleClass="small">
                                     <p:outputLabel value="#{file.fileExtension}"/>

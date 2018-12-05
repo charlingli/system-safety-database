@@ -39,7 +39,7 @@ public class DbHazardFilesFacade extends AbstractFacade<DbHazardFiles> implement
         List<fileHeaderObject> resultantList = new ArrayList<>();
         try {
             querySTR = "SELECT new customObjects.fileHeaderObject"
-                    + "(f.fileId, f.fileName, f.fileExtension, f.fileSize) "
+                    + "(f.fileId, f.fileName, f.fileExtension, f.fileSize, f.fileDescription) "
                     + "FROM DbFiles f WHERE EXISTS (SELECT 'x' FROM DbHazardFiles h "
                     + "WHERE h.dbHazardFilesPK.hazardId = ?1 "
                     + "AND h.dbHazardFilesPK.fileId = f.fileId)"; // Change the f to link from files to hazard_files

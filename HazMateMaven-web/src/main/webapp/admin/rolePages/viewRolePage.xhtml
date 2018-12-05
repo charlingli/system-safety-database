@@ -10,56 +10,23 @@
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
-                    <p:dataTable id="rolePageTable" value="#{role_page_MB.listDbRolePage}" var="item" styleClass="managementTableLarge" resizableColumns="true" widgetVar="rolesPageTable" 
-                                 emptyMessage="No rows found with given criteria" filteredValue="#{role_page_MB.filteredDbRolePage}" scrollable="true" scrollHeight="680">
+                    <p:dataTable id="rolePageTable" value="#{role_page_MB.checkedRolePermissions}" var="p" styleClass="managementTable" widgetVar="rolePageTable" 
+                                 emptyMessage="No rows found with given criteria" scrollable="true" scrollHeight="680" rowKey="rowIndex">
                         <f:facet name="header">
                             <p:outputPanel>
-                                <h:outputText value="The current system roles and their permissions per page are:"/>
+                                <h:outputText value="The current user roles and their page permissions are:"/>
                             </p:outputPanel>
                         </f:facet>
-                        <p:column filterBy="#{item.dbRole.roleName}" class="tableColumn100p">
-                            <f:facet name="header">
-                                <p:outputLabel value="Role Name"/>
-                            </f:facet>
-                            <p:outputLabel value="#{item.dbRole.roleName}"/>
+                        <p:column headerText="Page Name" style="width: 25%">
+                            <h:outputText value="#{role_page_MB.getPageName(p.pageId)}" />
                         </p:column>
-                        <p:column filterBy="#{item.dbPage.pageName}" class="tableColumn100p">
-                            <f:facet name="header">
-                                <p:outputLabel value="Page Name"/>
-                            </f:facet>
-                            <p:outputLabel value="#{item.dbPage.pageName}"/>
-                        </p:column>
-                        <p:column filterBy="#{role_page_MB.printPermission(item.addPermission)}" class="tableColumn80p">
-                            <f:facet name="header">
-                                <p:outputLabel value="Add Permission"/>
-                            </f:facet>
-                            <p:outputLabel value="#{role_page_MB.printPermission(item.addPermission)}"/>
-                        </p:column>
-                        <p:column filterBy="#{role_page_MB.printPermission(item.updatePermission)}" class="tableColumn80p">
-                            <f:facet name="header">
-                                <p:outputLabel value="Update Permission"/>
-                            </f:facet>
-                            <p:outputLabel value="#{role_page_MB.printPermission(item.updatePermission)}"/>
-                        </p:column>
-                        <p:column filterBy="#{role_page_MB.printPermission(item.deletePermission)}" class="tableColumn80p">
-                            <f:facet name="header">
-                                <p:outputLabel value="Delete Permission"/>
-                            </f:facet>
-                            <p:outputLabel value="#{role_page_MB.printPermission(item.deletePermission)}"/>
-                        </p:column>
-                        <p:column class="tableColumn80p">
-                            <f:facet name="header">
-                                <p:outputLabel value="Options"/>
-                            </f:facet>
-                            <p:commandLink value="Edit" action="#{role_page_MB.edit(item)}" class="linkActions"/> 
-                            | 
-                            <p:commandLink value="Delete" action="#{role_page_MB.delete(item)}" onstart="if (!confirm('Are you sure?')) { return; } ;" 
-                                           oncomplete="PF('rolesPageTable').filter()" class="linkActions"/>
-                        </p:column>
+                        <p:columns var="r" value="#{role_page_MB.listRoles}" columnIndexVar="colIndex" headerText="#{r.roleName} Access">
+                            <p:selectBooleanCheckbox value="#{p.permission[r.roleName]}" />
+                        </p:columns>
                     </p:dataTable>
                     <div class="panelButtons">
-                        <p:commandButton value="Assign Permissions" onclick="#{role_page_MB.init()}" action="addRolePage"/>
+                        <p:commandButton value="Assign Permissions" actionListener="#{role_page_MB.changePermissions()}"/>
+                        <p:commandButton value="Reset Changes" actionListener="#{role_page_MB.resetPermissions()}" update="rolePageTable"/>
                     </div>
                 </h:form>
             </ui:define>

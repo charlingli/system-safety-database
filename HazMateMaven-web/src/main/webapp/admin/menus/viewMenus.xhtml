@@ -10,7 +10,6 @@
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:dataTable var="menu" value="#{menus_MB.listMenus}" styleClass="parameterTable" sortBy="#{menu.indexMenu}" sortOrder="ascending" resizableColumns="true">
                         <f:facet name="header">
                             <p:outputPanel>

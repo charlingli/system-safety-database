@@ -10,7 +10,6 @@
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                     <p:dataTable var="item" value="#{roles_MB.listDbRole}" styleClass="parameterTable">
                         <f:facet name="header">
                             <p:outputPanel>

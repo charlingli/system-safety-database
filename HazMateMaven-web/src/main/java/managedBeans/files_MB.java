@@ -43,6 +43,8 @@ public class files_MB implements Serializable {
     private List<fileHeaderObject> listHeaders;
     
     private DbFiles fileObject = new DbFiles();
+    
+    private String originalName;
 
     private boolean addFlag = false;
     private boolean editFlag = false;
@@ -88,12 +90,12 @@ public class files_MB implements Serializable {
     }
 
     public void renameFile() {
-        if (dbFilesFacade.findHeadersForDuplicate(fileObject.getFileName(), fileObject.getFileExtension()).size() >= 1) {
+        if (dbFilesFacade.findHeadersForDuplicate(fileObject.getFileName(), fileObject.getFileExtension()).size() >= 1 && !originalName.equals(fileObject.getFileName())) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "'" + fileObject.getFileName() + "." + fileObject.getFileExtension() + "' already exists in the database!"));
             return;
         } else {
             dbFilesFacade.edit(fileObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "'" + fileObject.getFileName() + "." + fileObject.getFileExtension() + "' has been successfully uploaded."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "'" + fileObject.getFileName() + "." + fileObject.getFileExtension() + "' has been successfully updated."));
         }
         fileObject = new DbFiles();
         init();
@@ -118,6 +120,7 @@ public class files_MB implements Serializable {
     public void showEdit(fileHeaderObject file) {
         editFlag = true;
         this.fileObject = dbFilesFacade.findFileFromId(file.getFileId()).get(0);
+        this.originalName = dbFilesFacade.findFileFromId(file.getFileId()).get(0).getFileName();
     }
 
     public void cancel() {

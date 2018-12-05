@@ -12,7 +12,6 @@
                     <h:form>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Pages Definition,Edit Page')}" escape="false"/></div>
                         <p:panel class="managementModifyPanel">
-                            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" showSummary="false"/>
                             <p:panelGrid columns="2" columnClasses="left,middle">
                                 <p:outputLabel value="Page Name:" for="pageName"/>
                                 <p:inputText id="pageName" value="#{pages_MB.pageObject.pageName}" title="PageName" required="true" requiredMessage="The Page Name field is required."/>

@@ -174,7 +174,7 @@ footer {
     border-bottom-color: rgb(133, 0, 21);
 }
 .ui-state-highlight .ui-icon {
-    background-image: url(/ssd/faces/javax.faces.resource/images/ui-icons_333333_256x240.png?ln=primefaces-bootstrap);
+    background-image: url(/faces/javax.faces.resource/images/ui-icons_333333_256x240.png?ln=primefaces-bootstrap);
 }
 .ui-panelgrid .ui-panelgrid-cell {
     border: none;
@@ -350,7 +350,7 @@ span.commandLinkWhite {
 .detailTable .normal {
     cursor: default;
 }
-.parameterTable, .managementTable, .messageDiv {
+.parameterTable, .managementTable {
     width: 800px;
     text-align: center;
 }
@@ -489,7 +489,7 @@ span.commandLinkWhite {
 .suggestionPanel button {
     float: right;
 }
-.suggestionPanel textarea {
+.suggestionPanel textarea, .messageDiv {
   width: 100%;
 }
 

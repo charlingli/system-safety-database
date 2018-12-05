@@ -11,7 +11,6 @@
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.buildPageHtmlPath('Management,Roles Definition,Edit Role')}" escape="false"/></div>
                     <p:panel class="managementModifyPanel">
-                        <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
                         <p:panelGrid columns="2" columnClasses="left,middle">
                             <p:outputLabel value="Role name:" for="roleName"/>
                             <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="Please specify name of role"/>

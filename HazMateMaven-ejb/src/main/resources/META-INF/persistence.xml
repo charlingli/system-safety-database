@@ -2,7 +2,52 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="HazMate-ejbPU" transaction-type="JTA">
     <jta-data-source>java:/ssdDb</jta-data-source>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <class>entities.DbCause</class>
+    <class>entities.DbConsequence</class>
+    <class>entities.DbControl</class>
+    <class>entities.DbControlHazard</class>
+    <class>entities.DbFiles</class>
+    <class>entities.DbHazard</class>
+    <class>entities.DbHazardCause</class>
+    <class>entities.DbHazardConsequence</class>
+    <class>entities.DbHazardFiles</class>
+    <class>entities.DbHazardSbs</class>
+    <class>entities.DbLocation</class>
+    <class>entities.DbMenu</class>
+    <class>entities.DbOwners</class>
+    <class>entities.DbPage</class>
+    <class>entities.DbProject</class>
+    <class>entities.DbQuality</class>
+    <class>entities.DbRole</class>
+    <class>entities.DbRolePage</class>
+    <class>entities.DbUser</class>
+    <class>entities.DbchangeType</class>
+    <class>entities.DbconstructionType</class>
+    <class>entities.DbcontrolHierarchy</class>
+    <class>entities.DbcontrolRecommend</class>
+    <class>entities.DbglobalId</class>
+    <class>entities.DbgradeSeparation</class>
+    <class>entities.DbhazardActivity</class>
+    <class>entities.DbhazardContext</class>
+    <class>entities.DbhazardStatus</class>
+    <class>entities.DbhazardSystemStatus</class>
+    <class>entities.DbhazardType</class>
+    <class>entities.DbriskClass</class>
+    <class>entities.DbriskFrequency</class>
+    <class>entities.DbriskSeverity</class>
+    <class>entities.DbsystemParameters</class>
+    <class>entities.DbtreeLevel1</class>
+    <class>entities.DbtreeLevel2</class>
+    <class>entities.DbtreeLevel3</class>
+    <class>entities.DbtreeLevel4</class>
+    <class>entities.DbtreeLevel5</class>
+    <class>entities.DbtreeLevel6</class>
+    <class>entities.DbuserPreferences</class>
+    <class>entities.DbwfDecision</class>
+    <class>entities.DbwfHeader</class>
+    <class>entities.DbwfLine</class>
+    <class>entities.DbwfType</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties/>
   </persistence-unit>
 </persistence>

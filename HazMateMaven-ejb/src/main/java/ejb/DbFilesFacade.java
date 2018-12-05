@@ -57,7 +57,7 @@ public class DbFilesFacade extends AbstractFacade<DbFiles> implements DbFilesFac
         List<fileHeaderObject> resultantList = new ArrayList<>();
         try {
             querySTR = "SELECT new customObjects.fileHeaderObject"
-                    + "(f.fileId, f.fileName, f.fileExtension, f.fileSize) "
+                    + "(f.fileId, f.fileName, f.fileExtension, f.fileSize, f.fileDescription) "
                     + "FROM DbFiles f WHERE (f.fileName = ?1 "
                     + "AND f.fileExtension = ?2)";
             Query query = em.createQuery(querySTR);
@@ -79,7 +79,7 @@ public class DbFilesFacade extends AbstractFacade<DbFiles> implements DbFilesFac
         List<fileHeaderObject> resultantList = new ArrayList<>();
         try {
             querySTR = "SELECT new customObjects.fileHeaderObject"
-                    + "(f.fileId, f.fileName, f.fileExtension, f.fileSize) "
+                    + "(f.fileId, f.fileName, f.fileExtension, f.fileSize, f.fileDescription) "
                     + "FROM DbFiles f";
             Query query = em.createQuery(querySTR);
 

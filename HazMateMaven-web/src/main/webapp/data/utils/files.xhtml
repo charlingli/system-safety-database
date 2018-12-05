@@ -19,19 +19,22 @@
                                         <h:outputText value="The current files uploaded are: "/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="ID" style="width: 12%">
+                                <p:column headerText="ID" style="width: 4%">
                                     <p:outputLabel value="#{file.fileId}"/>
                                 </p:column>
-                                <p:column headerText="Name" style="width: 26%">
+                                <p:column headerText="Name" style="width: 16%">
                                     <p:outputLabel value="#{file.fileName}"/>
                                 </p:column>
-                                <p:column headerText="Extension" style="width: 15%">
+                                <p:column headerText="Description" style="width: 26%">
+                                    <p:outputLabel value="#{file.fileDescription}"/>
+                                </p:column>
+                                <p:column headerText="Extension" style="width: 13%">
                                     <p:outputLabel value="#{file.fileExtension}"/>
                                 </p:column>
-                                <p:column headerText="Size"  style="width: 17%">
+                                <p:column headerText="Size"  style="width: 13%">
                                     <p:outputLabel value="#{files_MB.parseSize(file.fileSize)}"/>
                                 </p:column>
-                                <p:column headerText="Download"  style="width: 12%">
+                                <p:column headerText="Download"  style="width: 10%">
                                     <p:commandButton action="#{files_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
                                 </p:column>
                                 <p:column headerText="Options" style="width: 16%">
@@ -66,6 +69,8 @@
                                     </f:facet>
                                     <p:outputLabel value="File Name:" for="fileName"/>
                                     <p:inputText id="fileName" value="#{files_MB.fileObject.fileName}" title="FileName" required="true" requiredMessage="The FileName field is required."/>
+                                    <p:outputLabel value="File Description:" for="fileDescription"/>
+                                    <p:inputText id="fileDescription" value="#{files_MB.fileObject.fileDescription}" title="fileDescription" required="false" />
                                 </p:panelGrid>
                                 <div class="panelButtons">
                                     <p:commandButton value="Save">
