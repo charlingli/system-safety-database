@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author lxra
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_riskFrequency")
@@ -54,7 +54,7 @@ public class DbriskFrequency implements Serializable {
     private int frequencyValue;
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskCurrentFrequencyId")
     private List<DbHazard> dbHazardList;
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskTargetFrequencyId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "riskTargetFrequencyId")
     private List<DbHazard> dbHazardList1;
 
     public DbriskFrequency() {
@@ -94,6 +94,24 @@ public class DbriskFrequency implements Serializable {
         this.frequencyValue = frequencyValue;
     }
 
+    @XmlTransient
+    public List<DbHazard> getDbHazardList() {
+        return dbHazardList;
+    }
+
+    public void setDbHazardList(List<DbHazard> dbHazardList) {
+        this.dbHazardList = dbHazardList;
+    }
+
+    @XmlTransient
+    public List<DbHazard> getDbHazardList1() {
+        return dbHazardList1;
+    }
+
+    public void setDbHazardList1(List<DbHazard> dbHazardList1) {
+        this.dbHazardList1 = dbHazardList1;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -118,23 +136,5 @@ public class DbriskFrequency implements Serializable {
     public String toString() {
         return "entities.DbriskFrequency[ riskFrequencyId=" + riskFrequencyId + " ]";
     }
-
-    @XmlTransient
-    public List<DbHazard> getDbHazardList() {
-        return dbHazardList;
-    }
-
-    public void setDbHazardList(List<DbHazard> dbHazardList) {
-        this.dbHazardList = dbHazardList;
-    }
-
-    @XmlTransient
-    public List<DbHazard> getDbHazardList1() {
-        return dbHazardList1;
-    }
-
-    public void setDbHazardList1(List<DbHazard> dbHazardList1) {
-        this.dbHazardList1 = dbHazardList1;
-    }
-
+    
 }

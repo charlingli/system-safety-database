@@ -1401,16 +1401,21 @@ public class hazardView_MB implements Serializable {
                 String hazardConsequences = checkNullString(exportedInfo.get(i)[8]);
                 String hazardTypeName = checkNullString(exportedInfo.get(i)[9]);
                 String riskClassName = checkNullString(exportedInfo.get(i)[13]);
-                String severityScore = checkNullString(exportedInfo.get(i)[19]);
-                String frequencyScore = checkNullString(exportedInfo.get(i)[20]);
-                String riskScore = exportedInfo.get(i)[21].toString();
-                String hazardComment = checkNullString(exportedInfo.get(i)[22]);
-                String hazardDate = checkNullDate(exportedInfo.get(i)[23]);
-                String hazardWorkshop = checkNullString(exportedInfo.get(i)[24]);
-                String hazardStatusName = checkNullString(exportedInfo.get(i)[25]);
+                String currentSeverityScore = checkNullString(exportedInfo.get(i)[14]);
+                String currentFrequencyScore = checkNullString(exportedInfo.get(i)[15]);
+                String currentRiskScore = exportedInfo.get(i)[16].toString();
+                String targetSeverityScore = checkNullString(exportedInfo.get(i)[22]);
+                String targetFrequencyScore = checkNullString(exportedInfo.get(i)[23]);
+                String targetRiskScore = exportedInfo.get(i)[24].toString();
+                String hazardComment = checkNullString(exportedInfo.get(i)[25]);
+                String hazardDate = checkNullDate(exportedInfo.get(i)[26]);
+                String hazardWorkshop = checkNullString(exportedInfo.get(i)[27]);
+                String hazardStatusName = checkNullString(exportedInfo.get(i)[28]);
+                String humanFactors = checkNullString(exportedInfo.get(i)[29]);
 
                 exportedHazard curHazard = new exportedHazard(hazardId1, locationName, hazardContextName, hazardCauses, hazardDescription, ownerName, hazardConsequences,
-                        hazardTypeName, riskClassName, severityScore, frequencyScore, riskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName);
+                        hazardTypeName, riskClassName, currentSeverityScore, currentFrequencyScore, currentRiskScore, targetSeverityScore, targetFrequencyScore, 
+                        targetRiskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName, humanFactors);
 
                 // Getting the controls information
                 List<exportedExsControl> listExsCtl = new ArrayList<>();
@@ -1419,9 +1424,9 @@ public class hazardView_MB implements Serializable {
                     if (exportedInfo.get(j)[10] != null && !listExsCtl.contains(new exportedExsControl((int) exportedInfo.get(j)[10]))) {
                         listExsCtl.add(new exportedExsControl((int) exportedInfo.get(j)[10], exportedInfo.get(j)[11].toString(), exportedInfo.get(j)[12].toString()));
                     }
-                    if (exportedInfo.get(j)[14] != null && !listProCtl.contains(new exportedProControl((int) exportedInfo.get(j)[14]))) {
-                        listProCtl.add(new exportedProControl((int) exportedInfo.get(j)[14], exportedInfo.get(j)[15].toString(), exportedInfo.get(j)[17].toString(),
-                                exportedInfo.get(j)[16].toString(), exportedInfo.get(j)[18].toString()));
+                    if (exportedInfo.get(j)[17] != null && !listProCtl.contains(new exportedProControl((int) exportedInfo.get(j)[17]))) {
+                        listProCtl.add(new exportedProControl((int) exportedInfo.get(j)[17], exportedInfo.get(j)[18].toString(), exportedInfo.get(j)[20].toString(),
+                                exportedInfo.get(j)[19].toString(), exportedInfo.get(j)[21].toString()));
                     }
                 }
 
@@ -1523,29 +1528,56 @@ public class hazardView_MB implements Serializable {
                         > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
+                
+                // Hazard target severity is in column Q
+                column = "Q";
+                BodyCell = bodyRow.createCell(16);
+                BodyCell.setCellValue(curHazard.currentSeverityScore);
+                BodyCell.setCellStyle(bodyCellStyle);
+                if (numberOfRowsperHazard > 1) {
+                    sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
+                }
 
-                // Hazard severity is in column AC
+                // Hazard target frequency is in column R
+                column = "R";
+                BodyCell = bodyRow.createCell(17);
+                BodyCell.setCellValue(curHazard.currentFrequencyScore);
+                BodyCell.setCellStyle(bodyCellStyle);
+                if (numberOfRowsperHazard > 1) {
+                    sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
+                }
+
+                // Hazard target score is in column T
+                column = "T";
+                BodyCell = bodyRow.createCell(19);
+                BodyCell.setCellValue(curHazard.currentRiskScore);
+                BodyCell.setCellStyle(bodyCellStyle);
+                if (numberOfRowsperHazard > 1) {
+                    sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
+                }
+
+                // Hazard target severity is in column AC
                 column = "AC";
                 BodyCell = bodyRow.createCell(28);
-                BodyCell.setCellValue(curHazard.severityScore);
+                BodyCell.setCellValue(curHazard.targetSeverityScore);
                 BodyCell.setCellStyle(bodyCellStyle);
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
 
-                // Hazard severity is in column AD
+                // Hazard target frequency is in column AD
                 column = "AD";
                 BodyCell = bodyRow.createCell(29);
-                BodyCell.setCellValue(curHazard.frequencyScore);
+                BodyCell.setCellValue(curHazard.targetFrequencyScore);
                 BodyCell.setCellStyle(bodyCellStyle);
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
 
-                // Hazard score is in column AD
+                // Hazard target score is in column AE
                 column = "AE";
                 BodyCell = bodyRow.createCell(30);
-                BodyCell.setCellValue(curHazard.riskScore);
+                BodyCell.setCellValue(curHazard.targetRiskScore);
                 BodyCell.setCellStyle(bodyCellStyle);
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
@@ -1578,7 +1610,7 @@ public class hazardView_MB implements Serializable {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
 
-                // Hazard status is in column AG
+                // Hazard status is in column AJ
                 column = "AJ";
                 BodyCell = bodyRow.createCell(35);
                 BodyCell.setCellValue(curHazard.hazardStatusName);
@@ -1586,6 +1618,15 @@ public class hazardView_MB implements Serializable {
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
+                
+                // Human factors field is in column AK
+                column = "AK";
+                BodyCell = bodyRow.createCell(36);
+                BodyCell.setCellValue(curHazard.humanFactors);
+                BodyCell.setCellStyle(bodyCellStyle);
+                if (numberOfRowsperHazard > 1) {
+                    sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
+                }                
 
                 // -------------------------------> Second step, writing the controls. <---------------------------------------
                 Iterator<exportedExsControl> exsIterator = listExsCtl.iterator();
@@ -1823,16 +1864,23 @@ public class hazardView_MB implements Serializable {
         public String hazardConsequences;
         public String hazardTypeName;
         public String riskClassName;
-        public String severityScore;
-        public String frequencyScore;
-        public String riskScore;
+        public String currentSeverityScore;
+        public String currentFrequencyScore;
+        public String currentRiskScore;
+        public String targetSeverityScore;
+        public String targetFrequencyScore;
+        public String targetRiskScore;
         public String hazardComment;
         public String hazardDate;
         public String hazardWorkshop;
         public String hazardStatusName;
+        public String humanFactors;
 
-        public exportedHazard(String hazard, String locationName, String hazardContextName, String hazardCauses, String hazardDescription, String ownerName, String hazardConsequences, String hazardTypeName, String riskClassName, String severityScore, String frequencyScore, String riskScore, String hazardComment, String hazardDate, String hazardWorkshop, String hazardStatusName) {
-            this.hazardId = hazard;
+        public exportedHazard(String hazardId, String locationName, String hazardContextName, String hazardCauses, String hazardDescription, String ownerName, 
+                String hazardConsequences, String hazardTypeName, String riskClassName, String currentSeverityScore, String currentFrequencyScore, 
+                String currentRiskScore, String targetSeverityScore, String targetFrequencyScore, String targetRiskScore, String hazardComment, 
+                String hazardDate, String hazardWorkshop, String hazardStatusName, String humanFactors) {
+            this.hazardId = hazardId;
             this.locationName = locationName;
             this.hazardContextName = hazardContextName;
             this.hazardCauses = hazardCauses;
@@ -1841,14 +1889,20 @@ public class hazardView_MB implements Serializable {
             this.hazardConsequences = hazardConsequences;
             this.hazardTypeName = hazardTypeName;
             this.riskClassName = riskClassName;
-            this.severityScore = severityScore;
-            this.frequencyScore = frequencyScore;
-            this.riskScore = riskScore;
+            this.currentSeverityScore = currentSeverityScore;
+            this.currentFrequencyScore = currentFrequencyScore;
+            this.currentRiskScore = currentRiskScore;
+            this.targetSeverityScore = targetSeverityScore;
+            this.targetFrequencyScore = targetFrequencyScore;
+            this.targetRiskScore = targetRiskScore;
             this.hazardComment = hazardComment;
             this.hazardDate = hazardDate;
             this.hazardWorkshop = hazardWorkshop;
             this.hazardStatusName = hazardStatusName;
+            this.humanFactors = humanFactors;
         }
+
+        
     }
 
     class exportedExsControl {
@@ -1931,9 +1985,6 @@ public class hazardView_MB implements Serializable {
             return this.controlId == other.controlId;
         }
 
-//    public List<String> getIdsForExport() {
-//        return getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
-//    }
     }
     
     public String parseSize(int fileSize) {
