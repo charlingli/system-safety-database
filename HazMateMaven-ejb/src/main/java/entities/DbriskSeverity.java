@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author Juan David
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_riskSeverity")
@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "DbriskSeverity.findAll", query = "SELECT d FROM DbriskSeverity d")
     , @NamedQuery(name = "DbriskSeverity.findByRiskSeverityId", query = "SELECT d FROM DbriskSeverity d WHERE d.riskSeverityId = :riskSeverityId")
-    , @NamedQuery(name = "DbriskSeverity.findBySeverityScore", query = "SELECT d FROM DbriskSeverity d WHERE d.severityScore = :severityScore")})
+    , @NamedQuery(name = "DbriskSeverity.findBySeverityScore", query = "SELECT d FROM DbriskSeverity d WHERE d.severityScore = :severityScore")
+    , @NamedQuery(name = "DbriskSeverity.findBySeverityValue", query = "SELECT d FROM DbriskSeverity d WHERE d.severityValue = :severityValue")})
 public class DbriskSeverity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -53,7 +54,7 @@ public class DbriskSeverity implements Serializable {
     private int severityValue;
     @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskCurrentSeverityId")
     private List<DbHazard> dbHazardList;
-    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "riskTargetSeverityId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "riskTargetSeverityId")
     private List<DbHazard> dbHazardList1;
 
     public DbriskSeverity() {
@@ -63,9 +64,10 @@ public class DbriskSeverity implements Serializable {
         this.riskSeverityId = riskSeverityId;
     }
 
-    public DbriskSeverity(Integer riskSeverityId, String severityScore) {
+    public DbriskSeverity(Integer riskSeverityId, String severityScore, int severityValue) {
         this.riskSeverityId = riskSeverityId;
         this.severityScore = severityScore;
+        this.severityValue = severityValue;
     }
 
     public Integer getRiskSeverityId() {
@@ -84,6 +86,14 @@ public class DbriskSeverity implements Serializable {
         this.severityScore = severityScore;
     }
 
+    public int getSeverityValue() {
+        return severityValue;
+    }
+
+    public void setSeverityValue(int severityValue) {
+        this.severityValue = severityValue;
+    }
+
     @XmlTransient
     public List<DbHazard> getDbHazardList() {
         return dbHazardList;
@@ -93,12 +103,13 @@ public class DbriskSeverity implements Serializable {
         this.dbHazardList = dbHazardList;
     }
 
-    public int getSeverityValue() {
-        return severityValue;
+    @XmlTransient
+    public List<DbHazard> getDbHazardList1() {
+        return dbHazardList1;
     }
 
-    public void setSeverityValue(int severityValue) {
-        this.severityValue = severityValue;
+    public void setDbHazardList1(List<DbHazard> dbHazardList1) {
+        this.dbHazardList1 = dbHazardList1;
     }
 
     @Override
@@ -123,7 +134,7 @@ public class DbriskSeverity implements Serializable {
 
     @Override
     public String toString() {
-        return severityScore;
+        return "entities.DbriskSeverity[ riskSeverityId=" + riskSeverityId + " ]";
     }
-
+    
 }

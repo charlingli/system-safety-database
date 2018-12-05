@@ -122,9 +122,6 @@ public class DbHazard implements Serializable {
     @JoinColumn(name = "hazardTypeId", referencedColumnName = "hazardTypeId")
     @ManyToOne(optional = false)
     private DbhazardType hazardTypeId;
-    @JoinColumn(name = "riskTargetSeverityId", referencedColumnName = "riskSeverityId")
-    @ManyToOne(optional = false)
-    private DbriskSeverity riskTargetSeverityId;
     @JoinColumn(name = "ownerId", referencedColumnName = "ownerId")
     @ManyToOne(optional = false)
     private DbOwners ownerId;
@@ -134,6 +131,9 @@ public class DbHazard implements Serializable {
     @JoinColumn(name = "riskTargetFrequencyId", referencedColumnName = "riskFrequencyId")
     @ManyToOne(optional = false)
     private DbriskFrequency riskTargetFrequencyId;
+    @JoinColumn(name = "riskTargetSeverityId", referencedColumnName = "riskSeverityId")
+    @ManyToOne(optional = false)
+    private DbriskSeverity riskTargetSeverityId;
 
     public DbHazard() {
     }
@@ -320,14 +320,6 @@ public class DbHazard implements Serializable {
         this.hazardTypeId = hazardTypeId;
     }
 
-    public DbriskSeverity getRiskTargetSeverityId() {
-        return riskTargetSeverityId;
-    }
-
-    public void setRiskTargetSeverityId(DbriskSeverity riskTargetSeverityId) {
-        this.riskTargetSeverityId = riskTargetSeverityId;
-    }
-
     public DbOwners getOwnerId() {
         return ownerId;
     }
@@ -350,6 +342,14 @@ public class DbHazard implements Serializable {
 
     public void setRiskTargetFrequencyId(DbriskFrequency riskTargetFrequencyId) {
         this.riskTargetFrequencyId = riskTargetFrequencyId;
+    }
+
+    public DbriskSeverity getRiskTargetSeverityId() {
+        return riskTargetSeverityId;
+    }
+
+    public void setRiskTargetSeverityId(DbriskSeverity riskTargetSeverityId) {
+        this.riskTargetSeverityId = riskTargetSeverityId;
     }
 
     @Override
@@ -383,7 +383,7 @@ public class DbHazard implements Serializable {
                 && this.hazardDescription.equals(other.hazardDescription) && this.hazardLocation.equals(other.hazardLocation) && this.hazardActivity.equals(other.hazardActivity)
                 && this.ownerId.equals(other.ownerId) && this.hazardTypeId.equals(other.hazardTypeId) && this.hazardStatusId.equals(other.hazardStatusId)
                 && this.riskClassId.equals(other.riskClassId) && this.riskCurrentFrequencyId.equals(other.riskCurrentFrequencyId)
-                && this.riskCurrentSeverityId.equals(other.riskCurrentSeverityId) && this.riskCurrentScore == other.riskCurrentScore 
+                && this.riskCurrentSeverityId.equals(other.riskCurrentSeverityId) && this.riskCurrentScore == other.riskCurrentScore
                 && this.riskTargetFrequencyId.equals(other.riskTargetFrequencyId) && this.riskCurrentSeverityId.equals(other.riskCurrentSeverityId)
                 && this.riskTargetScore == other.riskTargetScore && this.hazardComment.equals(other.hazardComment) && this.hazardDate.equals(other.hazardDate)
                 && this.hazardWorkshop.equals(other.hazardWorkshop) && this.hazardReview.equals(other.hazardReview) && this.legacyId.equals(other.legacyId);
