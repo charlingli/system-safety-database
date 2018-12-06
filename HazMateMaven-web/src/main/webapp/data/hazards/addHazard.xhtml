@@ -72,13 +72,23 @@
                                                 <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                                 <f:selectItems value="#{addHazard_MB.listDbRiskClass}" var="riskClassItem" itemLabel="#{riskClassItem.riskClassName}" itemValue="#{riskClassItem.riskClassId}"/> 
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Risk Frequency:" for="riskFrequencyId"/>
-                                            <p:selectOneMenu id="riskFrequencyId" value="#{addHazard_MB.freqId}" required="true" requiredMessage="The RiskFrequencyId field is required." class="editInput" autoWidth="false">
+                                            <p:outputLabel value="Current Risk Frequency:" for="currentRiskFrequencyId"/>
+                                            <p:selectOneMenu id="currentRiskFrequencyId" value="#{addHazard_MB.currentFreqId}" required="true" requiredMessage="The current risk frequency field is required." class="editInput" autoWidth="false">
                                                 <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                                 <f:selectItems value="#{addHazard_MB.listDbRiskFrequency}" var="riskFreqItem" itemLabel="#{riskFreqItem.frequencyScore}" itemValue="#{riskFreqItem.riskFrequencyId}"/>
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Risk Severity:" for="riskSeverityId"/>
-                                            <p:selectOneMenu id="riskSeverityId" value="#{addHazard_MB.severityId}" required="true" requiredMessage="The RiskSeverityId field is required." class="editInput" autoWidth="false">
+                                            <p:outputLabel value="Current Risk Severity:" for="currentRiskSeverityId"/>
+                                            <p:selectOneMenu id="currentRiskSeverityId" value="#{addHazard_MB.currentSeverityId}" required="true" requiredMessage="The current risk severity field is required." class="editInput" autoWidth="false">
+                                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                                <f:selectItems value="#{addHazard_MB.listDbRiskSeverity}" var="riskSeverityItem" itemLabel="#{riskSeverityItem.severityScore}" itemValue="#{riskSeverityItem.riskSeverityId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Target Risk Frequency:" for="targetRiskFrequencyId"/>
+                                            <p:selectOneMenu id="targetRiskFrequencyId" value="#{addHazard_MB.targetFreqId}" required="true" requiredMessage="The target risk frequency field is required." class="editInput" autoWidth="false">
+                                                <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
+                                                <f:selectItems value="#{addHazard_MB.listDbRiskFrequency}" var="riskFreqItem" itemLabel="#{riskFreqItem.frequencyScore}" itemValue="#{riskFreqItem.riskFrequencyId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Target Risk Severity:" for="targetRiskSeverityId"/>
+                                            <p:selectOneMenu id="targetRiskSeverityId" value="#{addHazard_MB.targetSeverityId}" required="true" requiredMessage="The target risk severity field is required." class="editInput" autoWidth="false">
                                                 <f:selectItem itemLabel="--Select--" noSelectionOption="true"/>
                                                 <f:selectItems value="#{addHazard_MB.listDbRiskSeverity}" var="riskSeverityItem" itemLabel="#{riskSeverityItem.severityScore}" itemValue="#{riskSeverityItem.riskSeverityId}"/>
                                             </p:selectOneMenu>

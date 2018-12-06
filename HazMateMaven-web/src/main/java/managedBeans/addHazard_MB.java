@@ -149,8 +149,10 @@ public class addHazard_MB implements Serializable {
     private int typeId;
     private int ownerId;
     private int hazardContextId;
-    private int freqId;
-    private int severityId;
+    private int currentFreqId;
+    private int currentSeverityId;
+    private int targetFreqId;
+    private int targetSeverityId;
     private int riskClassId;
 
     /*Variables relevant to SBS tree*/
@@ -164,7 +166,7 @@ public class addHazard_MB implements Serializable {
     private List<fileHeaderObject> checkedFiles;
     private List<fileHeaderObject> savedFiles;
     private boolean filesChanged;
-    
+
     public addHazard_MB() {
     }
 
@@ -296,20 +298,36 @@ public class addHazard_MB implements Serializable {
         this.hazardContextId = hazardContextId;
     }
 
-    public int getFreqId() {
-        return freqId;
+    public int getCurrentFreqId() {
+        return currentFreqId;
     }
 
-    public void setFreqId(int freqId) {
-        this.freqId = freqId;
+    public void setCurrentFreqId(int currentFreqId) {
+        this.currentFreqId = currentFreqId;
     }
 
-    public int getSeverityId() {
-        return severityId;
+    public int getCurrentSeverityId() {
+        return currentSeverityId;
     }
 
-    public void setSeverityId(int severityId) {
-        this.severityId = severityId;
+    public void setCurrentSeverityId(int curentSeverityId) {
+        this.currentSeverityId = curentSeverityId;
+    }
+    
+    public int getTargetFreqId() {
+        return targetFreqId;
+    }
+
+    public void setTargetFreqId(int freqId) {
+        this.targetFreqId = freqId;
+    }
+
+    public int getTargetSeverityId() {
+        return targetSeverityId;
+    }
+
+    public void setTargetSeverityId(int severityId) {
+        this.targetSeverityId = severityId;
     }
 
     public int getRiskClassId() {
@@ -351,7 +369,7 @@ public class addHazard_MB implements Serializable {
     public void setCheckedFiles(List<fileHeaderObject> checkedFiles) {
         this.checkedFiles = checkedFiles;
     }
-    
+
     @PostConstruct
     public void init() {
         createTree();
@@ -369,7 +387,7 @@ public class addHazard_MB implements Serializable {
         listFiles = dbFilesFacade.listAllHeaders();
         savedFiles = new ArrayList<>();
         checkedFiles = new ArrayList<>();
-        
+
     }
 
     @PreDestroy
@@ -448,14 +466,15 @@ public class addHazard_MB implements Serializable {
         String key2 = returnedLocationList.get(0).getLocationAbbrev();
         hazardObject.setHazardId(dbglobalIdFacade.nextConsecutive(key1, key2, "-", 4).getAnswerString());
 
-        //Calculating the risk score and persisting the object in the database.
-        hazardObject.setRiskTargetScore(dbHazardFacade.calculateRiskScore(dbriskFrequencyFacade.find(freqId).getFrequencyValue(), dbriskSeverityFacade.find(severityId).getSeverityValue()));
+        //Calculating the current and target risk score and persisting the object in the database.
+        hazardObject.setRiskCurrentScore(dbHazardFacade.calculateRiskScore(dbriskFrequencyFacade.find(currentFreqId).getFrequencyValue(), dbriskSeverityFacade.find(currentSeverityId).getSeverityValue()));
+        hazardObject.setRiskTargetScore(dbHazardFacade.calculateRiskScore(dbriskFrequencyFacade.find(targetFreqId).getFrequencyValue(), dbriskSeverityFacade.find(targetSeverityId).getSeverityValue()));
 
         //Setting the audit fields
         DbUser activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         hazardObject.setAddedDateTime(new Date());
         hazardObject.setUserIdAdd(activeUser.getUserId());
-        
+
         //Updating the system status on pending
         hazardObject.setHazardSystemStatus(new DbhazardSystemStatus(1));
 
@@ -472,8 +491,10 @@ public class addHazard_MB implements Serializable {
         hazardObject.setHazardTypeId(new DbhazardType(typeId));
         hazardObject.setOwnerId(new DbOwners(ownerId));
         hazardObject.setHazardContextId(new DbhazardContext(hazardContextId));
-        hazardObject.setRiskTargetFrequencyId(new DbriskFrequency(freqId));
-        hazardObject.setRiskTargetSeverityId(new DbriskSeverity(severityId));
+        hazardObject.setRiskTargetFrequencyId(new DbriskFrequency(targetFreqId));
+        hazardObject.setRiskTargetSeverityId(new DbriskSeverity(targetSeverityId));
+        hazardObject.setRiskCurrentFrequencyId(new DbriskFrequency(currentFreqId));
+        hazardObject.setRiskCurrentSeverityId(new DbriskSeverity(currentSeverityId));
         hazardObject.setRiskClassId(new DbriskClass(riskClassId));
     }
 
@@ -532,15 +553,17 @@ public class addHazard_MB implements Serializable {
         typeId = -1;
         ownerId = -1;
         hazardContextId = -1;
-        freqId = -1;
-        severityId = -1;
+        currentFreqId = -1;
+        currentSeverityId = -1;
+        targetFreqId = -1;
+        targetSeverityId = -1;
         riskClassId = -1;
 
         clearTree();
         collapsingOrExpanding(root, false);
     }
-    
-    public String assignRelations(){
+
+    public String assignRelations() {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("hazardRelObj", hazardObject);
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("redirectionSource", "AddHazard");
         return "/data/relations/hazardsRelation";
@@ -681,6 +704,9 @@ public class addHazard_MB implements Serializable {
         savedHazardObject.setHazardTypeId(inputObj.getHazardTypeId());
         savedHazardObject.setHazardStatusId(inputObj.getHazardStatusId());
         savedHazardObject.setRiskClassId(inputObj.getRiskClassId());
+        savedHazardObject.setRiskCurrentFrequencyId(inputObj.getRiskCurrentFrequencyId());
+        savedHazardObject.setRiskCurrentSeverityId(inputObj.getRiskCurrentSeverityId());
+        savedHazardObject.setRiskCurrentScore(inputObj.getRiskCurrentScore());
         savedHazardObject.setRiskTargetFrequencyId(inputObj.getRiskTargetFrequencyId());
         savedHazardObject.setRiskTargetSeverityId(inputObj.getRiskTargetSeverityId());
         savedHazardObject.setRiskTargetScore(inputObj.getRiskTargetScore());
@@ -721,7 +747,7 @@ public class addHazard_MB implements Serializable {
             n.setSelected(false);
         }
     }
-    
+
     public void handleUpload(FileUploadEvent event) {
         try {
             UploadedFile rawFile = event.getFile();
@@ -733,7 +759,7 @@ public class addHazard_MB implements Serializable {
             }
             String fileName = sb.toString();
             String fileExtension = rawName[rawName.length - 1];
-            
+
             if (dbFilesFacade.findHeadersForDuplicate(fileName, fileExtension).size() >= 1) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "'" + fileName + "." + fileExtension + "' already exists in the database!"));
             } else {
@@ -745,22 +771,22 @@ public class addHazard_MB implements Serializable {
                 dbFilesFacade.create(newFile);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "'" + fileName + "." + fileExtension + "' has been successfully uploaded."));
             }
-            
-        listFiles = (List<fileHeaderObject>) (Object) dbFilesFacade.listAllHeaders(); 
+
+            listFiles = (List<fileHeaderObject>) (Object) dbFilesFacade.listAllHeaders();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
     }
-    
+
     public void handleDownload(fileHeaderObject file) {
         FacesContext fc = FacesContext.getCurrentInstance();
         ExternalContext ec = fc.getExternalContext();
-        
+
         ec.responseReset();
         ec.setResponseContentType(ec.getMimeType(file.getFileName() + "." + file.getFileExtension()));
         ec.setResponseContentLength(file.getFileSize());
         ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "." + file.getFileExtension() + "\"");
-        
+
         try {
             byte[] fileBlob = dbFilesFacade.findFileFromId(file.getFileId()).get(0).getFileBlob();
             OutputStream os = ec.getResponseOutputStream();
@@ -770,7 +796,7 @@ public class addHazard_MB implements Serializable {
         }
         fc.responseComplete();
     }
-    
+
     public String parseSize(int fileSize) {
         // Return a string for readability of the size field in tables
         int order = 0;
@@ -786,7 +812,7 @@ public class addHazard_MB implements Serializable {
         DecimalFormat df = new DecimalFormat("#.###");
         return Double.valueOf(df.format(formatSize)).toString() + " " + suffix[order];
     }
-    
+
     private void addFiles() {
         filesChanged = false;
         if (!checkedFiles.containsAll(savedFiles) || !savedFiles.containsAll(checkedFiles)) {
@@ -805,7 +831,7 @@ public class addHazard_MB implements Serializable {
                         unlinkFile(tmpFile);
                     }
                 }
-                for (fileHeaderObject tmpFile: checkedFiles) {
+                for (fileHeaderObject tmpFile : checkedFiles) {
                     if (!savedFiles.contains(tmpFile)) {
                         linkFile(tmpFile);
                     }
@@ -814,7 +840,7 @@ public class addHazard_MB implements Serializable {
             savedFiles = dbHazardFilesFacade.findHeadersForHazard(hazardObject.getHazardId());
         }
     }
-    
+
     private void linkFile(fileHeaderObject fileHeader) {
         DbHazardFiles tmpHazardFiles = new DbHazardFiles();
         DbHazardFilesPK tmpHazardFilesPK = new DbHazardFilesPK(hazardObject.getHazardId(), fileHeader.getFileId());
@@ -822,7 +848,7 @@ public class addHazard_MB implements Serializable {
         tmpHazardFiles.setDbHazardFilesDummyvar(null);
         dbHazardFilesFacade.create(tmpHazardFiles);
     }
-    
+
     private void unlinkFile(fileHeaderObject fileHeader) {
         dbHazardFilesFacade.customRemove(hazardObject.getHazardId(), fileHeader.getFileId());
     }

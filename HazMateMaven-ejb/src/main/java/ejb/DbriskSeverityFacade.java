@@ -33,7 +33,8 @@ public class DbriskSeverityFacade extends AbstractFacade<DbriskSeverity> impleme
     
     @Override
     public List<DbHazard> checkRiskSeverity(int riskSeverityId)   {
-        return em.createQuery("FROM DbHazard h WHERE h.riskSeverityId.riskSeverityId = :checkRiskSeverityId")
+        return em.createQuery("FROM DbHazard h WHERE h.riskCurrentSeverityId.riskSeverityId = :checkRiskSeverityId "
+                + "OR h.riskTargetSeverityId.riskSeverityId = :checkRiskSeverityId")
                 .setParameter("checkRiskSeverityId", riskSeverityId)
                 .setMaxResults(10)
                 .getResultList(); 
