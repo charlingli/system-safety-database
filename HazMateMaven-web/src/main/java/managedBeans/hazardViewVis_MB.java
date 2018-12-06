@@ -101,8 +101,4 @@ public class hazardViewVis_MB {
         setSelectedMControls(dbHazardFacade.getMControlHazard(selectedHazard.getHazardId()));
         setSelectedPControls(dbHazardFacade.getPControlHazard(selectedHazard.getHazardId()));
     }
-    
-    public void testPageAccess() {
-        System.out.println(dbUserFacade.getPageAccessForUser(1, "Users Definition"));
-    }
 }

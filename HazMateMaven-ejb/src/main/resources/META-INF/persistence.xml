@@ -47,7 +47,7 @@
     <class>entities.DbwfHeader</class>
     <class>entities.DbwfLine</class>
     <class>entities.DbwfType</class>
-    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties/>
   </persistence-unit>
 </persistence>

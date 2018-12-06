@@ -30,17 +30,32 @@
                                     </ui:repeat>
                                 </div>
                                 <div class="mid">
-                                    <div>
+                                    <div class="top">
+                                        <div class="label">
+                                            Current Risk:
+                                        </div>
+                                        <div class="risk">
+                                            <div class="frequency">
+                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskCurrentFrequencyId.frequencyScore}"> </h:outputText>
+                                            </div>
+                                            <div class="severity">
+                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskCurrentSeverityId.severityScore}"> </h:outputText>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="center">
                                         <h:outputText value="${hazardViewVis_MB.selectedDescription}"> </h:outputText>
+                                    </div>
+                                    <div class="bottom">
                                         <div class="label">
                                             Targeted Risk:
                                         </div>
                                         <div class="risk">
                                             <div class="frequency">
-                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskFrequencyId.frequencyScore}"> </h:outputText>
+                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskTargetFrequencyId.frequencyScore}"> </h:outputText>
                                             </div>
                                             <div class="severity">
-                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskSeverityId.severityScore}"> </h:outputText>
+                                                <h:outputText value="${hazardViewVis_MB.selectedHazard.riskTargetSeverityId.severityScore}"> </h:outputText>
                                             </div>
                                         </div>
                                     </div>
@@ -157,14 +172,28 @@
                                 <p:column headerText="Class" styleClass="small">
                                     <p:outputLabel value="#{hazardView_MB.detailHazard.riskClassId.riskClassName}"/>
                                 </p:column>
-                                <p:column headerText="Frequency" styleClass="small">
-                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskFrequencyId.frequencyScore}"/>
+                                <p:column headerText="Current Frequency" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskCurrentFrequencyId.frequencyScore}"/>
                                 </p:column>
-                                <p:column headerText="Severity" styleClass="small">
-                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskSeverityId.severityScore}"/>
+                                <p:column headerText="Current Severity" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskCurrentSeverityId.severityScore}"/>
                                 </p:column>
-                                <p:column headerText="Score" styleClass="small">
-                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskScore}"/>
+                                <p:column headerText="Current Score" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskCurrentScore}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <p:dataTable value="#{hazardView_MB.detailHazard}" emptyMessage="No risk details found.">
+                                <p:column headerText="Class" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskClassId.riskClassName}"/>
+                                </p:column>
+                                <p:column headerText="Target Frequency" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskTargetFrequencyId.frequencyScore}"/>
+                                </p:column>
+                                <p:column headerText="Target Severity" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskTargetSeverityId.severityScore}"/>
+                                </p:column>
+                                <p:column headerText="Target Score" styleClass="small">
+                                    <p:outputLabel value="#{hazardView_MB.detailHazard.riskTargetScore}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>
@@ -257,7 +286,7 @@
                                                 <p:ajax event="keyup" update="HiDClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HiDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardId}">
+                                                <p:commandLink id="HiDClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardId}">
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -266,7 +295,7 @@
                                                 <p:ajax event="keyup" update="HDClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardDescription}">
+                                                <p:commandLink id="HDClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardDescription}">
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -275,7 +304,7 @@
                                                 <p:ajax event="keyup" update="CAClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CAClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedCauses}"> 
+                                                <p:commandLink id="CAClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedCauses}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -284,7 +313,7 @@
                                                 <p:ajax event="keyup" update="CQClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CQClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedConsequences}"> 
+                                                <p:commandLink id="CQClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedConsequences}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -293,7 +322,7 @@
                                                 <p:ajax event="keyup" update="HMClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HMClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardComments}"> 
+                                                <p:commandLink id="HMClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedHazardComments}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -302,7 +331,7 @@
                                                 <p:ajax event="keyup" update="HLiDClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HLiDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedLegacyId}"> 
+                                                <p:commandLink id="HLiDClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedLegacyId}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -311,7 +340,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listLocations}" var="location" itemLabel="#{location.locationName}" itemValue="#{location.locationId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HLClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedLocations}"> 
+                                                <p:commandLink id="HLClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedLocations}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -320,7 +349,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listProjects}" var="project" itemLabel="#{project.projectName}" itemValue="#{project.projectId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HPClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedProjects}"> 
+                                                <p:commandLink id="HPClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedProjects}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -329,7 +358,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listGradeSeparations}" var="gradeSeparation" itemLabel="#{gradeSeparation.gradeSeparationName}" itemValue="#{gradeSeparation.gradeSeparationId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="GSClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedGradeSeparations}"> 
+                                                <p:commandLink id="GSClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedGradeSeparations}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -338,7 +367,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listConstructionTypes}" var="constructionType" itemLabel="#{constructionType.constructionTypeName}" itemValue="#{constructionType.constructionTypeId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CNClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedConstructionTypes}"> 
+                                                <p:commandLink id="CNClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedConstructionTypes}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -347,7 +376,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listChangeTypes}" var="changeType" itemLabel="#{changeType.changeTypeName}" itemValue="#{changeType.changeTypeId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CHClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedChangeTypes}"> 
+                                                <p:commandLink id="CHClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedChangeTypes}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -356,7 +385,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listHazardActivities}" var="hazardActivity" itemLabel="#{hazardActivity.activityName}" itemValue="#{hazardActivity.activityId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HAClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardActivities}"> 
+                                                <p:commandLink id="HAClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardActivities}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -365,7 +394,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listHazardContexts}" var="hazardContext" itemLabel="#{hazardContext.hazardContextName}" itemValue="#{hazardContext.hazardContextId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HCClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardContexts}"> 
+                                                <p:commandLink id="HCClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardContexts}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -374,7 +403,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listHazardTypes}" var="hazardType" itemLabel="#{hazardType.hazardTypeName}" itemValue="#{hazardType.hazardTypeId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HTClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardTypes}"> 
+                                                <p:commandLink id="HTClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardTypes}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -383,7 +412,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listHazardStatuses}" var="hazardStatus" itemLabel="#{hazardStatus.hazardStatusName}" itemValue="#{hazardStatus.hazardStatusId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HSClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardStatuses}"> 
+                                                <p:commandLink id="HSClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardStatuses}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -392,7 +421,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listHazardOwners}" var="hazardOwner" itemLabel="#{hazardOwner.ownerName}" itemValue="#{hazardOwner.ownerId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="HOClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardOwners}"> 
+                                                <p:commandLink id="HOClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedHazardOwners}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -416,7 +445,7 @@
                                                 <p:ajax event="keyup" update="CDClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CDClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedControlDescription}"> 
+                                                <p:commandLink id="CDClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedControlDescription}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -425,7 +454,7 @@
                                                 <p:ajax event="keyup" update="CJClear"/>
                                             </p:inputText>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CJClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedControlJustification}"> 
+                                                <p:commandLink id="CJClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.searchedControlJustification}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -434,7 +463,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listControlHierarchies}" var="controlHier" itemLabel="#{controlHier.controlHierarchyName}" itemValue="#{controlHier.controlHierarchyId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CTClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlHierachies}"> 
+                                                <p:commandLink id="CTClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlHierachies}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -443,7 +472,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listHazardOwners}" var="controlOwner" itemLabel="#{controlOwner.ownerName}" itemValue="#{controlOwner.ownerId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="COClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlOwners}"> 
+                                                <p:commandLink id="COClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlOwners}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -452,7 +481,7 @@
                                                 <f:selectItems value="#{hazardView_MB.listControlRecommendations}" var="controlRecommendation" itemLabel="#{controlRecommendation.controlRecommendName}" itemValue="#{controlRecommendation.controlRecommendId}"/>
                                             </p:selectCheckboxMenu>
                                             <h:panelGroup styleClass="remove">
-                                                <p:commandLink id="CRClear" update="hazardsForm" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlRecommendations}"> 
+                                                <p:commandLink id="CRClear" update="hazardsForm:fieldset" action="#{hazardView_MB.clearField(component.id)}" process="@this" rendered="#{not empty hazardView_MB.selectedControlRecommendations}"> 
                                                     <i class="fa fa-remove"/>
                                                 </p:commandLink>
                                             </h:panelGroup>
@@ -479,8 +508,8 @@
                     </p:fieldset>
                     <div class="panelButtons">
                         <p:commandButton value="Search Hazards" action="#{hazardView_MB.constructSearchObject()}" update="hazardsForm" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()" />
-                        <p:commandButton value="Reset Fields" update="hazardsForm" process="@this" action="#{hazardView_MB.resetFields()}">
-                            <p:resetInput target="hazardsForm"/>
+                        <p:commandButton value="Reset Fields" update="hazardsForm:fieldset" process="@this" action="#{hazardView_MB.resetFields()}">
+                            <p:resetInput target="hazardsForm:fieldset"/>
                         </p:commandButton>
                     </div>
                     <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
@@ -507,7 +536,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>
                             </f:facet>
-                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{empty hazard.missingInfo ? false : hazard.missingInfo}"/>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{empty hazard.missingInfo ? false : hazard.missingInfo}"/>
                         </p:column>
                         <p:column style="width: 7%; text-align:center" headerText="Rate &amp; Tag">
                             <h:outputText>

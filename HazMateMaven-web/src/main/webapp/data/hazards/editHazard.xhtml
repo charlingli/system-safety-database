@@ -244,13 +244,21 @@
                                             <p:selectOneMenu value="#{editHazard_MB.editingRC}" required="true" requiredMessage="The Risk class field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listRC}" var="rc" itemLabel="#{rc.riskClassName}" itemValue="#{rc.riskClassId}"/> 
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Risk Frequency:"/>
-                                            <p:selectOneMenu  value="#{editHazard_MB.editingRF}" required="true" requiredMessage="The RiskFrequencyId field is required." class="editInput" autoWidth="false">
-                                                <f:selectItems value="#{editHazard_MB.listRF}" var="rf" itemLabel="#{rf.frequencyScore}" itemValue="#{rf.riskFrequencyId}"/>
+                                            <p:outputLabel value="Current Frequency:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingCF}" required="true" requiredMessage="The RiskFrequencyId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRF}" var="cf" itemLabel="#{cf.frequencyScore}" itemValue="#{cf.riskFrequencyId}"/>
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Risk Severity:"/>
-                                            <p:selectOneMenu  value="#{editHazard_MB.editingRS}" required="true" requiredMessage="The RiskSeverityId field is required." class="editInput" autoWidth="false">
-                                                <f:selectItems value="#{editHazard_MB.listRS}" var="rs" itemLabel="#{rs.severityScore}" itemValue="#{rs.riskSeverityId}"/>
+                                            <p:outputLabel value="Current Severity:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingCS}" required="true" requiredMessage="The RiskSeverityId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRS}" var="cs" itemLabel="#{cs.severityScore}" itemValue="#{cs.riskSeverityId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Target Frequency:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingTF}" required="true" requiredMessage="The RiskFrequencyId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRF}" var="tf" itemLabel="#{tf.frequencyScore}" itemValue="#{tf.riskFrequencyId}"/>
+                                            </p:selectOneMenu>
+                                            <p:outputLabel value="Target Severity:"/>
+                                            <p:selectOneMenu  value="#{editHazard_MB.editingTS}" required="true" requiredMessage="The RiskSeverityId field is required." class="editInput" autoWidth="false">
+                                                <f:selectItems value="#{editHazard_MB.listRS}" var="ts" itemLabel="#{ts.severityScore}" itemValue="#{ts.riskSeverityId}"/>
                                             </p:selectOneMenu>
                                             <p:outputLabel value="System Breakdown Structure:"/>
                                             <p:tree id="sbsTree" value="#{editHazard_MB.root}" var="node" selectionMode="checkbox" selection="#{editHazard_MB.currentTree}">

@@ -792,17 +792,14 @@ public class addHazard_MB implements Serializable {
         if (!checkedFiles.containsAll(savedFiles) || !savedFiles.containsAll(checkedFiles)) {
             filesChanged = true;
             if (checkedFiles.isEmpty() && !savedFiles.isEmpty()) {
-                System.out.println("All saved files to be unlinked.");
                 for (fileHeaderObject tmpFile: savedFiles) {
                     unlinkFile(tmpFile);
                 }
             } else if (!checkedFiles.isEmpty() && savedFiles.isEmpty()) {
-                System.out.println("All checked files to be linked.");
                 for (fileHeaderObject tmpFile: checkedFiles) {
                     linkFile(tmpFile);
                 }
             } else if (!checkedFiles.isEmpty() && !savedFiles.isEmpty()) {
-                System.out.println("Files to be checked against both lists.");
                 for (fileHeaderObject tmpFile: savedFiles) { 
                     if (!checkedFiles.contains(tmpFile)) {
                         unlinkFile(tmpFile);

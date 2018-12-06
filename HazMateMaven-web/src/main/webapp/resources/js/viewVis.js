@@ -18,58 +18,62 @@ function buildVis() {
     var wVis = $('#graphic').width();
     var hVis = $('#graphic').height();
     
-    var elemHD = $('.visCanvas .mid div');
+    var elemHD = $('.visCanvas .mid>div:nth-child(2)');
     var HDl = elemHD.position()['left'];
     var HDr = elemHD.position()['left'] + elemHD.width();
     var HDy = elemHD.position()['top'] + (elemHD.height() / 2);
     
-    var elemRF =  elemHD.find('.frequency');
-    if (elemRF.html()[1] === "0") {
-        elemRF.css('background', '#F2FDFE');
-        elemRF.parent().css('border', '1px solid #01D1EE');
-    } else if (elemRF.html()[1] === "1") {
-        elemRF.css('background', '#F2FDFE');
-        elemRF.parent().css('border', '1px solid #01D1EE');
-    } else if (elemRF.html()[1] === "2") {
-        elemRF.css('background', '#96E9F5');
-        elemRF.parent().css('border', '1px solid #2793A2');
-    } else if (elemRF.html()[1] === "3") {
-        elemRF.css('background', '#56DEF1');
-        elemRF.parent().css('border', '1px solid #03899C');
-    } else if (elemRF.html()[1] === "4") {
-        elemRF.css('background', '#1BD7F1');
-        elemRF.parent().css('border', '1px solid #026A79');
-    } else if (elemRF.html()[1] === "5") {
-        elemRF.css('background', '#01D1EE');
-        elemRF.parent().css('border', '1px solid #01535F');
-    } else if (elemRF.html()[1] === "6") {
-        elemRF.css('background', '#98D5DD');
-        elemRF.parent().css('border', '1px solid #01535F');
-    }
+    var elemRS = $('.severity');
+    elemRS.each(function () {
+        if ($(this).html()[1] === "0") {
+            $(this).css('background', '#FFEA64');
+            $(this).parent().css('border', '1px solid #FFDD00');
+        } else if ($(this).html()[1] === "1") {
+            $(this).css('background', '#FFDD00');
+            $(this).parent().css('border', '1px solid #FFB300');
+        } else if ($(this).html()[1] === "2") {
+            $(this).css('background', '#FFB300');
+            $(this).parent().css('border', '1px solid #FF8000');
+        } else if ($(this).html()[1] === "3") {
+            $(this).css('background', '#FF8000');
+            $(this).parent().css('border', '1px solid #FF5500');
+        } else if ($(this).html()[1] === "4") {
+            $(this).css('background', '#FF5500');
+            $(this).parent().css('border', '1px solid #FF0000');
+        } else if ($(this).html()[1] === "5") {
+            $(this).css('background', '#FF0000');
+            $(this).parent().css('border', '1px solid #9B0000');
+        } else if ($(this).html()[1] === "6") {
+            $(this).css('background', '#9B0000');
+            $(this).parent().css('border', '1px solid #4C0000');
+        }
+    });
     
-    var elemRS =  elemHD.find('.severity');
-    if (elemRS.html()[1] === "0") {
-        elemRS.css('background', '#F2FDFE');
-        elemRS.parent().css('border', '1px solid #01D1EE');
-    } else if (elemRS.html()[1] === "1") {
-        elemRS.css('background', '#F2FDFE');
-        elemRS.parent().css('border', '1px solid #01D1EE');
-    } else if (elemRS.html()[1] === "2") {
-        elemRS.css('background', '#96E9F5');
-        elemRS.parent().css('border', '1px solid #2793A2');
-    } else if (elemRS.html()[1] === "3") {
-        elemRS.css('background', '#56DEF1');
-        elemRS.parent().css('border', '1px solid #03899C');
-    } else if (elemRS.html()[1] === "4") {
-        elemRS.css('background', '#1BD7F1');
-        elemRS.parent().css('border', '1px solid #026A79');
-    } else if (elemRS.html()[1] === "5") {
-        elemRS.css('background', '#98D5DD');
-        elemRS.parent().css('border', '1px solid #01535F');
-    } else if (elemRS.html()[1] === "6") {
-        elemRS.css('background', '#98D5DD');
-        elemRS.parent().css('border', '1px solid #01535F');
-    }
+    var elemRF = $('.frequency');
+    elemRF.each(function () {
+        if ($(this).html()[1] === "0") {
+            $(this).css('background', '#FFEA64');
+            $(this).parent().css('border', '1px solid #FFDD00');
+        } else if ($(this).html()[1] === "1") {
+            $(this).css('background', '#FFDD00');
+            $(this).parent().css('border', '1px solid #FFB300');
+        } else if ($(this).html()[1] === "2") {
+            $(this).css('background', '#FFB300');
+            $(this).parent().css('border', '1px solid #FF8000');
+        } else if ($(this).html()[1] === "3") {
+            $(this).css('background', '#FF8000');
+            $(this).parent().css('border', '1px solid #FF5500');
+        } else if ($(this).html()[1] === "4") {
+            $(this).css('background', '#FF5500');
+            $(this).parent().css('border', '1px solid #FF0000');
+        } else if ($(this).html()[1] === "5") {
+            $(this).css('background', '#FF0000');
+            $(this).parent().css('border', '1px solid #9B0000');
+        } else if ($(this).html()[1] === "6") {
+            $(this).css('background', '#9B0000');
+            $(this).parent().css('border', '1px solid #4C0000');
+        }
+    });
     
     var CAx;
     var CQx;

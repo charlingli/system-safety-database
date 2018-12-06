@@ -112,18 +112,32 @@
                             <div class="p-emphasis-spacer">
                                 <h:outputText styleClass="p-emphasis" value="Risk Information:"/>
                             </div>
-                            <p:dataTable value="#{userWF_MB.detailHazard}">
+                            <p:dataTable value="#{userWF_MB.detailHazard}" emptyMessage="No risk details found.">
                                 <p:column headerText="Class" styleClass="small">
                                     <p:outputLabel value="#{userWF_MB.detailHazard.riskClassId.riskClassName}"/>
                                 </p:column>
-                                <p:column headerText="Frequency" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskFrequencyId.frequencyScore}"/>
+                                <p:column headerText="Current Frequency" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskCurrentFrequencyId.frequencyScore}"/>
                                 </p:column>
-                                <p:column headerText="Severity" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskSeverityId.severityScore}"/>
+                                <p:column headerText="Current Severity" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskCurrentSeverityId.severityScore}"/>
                                 </p:column>
-                                <p:column headerText="Score" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskScore}"/>
+                                <p:column headerText="Current Score" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskCurrentScore}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <p:dataTable value="#{userWF_MB.detailHazard}" emptyMessage="No risk details found.">
+                                <p:column headerText="Class" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskClassId.riskClassName}"/>
+                                </p:column>
+                                <p:column headerText="Target Frequency" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskTargetFrequencyId.frequencyScore}"/>
+                                </p:column>
+                                <p:column headerText="Target Severity" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskTargetSeverityId.severityScore}"/>
+                                </p:column>
+                                <p:column headerText="Target Score" styleClass="small">
+                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskTargetScore}"/>
                                 </p:column>
                             </p:dataTable>
                         </p:panel>

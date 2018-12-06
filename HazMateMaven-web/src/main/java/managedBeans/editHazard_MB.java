@@ -207,8 +207,10 @@ public class editHazard_MB implements Serializable {
     private int editingHS;
     private int editingHO;
     private int editingRC;
-    private int editingRF;
-    private int editingRS;
+    private int editingCF;
+    private int editingCS;
+    private int editingTF;
+    private int editingTS;
     private int editingSS;
     
     // Variables used to handle files
@@ -572,20 +574,36 @@ public class editHazard_MB implements Serializable {
         this.editingRC = editingRC;
     }
 
-    public int getEditingRF() {
-        return editingRF;
+    public int getEditingCF() {
+        return editingCF;
     }
 
-    public void setEditingRF(int editingRF) {
-        this.editingRF = editingRF;
+    public void setEditingCF(int editingCF) {
+        this.editingCF = editingCF;
     }
 
-    public int getEditingRS() {
-        return editingRS;
+    public int getEditingCS() {
+        return editingCS;
     }
 
-    public void setEditingRS(int editingRS) {
-        this.editingRS = editingRS;
+    public void setEditingCS(int editingCS) {
+        this.editingCS = editingCS;
+    }
+
+    public int getEditingTF() {
+        return editingTF;
+    }
+
+    public void setEditingTF(int editingTF) {
+        this.editingTF = editingTF;
+    }
+
+    public int getEditingTS() {
+        return editingTS;
+    }
+
+    public void setEditingTS(int editingTS) {
+        this.editingTS = editingTS;
     }
 
     public int getEditingSS() {
@@ -674,8 +692,10 @@ public class editHazard_MB implements Serializable {
         setEditingHS(currentHazard.getHazardStatusId().getHazardStatusId());
         setEditingHO(currentHazard.getOwnerId().getOwnerId());
         setEditingRC(currentHazard.getRiskClassId().getRiskClassId());
-        setEditingRF(currentHazard.getRiskTargetFrequencyId().getRiskFrequencyId());
-        setEditingRS(currentHazard.getRiskTargetSeverityId().getRiskSeverityId());
+        setEditingCF(currentHazard.getRiskCurrentFrequencyId().getRiskFrequencyId());
+        setEditingCS(currentHazard.getRiskCurrentSeverityId().getRiskSeverityId());
+        setEditingTF(currentHazard.getRiskTargetFrequencyId().getRiskFrequencyId());
+        setEditingTS(currentHazard.getRiskTargetSeverityId().getRiskSeverityId());
         setEditingSS(currentHazard.getHazardSystemStatus().getSystemStatusId());
         
         savedHazard = new DbHazard();
@@ -693,13 +713,13 @@ public class editHazard_MB implements Serializable {
         savedHazard.setHazardStatusId(currentHazard.getHazardStatusId());
         savedHazard.setOwnerId(currentHazard.getOwnerId());
         savedHazard.setRiskClassId(currentHazard.getRiskClassId());
+        savedHazard.setRiskCurrentFrequencyId(currentHazard.getRiskCurrentFrequencyId());
+        savedHazard.setRiskCurrentSeverityId(currentHazard.getRiskCurrentSeverityId());
         savedHazard.setRiskTargetFrequencyId(currentHazard.getRiskTargetFrequencyId());
         savedHazard.setRiskTargetSeverityId(currentHazard.getRiskTargetSeverityId());
         savedHazard.setHazardSystemStatus(currentHazard.getHazardSystemStatus());
         checkedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
         savedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
-        System.out.println("Loading " + savedFiles.size() + " linked files on hazard " + currentHazard.getHazardId() + ": ");
-        savedFiles.stream().forEach(h -> System.out.println(h.getFileId()));
         populateTree();
     }
     
@@ -711,7 +731,7 @@ public class editHazard_MB implements Serializable {
             listSearchObject.add(new searchObject("hazardId", getSearchHI(), "string", "DbHazard", null, null, null, "like", "Hazard ID"));
         }
         if (getSearchDT() != null) {
-        listSearchObject.add(new searchObject("hazardDate", df.format(getSearchDT()), "date", "DbHazard", null, null, null, "=", "Hazard Date"));
+            listSearchObject.add(new searchObject("hazardDate", df.format(getSearchDT()), "date", "DbHazard", null, null, null, "=", "Hazard Date"));
         }
         if (getSearchHD() != null && getSearchHD().length() > 0) {
             listSearchObject.add(new searchObject("hazardDescription", getSearchHD(), "string", "DbHazard", null, null, null, "like", "Hazard Description"));
@@ -783,6 +803,8 @@ public class editHazard_MB implements Serializable {
                 currentHazard.getOwnerId().getOwnerId().equals(savedHazard.getOwnerId().getOwnerId()) &&
                 currentHazard.getHazardWorkshop().equals(savedHazard.getHazardWorkshop()) &&
                 currentHazard.getRiskClassId().getRiskClassId().equals(savedHazard.getRiskClassId().getRiskClassId()) &&
+                currentHazard.getRiskCurrentFrequencyId().getRiskFrequencyId().equals(savedHazard.getRiskCurrentFrequencyId().getRiskFrequencyId()) &&
+                currentHazard.getRiskCurrentSeverityId().getRiskSeverityId().equals(savedHazard.getRiskCurrentSeverityId().getRiskSeverityId()) &&
                 currentHazard.getRiskTargetFrequencyId().getRiskFrequencyId().equals(savedHazard.getRiskTargetFrequencyId().getRiskFrequencyId()) &&
                 currentHazard.getRiskTargetSeverityId().getRiskSeverityId().equals(savedHazard.getRiskTargetSeverityId().getRiskSeverityId()) &&
                 currentHazard.getLegacyId().equals(savedHazard.getLegacyId()) &&
@@ -821,6 +843,7 @@ public class editHazard_MB implements Serializable {
             }
         }
         if (hazardChanged()) {
+            currentHazard.setRiskCurrentScore(dbHazardFacade.calculateRiskScore(currentHazard.getRiskCurrentFrequencyId().getFrequencyValue(), currentHazard.getRiskCurrentSeverityId().getSeverityValue()));
             currentHazard.setRiskTargetScore(dbHazardFacade.calculateRiskScore(currentHazard.getRiskTargetFrequencyId().getFrequencyValue(), currentHazard.getRiskTargetSeverityId().getSeverityValue()));
             currentHazard.setUpdatedDateTime(new Date());
             currentHazard.setUserIdUpdate(activeUser.getUserId());
@@ -856,8 +879,10 @@ public class editHazard_MB implements Serializable {
         DbhazardStatus statusObject = new DbhazardStatus();
         DbOwners ownerObject = new DbOwners();
         DbriskClass classObject = new DbriskClass();
-        DbriskFrequency frequencyObject = new DbriskFrequency();
-        DbriskSeverity severityObject = new DbriskSeverity();
+        DbriskFrequency currentFrequencyObject = new DbriskFrequency();
+        DbriskSeverity currentSeverityObject = new DbriskSeverity();
+        DbriskFrequency targetFrequencyObject = new DbriskFrequency();
+        DbriskSeverity targetSeverityObject = new DbriskSeverity();
         DbhazardSystemStatus systemObject = new DbhazardSystemStatus();
         
         activityObject.setActivityId(editingHA);
@@ -866,10 +891,14 @@ public class editHazard_MB implements Serializable {
         statusObject.setHazardStatusId(editingHS);
         ownerObject.setOwnerId(editingHO);
         classObject.setRiskClassId(editingRC);
-        frequencyObject.setRiskFrequencyId(editingRF);
-        frequencyObject.setFrequencyValue(dbriskFrequencyFacade.getRiskFrequency(editingRF).get(0).getFrequencyValue());
-        severityObject.setRiskSeverityId(editingRS);
-        severityObject.setSeverityValue(dbriskSeverityFacade.getRiskSeverity(editingRS).get(0).getSeverityValue());
+        currentFrequencyObject.setRiskFrequencyId(editingCF);
+        currentFrequencyObject.setFrequencyValue(dbriskFrequencyFacade.getRiskFrequency(editingCF).get(0).getFrequencyValue());
+        currentSeverityObject.setRiskSeverityId(editingCS);
+        currentSeverityObject.setSeverityValue(dbriskSeverityFacade.getRiskSeverity(editingCS).get(0).getSeverityValue());
+        targetFrequencyObject.setRiskFrequencyId(editingTF);
+        targetFrequencyObject.setFrequencyValue(dbriskFrequencyFacade.getRiskFrequency(editingTF).get(0).getFrequencyValue());
+        targetSeverityObject.setRiskSeverityId(editingTS);
+        targetSeverityObject.setSeverityValue(dbriskSeverityFacade.getRiskSeverity(editingTS).get(0).getSeverityValue());
         systemObject.setSystemStatusId(editingSS);
         
         currentHazard.setHazardActivity(activityObject);
@@ -878,8 +907,10 @@ public class editHazard_MB implements Serializable {
         currentHazard.setHazardStatusId(statusObject);
         currentHazard.setOwnerId(ownerObject);
         currentHazard.setRiskClassId(classObject);
-        currentHazard.setRiskTargetFrequencyId(frequencyObject);
-        currentHazard.setRiskTargetSeverityId(severityObject);
+        currentHazard.setRiskCurrentFrequencyId(currentFrequencyObject);
+        currentHazard.setRiskCurrentSeverityId(currentSeverityObject);
+        currentHazard.setRiskTargetFrequencyId(targetFrequencyObject);
+        currentHazard.setRiskTargetSeverityId(targetSeverityObject);
         savedHazard.setHazardSystemStatus(systemObject);
         
     }
@@ -1336,17 +1367,14 @@ public class editHazard_MB implements Serializable {
         if (!checkedFiles.containsAll(savedFiles) || !savedFiles.containsAll(checkedFiles)) {
             filesChanged = true;
             if (checkedFiles.isEmpty() && !savedFiles.isEmpty()) {
-                System.out.println("All saved files to be unlinked.");
                 for (fileHeaderObject tmpFile: savedFiles) {
                     unlinkFile(tmpFile);
                 }
             } else if (!checkedFiles.isEmpty() && savedFiles.isEmpty()) {
-                System.out.println("All checked files to be linked.");
                 for (fileHeaderObject tmpFile: checkedFiles) {
                     linkFile(tmpFile);
                 }
             } else if (!checkedFiles.isEmpty() && !savedFiles.isEmpty()) {
-                System.out.println("Files to be checked against both lists.");
                 for (fileHeaderObject tmpFile: savedFiles) { 
                     if (!checkedFiles.contains(tmpFile)) {
                         unlinkFile(tmpFile);
