@@ -76,6 +76,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import org.apache.commons.io.FilenameUtils;
 import static org.apache.commons.io.IOUtils.toByteArray;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -166,6 +167,8 @@ public class addHazard_MB implements Serializable {
     private List<fileHeaderObject> checkedFiles;
     private List<fileHeaderObject> savedFiles;
     private boolean filesChanged;
+    private String uploadName;
+    private String uploadDescription;
 
     public addHazard_MB() {
     }
@@ -368,6 +371,22 @@ public class addHazard_MB implements Serializable {
 
     public void setCheckedFiles(List<fileHeaderObject> checkedFiles) {
         this.checkedFiles = checkedFiles;
+    }
+
+    public String getUploadName() {
+        return uploadName;
+    }
+
+    public void setUploadName(String uploadName) {
+        this.uploadName = uploadName;
+    }
+
+    public String getUploadDescription() {
+        return uploadDescription;
+    }
+
+    public void setUploadDescription(String uploadDescription) {
+        this.uploadDescription = uploadDescription;
     }
 
     @PostConstruct
@@ -760,6 +779,10 @@ public class addHazard_MB implements Serializable {
             String fileName = sb.toString();
             String fileExtension = rawName[rawName.length - 1];
 
+            if (uploadName.length() > 0) {
+                fileName = uploadName;
+            }
+
             if (dbFilesFacade.findHeadersForDuplicate(fileName, fileExtension).size() >= 1) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "'" + fileName + "." + fileExtension + "' already exists in the database!"));
             } else {
@@ -768,11 +791,13 @@ public class addHazard_MB implements Serializable {
                 newFile.setFileExtension(fileExtension);
                 newFile.setFileSize(rawFile.getContents().length);
                 newFile.setFileBlob(toByteArray(fileStream));
+                newFile.setFileDescription(uploadDescription);
                 dbFilesFacade.create(newFile);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "'" + fileName + "." + fileExtension + "' has been successfully uploaded."));
             }
 
             listFiles = (List<fileHeaderObject>) (Object) dbFilesFacade.listAllHeaders();
+            init();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
@@ -795,6 +820,7 @@ public class addHazard_MB implements Serializable {
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         fc.responseComplete();
+        RequestContext.getCurrentInstance().execute("PF('fileNameOverlay').hide();");
     }
 
     public String parseSize(int fileSize) {

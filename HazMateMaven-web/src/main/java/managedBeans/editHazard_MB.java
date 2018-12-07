@@ -57,6 +57,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import static org.apache.commons.io.IOUtils.toByteArray;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -218,6 +219,8 @@ public class editHazard_MB implements Serializable {
     private List<fileHeaderObject> checkedFiles;
     private List<fileHeaderObject> savedFiles;
     private boolean filesChanged;
+    private String uploadName;
+    private String uploadDescription;
 
     public editHazard_MB() {
     }
@@ -629,6 +632,22 @@ public class editHazard_MB implements Serializable {
     public void setCheckedFiles(List<fileHeaderObject> checkedFiles) {
         this.checkedFiles = checkedFiles;
     }
+
+    public String getUploadName() {
+        return uploadName;
+    }
+
+    public void setUploadName(String uploadName) {
+        this.uploadName = uploadName;
+    }
+
+    public String getUploadDescription() {
+        return uploadDescription;
+    }
+
+    public void setUploadDescription(String uploadDescription) {
+        this.uploadDescription = uploadDescription;
+    }
     
     public List<DbHazard> getListHazards() {
         return listHazards;
@@ -721,6 +740,7 @@ public class editHazard_MB implements Serializable {
         checkedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
         savedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
         populateTree();
+        RequestContext.getCurrentInstance().execute("PF('statusOverlay').hide()");
     }
     
     public void constructSearchObject() {
@@ -851,7 +871,7 @@ public class editHazard_MB implements Serializable {
             if (filesChanged) {
                 responseStr = "The hazard has been edited and files have been linked successfully.";
             } else {
-                responseStr = "The sbs tree has been edited successfully.";
+                responseStr = "The hazard has been edited successfully.";
             }
             if (!Arrays.equals(currentTree, savedTree) && currentTree != null && currentTree.length > 0) {
                 if (filesChanged) {
@@ -1309,6 +1329,10 @@ public class editHazard_MB implements Serializable {
             String fileName = rawFile.getFileName().split("\\.")[0];
             String fileExtension = rawFile.getFileName().split("\\.")[1];
             
+            if (uploadName.length() > 0) {
+                fileName = uploadName;
+            }
+            
             if (dbFilesFacade.findHeadersForDuplicate(fileName, fileExtension).size() >= 1) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "'" + fileName + "." + fileExtension + "' already exists in the database!"));
             } else {
@@ -1317,11 +1341,13 @@ public class editHazard_MB implements Serializable {
                 newFile.setFileExtension(fileExtension);
                 newFile.setFileSize(rawFile.getContents().length);
                 newFile.setFileBlob(toByteArray(fileStream));
+                newFile.setFileDescription(uploadDescription);
                 dbFilesFacade.create(newFile);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "'" + fileName + "." + fileExtension + "' has been successfully uploaded."));
             }
             
-        listFiles = (List<fileHeaderObject>) (Object) dbFilesFacade.listAllHeaders(); 
+            listFiles = (List<fileHeaderObject>) (Object) dbFilesFacade.listAllHeaders(); 
+            init();
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }

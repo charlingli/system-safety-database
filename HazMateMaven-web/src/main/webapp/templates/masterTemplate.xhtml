@@ -20,7 +20,6 @@
         <header id="top">
             <ui:insert name="top">
                 <h:form>
-                    <p:remoteCommand name="keepAlive" immediate="true" actionListener="#{login_MB.keepAlive()}" />
                     <p:idleMonitor timeout="300000">
                         <p:ajax event="idle" listener="#{login_MB.onIdle5}" update="growl" />
                     </p:idleMonitor>
@@ -88,12 +87,5 @@
                 </h:form>
             </ui:insert>
         </footer>
-        <script language="JavaScript">
-            document.getElementsByClassName('timeout').onclick = myClickHandler;
-            function myClickHandler() {
-                console.log("Session extended");
-                keepAlive();
-            }
-        </script>
     </h:body>
 </html>

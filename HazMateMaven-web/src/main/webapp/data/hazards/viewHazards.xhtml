@@ -10,7 +10,7 @@
             <ui:define name="content">
                 <h:form id="hazardsForm">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" style="min-width: 8em; min-height: 8em">
+                    <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" modal="true" style="min-width: 8em; min-height: 8em">
                         <div class="progress-back">
                             <div class="progress-front-1"></div>
                             <div class="progress-front-2"></div>

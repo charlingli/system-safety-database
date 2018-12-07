@@ -52,7 +52,7 @@
                                             <h:outputText value="Upload a new file:"/>
                                         </p:outputPanel>
                                     </f:facet>
-                                    <p:fileUpload fileUploadListener="#{files_MB.handleUpload}" oncomplete="PF('fileTable').filter()" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                    <p:fileUpload fileUploadListener="#{files_MB.handleUpload}" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
                                     <div class="panelButtons">
                                         <p:commandButton value="Cancel" immediate="true">
                                             <f:ajax listener="#{files_MB.cancel()}" execute="@form" render="@form"/>

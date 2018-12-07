@@ -9,7 +9,7 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
-                    <h:form>
+                    <h:form id="addForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:panel styleClass="hazardModifyPanel">
                             <p:panelGrid columns="2" columnClasses="left,middle">
@@ -18,8 +18,8 @@
                                         <h:outputText value="Adding New Hazard"/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:tabView styleClass="hazardTabs">
-                                    <p:tab title="Insert hazard information">
+                                <p:tabView styleClass="hazardTabs" id="addTabs">
+                                    <p:tab id="info" title="Insert hazard information">
                                         <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
                                             <p:outputLabel for="hazardId" value="Hazard ID:"/>
                                             <p:inputText id="hazardId" value="#{addHazard_MB.hazardObject.hazardId == null ? '(Auto)' : addHazard_MB.hazardObject.hazardId}" disabled="true"/>
@@ -104,14 +104,25 @@
                                             <p:inputText id="legacyId" value="#{addHazard_MB.hazardObject.legacyId}" title="Legacy Id"/>
                                         </p:panelGrid>
                                     </p:tab>
-                                    <p:tab title="Upload/link supporting files">
+                                    <p:tab id="files" title="Upload/link supporting files">
                                         <h:panelGrid styleClass="searchPanel">
                                             <f:facet name="header">
                                                 <p:outputPanel>
                                                     <h:outputText value="Upload a new file:"/>
                                                 </p:outputPanel>
                                             </f:facet>
-                                            <p:fileUpload fileUploadListener="#{addHazard_MB.handleUpload}" oncomplete="PF('fileTable').filter()" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                            <p:fileUpload id="fileUploader" fileUploadListener="#{addHazard_MB.handleUpload}" onstart="PF('fileNameOverlay').hide(); submitOverlay()" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="false" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                            <p:overlayPanel widgetVar="fileNameOverlay" hideEffect="fade" dismissable="true" showCloseIcon="true" styleClass="uploadDialog">
+                                                <p:panelGrid columns="1" styleClass="uploadGrid">
+                                                    <f:facet name="header">
+                                                        <h:outputText value="Set File Name and Description (Optional)"/>
+                                                    </f:facet>
+                                                    <h:outputText value="Name:"/>
+                                                    <p:inputText widgetVar="fileName" id="uploadName" value="#{addHazard_MB.uploadName}" />
+                                                    <h:outputText value="Description:"/>
+                                                    <p:inputTextarea widgetVar="fileDescription" id="uploadDescription" value="#{addHazard_MB.uploadDescription}" />
+                                                </p:panelGrid>
+                                            </p:overlayPanel>
                                         </h:panelGrid>
                                         <h:panelGrid>
                                             <f:facet name="header">
@@ -131,19 +142,19 @@
                                                 <p:ajax event="rowUnselectCheckbox" update="fileTable"/>
                                                 <p:ajax event="toggleSelect" update="fileTable"/>
                                                 <p:column selectionMode="multiple" style="width: 8%; text-align:center"/>
-                                                <p:column style="width: 8%; text-align:center" headerText="File ID">
+                                                <p:column style="width: 8%; text-align:center" headerText="ID">
                                                     <h:outputText value="#{file.fileId}"/>
                                                 </p:column>
-                                                <p:column style="width: 15%; text-align:center" headerText="File Name">
+                                                <p:column style="width: 15%; text-align:center" headerText="Name">
                                                     <h:outputText value="#{file.fileName}"/>
                                                 </p:column>
-                                                <p:column style="width: 20%; text-align:center" headerText="File Description">
+                                                <p:column style="width: 20%; text-align:center" headerText="Description">
                                                     <h:outputText value="#{file.fileDescription}"/>
                                                 </p:column>
-                                                <p:column style="width: 14%; text-align:center" headerText="File Type">
+                                                <p:column style="width: 14%; text-align:center" headerText="Type">
                                                     <h:outputText value="#{file.fileExtension}"/>
                                                 </p:column>
-                                                <p:column style="width: 16%; text-align:center" headerText="File Size">
+                                                <p:column style="width: 16%; text-align:center" headerText="Size">
                                                     <h:outputText value="#{addHazard_MB.parseSize(file.fileSize)}"/>
                                                 </p:column>
                                                 <p:column style="width: 15%; text-align:center" headerText="Download">
@@ -165,6 +176,13 @@
                             <p:commandButton value="Assign Relations" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}" 
                                              action="#{addHazard_MB.assignRelations()}" ajax="false"/>
                         </div>
+                        <p:remoteCommand name="submitOverlay" process="addForm:addTabs:uploadName, addForm:addTabs:uploadDescription" />
+                        <script>
+                            $(document).on("click", ".ui-fileupload input[type=file]", function(event){
+                                var component = $(this).closest('.ui-fileupload').find('.ui-icon-close').trigger('click');
+                                PF('fileNameOverlay').show();
+                            });
+                        </script>
                     </h:form>
                 </f:view>
             </ui:define>

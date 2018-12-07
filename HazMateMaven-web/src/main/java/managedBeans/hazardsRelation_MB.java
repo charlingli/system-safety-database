@@ -714,7 +714,7 @@ public class hazardsRelation_MB implements Serializable {
                 currentWF.setWfStatus("C");
                 dbwfHeaderFacade.edit(currentWF);
                 //second, create a new workflow
-                String Comment = "A user has updated this hazard in response to a request for information, refer to workflow ID " + currentWF.getWfId();
+                String Comment = "A user has updated this hazard in response to a request for information. Please review and approve, reject, or request more information.";
                 createNewWf(listApprovers, hazardObject, Comment);
                 //Third, delete variables
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("hazardRelObj");

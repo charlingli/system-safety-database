@@ -111,7 +111,10 @@ public class riskSeverity_MB implements Serializable {
         
         if (existingSeverity.isEmpty()) {
             dbriskSeverityFacade.create(riskSeverityObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully added."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Info:", "The risk severity has been successfully added."));
+            if (riskSeverityObject.getSeverityValue() > 5 || riskSeverityObject.getSeverityValue() < 0) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The severity value provided cannot be mapped to the risk matrix and will not be used to calculate a risk score."));
+            }
         } else { 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity already exists!"));
             return;
@@ -146,7 +149,7 @@ public class riskSeverity_MB implements Serializable {
             dbriskSeverityFacade.remove(riskSeverityObject);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully removed."));
         } else {
-            error();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity is currently assigned to one or more hazards."));
             return;
         }
         init();
@@ -176,10 +179,5 @@ public class riskSeverity_MB implements Serializable {
         deleteButton = false;
 
         riskSeverityObject = new DbriskSeverity();
-    }
-
-    public void error() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity is currently assigned to one or more hazards."));
-
     }
 }

@@ -49,7 +49,7 @@ public class login_MB implements Serializable {
         userEmail = "";
         password = "";
     }
-
+    
     public String getIdUser() {
         return idUser;
     }
@@ -139,15 +139,11 @@ public class login_MB implements Serializable {
     }
     
     public void onIdle5() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 5 minutes. Click here to refresh the session."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 5 minutes. Take action to refresh the session."));
     }
     
     public void onIdle8() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 2 minutes. Click here to refresh the session."));
-    }
-    
-    public void keepAlive() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session has been extended."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 2 minutes. Take action to refresh the session."));
     }
 
 }

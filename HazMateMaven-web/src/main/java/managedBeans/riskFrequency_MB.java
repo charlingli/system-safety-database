@@ -113,6 +113,9 @@ public class riskFrequency_MB implements Serializable {
         if (existingRiskFreq.isEmpty()) {
             dbriskFrequencyFacade.create(riskFrequencyObject);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully added."));
+            if (riskFrequencyObject.getFrequencyValue()> 5 || riskFrequencyObject.getFrequencyValue() < 1) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The frequency value provided cannot be mapped to the risk matrix and will not be used to calculate a risk score."));
+            }
         } else { 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency already exists!"));
             return;
@@ -147,7 +150,7 @@ public class riskFrequency_MB implements Serializable {
             dbriskFrequencyFacade.remove(riskFrequencyObject);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully removed."));
         } else {
-            error();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency is currently assigned to one or more hazards."));
             return;
         }
         init();
@@ -177,10 +180,5 @@ public class riskFrequency_MB implements Serializable {
         deleteButton = false;
 
         riskFrequencyObject = new DbriskFrequency();
-    }
-
-    public void error() {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency is currently assigned to one or more hazards."));
-
     }
 }
