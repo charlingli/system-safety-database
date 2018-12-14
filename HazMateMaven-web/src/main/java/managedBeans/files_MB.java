@@ -109,6 +109,7 @@ public class files_MB implements Serializable {
             return;
         } else {
             dbFilesFacade.remove(fileObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The file has been successfully deleted."));
         }
         init();
     }

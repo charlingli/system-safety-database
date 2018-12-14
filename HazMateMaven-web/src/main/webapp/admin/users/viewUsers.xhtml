@@ -4,13 +4,14 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <h:form>
+                <h:form id="usersForm">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <p:dataTable styleClass="managementTableLarge" id="userTable" value="#{users_MB.listUsers}" var="user" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}">
+                    <p:dataTable styleClass="managementTableLarge" paginator="true" rows="20" paginatorPosition="bottom" id="userTable" value="#{users_MB.listUsers}" var="user" widgetVar="usersTable" emptyMessage="No users found with given criteria" filteredValue="#{users_MB.filteredUsers}">
                         <f:facet name="header">
                             <p:outputPanel>
                                 <h:outputText value="Search all user entries: "/>
@@ -72,15 +73,87 @@
                             </f:facet>
                             <h:outputText id="STEntry" value="#{users_MB.getStatusString(user.userStatus)}" class="tableColumn300p"/>
                         </p:column>
-                        <p:column headerText="Options" class="tableColumn200p">                            
-                            <p:commandLink value="Edit" action="#{users_MB.editUser(user)}" class="linkActions"/> | 
-                            <p:commandLink value="Change Password" action="#{users_MB.changeUser(user)}" class="linkActions"/> |
-                            <p:commandLink value="Delete" action="#{users_MB.deleteUser(user)}" onstart="if (!confirm('Are you sure?')) { return; } ;" 
-                                           oncomplete="PF('usersTable').filter()" class="linkActions"/>
+                        <p:column headerText="Options" class="tableColumn200p">
+                            <h:commandLink value="Edit" disabled="#{users_MB.addFlag or users_MB.changeFlag}" class="commandLink">
+                                <f:ajax listener="#{users_MB.editUser(user)}" execute=":usersForm" render=":usersForm"/>
+                            </h:commandLink> | 
+                            <h:commandLink value="Change Password" disabled="#{users_MB.addFlag or (users_MB.editFlag or users_MB.changeFlag)}" class="commandLink">
+                                <f:ajax listener="#{users_MB.changeUser(user)}" execute=":usersForm" render=":usersForm"/>
+                            </h:commandLink> | 
+                            <h:commandLink value="Delete" action="#{users_MB.deleteUser(user)}" immediate="true" onclick="return confirm('Are you sure?')" disabled="#{users_MB.editFlag or users_MB.changeFlag}" class="commandLink"/> 
                         </p:column>
                     </p:dataTable>
                     <div class="panelButtons">
-                        <p:commandButton value = "Add User" action="#{users_MB.addUser()}"/>
+                        <p:commandButton value="Add User" disabled="#{users_MB.editFlag or users_MB.addFlag or users_MB.changeFlag}"> 
+                            <f:ajax listener="#{users_MB.addUser()}" execute=":usersForm" render=":usersForm"/>
+                        </p:commandButton>
+                    </div>
+                    <c:choose>
+                        <c:when test="#{users_MB.addFlag}">
+                            <p class="p-emphasis"><p:outputLabel value="Adding a new user"/></p>
+                        </c:when>
+                        <c:when test="#{users_MB.editFlag or users_MB.changeFlag}">
+                            <p class="p-emphasis"><p:outputLabel value="Editing #{users_MB.user.firstName} #{users_MB.user.lastName}"/></p>
+                        </c:when>
+                    </c:choose>
+                    <p:panel class="parameterModifyPanel" rendered="#{users_MB.addFlag or (users_MB.changeFlag or users_MB.editFlag)}">
+                        <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                            <p:outputLabel value="First Name:" rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:inputText id="FNInput" value="#{users_MB.user.firstName}" rendered="#{users_MB.addFlag or users_MB.editFlag}" title="First Name" required="true" styleClass="inputField200px" validatorMessage="The first name must be 60 characters or less." requiredMessage="A first name is required."/>
+                            <p:outputLabel value="Last Name:" rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:inputText id="LNInput" value="#{users_MB.user.lastName}" rendered="#{users_MB.addFlag or users_MB.editFlag}" title="Last Name" required="true" styleClass="inputField200px" validatorMessage="The last name must be 60 characters or less." requiredMessage="A last name is required."/>
+                            <p:outputLabel value="Email:" rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:inputText id="EMInput" value="#{users_MB.checkEmail}" rendered="#{users_MB.addFlag or users_MB.editFlag}" title="Email" required="true" styleClass="inputField200px" requiredMessage="An email is required." validatorMessage="The email is invalid.">
+                                <f:validateLength minimum="1" maximum="60"/>
+                                <f:validateRegex pattern="[\w\.-]*[a-zA-Z0-9_]@[\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]"/>
+                            </p:inputText>
+                            <p:outputLabel value="Mobile Number:" rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:inputText id="MNInput" value="#{users_MB.user.mobileNumber}" rendered="#{users_MB.addFlag or users_MB.editFlag}" title="Contact Number" required="true" styleClass="inputField200px" validatorMessage="The contact number must be 10 characters or less." requiredMessage="A contact number is required."/>
+                            <p:outputLabel value="Company:" rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:inputText id="CPInput" value="#{users_MB.user.company}" rendered="#{users_MB.addFlag or users_MB.editFlag}" title="Company" required="true" styleClass="inputField200px" validatorMessage="The company name must be 45 characters or less." requiredMessage="A company is required."/>
+                            <p:outputLabel value="Role:" rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:selectOneMenu id="RLInput" value="#{users_MB.submitRole}" rendered="#{users_MB.addFlag or users_MB.editFlag}" required="true" requiredMessage="A role is required." styleClass="editInput">
+                                <f:selectItems value="#{users_MB.getListRoles()}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Status: " rendered="#{users_MB.addFlag or users_MB.editFlag}"/>
+                            <p:selectOneMenu id="STInput" value="#{users_MB.userStatus}" rendered="#{users_MB.addFlag or users_MB.editFlag}" required="true" requiredMessage="A status is required." styleClass="editInput">
+                                <f:selectItem itemLabel="Active" itemValue="Active"/>
+                                <f:selectItem itemLabel="Inactive" itemValue="Inactive"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Password: " rendered="#{users_MB.addFlag or users_MB.changeFlag}"/>
+                            <p:password id="PWInput" value="#{users_MB.rawPassword}" rendered="#{users_MB.addFlag or users_MB.changeFlag}" title="Password" required="true" styleClass="inputField200px" validatorMessage="The password must be 150 characters or less and match the confirmation password." requiredMessage="A password is required.">
+                                <f:validator validatorId="passwordValidator"/>
+                                <f:attribute name="confirmPassword" value="#{confirmPassword}"/>
+                            </p:password>
+                            <p:outputLabel value="Confirm Password:" rendered="#{users_MB.addFlag or users_MB.changeFlag}"/>
+                            <p:password id="confirmPassword" binding="#{confirmPassword}" rendered="#{users_MB.addFlag or users_MB.changeFlag}" title="Confirm Password" required="true" styleClass="inputField200px" validatorMessage="The password must be 150 characters or less and match the confirmation password." requiredMessage="A password confirmation is required."/>
+                        </p:panelGrid>
+                    </p:panel>
+                    <div class="panelButtons">
+                        <c:choose>
+                            <c:when test="#{users_MB.addFlag}">
+                                <p:commandButton value="Save" update=":usersForm modifyTable"/>   
+                                <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
+                                    <p:resetInput target=":usersForm" />
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{users_MB.editFlag}">
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{users_MB.edit()}" execute="usersForm" render="usersForm"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
+                                    <p:resetInput target=":usersForm" />
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{users_MB.changeFlag}">
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{users_MB.change()}" execute="usersForm" render="usersForm"/>
+                                </p:commandButton>
+                                <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
+                                    <p:resetInput target=":usersForm" />
+                                </p:commandButton>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </h:form>
             </ui:define>

@@ -116,7 +116,7 @@ public class workflowDecision_MB implements Serializable {
             return;
         }
         
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The workflow decision has been added, but will not be used anywhere."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The workflow decision has been added, but is not handled by any logic and so cannot be used in the system."));
         wfDecisionObject = new DbwfDecision();
         init();
 
@@ -127,6 +127,7 @@ public class workflowDecision_MB implements Serializable {
         
         if (existingWfDecision.isEmpty() || existingWfDecision.get(0).getWfDecisionName().equals(prevWfDecisionName)) {
             dbwfDecisionFacade.edit(wfDecisionObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The workflow type has been successfully edited."));
         } else { 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The workflow decision ID exists already."));
             return;
@@ -143,6 +144,7 @@ public class workflowDecision_MB implements Serializable {
 
         if (existingWfLines.isEmpty()) {
             dbwfDecisionFacade.remove(wfDecisionObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The workflow decision has been successfully deleted."));
         } else {
             error();
             return;

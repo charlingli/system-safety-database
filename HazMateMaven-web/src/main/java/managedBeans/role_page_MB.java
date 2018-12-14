@@ -8,7 +8,6 @@ package managedBeans;
 import ejb.DbPageFacadeLocal;
 import ejb.DbRoleFacadeLocal;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.*;
 import entities.*;
@@ -17,13 +16,14 @@ import javax.ejb.EJB;
 import ejb.DbRolePageFacadeLocal;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 
 /**
  *
  * @author Charling Li
  */
 @Named(value = "role_page_MB")
-@SessionScoped
+@ViewScoped
 public class role_page_MB implements Serializable {
 
     @EJB

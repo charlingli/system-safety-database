@@ -30,7 +30,7 @@
                             <p:tab title="Change Password">
                                 <p class="p-heading">Change Password</p>
                                 <p class="p-emphasis">
-                                    To change other profile details, please contact the <a href="mailto:system.safety@levelcrossings.vic.gov.au">administrator</a>.
+                                    To change other profile details, please contact the <a href="mailto:#{activeUser_MB.systemEmail}">administrator</a>.
                                 </p>
                                 <p:panelGrid columns="2" columnClasses="left,middle">
                                     <p:outputLabel value="Confirm Current Password:" for="currentPassword"/>
@@ -50,7 +50,7 @@
                             <p:tab title="My Permissions">
                                 <p class="p-heading">My Permissions</p>
                                 <p class="p-emphasis">
-                                    To request permissions to access restricted pages, please contact the <a href="mailto:system.safety@levelcrossings.vic.gov.au">administrator</a>.
+                                    To request permissions to access restricted pages, please contact the <a href="mailto:#{activeUser_MB.systemEmail}">administrator</a>.
                                 </p>
                                 <div class="permissionsTable">
                                     <p:dataTable id="availablePermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.availablePageList}" emptyMessage="No available pages.">

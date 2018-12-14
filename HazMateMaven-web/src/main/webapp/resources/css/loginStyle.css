@@ -7,53 +7,81 @@ and open the template in the editor.
     Created on : 02/02/2018, 12:03:07 PM
     Author     : Juan David
 */
-body{
+body {
     margin: 0;
     padding: 0;
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
-   /*background: url(../img/br.jpg);
-    background-size: cover; */
+    /*background: url(../img/br.jpg);
+     background-size: cover; */
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
-.logo img
-{
-    width: 125px;
+body:after{
+    content: "";
+    opacity: 0.2;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     position: absolute;
-    top: -37%;
-    left: -38%;
+    z-index: -1;   
 }
-.hazMateLogo img
-{
-    width: 100px;
-    position: absolute;
-    top: -37%;
-    left: 106%;
+.body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
 }
-.box
-{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%,-50%);
-    width: 400px;
+footer {
+    background: rgb(71, 76, 85); 
+}
+header {
+    background: rgb(71, 76, 85); 
+}
+.feature {
+    display:flex;
+    max-width: 48%;
+    margin-bottom: 20px;
+}
+.feature-introduction {
+    font-weight: 100;
+    text-align: center;
+}
+.feature-heading {
+    color: rgb(72, 185, 199);
+    font-size: 2em;
+} 
+.feature-text {
+    font-size: 1.2em;
+}
+.content {
+    display:flex;
+    max-width: 72%;
+    align-items: center;
+    justify-content: space-between;
+}
+.content-box {
+    width: 480px;
     padding: 40px;
-    background: rgba(0,0,0,.8);
+    margin-left: 80px;
+    background: rgb(71, 76, 85); 
     box-sizing: border-box;
     box-shadow: 0 15px 25px rgba(0,0,0,.5);
     border-radius: 10px;
 }
-.box h2
-{
+.content-box h2 {
     margin: 0 0 30px;
     padding: 0;
     color: #fff;
     text-align: center;
 }
-.box .inputBox
-{
+.content-box .inputBox {
     position: relative;
 }
-.box .inputBox input
-{
+.content-box .inputBox input {
     width: 100%;
     padding: 10px 0;
     font-size: 16px;
@@ -65,8 +93,7 @@ body{
     outline: none;
     background: transparent;
 }
-.box .inputBox label
-{
+.content-box .inputBox label {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -77,16 +104,13 @@ body{
     pointer-events: none;
     transition: .5s;
 }
-.box .inputBox input:focus ~ label,
-.box .inputBox input:valid ~ label
-{
+.content-box .inputBox input:focus ~ label, .content-box .inputBox input:valid ~ label {
     top: -24px;
     left: 0;
-    color: #03a9f4;
+    color: rgb(72, 185, 199);
     font-size: 12px;
 }
-.box input[type="submit"]
-{
+.content-box input[type="submit"] {
     background: transparent;
     border: none;
     outline: none;
@@ -102,8 +126,97 @@ body{
         background: transparent;
     }
 }
-
 input:-webkit-autofill {
     -webkit-animation-name: autofill;
     -webkit-animation-fill-mode: both;
+}
+.commandLink {
+  color: rgb(0, 150, 169);
+  text-decoration: underline;
+  font-weight: bold;
+}
+.commandLink:hover {
+  color: rgb(72, 185, 199);
+}
+header {
+    position:relative;
+    display:-webkit-box;
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-wrap:wrap;
+    flex-wrap:wrap;
+    -webkit-box-align:center;
+    -ms-flex-align:center;
+    align-items:center;
+    -webkit-box-pack:justify;
+    -ms-flex-pack:justify;
+    justify-content:space-between;
+    padding:0.25rem 10rem 0.25rem 10rem;
+    color: white;
+    font-weight: lighter;
+}
+.header-title {
+    display: inline-block;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    line-height: inherit;
+    white-space: nowrap;
+}
+.header-link {
+    color: rgb(215, 216, 214);
+    display: inline-block;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    line-height: inherit;
+    white-space: nowrap;
+    text-decoration: underline;
+}
+.header-link:hover {
+    color: white;
+}
+footer {
+    position:relative;
+    display:-webkit-box;
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-wrap:wrap;
+    flex-wrap:wrap;
+    -webkit-box-align:center;
+    -ms-flex-align:center;
+    align-items:center;
+    -webkit-box-pack:justify;
+    -ms-flex-pack:justify;
+    justify-content:space-between;
+    padding:0.25rem 1rem;
+    color: white;
+    height: 80px;
+}
+.footer-logo1 {
+    flex: 1 1 auto;
+    height: 64px;
+    color: rgba(0, 0, 0, 0);
+    background-image: url("https://levelcrossings.vic.gov.au/__data/assets/git_bridge/0019/144613/dist/css/mysource_files/lxra-logo-desktop.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.footer-logo2 {
+    flex: 1 1 auto;
+    height: 64px;
+    color: rgba(0, 0, 0, 0);
+    background-image: url("https://levelcrossings.vic.gov.au/__data/assets/git_bridge/0019/144613/dist/css/mysource_files/vicgov-logo.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.footer-text{
+    flex: 19 1;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    line-height: inherit;
+    word-wrap: normal;
+    text-align: center;
 }

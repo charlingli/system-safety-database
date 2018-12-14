@@ -9,6 +9,8 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="hazardsForm">
+                    <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()" />
+                    <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}" />
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" modal="true" style="min-width: 8em; min-height: 8em">
                         <div class="progress-back">
@@ -536,41 +538,34 @@
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>
                             </f:facet>
-                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" disabled="#{empty hazard.missingInfo ? false : hazard.missingInfo}"/>
+                            <p:commandLink id="missingIcon" class="missingIcon" rendered="#{empty hazard.missingInfo ? false : hazard.missingInfo}"><i class="fa fa-warning"></i></p:commandLink>
+                            <p:tooltip for="missingIcon">
+                                <h:outputText value="A visualisation cannot be generated since this hazard is missing causes, consequences, or controls!"/>
+                            </p:tooltip>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" rendered="#{hazard.missingInfo ? false : true}"/>
                         </p:column>
-                        <p:column style="width: 7%; text-align:center" headerText="Rate &amp; Tag">
+                        <p:column style="width: 5%; text-align:center" headerText="Rating">
                             <h:outputText>
                                 <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}" />
-                            </h:outputText>
-                            <p:rating value="#{hazardView_MB.qualityRating}" stars="3" >
-                                <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, hazardView_MB.qualityRating)}" update="hazardsForm:hazardsTable:#{rowIndex}:averageRating, hazardsForm:hazardsTable:#{rowIndex}:countRating, hazardsForm:hazardsTable:#{rowIndex}:averageTooltip, hazardsForm:hazardsTable:#{rowIndex}:countTooltip">
-                                    <f:attribute name="hazardId" value="#{hazard.hazardObj}" />
-                                </p:ajax>
-                                <p:ajax event="cancel" listener="#{hazardView_MB.rateHazard(hazard.hazardObj.hazardId, 0)}" update="hazardsForm:hazardsTable:#{rowIndex}:averageRating, hazardsForm:hazardsTable:#{rowIndex}:countRating" />
+                                </h:outputText>
+                            <p:rating id="averageRating" stars="3" cancel="false" value="#{hazardView_MB.qualityRating}" >
+                                <p:ajax event="rate" ignoreAutoUpdate="true" listener="#{hazardView_MB.prepareRating(hazard.hazardObj.hazardId, rowIndex, hazard.sumOfRateTimesWeighting, hazard.sumOfWeight, hazard.rateCount)}" oncomplete="PF('ratingOverlay').show('#{component.clientId}');" />
                             </p:rating>
-                            <p:commandLink id="averageRating">
-                                <h:outputText value="#{empty hazard.sumOfRateTimesWeighting ? 'N/A' : hazardView_MB.getRatingScore(hazard.sumOfRateTimesWeighting, hazard.sumOfWeight)}"/>
-                            </p:commandLink> |
-                            <p:commandLink id="countRating">
-                                <h:outputText value="#{hazard.rateCount}"/>
-                            </p:commandLink>
-                            <br />
-                            <p:commandButton id="missingButton" action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" rendered="#{empty hazard.missingInfo ? false : hazard.missingInfo}" icon="fa fa-question" styleClass="missingButton"/>
+                            <p:tooltip for="averageRating">
+                                <h:outputText value="Rated #{hazardView_MB.qualityRating} from #{hazard.rateCount} users."/>
+                            </p:tooltip>
+                            <p:commandLink id="ratedIcon" class="ratedIcon" rendered="#{hazardView_MB.userRating == 0 ? false : true}"><i class="fa fa-check-circle"></i></p:commandLink>
+                            <p:tooltip for="ratedIcon">
+                                <h:outputText value="You have rated this hazard."/>
+                            </p:tooltip>
+                        </p:column>
+                        <p:column style="width: 4%; text-align:center" headerText="Tagging">
                             <p:menuButton icon="fa fa-tag" id="tagButton">
                                 <p:menuitem id="suggestionButton" value="Suggest a change" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('suggestionOverlay').show('#{component.clientId}')" icon="fa fa-pencil"/>
                                 <p:menuitem id="deletionButton" value="Mark for deletion" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('deletionOverlay').show('#{component.clientId}')" icon="fa fa-trash"/>
                             </p:menuButton>
-                            <p:tooltip id="averageTooltip" for="averageRating">
-                                <h:outputText value="Average rating"/>
-                            </p:tooltip>
-                            <p:tooltip id="countTooltip" for="countRating">
-                                <h:outputText value="Number of ratings"/>
-                            </p:tooltip>
                             <p:tooltip for="tagButton">
                                 <h:outputText value="Tag a change or mark for deletion"/>
-                            </p:tooltip>
-                            <p:tooltip for="missingButton">
-                                <h:outputText value="This hazard is missing information!"/>
                             </p:tooltip>
                         </p:column>
                         <p:column style="width: 7%; text-align:center">
@@ -585,13 +580,13 @@
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 23%">
+                        <p:column style="width: 22%">
                             <f:facet name="header">
                                 <h:outputText value="Description"/>
                             </f:facet>
                             <h:outputText value="#{hazard.hazardObj.hazardDescription}"/>
                         </p:column>
-                        <p:column style="width: 23%">
+                        <p:column style="width: 22%">
                             <f:facet name="header">
                                 <h:outputText value="Comment"/>
                             </f:facet>
@@ -639,7 +634,27 @@
                             </p:outputPanel>
                         </f:facet>
                     </p:dataTable>
-                    <p:overlayPanel widgetVar="suggestionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                    <p:overlayPanel my="top right" at="top right" class="ratingPanel" widgetVar="ratingOverlay" hideEffect="fade" dismissable="false" showCloseIcon="false">
+                        <p:commandLink id="averageRating" class="averageRating">
+                            <h:outputText value="#{hazardView_MB.averageRating}"/>
+                        </p:commandLink><br />
+                        <p:commandLink id="countRating" class="countRating">
+                            <i class="fa fa-user" /><h:outputText value=" #{hazardView_MB.ratingCount} total"/>
+                        </p:commandLink>
+                        <p:tooltip id="averageTooltip" for="averageRating">
+                            <h:outputText value="Average rating"/>
+                        </p:tooltip>
+                        <p:tooltip id="countTooltip" for="countRating">
+                            <h:outputText value="Number of ratings"/>
+                        </p:tooltip><br />
+                        <h:outputText value="Your rating:" style="font-size: 1.2em;"/>
+                        <p:rating id="userRating" value="#{hazardView_MB.userRating}" stars="3" cancel="false">
+                            <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazardView_MB.ratingId, hazardView_MB.userRating)}" update="hazardsForm:averageRating, hazardsForm:countRating, hazardsForm:averageTooltip, hazardsForm:countTooltip">
+                                <f:attribute name="hazardId" value="#{hazard.hazardObj}" />
+                            </p:ajax>
+                        </p:rating>
+                    </p:overlayPanel>
+                    <p:overlayPanel widgetVar="suggestionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true" >
                         <p:panelGrid columns="1" class="suggestionPanel">
                             <f:facet name="header">
                                 <h:outputText value="Suggest a change"/>

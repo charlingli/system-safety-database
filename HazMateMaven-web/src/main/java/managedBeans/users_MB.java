@@ -18,16 +18,15 @@ import javax.inject.Named;
 import javax.ejb.EJB;
 import ejb.DbRoleFacadeLocal;
 import ejb.DbUserFacadeLocal;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 
 /**
- *
  * @author Charling
  */
 @Named(value = "users_MB")
-@SessionScoped
+@ViewScoped
 public class users_MB implements Serializable {
 
     @EJB
@@ -46,6 +45,10 @@ public class users_MB implements Serializable {
     private String submitRole;
     private String userStatus;
     private List<DbUser> filteredUsers;
+    
+    private boolean editFlag;
+    private boolean addFlag;
+    private boolean changeFlag;
 
     public String getCurrentPassword() {
         return currentPassword;
@@ -103,6 +106,30 @@ public class users_MB implements Serializable {
         this.listRoles = listRoles;
     }
 
+    public boolean isEditFlag() {
+        return editFlag;
+    }
+
+    public void setEditFlag(boolean editFlag) {
+        this.editFlag = editFlag;
+    }
+
+    public boolean isAddFlag() {
+        return addFlag;
+    }
+
+    public void setAddFlag(boolean addFlag) {
+        this.addFlag = addFlag;
+    }
+
+    public boolean isChangeFlag() {
+        return changeFlag;
+    }
+
+    public void setChangeFlag(boolean changeFlag) {
+        this.changeFlag = changeFlag;
+    }
+
     public users_MB() {
     }
 
@@ -110,6 +137,9 @@ public class users_MB implements Serializable {
     public void init() {
         this.setListUsers(dbUserFacade.findAll());
         this.setListRoles(dbRoleFacade.listActiveRoles());
+        addFlag = false;
+        editFlag = false;
+        changeFlag = false;
     }
 
     public DbUser getUser() {
@@ -131,14 +161,15 @@ public class users_MB implements Serializable {
     public void deleteUser(DbUser user) {
         try {
             dbUserFacade.remove(user);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "User successfully deleted."));
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error deleting user: " + e.getMessage()));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: ", "Cannot delete user: " + e.getMessage()));
         } finally {
             init();
         }
     }
 
-    public String add() {
+    public void add() {
         if (checkEmail(checkEmail)) {
             String hashedPassword = hashPassword(rawPassword);
             user.setPassword(hashedPassword);
@@ -148,54 +179,59 @@ public class users_MB implements Serializable {
             dbUserFacade.create(user);
             user = new DbUser();
             init();
-            return "viewUsers";
-        } else {
-            return "";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "User successfully added."));
         }
     }
 
-    public String addUser() {
+    public void addUser() {
         user = new DbUser();
         setCheckEmail("");
         setSubmitRole(null);
         setUserStatus(null);
-        return "addUser";
+        addFlag = true;
     }
 
-    public String editUser(DbUser user) {
+    public void editUser(DbUser user) {
         submitRole = user.getRoleId().getRoleName();
         checkEmail = user.getUserEmail();
         userStatus = getStatusString(user.getUserStatus());
         this.user = user;
-        return "editUser";
+        editFlag = true;
     }
 
-    public String edit() {
+    public void edit() {
         user.setRoleId(getSubmittedRole(submitRole));
         user.setUserStatus(getStatusShort(userStatus));
         dbUserFacade.edit(user);
         user = new DbUser();
         init();
-        return "viewUsers";
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "User successfully edited."));
     }
 
-    public String changeUser(DbUser user) {
+    public void changeUser(DbUser user) {
         checkEmail = user.getUserEmail();
         this.user = user;
-        return "changeUser";
+        changeFlag = true;
     }
 
-    public String change() {
+    public void change() {
         if (checkEmail(checkEmail)) {
             String hashedPassword = hashPassword(rawPassword);
             user.setPassword(hashedPassword);
             dbUserFacade.edit(user);
             user = new DbUser();
             init();
-            return "viewUsers";
-        } else {
-            return "";
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "Password successfully changed."));
         }
+    }
+    
+    public void cancel() {
+        addFlag = false;
+        editFlag = false;
+        changeFlag = false;
+        
+        user = new DbUser();
+        init();
     }
 
     private static final int ITERATIONS = 4096;
@@ -237,7 +273,7 @@ public class users_MB implements Serializable {
         if (!email.equals(user.getUserEmail())) {
             for (int i = 0; i < getNumberOfUsers(); i++) {
                 if (listUsers.get(i).getUserEmail().toLowerCase().equals(email.toLowerCase())) {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, null, "This email has already been registered!"));
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: ", "This email has already been registered!"));
                     return false;
                 }
             }

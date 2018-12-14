@@ -158,8 +158,12 @@ public class hazardView_MB implements Serializable {
     private DbQuality qualityObject;
     private DbQualityPK qualityPKObject;
     private int qualityRating;
-    private int displayRating;
+    private int userRating;
     private int displayCount;
+    private int ratingRow;
+    private double averageRating;
+    private int ratingCount;
+    private String ratingId;
     private String suggestionComment;
     private String deletionComment;
     private String deletionReason;
@@ -597,12 +601,12 @@ public class hazardView_MB implements Serializable {
         this.qualityRating = qualityRating;
     }
 
-    public int getDisplayRating() {
-        return displayRating;
+    public int getUserRating() {
+        return userRating;
     }
 
-    public void setDisplayRating(int displayRating) {
-        this.displayRating = displayRating;
+    public void setUserRating(int userRating) {
+        this.userRating = userRating;
     }
 
     public int getDisplayCount() {
@@ -611,6 +615,38 @@ public class hazardView_MB implements Serializable {
 
     public void setDisplayCount(int displayCount) {
         this.displayCount = displayCount;
+    }
+
+    public int getRatingRow() {
+        return ratingRow;
+    }
+
+    public void setRatingRow(int ratingRow) {
+        this.ratingRow = ratingRow;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public String getRatingId() {
+        return ratingId;
+    }
+
+    public void setRatingId(String ratingId) {
+        this.ratingId = ratingId;
     }
 
     public String getSuggestionComment() {
@@ -1145,6 +1181,21 @@ public class hazardView_MB implements Serializable {
         constructHtml(new ArrayList<>(), new ArrayList<>());
         enableQueryDescr = false;
     }
+    
+    public void prepareRating(String hazardId, int rowId, int sumOfRateTimesWeighting, int sumOfWeight, int rateCount) {
+        ratingRow = rowId;
+        if (sumOfWeight == 0) {
+            averageRating = 0;
+        } else {
+            averageRating = Math.floor((double) sumOfRateTimesWeighting / sumOfWeight * 10) / 10;
+        }
+        ratingCount = rateCount;
+        ratingId = hazardId;
+        userRating = getUserRating(hazardId);
+        RequestContext.getCurrentInstance().update("hazardsForm:averageRating");
+        RequestContext.getCurrentInstance().update("hazardsForm:countRating");
+        RequestContext.getCurrentInstance().update("hazardsForm:userRating");
+    }
 
     public void rateHazard(String hazardId, int rating) {
         if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
@@ -1175,6 +1226,22 @@ public class hazardView_MB implements Serializable {
             dbQualityFacade.create(qualityObject);
         }
         updateSearchList(hazardId);
+        averageRating = Math.floor(dbQualityFacade.getHazardRating(hazardId) * 10) / 10;
+        userRating = getUserRating(hazardId);
+        qualityRating = (int) averageRating; // Here, we need qualityRating since PF ratings cannot show floats.
+        refreshRating();
+        
+    }
+    
+    public void refreshRating() {
+        if (ratingId != null) {
+            qualityRating = (int) getHazardRating(ratingId);
+            RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable:" + ratingRow + ":averageRating");
+            RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable:" + ratingRow + ":ratedIcon");
+        }
+        RequestContext.getCurrentInstance().update("hazardsForm:averageRating");
+        RequestContext.getCurrentInstance().update("hazardsForm:countRating");
+        RequestContext.getCurrentInstance().update("hazardsForm:userRating");
     }
 
     public double getHazardRating(String hazardId) {
@@ -1186,8 +1253,9 @@ public class hazardView_MB implements Serializable {
     }
 
     public int getUserRating(String hazardId) {
-        if (dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).size() > 0) {
-            return dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId).get(0).getRating();
+        List<DbQuality> userRatings = dbQualityFacade.getUserHazardRating(activeUser.getUserId(), hazardId);
+        if (!userRatings.isEmpty()) {
+            return userRatings.get(0).getRating();
         }
         return 0;
     }
@@ -1210,7 +1278,6 @@ public class hazardView_MB implements Serializable {
     }
 
     public void sendSuggestion() {
-        System.out.println(getSuggestionComment());
         if (getSuggestionComment().length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your change suggestion."));
         } else {
@@ -2020,5 +2087,5 @@ public class hazardView_MB implements Serializable {
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         fc.responseComplete();
-    }  
+    }
 }

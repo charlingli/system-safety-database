@@ -6,6 +6,7 @@
 package managedBeans;
 
 import ejb.DbUserFacadeLocal;
+import ejb.DbsystemParametersFacadeLocal;
 import entities.DbUser;
 import java.io.IOException;
 import javax.inject.Named;
@@ -31,14 +32,26 @@ import javax.crypto.spec.PBEKeySpec;
 public class login_MB implements Serializable {
 
     @EJB
+    private DbsystemParametersFacadeLocal dbsystemParametersFacade;
+
+    @EJB
     private DbUserFacadeLocal dbUserFacade;
     private String idUser;
     private String password;
     private String userEmail;
+    private String systemEmail;
 
     private static final int ITERATIONS = 4096;
     private static final int KEY_LENGTH = 256;
     private static final byte[] SALT = "jcf_5#ecJm%HLyl6".getBytes();
+
+    public String getSystemEmail() {
+        return systemEmail;
+    }
+
+    public void setSystemEmail(String systemEmail) {
+        this.systemEmail = systemEmail;
+    }
 
     public login_MB() {
     }
@@ -48,6 +61,7 @@ public class login_MB implements Serializable {
         idUser = "";
         userEmail = "";
         password = "";
+        setSystemEmail(dbsystemParametersFacade.findByName("systemParameterId", "1").get(0).getSystemAdminEmail());
     }
     
     public String getIdUser() {

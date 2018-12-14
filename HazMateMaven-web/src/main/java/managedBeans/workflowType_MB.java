@@ -119,7 +119,7 @@ public class workflowType_MB implements Serializable {
         }
         
         if (!dbwfHeaderFacade.wfTypesValidation(wfTypeObject.getWfTypeName())) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The workflow type has been added, but will not be used anywhere."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The workflow type has been added, but is not handled by any logic and so cannot be used in the system."));
         }
         dbwfTypeFacade.create(wfTypeObject);
         
@@ -149,6 +149,7 @@ public class workflowType_MB implements Serializable {
 
         if (listDbwfHeader.isEmpty()) {
             dbwfTypeFacade.remove(wfTypeObject);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The workflow type has been deleted."));
         } else {
             error();
             return;
