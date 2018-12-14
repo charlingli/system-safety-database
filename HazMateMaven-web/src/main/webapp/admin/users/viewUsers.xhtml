@@ -84,7 +84,7 @@
                         </p:column>
                     </p:dataTable>
                     <div class="panelButtons">
-                        <p:commandButton value="Add User" disabled="#{users_MB.editFlag or users_MB.addFlag or users_MB.changeFlag}"> 
+                        <p:commandButton value="Add User" immediate="true" disabled="#{users_MB.editFlag or users_MB.addFlag or users_MB.changeFlag}"> 
                             <f:ajax listener="#{users_MB.addUser()}" execute=":usersForm" render=":usersForm"/>
                         </p:commandButton>
                     </div>

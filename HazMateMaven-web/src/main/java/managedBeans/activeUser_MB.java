@@ -8,6 +8,7 @@ package managedBeans;
 import ejb.DbMenuFacadeLocal;
 import ejb.DbPageFacadeLocal;
 import ejb.DbUserFacadeLocal;
+import ejb.DbsystemParametersFacadeLocal;
 import ejb.DbuserPreferencesFacadeLocal;
 import entities.DbPage;
 import entities.DbUser;
@@ -39,6 +40,9 @@ import javax.faces.context.FacesContext;
 public class activeUser_MB implements Serializable {
 
     @EJB
+    private DbsystemParametersFacadeLocal dbsystemParametersFacade;
+
+    @EJB
     private DbuserPreferencesFacadeLocal dbuserPreferencesFacade;
 
     @EJB
@@ -54,7 +58,6 @@ public class activeUser_MB implements Serializable {
     private List<DbPage> userPageList;
     private List<DbPage> completePageList;
     private List<String> restrictedPageList;
-    ;
     private List<String> availablePageList;
     private String activeUserName;
     private String activeUserCompany;
@@ -67,6 +70,7 @@ public class activeUser_MB implements Serializable {
     private DbuserPreferencesPK userPreferencePK;
     private List<DbuserPreferences> userPreferences;
     private DbuserPreferences userPreference;
+    private String systemEmail;
 
     public List<DbPage> getUserPageList() {
         return userPageList;
@@ -196,6 +200,14 @@ public class activeUser_MB implements Serializable {
         this.userPreferencePK = userPreferencePK;
     }
 
+    public String getSystemEmail() {
+        return systemEmail;
+    }
+
+    public void setSystemEmail(String systemEmail) {
+        this.systemEmail = systemEmail;
+    }
+
     public activeUser_MB() {
     }
 
@@ -208,6 +220,7 @@ public class activeUser_MB implements Serializable {
         setActiveUserMobile(activeUser.getMobileNumber());
         setActiveUserEmail(activeUser.getUserEmail());
 
+        setSystemEmail(dbsystemParametersFacade.findByName("systemParameterId", "1").get(0).getSystemAdminEmail());
         setUserPreferences(dbuserPreferencesFacade.getUserPreferences(activeUser.getUserId()));
 
         // Populate permissions for pages
