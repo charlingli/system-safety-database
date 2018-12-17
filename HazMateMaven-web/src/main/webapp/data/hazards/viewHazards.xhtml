@@ -515,7 +515,7 @@
                         </p:commandButton>
                     </div>
                     <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
-                                 scrollable="true" scrollHeight="600" scrollRows="400" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox" >
+                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox" >
                         <f:facet name="header">
                             <p:outputPanel styleClass="tableHeader">
                                 <div class="left"></div>
@@ -533,7 +533,10 @@
                         <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" process="@this" />
                         <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" process="@this" />
                         <p:ajax event="toggleSelect" update="exportMessage, exportButton" process="@this" />
-                        <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
+                        <p:column selectionMode="multiple"
+                                  
+                                  
+                                  style="width: 2%; text-align:center"/>
                         <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>

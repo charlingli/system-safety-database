@@ -19,16 +19,16 @@ import javax.enterprise.context.RequestScoped;
  *
  * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
-@Named(value = "textSimilarity_MB")
+@Named(value = "wordProcessing_MB")
 @RequestScoped
-public class textSimilarity_MB {
+public class wordProcessing_MB {
 
     @EJB
     private DbindexedWordFacadeLocal dbindexedWordFacade;
     @EJB
     private DbcommonWordFacadeLocal dbcommonWordFacade;
 
-    public textSimilarity_MB() {
+    public wordProcessing_MB() {
     }
 
     public List<similarityObject> findSimilarity(String newDescription, String objectType) {
@@ -44,8 +44,7 @@ public class textSimilarity_MB {
 
         // Getting from the database the hazards that matches with the typed words
         List<Object[]> resultantList = dbindexedWordFacade.findSimilarities(objectType, listOfValues);
-        System.out.println(resultantList.size()); // for delete
-
+        
         // Calculating the distance between the stored data and the new data
         List<similarityObject> listPotentialDuplicates = new ArrayList<>();
         resultantList.forEach((tmp) -> {
