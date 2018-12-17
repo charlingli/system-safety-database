@@ -7,7 +7,6 @@ package managedBeans;
 
 import entities.DbMenu;
 import javax.inject.Named;
-import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
@@ -17,13 +16,14 @@ import entities.DbPage;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
 
 /**
  *
  * @author Admin
  */
 @Named(value = "pages_MB")
-@SessionScoped
+@ViewScoped
 public class pages_MB implements Serializable {
 
     @EJB
@@ -53,6 +53,9 @@ public class pages_MB implements Serializable {
     private List<DbPage> filteredDbPage;
     private DbPage pageObject = new DbPage();
     private String pageIndex;
+    private boolean addFlag;
+    private boolean editFlag;
+    private String validIndexPrefix;
 
     public String getPageIndex() {
         return pageIndex;
@@ -85,6 +88,30 @@ public class pages_MB implements Serializable {
     public void setFilteredDbPage(List<DbPage> filteredDbPage) {
         this.filteredDbPage = filteredDbPage;
     }
+
+    public boolean isAddFlag() {
+        return addFlag;
+    }
+
+    public void setAddFlag(boolean addFlag) {
+        this.addFlag = addFlag;
+    }
+
+    public boolean isEditFlag() {
+        return editFlag;
+    }
+
+    public void setEditFlag(boolean editFlag) {
+        this.editFlag = editFlag;
+    }
+
+    public String getValidIndexPrefix() {
+        return validIndexPrefix;
+    }
+
+    public void setValidIndexPrefix(String validIndexPrefix) {
+        this.validIndexPrefix = validIndexPrefix;
+    }
     
     public pages_MB() {
     }
@@ -93,11 +120,19 @@ public class pages_MB implements Serializable {
     public void init() {
         listDbPage = dbPageFacade.findAllSortedByInx();
         listDbMenu = dbMenuFacade.findAll();
+        addFlag = false;
+        editFlag = false;
+        validIndexPrefix = "";
+        findValidIndices();
+    }
+    
+    public void showAdd() {
+        pageObject = new DbPage();
+        menuObject = new DbMenu();
+        addFlag = true;
     }
 
-    public String add() {
-        String tmp = "";
-
+    public void add() {
         if (generalValidations()) {
             pageObject.setMenuId(menuObject);
             pageObject.setIndexPage(Integer.parseInt(pageIndex));
@@ -106,20 +141,18 @@ public class pages_MB implements Serializable {
             }
             dbPageFacade.create(pageObject);
             clearVariables();
-            tmp = "viewPages";
         }
-        return tmp;
+        addFlag = false;
     }
 
-    public String edit(DbPage pageObject) {
+    public void edit(DbPage pageObject) {
         this.pageObject = pageObject;
         setPageIndex(Integer.toString(pageObject.getIndexPage()));
         menuObject.setMenuId(pageObject.getMenuId().getMenuId());
-        return "editPages";
+        editFlag = true;
     }
 
-    public String edit() {
-        String tmp = "";
+    public void edit() {
         pageObject.setMenuId(menuObject);
         if (generalValidations()) {
             pageObject.setIndexPage(Integer.parseInt(pageIndex));
@@ -128,14 +161,19 @@ public class pages_MB implements Serializable {
             }
             dbPageFacade.edit(pageObject);
             clearVariables();
-            tmp = "viewPages";
         }
-        return tmp;
+        editFlag = false;
     }
 
     public void delete(DbPage pageObject) {
         dbPageFacade.remove(pageObject);
         init();
+    }
+    
+    public void findValidIndices() {
+        DbMenu tempMenu = dbMenuFacade.find(menuObject.getMenuId());
+        validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, 2);
+        System.out.println(validIndexPrefix);
     }
 
     public boolean generalValidations() {
@@ -181,8 +219,7 @@ public class pages_MB implements Serializable {
         init();
     }
 
-    public String cancel() {
+    public void cancel() {
         clearVariables();
-        return "viewPages";
     }
 }

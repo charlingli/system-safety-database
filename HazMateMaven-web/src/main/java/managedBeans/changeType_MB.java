@@ -143,7 +143,7 @@ public class changeType_MB implements Serializable {
         
         if (listDbLocation.isEmpty())   {
             dbchangeTypeFacade.remove(changeTypeObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The change type has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The change type has been successfully deleted."));
         }
         else    {
             error(); 

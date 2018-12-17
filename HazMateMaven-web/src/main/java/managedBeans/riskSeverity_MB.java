@@ -147,7 +147,7 @@ public class riskSeverity_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbriskSeverityFacade.remove(riskSeverityObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully deleted."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk severity is currently assigned to one or more hazards."));
             return;

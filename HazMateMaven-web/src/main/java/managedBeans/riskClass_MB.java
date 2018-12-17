@@ -144,7 +144,7 @@ public class riskClass_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbriskClassFacade.remove(riskClassObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk class has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk class has been successfully deleted."));
         } else {
             error();
             return;

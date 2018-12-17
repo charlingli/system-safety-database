@@ -144,7 +144,7 @@ public class hazardType_MB implements Serializable {
         
         if (listDbHazard.isEmpty()) {
             dbhazardTypeFacade.remove(hazardTypeObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard type has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard type has been successfully deleted."));
         }
         else    {
             error();

@@ -161,7 +161,7 @@ public class users_MB implements Serializable {
     public void deleteUser(DbUser user) {
         try {
             dbUserFacade.remove(user);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "User successfully deleted."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The user has been successfully deleted."));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error: ", "Cannot delete user: " + e.getMessage()));
         } finally {
@@ -179,7 +179,7 @@ public class users_MB implements Serializable {
             dbUserFacade.create(user);
             user = new DbUser();
             init();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "User successfully added."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The user has been successfully added."));
         }
     }
 
@@ -205,7 +205,7 @@ public class users_MB implements Serializable {
         dbUserFacade.edit(user);
         user = new DbUser();
         init();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "User successfully edited."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The user has been successfully edited."));
     }
 
     public void changeUser(DbUser user) {
@@ -221,7 +221,7 @@ public class users_MB implements Serializable {
             dbUserFacade.edit(user);
             user = new DbUser();
             init();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "Password successfully changed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The password has been successfully changed."));
         }
     }
     

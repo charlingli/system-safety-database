@@ -154,7 +154,7 @@ public class project_MB implements Serializable {
         
         if (listDbLocation.isEmpty()) {
             dbProjectFacade.remove(projectObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The project has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The project has been successfully deleted."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The project is currently assigned to one or more locations."));
             return; 

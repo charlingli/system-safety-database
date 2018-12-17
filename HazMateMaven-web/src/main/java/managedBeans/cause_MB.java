@@ -200,7 +200,7 @@ public class cause_MB implements Serializable {
     public void deleteCause(DbCause causeObject) {
         try {
             dbCauseFacade.remove(causeObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The cause has been successfully removed"));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The cause has been successfully deleted"));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         } finally {

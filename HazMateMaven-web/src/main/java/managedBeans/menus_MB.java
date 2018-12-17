@@ -205,6 +205,7 @@ public class menus_MB implements Serializable {
         dbMenuFacade.create(menuObjectVariable);
         cleanVariables();
         addFlag = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The menu has been successfully added."));
     }
 
     public void deleteMenu(DbMenu menuIn) {
@@ -223,6 +224,7 @@ public class menus_MB implements Serializable {
         if (validator) {
             dbMenuFacade.remove(menuIn);
             init();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The menu has been successfully deleted."));
         }
     }
 
@@ -250,6 +252,7 @@ public class menus_MB implements Serializable {
         dbMenuFacade.edit(menuObjectVariable);
         cleanVariables();
         editFlag = false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The menu has been successfully edited."));
     }
     
     public List<String> findAvailableIndices() {

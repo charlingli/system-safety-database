@@ -237,7 +237,7 @@ public class location_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbLocationFacade.remove(locationObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The location has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The location has been successfully deleted."));
         } else {
             error();
             return;

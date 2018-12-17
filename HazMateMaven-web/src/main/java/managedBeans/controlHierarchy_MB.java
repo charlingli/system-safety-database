@@ -144,7 +144,7 @@ public class controlHierarchy_MB implements Serializable {
 
         if (listDbControl.isEmpty()) {
             dbcontrolHierarchyFacade.remove(controlHierarchyObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control hierarchy has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control hierarchy has been successfully deleted."));
         } else {
             error();
             return;

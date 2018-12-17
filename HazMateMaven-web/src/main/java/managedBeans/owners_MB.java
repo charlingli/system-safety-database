@@ -168,7 +168,7 @@ public class owners_MB implements Serializable {
 
             if (listDbHazard.isEmpty() && listDbControl.isEmpty()) {
                 dbOwnersFacade.remove(ownersObject);
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The owner has been successfully removed."));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The owner has been successfully deleted."));
             } else {
                 error();
             }

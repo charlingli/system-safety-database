@@ -86,9 +86,7 @@
                                 </p:commandButton>
                             </c:when>
                             <c:when test="#{menus_MB.editFlag}">
-                                <p:commandButton value="Save">
-                                    <f:ajax listener="#{menus_MB.editMenu()}" execute="@form" render="@form modifyTable"/>
-                                </p:commandButton>
+                                <p:commandButton value="Save" action="#{menus_MB.editMenu()}" update="@form modifyTable" />
                                 <p:commandButton value="Cancel" immediate="true">
                                     <f:ajax listener="#{menus_MB.cleanVariables()}" execute="@form" render="@form"/>
                                 </p:commandButton>

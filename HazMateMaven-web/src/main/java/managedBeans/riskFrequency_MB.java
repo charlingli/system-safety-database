@@ -148,7 +148,7 @@ public class riskFrequency_MB implements Serializable {
 
         if (listDbHazard.isEmpty()) {
             dbriskFrequencyFacade.remove(riskFrequencyObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk frequency has been successfully deleted."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The risk frequency is currently assigned to one or more hazards."));
             return;

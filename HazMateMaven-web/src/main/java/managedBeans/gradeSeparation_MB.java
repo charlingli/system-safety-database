@@ -145,7 +145,7 @@ public class gradeSeparation_MB implements Serializable {
 
         if (listDbLocation.isEmpty()) {
             dbgradeSeparationFacade.remove(gradeSeparationObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The grade separation has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The grade separation has been successfully deleted."));
         }
         else    {
             error();

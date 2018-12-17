@@ -147,7 +147,7 @@ public class constructionType_MB implements Serializable {
         
         if (listDbLocation.isEmpty())   {
             dbconstructionTypeFacade.remove(constructionTypeObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The construction type has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The construction type has been successfully deleted."));
         }
         else {
             error(); 

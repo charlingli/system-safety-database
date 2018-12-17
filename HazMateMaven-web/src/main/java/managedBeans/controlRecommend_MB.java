@@ -145,7 +145,7 @@ public class controlRecommend_MB implements Serializable {
 
         if (listDbControlHazard.isEmpty()) {
             dbcontrolRecommendFacade.remove(controlRecommendObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control recommendation has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control recommendation has been successfully deleted."));
         } else {
             error();
             return;

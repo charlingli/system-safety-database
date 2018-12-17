@@ -200,7 +200,7 @@ public class consequence_MB implements Serializable {
     public void deleteConsequence(DbConsequence consequenceObject) {
         try {
             dbConsequenceFacade.remove(consequenceObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The consequence has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The consequence has been successfully deleted."));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         } finally {

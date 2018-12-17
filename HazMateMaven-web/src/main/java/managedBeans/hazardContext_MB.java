@@ -155,7 +155,7 @@ public class hazardContext_MB implements Serializable{
         
         if (listDbHazard.isEmpty()) {
             dbhazardContextFacade.remove(hazardContextObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard context has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard context has been successfully deleted."));
         }
         else    {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The hazard context is currently assigned to one or more hazards.")); 

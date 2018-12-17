@@ -146,7 +146,7 @@ public class hazardStatus_MB implements Serializable{
         
         if (listDbHazard.isEmpty()) {
             dbhazardStatusFacade.remove(hazardStatusObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard status has been successfully removed."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard status has been successfully deleted."));
         }
         else    {
             error(); 

@@ -4,7 +4,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
@@ -26,13 +27,54 @@
                             <p:outputLabel value="#{item.roleWFApprover}"/>
                         </p:column>
                         <p:column headerText="Option" class="tableColumn80p">
-                            <p:commandLink value="Edit" action="#{roles_MB.edit(item)}" class="linkActions"/> 
+                            <h:commandLink value="Edit" disabled="#{roles_MB.addFlag}" class="commandLink">
+                                <f:ajax listener="#{roles_MB.edit(item)}" execute="@form" render="@form"/>
+                            </h:commandLink>
                             | 
-                            <h:commandLink value="Delete" action="#{roles_MB.delete(item)}" onclick="return confirm('Are you sure?')" class="linkActions"/>
+                            <h:commandLink value="Delete" action="#{roles_MB.delete(item)}" immediate="true" disabled="#{roles_MB.editFlag}" onclick="return confirm('Are you sure?')" class="linkActions"/>
                         </p:column>
                     </p:dataTable>
                     <div class="panelButtons">
-                        <p:commandButton value="Add Role" action="addRole"></p:commandButton>
+                        <p:commandButton value="Add Role" disabled="#{roles_MB.editFlag or roles_MB.addFlag}"> 
+                            <f:ajax listener="#{roles_MB.showAdd()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                    </div>
+                    <c:choose>
+                        <c:when test="#{roles_MB.addFlag}">
+                            <p class="p-emphasis"><p:outputLabel value="Adding a new menu"/></p>
+                        </c:when>
+                        <c:when test="#{roles_MB.editFlag}">
+                            <p class="p-emphasis"><p:outputLabel value="Editing the #{roles_MB.roleObject.roleName} role"/></p>
+                        </c:when>
+                    </c:choose>
+                    <p:panel class="parameterModifyPanel" rendered="#{roles_MB.addFlag or roles_MB.editFlag}">
+                        <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                            <p:outputLabel value="Role name:" for="roleName"/>
+                            <p:inputText id="roleName" value="#{roles_MB.roleObject.roleName}" required="true" requiredMessage="Please specify name of role"/>
+                            <p:outputLabel value="Role status" for="status"/>
+                            <p:selectOneMenu styleClass="editInput" id="status" value="#{roles_MB.roleObject.roleStatus}" required="true" requiredMessage="Please select role status">
+                                <f:selectItem itemLabel="Active" itemValue="1"/>
+                                <f:selectItem itemLabel="Inactive" itemValue="0"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="@next" value="Workflow Approver: " />
+                            <p:selectBooleanCheckbox value="#{roles_MB.wfApprover}" />
+                        </p:panelGrid>
+                    </p:panel>
+                    <div class="panelButtons">
+                        <c:choose>
+                            <c:when test="#{roles_MB.addFlag}">
+                                <p:commandButton value="Save" action="#{roles_MB.add()}" update="@form modifyTable"/>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{roles_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{roles_MB.editFlag}">
+                                <p:commandButton value="Save" action="#{roles_MB.edit()}" update="@form modifyTable"/>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{roles_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </h:form>
             </ui:define>

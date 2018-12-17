@@ -4,14 +4,15 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:dataTable var="p" value="#{pages_MB.listDbPage}" styleClass="managementTableLarge" widgetVar="PagesTable" 
-                                 emptyMessage="No rows found with given criteria" filteredValue="#{pages_MB.filteredDbPage}" scrollable="true" scrollHeight="680">
+                                 emptyMessage="No rows found with given criteria" filteredValue="#{pages_MB.filteredDbPage}" paginator="true" rows="20" paginatorPosition="bottom" >
                         <f:facet name="header">
                             <p:outputPanel>
                                 <h:outputText value="The current system pages are:"/>
@@ -39,13 +40,61 @@
                         </p:column>
                         <p:column class="tableColumn80p">
                             <f:facet name="header">Options</f:facet> 
-                            <p:commandLink value="Edit" action="#{pages_MB.edit(p)}" class="linkActions"/> | 
-                            <p:commandLink value="Delete" action="#{pages_MB.delete(p)}" onstart="if (!confirm('Are you sure?')) { return; } ;"
-                                           oncomplete="PF('PagesTable').filter()" class="linkActions"/>
+                            <h:commandLink value="Edit" disabled="#{pages_MB.addFlag}" class="commandLink">
+                                <f:ajax listener="#{pages_MB.edit(p)}" execute="@form" render="@form"/>
+                            </h:commandLink>
+                            |
+                            <p:commandLink value="Delete" action="#{pages_MB.delete(p)}" immediate="true" disabled="#{pages_MB.editFlag}" onclick="return confirm('Are you sure?')" class="commandLink"/>
                         </p:column>
                     </p:dataTable>
                     <div class="panelButtons">
-                        <p:commandButton value="Add Page" onclick="#{pages_MB.init()}" action="addPages.xhtml"/>
+                        <p:commandButton value="Add Page" disabled="#{pages_MB.editFlag or pages_MB.addFlag}"> 
+                            <f:ajax listener="#{pages_MB.showAdd()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                    </div>
+                    <c:choose>
+                        <c:when test="#{pages_MB.addFlag}">
+                            <p class="p-emphasis"><p:outputLabel value="Adding a new page"/></p>
+                        </c:when>
+                        <c:when test="#{pages_MB.editFlag}">
+                            <p class="p-emphasis"><p:outputLabel value="Editing the #{pages_MB.pageObject.pageName} page"/></p>
+                        </c:when>
+                    </c:choose>
+                    <p:panel class="parameterModifyPanel" rendered="#{pages_MB.addFlag or pages_MB.editFlag}">
+                        <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                            <p:outputLabel value="Page Name:" for="pageName"/>
+                            <p:inputText id="pageName" value="#{pages_MB.pageObject.pageName}" title="PageName" required="true" requiredMessage="The Page Name field is required."/>
+                            <p:outputLabel value="Page Location:" for="pageLocation"/>
+                            <p:inputText id="pageLocation" value="#{pages_MB.pageObject.pageLocation}" title="PageLocation" required="true" requiredMessage="The Page Location field is required."/>
+                            <p:outputLabel value="Parent Menu:" for="menuId"/>
+                            <p:selectOneMenu styleClass="editInput" id="menuId" value="#{pages_MB.menuObject.menuId}" required="true" requiredMessage="The Parent Menu field is required.">
+                                <f:selectItems value="#{pages_MB.getListDbMenu()}" var="p" itemLabel="#{p.menuName}" itemValue="#{p.menuId}"/>    
+                                <p:ajax listener="#{pages_MB.findValidIndices()}" update="indexPrefix"/>                           
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Page Index:" for="indexPage"/>
+                            <h:outputText id="indexPrefix" value="#{pages_MB.validIndexPrefix}" />
+                            <p:inputText id="indexPage" value="#{pages_MB.pageIndex}" title="IndexPage" required="true" requiredMessage="The Page Index field is required." validator="pageIndexValidator">
+                                <f:ajax event="keyup" execute="@this"/>                             
+                            </p:inputText>
+                            <p:outputLabel value="Page Icon:" for="pageIcon"/>
+                            <p:inputText id="pageIcon" value="#{pages_MB.pageObject.pageIcon}" title="PageIcon"/>
+                        </p:panelGrid>
+                    </p:panel>
+                    <div class="panelButtons">
+                        <c:choose>
+                            <c:when test="#{pages_MB.addFlag}">
+                                <p:commandButton value="Save" action="#{pages_MB.add()}" update="@form modifyTable"/>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{pages_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                            <c:when test="#{pages_MB.editFlag}">
+                                <p:commandButton value="Save" action="#{pages_MB.edit()}" update="@form modifyTable"/>
+                                <p:commandButton value="Cancel" immediate="true">
+                                    <f:ajax listener="#{pages_MB.cancel()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </c:when>
+                        </c:choose>
                     </div>
                 </h:form>
             </ui:define>
