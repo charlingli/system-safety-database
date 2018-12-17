@@ -6,6 +6,7 @@
 package managedBeans;
 
 import customObjects.searchObject;
+import customObjects.similarityObject;
 import ejb.DbHazardSbsFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
 import ejb.DbtreeLevel2FacadeLocal;
@@ -24,10 +25,13 @@ import entities.DbwfHeader;
 import customObjects.treeNodeObject;
 import customObjects.validateIdObject;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbcommonWordFacadeLocal;
+import ejb.DbindexedWordFacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
 import ejb.DbwfLineFacadeLocal;
 import entities.DbHazard;
 import entities.DbUser;
+import entities.DbcommonWord;
 import entities.DbwfDecision;
 import entities.DbwfLine;
 import entities.DbwfLinePK;
@@ -35,13 +39,16 @@ import entities.DbwfType;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -74,6 +81,10 @@ import org.primefaces.model.TreeNode;
 @ViewScoped
 public class trees_MB implements Serializable {
 
+    @EJB
+    private DbindexedWordFacadeLocal dbindexedWordFacade;
+    @EJB
+    private DbcommonWordFacadeLocal dbcommonWordFacade;
     @EJB
     private DbwfLineFacadeLocal dbwfLineFacade;
     @EJB
@@ -599,7 +610,7 @@ public class trees_MB implements Serializable {
     public void experimentalTesting() {
         //experimentList = dbHazardFacade.testMethod();
     }
-  
+
     public void exportExcel() {
         List<String> hazardsToExport = dbHazardFacade.findAll().stream().map(h -> h.getHazardId()).collect(Collectors.toList());
         // Setting up the file
@@ -609,7 +620,7 @@ public class trees_MB implements Serializable {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Register");
         sheet.setZoom(80);
-        
+
         String[][] columnsHeaders = {{"Risk ID", "Blue", "14"},
         {"Drawing Package", "Yellow", "14"},
         {"Location", "Blue", "26"},
@@ -710,7 +721,7 @@ public class trees_MB implements Serializable {
                 String humanFactors = checkNullString(exportedInfo.get(i)[29]);
 
                 exportedHazard curHazard = new exportedHazard(hazardId1, locationName, hazardContextName, hazardCauses, hazardDescription, ownerName, hazardConsequences,
-                        hazardTypeName, riskClassName, currentSeverityScore, currentFrequencyScore, currentRiskScore, targetSeverityScore, targetFrequencyScore, 
+                        hazardTypeName, riskClassName, currentSeverityScore, currentFrequencyScore, currentRiskScore, targetSeverityScore, targetFrequencyScore,
                         targetRiskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName, humanFactors);
 
                 // Getting the controls information
@@ -824,7 +835,7 @@ public class trees_MB implements Serializable {
                         > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
-                
+
                 // Hazard target severity is in column Q
                 column = "Q";
                 BodyCell = bodyRow.createCell(16);
@@ -914,7 +925,7 @@ public class trees_MB implements Serializable {
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
-                
+
                 // Human factors field is in column AK
                 column = "AK";
                 BodyCell = bodyRow.createCell(36);
@@ -922,7 +933,7 @@ public class trees_MB implements Serializable {
                 BodyCell.setCellStyle(bodyCellStyle);
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
-                }                
+                }
 
                 // -------------------------------> Second step, writing the controls. <---------------------------------------
                 Iterator<exportedExsControl> exsIterator = listExsCtl.iterator();
@@ -943,7 +954,7 @@ public class trees_MB implements Serializable {
                     int finalHeight = sizePerRow;
                     int heightExsCtl = 0;
                     int heightProCtl = 0;
-                    
+
                     // From the second iteration we will create a new row per cycle
                     if (firstCycle) {
                         firstCycle = false;
@@ -963,7 +974,7 @@ public class trees_MB implements Serializable {
                         BodyCell = bodyRow.createCell(13);
                         BodyCell.setCellValue(tmpExtCtl.controlOwnerName);
                         BodyCell.setCellStyle(bodyCellStyle);
-                        
+
                         heightExsCtl = (int) Math.ceil((double) tmpExtCtl.controlDescription.length() / charColExsCntl) * 300;
                     }
 
@@ -989,18 +1000,18 @@ public class trees_MB implements Serializable {
                         BodyCell = bodyRow.createCell(26);
                         BodyCell.setCellValue(tmpProCtl.controlRecommendName);
                         BodyCell.setCellStyle(bodyCellStyle);
-                        
+
                         heightProCtl = (int) Math.ceil((double) tmpProCtl.controlDescription.length() / charColProCntl) * 300;
                     }
 
                     // After each iteration the row number will incresed by 1
                     currentRow++;
-                    
+
                     // Setting the row height 
-                    if (heightExsCtl > finalHeight){
+                    if (heightExsCtl > finalHeight) {
                         finalHeight = heightExsCtl;
                     }
-                    if (heightProCtl > finalHeight){
+                    if (heightProCtl > finalHeight) {
                         finalHeight = heightProCtl;
                     }
                     bodyRow.setHeight((short) finalHeight);
@@ -1114,33 +1125,33 @@ public class trees_MB implements Serializable {
     private int calculateSizePerRow(String[][] listOfHeaders, exportedHazard hazardInfo, int numberOfRows) {
         int maxNoLines = (int) Math.ceil((double) hazardInfo.hazardCauses.length() / getCharPerLine("Cause / Precursor / Events", listOfHeaders));
         int tmpNoLines;
-        
-        tmpNoLines = (int) Math.ceil((double)hazardInfo.hazardDescription.length() / getCharPerLine("Risk Description", listOfHeaders));
+
+        tmpNoLines = (int) Math.ceil((double) hazardInfo.hazardDescription.length() / getCharPerLine("Risk Description", listOfHeaders));
         if (tmpNoLines > maxNoLines) {
             maxNoLines = tmpNoLines;
         }
-        
-        tmpNoLines = (int) Math.ceil((double)hazardInfo.hazardConsequences.length() / getCharPerLine("Potential Impacts", listOfHeaders));
+
+        tmpNoLines = (int) Math.ceil((double) hazardInfo.hazardConsequences.length() / getCharPerLine("Potential Impacts", listOfHeaders));
         if (tmpNoLines > maxNoLines) {
             maxNoLines = tmpNoLines;
         }
-        
-        tmpNoLines = (int) Math.ceil((double)hazardInfo.hazardComment.length() / getCharPerLine("Comments / Assumptions", listOfHeaders));
+
+        tmpNoLines = (int) Math.ceil((double) hazardInfo.hazardComment.length() / getCharPerLine("Comments / Assumptions", listOfHeaders));
         if (tmpNoLines > maxNoLines) {
             maxNoLines = tmpNoLines;
         }
-        
+
         // Each line Height is around 300 so the number of lines required multiplied by 300 divided by the required rows for controls
         int minHeightRequired = (int) Math.round((maxNoLines * 300) / numberOfRows);
-        
-        if (minHeightRequired > 600){
+
+        if (minHeightRequired > 600) {
             return minHeightRequired;
         } else {
             return 600;
         }
     }
-    
-    private int getCharPerLine(String lookedValue, String[][] listOfHeaders){
+
+    private int getCharPerLine(String lookedValue, String[][] listOfHeaders) {
         for (String[] listOfHeader : listOfHeaders) {
             if (listOfHeader[0].equals(lookedValue)) {
                 return Integer.parseInt(listOfHeader[2]);
@@ -1172,9 +1183,9 @@ public class trees_MB implements Serializable {
         public String hazardStatusName;
         public String humanFactors;
 
-        public exportedHazard(String hazardId, String locationName, String hazardContextName, String hazardCauses, String hazardDescription, String ownerName, 
-                String hazardConsequences, String hazardTypeName, String riskClassName, String currentSeverityScore, String currentFrequencyScore, 
-                String currentRiskScore, String targetSeverityScore, String targetFrequencyScore, String targetRiskScore, String hazardComment, 
+        public exportedHazard(String hazardId, String locationName, String hazardContextName, String hazardCauses, String hazardDescription, String ownerName,
+                String hazardConsequences, String hazardTypeName, String riskClassName, String currentSeverityScore, String currentFrequencyScore,
+                String currentRiskScore, String targetSeverityScore, String targetFrequencyScore, String targetRiskScore, String hazardComment,
                 String hazardDate, String hazardWorkshop, String hazardStatusName, String humanFactors) {
             this.hazardId = hazardId;
             this.locationName = locationName;
@@ -1198,7 +1209,6 @@ public class trees_MB implements Serializable {
             this.humanFactors = humanFactors;
         }
 
-        
     }
 
     class exportedExsControl {
@@ -1281,4 +1291,44 @@ public class trees_MB implements Serializable {
             return this.controlId == other.controlId;
         }
     }
+
+//    public void findSimilarity(String newDescription) {
+//        // Processing the entered text against the recognised common words in the database
+//        String[] words = newDescription.replaceAll("/", " ").replaceAll("[^A-z\\s\\d\\-][\\\\\\^]?", "").toLowerCase().split("\\s+");
+//        List<String> listOfCommonWords = dbcommonWordFacade.findAll().stream().map(h -> h.getCommonWord()).collect(Collectors.toList());
+//        List<String> listOfValues = new ArrayList<>();
+//        for (String word : words) {
+//            if (!listOfCommonWords.contains(word) && word.length() > 2 && !listOfValues.contains(word)) {
+//                listOfValues.add(word);
+//            }
+//        }
+//        
+//        // Getting from the database the hazards that matches with the typed words
+//        List<Object[]> resultantList = dbindexedWordFacade.findSimilarities("hazard", listOfValues);
+//        System.out.println(resultantList.size()); // for delete
+//        
+//        // Calculating the distance between the stored data and the new data
+//        List<similarityObject> listPotentialDuplicates = new ArrayList<>();
+//        resultantList.forEach((tmp) -> {
+//            int percentageFromIndexed = (Integer.parseInt(tmp[1].toString()) * 100) / Integer.parseInt(tmp[2].toString());
+//            int percentageFromNew = (Integer.parseInt(tmp[1].toString()) * 100) / listOfValues.size();
+//            int averageDistance = (percentageFromIndexed + percentageFromNew) / 2;
+//            System.out.println(tmp[0].toString() + " " + tmp[1].toString() + " " + tmp[2].toString() + " " +  tmp[3].toString() + " " + averageDistance);
+//            System.out.println("percentageFromIndexed -> ( " + tmp[1].toString() + " / " + tmp[2].toString() + " * 100 ) = " + percentageFromIndexed);
+//            System.out.println("percentageFromNew -> ( " + tmp[1].toString() + " / " + listOfValues.size() + " * 100 ) = " + percentageFromNew);
+//            if (averageDistance > 75) {
+//                listPotentialDuplicates.add(new similarityObject(tmp[0].toString(), averageDistance, tmp[3].toString().split(",")));
+//            }
+//        });
+//        listPotentialDuplicates.forEach((tmp) -> {
+//            System.out.println(tmp.toString());
+//        });
+//    }
+    public void checkDuplicates(List<similarityObject> resultantList) {
+        resultantList.sort(Comparator.comparingInt(similarityObject::getAverageDistance));
+        resultantList.forEach((tmp) -> {
+            System.out.println(tmp.toString());
+        });
+    }
+
 }
