@@ -169,6 +169,7 @@ public class hazardView_MB implements Serializable {
     private String deletionReason;
     private List<defaultViewSrchObject> checkedHazards;
     private List<fileHeaderObject> fileHeaders;
+    private boolean toggleAll;
 
     public hazardView_MB() {
     }
@@ -191,6 +192,7 @@ public class hazardView_MB implements Serializable {
         setListHazardSystemStatus(dbhazardSystemStatusFacade.findAll());
         enableQueryDescr = false;
         hazardsQuality = "A";
+        toggleAll = false;
     }
 
     public DbUser getActiveUser() {
@@ -1372,7 +1374,12 @@ public class hazardView_MB implements Serializable {
     }
 
     public void exportExcel() {
-        List<String> hazardsToExport = getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
+        List<String> hazardsToExport;
+        if (toggleAll) {
+            hazardsToExport = getListSearchedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
+        } else {
+            hazardsToExport = getCheckedHazards().stream().map(h -> h.getHazardObj().getHazardId()).collect(Collectors.toList());
+        }
         // Setting up the file
         boolean complete = false;
         String filename = "SSD_Export.xls";
@@ -2087,5 +2094,19 @@ public class hazardView_MB implements Serializable {
             fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
         fc.responseComplete();
+    }
+    
+    public void selectAll() {
+        if (toggleAll) {
+            toggleAll = false;
+            setCheckedHazards(new ArrayList<>());
+        } else {
+            toggleAll = true;
+            setCheckedHazards(getListSearchedHazards());
+        }
+    }
+    
+    public void unSelectAll() {
+        toggleAll = false;
     }
 }

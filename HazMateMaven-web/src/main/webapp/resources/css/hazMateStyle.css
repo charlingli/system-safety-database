@@ -570,6 +570,20 @@ span.commandLinkWhite {
 .hazardTabs li a {
     color: #008080;
 }
+.indexPrefix {
+    background: #eee;
+    border: 1px solid #cccccc;
+    border-radius: 3px 0px 0px 3px;
+    border-right: 0px;
+    display: inline-block;
+    padding: 4px;
+    width: 16px;
+}
+#pagesForm\:indexPage {
+    border-radius: 0px 3px 3px 0px;
+    border-left: 0;
+    width: calc(80% - 24px);
+}
 /**
  * Visualisation
 **/

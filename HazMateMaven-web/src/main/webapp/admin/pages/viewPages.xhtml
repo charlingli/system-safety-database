@@ -9,7 +9,7 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <h:form>
+                <h:form id="pagesForm">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <p:dataTable var="p" value="#{pages_MB.listDbPage}" styleClass="managementTableLarge" widgetVar="PagesTable" 
                                  emptyMessage="No rows found with given criteria" filteredValue="#{pages_MB.filteredDbPage}" paginator="true" rows="20" paginatorPosition="bottom" >
@@ -44,7 +44,7 @@
                                 <f:ajax listener="#{pages_MB.edit(p)}" execute="@form" render="@form"/>
                             </h:commandLink>
                             |
-                            <p:commandLink value="Delete" action="#{pages_MB.delete(p)}" immediate="true" disabled="#{pages_MB.editFlag}" onclick="return confirm('Are you sure?')" class="commandLink"/>
+                            <h:commandLink value="Delete" action="#{pages_MB.delete(p)}" immediate="true" disabled="#{pages_MB.editFlag}" onclick="return confirm('Are you sure?')" class="commandLink"/>
                         </p:column>
                     </p:dataTable>
                     <div class="panelButtons">
@@ -72,10 +72,13 @@
                                 <p:ajax listener="#{pages_MB.findValidIndices()}" update="indexPrefix"/>                           
                             </p:selectOneMenu>
                             <p:outputLabel value="Page Index:" for="indexPage"/>
-                            <h:outputText id="indexPrefix" value="#{pages_MB.validIndexPrefix}" />
-                            <p:inputText id="indexPage" value="#{pages_MB.pageIndex}" title="IndexPage" required="true" requiredMessage="The Page Index field is required." validator="pageIndexValidator">
-                                <f:ajax event="keyup" execute="@this"/>                             
-                            </p:inputText>
+                            <h:panelGroup>
+                                <h:outputText id="indexPrefix" styleClass="indexPrefix" value="#{pages_MB.validIndexPrefix}" />
+                                <p:inputText id="indexPage" value="#{pages_MB.pageIndex}" title="IndexPage" required="true" requiredMessage="The page index field is required." validatorMessage="Please enter a 2-digit number to complete the index.">
+                                    <f:ajax event="keyup" execute="@this"/>
+                                    <f:validateLength maximum="#{4 - pages_MB.validIndexPrefix.length()}" minimum="#{4 - pages_MB.validIndexPrefix.length()}" />
+                                </p:inputText>
+                            </h:panelGroup>
                             <p:outputLabel value="Page Icon:" for="pageIcon"/>
                             <p:inputText id="pageIcon" value="#{pages_MB.pageObject.pageIcon}" title="PageIcon"/>
                         </p:panelGrid>

@@ -528,11 +528,11 @@
                                 </div>
                             </p:outputPanel>
                         </f:facet>
-                        <p:ajax event="rowSelect"  update="exportMessage, exportButton" process="@this" />
-                        <p:ajax event="rowUnselect" update="exportMessage, exportButton" process="@this" />
-                        <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" process="@this" />
-                        <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" process="@this" />
-                        <p:ajax event="toggleSelect" update="exportMessage, exportButton" process="@this" />
+                        <p:ajax event="rowSelect"  update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
+                        <p:ajax event="rowUnselect" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
+                        <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
+                        <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
+                        <p:ajax event="toggleSelect" update="exportMessage, exportButton" listener="#{hazardView_MB.selectAll()}" process="@this" />
                         <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
                         <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">

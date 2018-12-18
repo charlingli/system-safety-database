@@ -123,93 +123,102 @@ public class pages_MB implements Serializable {
         addFlag = false;
         editFlag = false;
         validIndexPrefix = "";
-        findValidIndices();
     }
     
     public void showAdd() {
         pageObject = new DbPage();
         menuObject = new DbMenu();
+        menuObject.setMenuId(listDbMenu.get(0).getMenuId());
+        findValidIndices();
         addFlag = true;
     }
 
     public void add() {
         if (generalValidations()) {
             pageObject.setMenuId(menuObject);
-            pageObject.setIndexPage(Integer.parseInt(pageIndex));
+            pageObject.setIndexPage(Integer.parseInt(validIndexPrefix + pageIndex));
             if ("".equals(pageObject.getPageIcon())) {
                 pageObject.setPageIcon(null);
             }
             dbPageFacade.create(pageObject);
             clearVariables();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The page has been successfully added."));
         }
         addFlag = false;
     }
 
     public void edit(DbPage pageObject) {
         this.pageObject = pageObject;
-        setPageIndex(Integer.toString(pageObject.getIndexPage()));
+        setPageIndex(Integer.toString(pageObject.getIndexPage()).substring(2));
         menuObject.setMenuId(pageObject.getMenuId().getMenuId());
+        findValidIndices();
         editFlag = true;
     }
 
     public void edit() {
         pageObject.setMenuId(menuObject);
         if (generalValidations()) {
-            pageObject.setIndexPage(Integer.parseInt(pageIndex));
+            pageObject.setIndexPage(Integer.parseInt(validIndexPrefix + pageIndex));
             if ("".equals(pageObject.getPageIcon())) {
                 pageObject.setPageIcon(null);
             }
             dbPageFacade.edit(pageObject);
             clearVariables();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The page has been successfully edited."));
         }
         editFlag = false;
     }
 
     public void delete(DbPage pageObject) {
         dbPageFacade.remove(pageObject);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The page has been successfully deleted."));
         init();
     }
     
     public void findValidIndices() {
         DbMenu tempMenu = dbMenuFacade.find(menuObject.getMenuId());
-        validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, 2);
-        System.out.println(validIndexPrefix);
+        if (tempMenu.getMenuType().equals("M")) {
+            validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, 1) + "9";
+        } else {
+            validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, 2);
+        }
     }
 
     public boolean generalValidations() {
         boolean flag = true;
-        int tempIndex = Integer.parseInt(pageIndex);
+        try {
+            int tempIndex = Integer.parseInt(validIndexPrefix + pageIndex);
+            DbPage tempPage = dbPageFacade.retrievePageMatch(tempIndex);
+            DbMenu tempMenu = dbMenuFacade.find(menuObject.getMenuId());
 
-        DbPage tempPage = dbPageFacade.retrievePageMatch(tempIndex);
-        DbMenu tempMenu = dbMenuFacade.find(menuObject.getMenuId());
-
-        if (tempPage.getPageId() != null && !(tempIndex == pageObject.getIndexPage())) {
-            flag = false;
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Page Index Error", "Page already exists. Please try assigning a different index."));
-        }
-
-        if (tempMenu.getMenuType().equals("M")) {
-            int tempMenuMin = tempMenu.getIndexMenu() + 980;
-            int tempMenuMax = tempMenu.getIndexMenu() + 999;
-            if (tempMenuMin > tempIndex || tempIndex > tempMenuMax) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Page Index Error", "The Page Index should be between "
-                                + tempMenuMin + " and " + tempMenuMax));
+            if (tempPage.getPageId() != null && !(tempIndex == pageObject.getIndexPage())) {
                 flag = false;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "This page index is already assigned."));
             }
-        } else if (tempMenu.getMenuType().equals("S")) {
-            int tempMenuMin = tempMenu.getIndexMenu();
-            int tempMenuMax = tempMenu.getIndexMenu() + 99;
-            if (tempMenuMin > tempIndex || tempIndex > tempMenuMax) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Page Index Error", "The Page Index should be between "
-                                + tempMenuMin + " and " + tempMenuMax));
-                flag = false;
+
+            if (tempMenu.getMenuType().equals("M")) {
+                int tempMenuMin = tempMenu.getIndexMenu() + 980;
+                int tempMenuMax = tempMenu.getIndexMenu() + 999;
+                if (tempMenuMin > tempIndex || tempIndex > tempMenuMax) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The page index should be between " + tempMenuMin + " and " + tempMenuMax));
+                    flag = false;
+                }
+            } else if (tempMenu.getMenuType().equals("S")) {
+                int tempMenuMin = tempMenu.getIndexMenu();
+                int tempMenuMax = tempMenu.getIndexMenu() + 99;
+                if (tempMenuMin > tempIndex || tempIndex > tempMenuMax) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "The page index should be between " + tempMenuMin + " and " + tempMenuMax));
+                    flag = false;
+                }
             }
+            return flag;
+
+        } catch (NumberFormatException e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "Please enter a valid number for the page index."));
+            return false;
         }
-        return flag;
     }
 
     public void clearVariables() {
