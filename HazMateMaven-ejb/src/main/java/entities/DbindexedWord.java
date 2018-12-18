@@ -28,18 +28,13 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DbindexedWord.findAll", query = "SELECT d FROM DbindexedWord d")
     , @NamedQuery(name = "DbindexedWord.findByObjectId", query = "SELECT d FROM DbindexedWord d WHERE d.dbindexedWordPK.objectId = :objectId")
     , @NamedQuery(name = "DbindexedWord.findByObjectLineNo", query = "SELECT d FROM DbindexedWord d WHERE d.dbindexedWordPK.objectLineNo = :objectLineNo")
-    , @NamedQuery(name = "DbindexedWord.findByObjectType", query = "SELECT d FROM DbindexedWord d WHERE d.objectType = :objectType")
+    , @NamedQuery(name = "DbindexedWord.findByObjectType", query = "SELECT d FROM DbindexedWord d WHERE d.dbindexedWordPK.objectType = :objectType")
     , @NamedQuery(name = "DbindexedWord.findByIndexedWord", query = "SELECT d FROM DbindexedWord d WHERE d.indexedWord = :indexedWord")})
 public class DbindexedWord implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DbindexedWordPK dbindexedWordPK;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
-    @Column(name = "objectType")
-    private String objectType;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -53,14 +48,13 @@ public class DbindexedWord implements Serializable {
         this.dbindexedWordPK = dbindexedWordPK;
     }
 
-    public DbindexedWord(DbindexedWordPK dbindexedWordPK, String objectType, String indexedWord) {
+    public DbindexedWord(DbindexedWordPK dbindexedWordPK, String indexedWord) {
         this.dbindexedWordPK = dbindexedWordPK;
-        this.objectType = objectType;
         this.indexedWord = indexedWord;
     }
 
-    public DbindexedWord(String objectId, int objectLineNo) {
-        this.dbindexedWordPK = new DbindexedWordPK(objectId, objectLineNo);
+    public DbindexedWord(String objectId, int objectLineNo, String objectType) {
+        this.dbindexedWordPK = new DbindexedWordPK(objectId, objectLineNo, objectType);
     }
 
     public DbindexedWordPK getDbindexedWordPK() {
@@ -69,14 +63,6 @@ public class DbindexedWord implements Serializable {
 
     public void setDbindexedWordPK(DbindexedWordPK dbindexedWordPK) {
         this.dbindexedWordPK = dbindexedWordPK;
-    }
-
-    public String getObjectType() {
-        return objectType;
-    }
-
-    public void setObjectType(String objectType) {
-        this.objectType = objectType;
     }
 
     public String getIndexedWord() {

@@ -72,4 +72,14 @@ public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implement
         return resultList;
     }
 
+    @Override
+    public int truncateTable() {
+        try {
+            String query = "TRUNCATE TABLE db_indexedWord";
+            return em.createNativeQuery(query).executeUpdate();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
 }
