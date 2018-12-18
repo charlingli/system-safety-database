@@ -128,9 +128,7 @@ public class wordProcessing_MB {
                 }
             });
             System.out.println(listIndexedWords.size());
-            listIndexedWords.forEach((tmp) -> {
-                dbindexedWordFacade.create(tmp);
-            });
+            dbindexedWordFacade.createBatch(listIndexedWords);
         } catch (Exception e) {
             System.out.println(e);
             return false;

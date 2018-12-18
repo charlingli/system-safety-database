@@ -82,4 +82,27 @@ public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implement
         }
     }
 
+    @Override
+    public void createBatch(List<DbindexedWord> listIndexedWords) {
+        int rowsPerLoop = 25000;
+        int loops = (int) Math.ceil((double) listIndexedWords.size() / rowsPerLoop);
+        for (int i = 0; i < loops; i++) {
+            String values = "";
+            int ini = i * rowsPerLoop;
+            int end;
+            if (i == (loops - 1)) {
+                end = listIndexedWords.size();
+            } else {
+                end = (i + 1) * rowsPerLoop;
+            }
+            for (; ini < end; ini++) {
+                values += "('" + listIndexedWords.get(ini).getDbindexedWordPK().getObjectId() + "'," + listIndexedWords.get(ini).getDbindexedWordPK().getObjectLineNo() + ",'"
+                        + listIndexedWords.get(ini).getDbindexedWordPK().getObjectType() + "','" + listIndexedWords.get(ini).getIndexedWord() + "'),";
+            }
+            values = values.substring(0, values.length() - 1);
+            String query = "INSERT INTO db_indexedWord (objectId, objectLineNo, objectType, indexedWord) VALUES " + values;
+            em.createNativeQuery(query).executeUpdate();
+        }
+    }
+
 }

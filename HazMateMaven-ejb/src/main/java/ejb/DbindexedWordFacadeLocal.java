@@ -34,4 +34,6 @@ public interface DbindexedWordFacadeLocal {
     
     int truncateTable();
     
+    void createBatch(List<DbindexedWord> listIndexedWords);
+    
 }
