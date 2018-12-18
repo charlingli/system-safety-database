@@ -108,6 +108,7 @@
                             <p:outputLabel>Check for similarity: </p:outputLabel>
                             <p:inputText placeholder="String to compare #" binding="#{newStr}"></p:inputText>
                             <p:commandButton value="Find similarities" action="#{trees_MB.checkDuplicates(wordProcessing_MB.findSimilarity(newStr.value, 'hazard'))}" ajax="false"/>
+                            <p:commandButton value="Index Db" action="#{wordProcessing_MB.indexDatabase()}" ajax="false"/>
                         </p:panel>
                     </div> 
                 </h:form>

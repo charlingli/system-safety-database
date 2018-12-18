@@ -6,11 +6,19 @@
 package managedBeans;
 
 import customObjects.similarityObject;
+import ejb.DbCauseFacadeLocal;
+import ejb.DbConsequenceFacadeLocal;
+import ejb.DbControlFacadeLocal;
+import ejb.DbHazardFacadeLocal;
 import ejb.DbcommonWordFacadeLocal;
 import ejb.DbindexedWordFacadeLocal;
+import entities.DbcommonWord;
+import entities.DbindexedWord;
+import entities.DbindexedWordPK;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -23,6 +31,14 @@ import javax.enterprise.context.RequestScoped;
 @RequestScoped
 public class wordProcessing_MB {
 
+    @EJB
+    private DbControlFacadeLocal dbControlFacade;
+    @EJB
+    private DbConsequenceFacadeLocal dbConsequenceFacade;
+    @EJB
+    private DbCauseFacadeLocal dbCauseFacade;
+    @EJB
+    private DbHazardFacadeLocal dbHazardFacade;
     @EJB
     private DbindexedWordFacadeLocal dbindexedWordFacade;
     @EJB
@@ -44,7 +60,7 @@ public class wordProcessing_MB {
 
         // Getting from the database the hazards that matches with the typed words
         List<Object[]> resultantList = dbindexedWordFacade.findSimilarities(objectType, listOfValues);
-        
+
         // Calculating the distance between the stored data and the new data
         List<similarityObject> listPotentialDuplicates = new ArrayList<>();
         resultantList.forEach((tmp) -> {
@@ -59,6 +75,69 @@ public class wordProcessing_MB {
             }
         });
         return listPotentialDuplicates;
+    }
+
+    public void indexDatabase() {
+        List<temporalObj> processingListHazards = new ArrayList<>();
+        dbHazardFacade.findAll().forEach((tmp) -> {
+            processingListHazards.add(new temporalObj(tmp.getHazardId(), tmp.getHazardDescription()));
+        });
+        if (!processList(processingListHazards, "hazard")) {
+            System.err.println("There was an error processing the hazard table.");
+        }
+        
+        List<temporalObj> processingListCauses = new ArrayList<>();
+        dbCauseFacade.findAll().forEach((tmp) -> {
+            processingListCauses.add(new temporalObj(tmp.getCauseId().toString(), tmp.getCauseDescription()));
+        });
+        if (!processList(processingListCauses, "cause")) {
+            System.err.println("There was an error processing the cause table.");
+        }
+        
+    }
+
+    private boolean processList(List<temporalObj> processingList, String entityName) {
+        try {
+            List<DbindexedWord> listIndexedWords = new ArrayList<>();
+            List<String> listOfCommonWords = dbcommonWordFacade.findAll().stream().map(h -> h.getCommonWord()).collect(Collectors.toList());
+            processingList.forEach((tmp) -> {
+                String[] words = tmp.description.replaceAll("/", " ").replaceAll("[^A-z\\s\\d\\-][\\\\\\^]?", "").toLowerCase().split("\\s+");
+                List<String> listOfIndexedWords = new ArrayList<>();
+                int line = 1;
+                for (String word : words) {
+                    if (!listOfCommonWords.contains(word) && word.length() > 2 && !listOfIndexedWords.contains(word) && !isNumeric(word)) {
+                        listOfIndexedWords.add(word);
+                        listIndexedWords.add(new DbindexedWord(new DbindexedWordPK(tmp.id, line), entityName, word));
+                        line++;
+                    }
+                }
+            });
+            System.err.println(listIndexedWords.size());
+        } catch (Exception e) {
+            System.err.println(e);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isNumeric(String strNum) {
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException | NullPointerException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+    class temporalObj {
+
+        public String id;
+        public String description;
+
+        public temporalObj(String id, String description) {
+            this.id = id;
+            this.description = description;
+        }
     }
 
 }
