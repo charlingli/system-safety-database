@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:dialog id="detailDialog" header="Hazard Detail" widgetVar="detailOverlay" height="70vh" width="90vw" closeOnEscape="true">
+        <p:panel styleClass="detailHazardPanel">
+            <div class="p-heading-spacer">
+                <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
+            </div>
+            <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
+                <p:outputLabel value="ID: "/>
+                <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardId}"/>
+                <p:outputLabel value="Description: "/>
+                <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardDescription}"/>
+                <p:outputLabel value="Comments: "/>
+                <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardComment}"/>
+            </p:panelGrid>
+        </p:panel>
+        <p:panel id="hazardPanel" class="detailHazardPanel">
+            <div class="p-emphasis-spacer">
+                <h:outputText styleClass="p-emphasis" value="Hazard Information:"/>
+            </div>
+            <p:dataTable value="#{hazardDetail_MB.detailHazard}" emptyMessage="No hazards found.">
+                <p:column headerText="Activity" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardContextId.hazardContextName}"/>
+                </p:column>
+                <p:column headerText="Context" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardActivity.activityName}"/>
+                </p:column>
+                <p:column headerText="Type" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
+                </p:column>
+                <p:column headerText="Status" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardStatusId.hazardStatusName}"/>
+                </p:column>
+                <p:column headerText="Owner" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.ownerId.ownerName}"/>
+                </p:column>
+            </p:dataTable>
+            <div class="p-emphasis-spacer">
+                <h:outputText styleClass="p-emphasis" value="Location Information:"/>
+            </div>
+            <p:dataTable value="#{hazardDetail_MB.detailHazard}" emptyMessage="No location details found.">
+                <p:column headerText="Project" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardLocation.projectId.projectName}"/>
+                </p:column>
+                <p:column headerText="Location" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardLocation.locationName}"/>
+                </p:column>
+                <p:column headerText="Grade Separation" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardLocation.locationGradeSeparation.gradeSeparationName}"/>
+                </p:column>
+                <p:column headerText="Construction Type" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardLocation.locationConstructionType.constructionTypeName}"/>
+                </p:column>
+                <p:column headerText="Change Type" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.hazardLocation.locationChangeType.changeTypeName}"/>
+                </p:column>
+            </p:dataTable>
+            <div class="p-emphasis-spacer">
+                <h:outputText styleClass="p-emphasis" value="Risk Information:"/>
+            </div>
+            <p:dataTable value="#{hazardDetail_MB.detailHazard}" emptyMessage="No risk details found.">
+                <p:column headerText="Class" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskClassId.riskClassName}"/>
+                </p:column>
+                <p:column headerText="Current Frequency" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskCurrentFrequencyId.frequencyScore}"/>
+                </p:column>
+                <p:column headerText="Current Severity" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskCurrentSeverityId.severityScore}"/>
+                </p:column>
+                <p:column headerText="Current Score" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskCurrentScore}"/>
+                </p:column>
+            </p:dataTable>
+            <p:dataTable value="#{hazardDetail_MB.detailHazard}" emptyMessage="No risk details found.">
+                <p:column headerText="Class" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskClassId.riskClassName}"/>
+                </p:column>
+                <p:column headerText="Target Frequency" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskTargetFrequencyId.frequencyScore}"/>
+                </p:column>
+                <p:column headerText="Target Severity" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskTargetSeverityId.severityScore}"/>
+                </p:column>
+                <p:column headerText="Target Score" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.detailHazard.riskTargetScore}"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+        <p:panel id="causePanel" class="detailHazardPanel">
+            <div class="p-emphasis-spacer">
+                <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
+            </div>
+            <p:dataTable value="#{hazardDetail_MB.detailCauses}" var="CA" emptyMessage="No causes are associated with this hazard.">
+                <p:column headerText="ID" styleClass="small">
+                    <p:outputLabel value="#{CA.dbCause.causeId}"/>
+                </p:column>
+                <p:column headerText="Description" styleClass="normal">
+                    <p:outputLabel value="#{CA.dbCause.causeDescription}"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+        <p:panel id="consequencePanel" styleClass="detailHazardPanel">
+            <h:outputText value="The following consequences are associated with the current hazard:" class="p-emphasis"/>
+            <p:dataTable value="#{hazardDetail_MB.detailConsequences}" var="CQ" emptyMessage="No consequences are associated with this hazard.">
+
+                <p:column headerText="ID" styleClass="small">
+                    <p:outputLabel value="#{CQ.dbConsequence.consequenceId}"/>
+                </p:column>
+                <p:column headerText="Description" styleClass="normal">
+                    <p:outputLabel value="#{CQ.dbConsequence.consequenceDescription}"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+        <p:panel id="controlPanel" styleClass="detailHazardPanel">
+            <h:outputText value="The following controls are associated with the current hazard:" class="p-emphasis"/>
+            <p:dataTable value="#{hazardDetail_MB.detailControls}" var="CO" emptyMessage="No controls are associated with this hazard.">
+                <p:column headerText="ID" styleClass="small">
+                    <p:outputLabel value="#{CO.dbControl.controlId}"/>
+                </p:column>
+                <p:column headerText="Description" styleClass="normal">
+                    <p:outputLabel value="#{CO.dbControl.controlDescription}"/>
+                </p:column>
+                <p:column headerText="Owner" styleClass="small">
+                    <p:outputLabel value="#{CO.dbControl.ownerId.ownerName}"/>
+                </p:column>
+                <p:column headerText="Hierarchy" styleClass="small">
+                    <p:outputLabel value="#{CO.dbControl.controlHierarchyId.controlHierarchyName}"/>
+                </p:column>
+                <p:column headerText="Type" styleClass="small">
+                    <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : CO.controlType == 'M' ? 'Mitigative' : CO.controlType}"/>
+                </p:column>
+                <p:column headerText="Recommendation" styleClass="small">
+                    <p:outputLabel value="#{CO.controlRecommendId.controlRecommendName}"/>
+                </p:column>
+                <p:column headerText="Justification" styleClass="normal">
+                    <p:outputLabel value="#{CO.controlJustify}"/>
+                </p:column>
+                <p:column headerText="Status" styleClass="small">
+                    <p:outputLabel value="#{CO.controlExistingOrProposed == 'P' ? 'Proposed' : CO.controlExistingOrProposed == 'E' ? 'Existing' : CO.controlExistingOrProposed}"/>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+        <p:panel id="filesPanel" styleClass="detailHazardPanel">
+            <h:outputText value="The following files are linked to the current hazard:" class="p-emphasis"/>
+            <p:dataTable value="#{hazardDetail_MB.fileHeaders}" var="file" emptyMessage="No files are linked to this hazard.">
+                <p:column headerText="ID" styleClass="small">
+                    <p:outputLabel value="#{file.fileId}"/>
+                </p:column>
+                <p:column headerText="Name" styleClass="normal">
+                    <p:outputLabel value="#{file.fileName}"/>
+                </p:column>
+                <p:column headerText="Description" styleClass="normal">
+                    <p:outputLabel value="#{file.fileDescription}"/>
+                </p:column>
+                <p:column headerText="Extension" styleClass="small">
+                    <p:outputLabel value="#{file.fileExtension}"/>
+                </p:column>
+                <p:column headerText="Size" styleClass="small">
+                    <p:outputLabel value="#{hazardDetail_MB.parseSize(file.fileSize)}"/>
+                </p:column>
+                <p:column headerText="Download" styleClass="small">
+                    <p:commandButton actionListener="#{hazardDetail_MB.handleDownload(file)}" ajax="false" icon="fa fa-download" />
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+    </p:dialog>
+</html>

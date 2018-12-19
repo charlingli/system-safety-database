@@ -9,7 +9,8 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="wfForm">
-                    <p:dialog id="detailDialog" header="Workflow Detail" widgetVar="detailOverlay" height="70vh" width="90vw" closeOnEscape="true">
+                    <ui:include src="../../templates/detailDialog.xhtml" />
+                    <p:dialog id="wfDialog" header="Workflow Detail" widgetVar="wfOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="Viewing details of the workflow:"/>
@@ -51,174 +52,6 @@
                             </p:dataTable>
                         </p:panel>
                     </p:dialog>
-                    <p:dialog id="objectDialog" header="Hazard Detail" widgetVar="objectOverlay" height="70vh" width="90vw" closeOnEscape="true">
-                        <p:panel styleClass="detailHazardPanel">
-                            <div class="p-heading-spacer">
-                                <p:outputLabel styleClass="p-heading" value="Viewing details of the hazard:"/>
-                            </div>
-                            <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
-                                <p:outputLabel value="ID: "/>
-                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardId}"/>
-                                <p:outputLabel value="Description: "/>
-                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardDescription}"/>
-                                <p:outputLabel value="Comments: "/>
-                                <p:outputLabel value="#{userWF_MB.detailHazard.hazardComment}"/>
-                            </p:panelGrid>
-                        </p:panel>
-                        <p:panel id="hazardPanel" class="detailHazardPanel">
-                            <div class="p-emphasis-spacer">
-                                <h:outputText styleClass="p-emphasis" value="Hazard Information:"/>
-                            </div>
-                            <p:dataTable value="#{userWF_MB.detailHazard}">
-                                <p:column headerText="SBS Code" styleClass="small">
-                                    <ui:repeat var="node" value="#{userWF_MB.viewSbsCondensed()}">#{node}</ui:repeat>
-                                </p:column>
-                                <p:column headerText="Activity" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardContextId.hazardContextName}"/>
-                                </p:column>
-                                <p:column headerText="Context" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardActivity.activityName}"/>
-                                </p:column>
-                                <p:column headerText="Type" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardTypeId.hazardTypeName}"/>
-                                </p:column>
-                                <p:column headerText="Status" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardStatusId.hazardStatusName}"/>
-                                </p:column>
-                                <p:column headerText="Owner" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.ownerId.ownerName}"/>
-                                </p:column>
-                            </p:dataTable>
-                            <div class="p-emphasis-spacer">
-                                <h:outputText styleClass="p-emphasis" value="Location Information:"/>
-                            </div>
-                            <p:dataTable value="#{userWF_MB.detailHazard}">
-                                <p:column headerText="Project" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardLocation.projectId.projectName}"/>
-                                </p:column>
-                                <p:column headerText="Location" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardLocation.locationName}"/>
-                                </p:column>
-                                <p:column headerText="Grade Separation" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardLocation.locationGradeSeparation.gradeSeparationName}"/>
-                                </p:column>
-                                <p:column headerText="Construction Type" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardLocation.locationConstructionType.constructionTypeName}"/>
-                                </p:column>
-                                <p:column headerText="Change Type" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.hazardLocation.locationChangeType.changeTypeName}"/>
-                                </p:column>
-                            </p:dataTable>
-                            <div class="p-emphasis-spacer">
-                                <h:outputText styleClass="p-emphasis" value="Risk Information:"/>
-                            </div>
-                            <p:dataTable value="#{userWF_MB.detailHazard}" emptyMessage="No risk details found.">
-                                <p:column headerText="Class" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskClassId.riskClassName}"/>
-                                </p:column>
-                                <p:column headerText="Current Frequency" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskCurrentFrequencyId.frequencyScore}"/>
-                                </p:column>
-                                <p:column headerText="Current Severity" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskCurrentSeverityId.severityScore}"/>
-                                </p:column>
-                                <p:column headerText="Current Score" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskCurrentScore}"/>
-                                </p:column>
-                            </p:dataTable>
-                            <p:dataTable value="#{userWF_MB.detailHazard}" emptyMessage="No risk details found.">
-                                <p:column headerText="Class" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskClassId.riskClassName}"/>
-                                </p:column>
-                                <p:column headerText="Target Frequency" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskTargetFrequencyId.frequencyScore}"/>
-                                </p:column>
-                                <p:column headerText="Target Severity" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskTargetSeverityId.severityScore}"/>
-                                </p:column>
-                                <p:column headerText="Target Score" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.detailHazard.riskTargetScore}"/>
-                                </p:column>
-                            </p:dataTable>
-                        </p:panel>
-                        <p:panel id="causePanel" class="detailHazardPanel">
-                            <div class="p-emphasis-spacer">
-                                <h:outputText styleClass="p-emphasis" value="The following causes are associated with the current hazard:"/>
-                            </div>
-                            <p:dataTable value="#{userWF_MB.detailCauses}" var="CA" emptyMessage="No causes are associated with this hazard.">
-                                <p:column headerText="ID" styleClass="small">
-                                    <p:outputLabel value="#{CA.dbCause.causeId}"/>
-                                </p:column>
-                                <p:column headerText="Description" styleClass="normal">
-                                    <p:outputLabel value="#{CA.dbCause.causeDescription}"/>
-                                </p:column>
-                            </p:dataTable>
-                        </p:panel>
-                        <p:panel id="consequencePanel" styleClass="detailHazardPanel">
-                            <h:outputText value="The following consequences are associated with the current hazard:" class="p-emphasis"/>
-                            <p:dataTable value="#{userWF_MB.detailConsequences}" var="CQ" emptyMessage="No consequences are associated with this hazard.">
-
-                                <p:column headerText="ID" styleClass="small">
-                                    <p:outputLabel value="#{CQ.dbConsequence.consequenceId}"/>
-                                </p:column>
-                                <p:column headerText="Description" styleClass="normal">
-                                    <p:outputLabel value="#{CQ.dbConsequence.consequenceDescription}"/>
-                                </p:column>
-                            </p:dataTable>
-                        </p:panel>
-                        <p:panel id="controlPanel" styleClass="detailHazardPanel">
-                            <h:outputText value="The following controls are associated with the current hazard:" class="p-emphasis"/>
-                            <p:dataTable value="#{userWF_MB.detailControls}" var="CO" emptyMessage="No controls are associated with this hazard.">
-                                <p:column headerText="ID" styleClass="small">
-                                    <p:outputLabel value="#{CO.dbControl.controlId}"/>
-                                </p:column>
-                                <p:column headerText="Description" styleClass="normal">
-                                    <p:outputLabel value="#{CO.dbControl.controlDescription}"/>
-                                </p:column>
-                                <p:column headerText="Owner" styleClass="small">
-                                    <p:outputLabel value="#{CO.dbControl.ownerId.ownerName}"/>
-                                </p:column>
-                                <p:column headerText="Hierarchy" styleClass="small">
-                                    <p:outputLabel value="#{CO.dbControl.controlHierarchyId.controlHierarchyName}"/>
-                                </p:column>
-                                <p:column headerText="Type" styleClass="small">
-                                    <p:outputLabel value="#{CO.controlType == 'P' ? 'Preventive' : CO.controlType == 'M' ? 'Mitigative' : CO.controlType}"/>
-                                </p:column>
-                                <p:column headerText="Recommendation" styleClass="small">
-                                    <p:outputLabel value="#{CO.controlRecommendId.controlRecommendName}"/>
-                                </p:column>
-                                <p:column headerText="Justification" styleClass="normal">
-                                    <p:outputLabel value="#{CO.controlJustify}"/>
-                                </p:column>
-                                <p:column headerText="Status" styleClass="small">
-                                    <p:outputLabel value="#{CO.controlExistingOrProposed == 'P' ? 'Proposed' : CO.controlExistingOrProposed == 'E' ? 'Existing' : CO.controlExistingOrProposed}"/>
-                                </p:column>
-                            </p:dataTable>
-                        </p:panel>
-                        <p:panel id="filesPanel" styleClass="detailHazardPanel">
-                            <h:outputText value="The following files are linked to the current hazard:" class="p-emphasis"/>
-                            <p:dataTable value="#{userWF_MB.fileHeaders}" var="file" emptyMessage="No files are linked to this hazard.">
-                                <p:column headerText="ID" styleClass="small">
-                                    <p:outputLabel value="#{file.fileId}"/>
-                                </p:column>
-                                <p:column headerText="Name" styleClass="normal">
-                                    <p:outputLabel value="#{file.fileName}"/>
-                                </p:column>
-                                <p:column headerText="Description" styleClass="normal">
-                                    <p:outputLabel value="#{file.fileDescription}"/>
-                                </p:column>
-                                <p:column headerText="Extension" styleClass="small">
-                                    <p:outputLabel value="#{file.fileExtension}"/>
-                                </p:column>
-                                <p:column headerText="Size" styleClass="small">
-                                    <p:outputLabel value="#{userWF_MB.parseSize(file.fileSize)}"/>
-                                </p:column>
-                                <p:column headerText="Download" styleClass="small">
-                                    <p:commandButton action="#{userWF_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
-                                </p:column>
-                            </p:dataTable>
-                        </p:panel>
-                    </p:dialog>
                     <p:dataTable value="#{userWF_MB.listMyWF}" id="mywfTable" widgetVar="wfTable" var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{userWF_MB.selectWFHeader}" rowSelectMode="checkbox" disabledSelection="#{wf.wfStatus == 'A' || wf.wfStatus == 'R'}" rowKey="#{wf.wfId}" scrollable="true" scrollHeight="400">
                         <f:facet name="header">
                             <p:outputPanel>
@@ -232,7 +65,7 @@
                         <p:ajax event="toggleSelect" update=":wfForm"/>
                         <p:column selectionMode="multiple" style="width: 2%;text-align:center"/>
                         <p:column headerText="Workflow ID" style="width: 7%; text-align:center">
-                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{userWF_MB.showDetail(wf)}" oncomplete="PF('detailOverlay').show()">
+                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{userWF_MB.showDetail(wf)}" oncomplete="PF('wfOverlay').show()">
                                 <h:outputText value="#{wf.wfId}"/>
                             </p:commandLink>
                             <p:tooltip for="wfAjax">
@@ -241,7 +74,7 @@
                             </p:tooltip>
                         </p:column>
                         <p:column headerText="Workflow Object Type &amp; ID" style="width: 11%; text-align:center">
-                            <p:commandLink id="objAjax" update=":wfForm" actionListener="#{userWF_MB.showHazard(wf)}" oncomplete="PF('objectOverlay').show()">
+                            <p:commandLink id="objAjax" update=":wfForm" actionListener="#{hazardDetail_MB.showDetail(wf.wfObjectId)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.wfObjectName}: #{wf.wfObjectId}"/>
                             </p:commandLink>
                             <p:tooltip for="objAjax">

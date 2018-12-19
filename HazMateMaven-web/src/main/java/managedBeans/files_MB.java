@@ -9,6 +9,7 @@ import customObjects.fileHeaderObject;
 import ejb.DbFilesFacadeLocal;
 import ejb.DbHazardFilesFacadeLocal;
 import entities.DbFiles;
+import entities.DbHazard;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,12 +40,10 @@ public class files_MB implements Serializable {
 
     @EJB
     private DbFilesFacadeLocal dbFilesFacade;
-
     private List<fileHeaderObject> listHeaders;
-    
     private DbFiles fileObject = new DbFiles();
-    
     private String originalName;
+    private List<DbHazard> linkedHazards;
 
     private boolean addFlag = false;
     private boolean editFlag = false;
@@ -63,6 +62,14 @@ public class files_MB implements Serializable {
 
     public void setFileObject(DbFiles fileObject) {
         this.fileObject = fileObject;
+    }
+
+    public List<DbHazard> getLinkedHazards() {
+        return linkedHazards;
+    }
+
+    public void setLinkedHazards(List<DbHazard> linkedHazards) {
+        this.linkedHazards = linkedHazards;
     }
 
     public boolean isAddFlag() {
@@ -193,5 +200,9 @@ public class files_MB implements Serializable {
         }
         DecimalFormat df = new DecimalFormat("#.###");
         return Double.valueOf(df.format(formatSize)).toString() + " " + suffix[order];
+    }
+    
+    public void showLinkedHazards(int fileId) {
+        setLinkedHazards(dbHazardFilesFacade.findLinkedHazards(fileId));
     }
 }

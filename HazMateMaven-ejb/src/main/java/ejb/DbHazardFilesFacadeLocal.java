@@ -6,6 +6,7 @@
 package ejb;
 
 import customObjects.fileHeaderObject;
+import entities.DbHazard;
 import entities.DbHazardFiles;
 import java.util.List;
 import javax.ejb.Local;
@@ -36,4 +37,6 @@ public interface DbHazardFilesFacadeLocal {
     int customRemove(String hazardId, int fileId);
     
     boolean hasHazardsLinked(int fileId);
+    
+    List<DbHazard> findLinkedHazards(int fileId);
 }

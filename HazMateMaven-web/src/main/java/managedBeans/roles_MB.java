@@ -109,7 +109,7 @@ public class roles_MB implements Serializable {
         dbRoleFacade.create(roleObject);
         roleObject = new DbRole();      //re-initialise roleObject for future calls of this method
         init();     //Update listDbRole so that the newly created role appears in the roles table
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The role has been successfully added. Remember to use the permissions page to assign access."));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The role has been successfully added. Remember to use the permissions page to assign access to pages."));
     }
 
     public void delete(DbRole roleObject) {

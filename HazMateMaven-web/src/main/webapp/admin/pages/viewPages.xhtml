@@ -61,16 +61,19 @@
                         </c:when>
                     </c:choose>
                     <p:panel class="parameterModifyPanel" rendered="#{pages_MB.addFlag or pages_MB.editFlag}">
-                        <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                        <p:panelGrid id="modifyTable" columns="3" columnClasses="left,middle,middle">
                             <p:outputLabel value="Page Name:" for="pageName"/>
                             <p:inputText id="pageName" value="#{pages_MB.pageObject.pageName}" title="PageName" required="true" requiredMessage="The Page Name field is required."/>
+                            <h:panelGroup/>
                             <p:outputLabel value="Page Location:" for="pageLocation"/>
                             <p:inputText id="pageLocation" value="#{pages_MB.pageObject.pageLocation}" title="PageLocation" required="true" requiredMessage="The Page Location field is required."/>
+                            <h:panelGroup/>
                             <p:outputLabel value="Parent Menu:" for="menuId"/>
                             <p:selectOneMenu styleClass="editInput" id="menuId" value="#{pages_MB.menuObject.menuId}" required="true" requiredMessage="The Parent Menu field is required.">
                                 <f:selectItems value="#{pages_MB.getListDbMenu()}" var="p" itemLabel="#{p.menuName}" itemValue="#{p.menuId}"/>    
                                 <p:ajax listener="#{pages_MB.findValidIndices()}" update="indexPrefix"/>                           
                             </p:selectOneMenu>
+                            <h:panelGroup/>
                             <p:outputLabel value="Page Index:" for="indexPage"/>
                             <h:panelGroup>
                                 <h:outputText id="indexPrefix" styleClass="indexPrefix" value="#{pages_MB.validIndexPrefix}" />
@@ -79,8 +82,13 @@
                                     <f:validateLength maximum="#{4 - pages_MB.validIndexPrefix.length()}" minimum="#{4 - pages_MB.validIndexPrefix.length()}" />
                                 </p:inputText>
                             </h:panelGroup>
+                            <h:panelGroup/>
                             <p:outputLabel value="Page Icon:" for="pageIcon"/>
                             <p:inputText id="pageIcon" value="#{pages_MB.pageObject.pageIcon}" title="PageIcon"/>
+                            <h:panelGroup>
+                                <h:outputLink value="https://api.jqueryui.com/theming/icons/" target="_blank">Available JQuery ThemeRoller icons</h:outputLink> | 
+                                <h:outputLink value="https://www.primefaces.org/showcase/ui/misc/fa.xhtml" target="_blank">Available Font Awesome icons</h:outputLink>
+                            </h:panelGroup>
                         </p:panelGrid>
                     </p:panel>
                     <div class="panelButtons">

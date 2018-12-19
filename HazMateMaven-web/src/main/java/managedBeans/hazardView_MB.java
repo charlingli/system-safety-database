@@ -117,9 +117,6 @@ public class hazardView_MB implements Serializable {
     private String searchedControlJustification;
     private String searchedLegacyId;
     private DbHazard detailHazard;
-    private String detailHazardId;
-    private String detailHazardDescription;
-    private String detailHazardComment;
     private String hazardsQuality;
     private List<DbHazardCause> detailCauses;
     private List<DbHazardConsequence> detailConsequences;
@@ -273,30 +270,6 @@ public class hazardView_MB implements Serializable {
 
     public void setDetailHazard(DbHazard detailHazard) {
         this.detailHazard = detailHazard;
-    }
-
-    public String getDetailHazardId() {
-        return detailHazardId;
-    }
-
-    public void setDetailHazardId(String detailHazardId) {
-        this.detailHazardId = detailHazardId;
-    }
-
-    public String getDetailHazardDescription() {
-        return detailHazardDescription;
-    }
-
-    public void setDetailHazardDescription(String detailHazardDescription) {
-        this.detailHazardDescription = detailHazardDescription;
-    }
-
-    public String getDetailHazardComment() {
-        return detailHazardComment;
-    }
-
-    public void setDetailHazardComment(String detailHazardComment) {
-        this.detailHazardComment = detailHazardComment;
     }
 
     public String getHazardsQuality() {
@@ -1100,18 +1073,6 @@ public class hazardView_MB implements Serializable {
             }
         }
         return nodeName;
-    }
-
-    public void showDetail(String hazardId) {
-        setDetailHazardId(hazardId);
-        setHazardDetailList(dbHazardFacade.findByName("hazardId", getDetailHazardId()));
-        detailHazard = getHazardDetailList().get(0);
-        setDetailHazardDescription(detailHazard.getHazardDescription());
-        setDetailHazardComment(detailHazard.getHazardComment());
-        detailCauses = dbHazardFacade.getHazardCause(detailHazard.getHazardId());
-        detailConsequences = dbHazardFacade.getHazardConsequence(detailHazard.getHazardId());
-        detailControls = dbHazardFacade.getControlHazard(detailHazard.getHazardId());
-        fileHeaders = dbHazardFilesFacade.findHeadersForHazard(hazardId);
     }
 
     public void clearField(String id) {
@@ -2059,41 +2020,6 @@ public class hazardView_MB implements Serializable {
             return this.controlId == other.controlId;
         }
 
-    }
-    
-    public String parseSize(int fileSize) {
-        // Return a string for readability of the size field in tables
-        int order = 0;
-        String[] suffix = new String[3];
-        suffix[0] = "B";
-        suffix[1] = "kB";
-        suffix[2] = "MB";
-        double formatSize = fileSize;
-        while (formatSize / 1000 > 1) {
-            formatSize = formatSize / 1000;
-            order++;
-        }
-        DecimalFormat df = new DecimalFormat("#.###");
-        return Double.valueOf(df.format(formatSize)).toString() + " " + suffix[order];
-    }
-    
-    public void handleDownload(fileHeaderObject file) {
-        FacesContext fc = FacesContext.getCurrentInstance();
-        ExternalContext ec = fc.getExternalContext();
-        
-        ec.responseReset();
-        ec.setResponseContentType(ec.getMimeType(file.getFileName() + "." + file.getFileExtension()));
-        ec.setResponseContentLength(file.getFileSize());
-        ec.setResponseHeader("Content-Disposition", "attachment; filename=\"" + file.getFileName() + "." + file.getFileExtension() + "\"");
-        
-        try {
-            byte[] fileBlob = dbFilesFacade.findFileFromId(file.getFileId()).get(0).getFileBlob();
-            OutputStream os = ec.getResponseOutputStream();
-            os.write(fileBlob);
-        } catch (IOException e) {
-            fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
-        }
-        fc.responseComplete();
     }
     
     public void selectAll() {

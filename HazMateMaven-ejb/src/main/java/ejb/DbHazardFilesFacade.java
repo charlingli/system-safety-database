@@ -6,6 +6,7 @@
 package ejb;
 
 import customObjects.fileHeaderObject;
+import entities.DbHazard;
 import entities.DbHazardFiles;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,5 +90,25 @@ public class DbHazardFilesFacade extends AbstractFacade<DbHazardFiles> implement
             throw e;
         }
         return !resultantList.isEmpty();
+    }
+    
+    @Override
+    public List<DbHazard> findLinkedHazards(int fileId) {
+        String querySTR;
+        List<DbHazard> resultantList = new ArrayList<>();
+        try {
+            querySTR = "FROM DbHazard h WHERE EXISTS (SELECT 'x' FROM DbHazardFiles hf "
+                    + "WHERE hf.dbHazardFilesPK.hazardId = ?1 "
+                    + "AND h.hazardId = hf.dbHazardFilesPK.hazardId)";
+            Query query = em.createQuery(querySTR);
+            query.setParameter(1, fileId);
+
+            resultantList = query.getResultList();
+
+        } catch (Exception e) {
+            throw e;
+        }
+        
+        return resultantList;
     }
 }

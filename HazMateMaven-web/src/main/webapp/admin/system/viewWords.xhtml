@@ -1,0 +1,91 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <h:form id="wordsForm">
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <div class="wordContainer">
+                        <div>
+                            <p:dataTable id="wordTable" value="#{wordView_MB.listCommonWords}" var="word" styleClass="parameterTableSmall" 
+                                         emptyMessage="No words found with given criteria" filteredValue="#{wordView_MB.showCommonWords}"  
+                                         paginator="true" rows="20" paginatorPosition="bottom" widgetVar="wordTable">
+                                <f:facet name="header">
+                                    <p:outputPanel>
+                                        <h:outputText value="The common words excluded from similarity analysis are: "/>
+                                    </p:outputPanel>
+                                </f:facet>
+                                <p:column headerText="ID" filterBy="#{word.commonWordId}" filterMatchMode="exact">
+                                    <p:outputLabel value="#{word.commonWordId}"/>
+                                </p:column>
+                                <p:column headerText="Word" filterBy="#{word.commonWord}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{word.commonWord}"/>
+                                </p:column>
+                                <p:column>
+                                    <f:facet name="header">
+                                        <p:outputLabel value="Options"/>
+                                    </f:facet>
+                                    <h:commandLink value="Delete" immediate="true" onclick="return confirm('Are you sure?')" class="commandLink"/> 
+                                </p:column>
+                            </p:dataTable>
+                            <div class="panelButtons">
+                                <p:commandButton value="Add common word" disabled="#{wordView_MB.addFlag}"> 
+                                    <f:ajax listener="#{wordView_MB.showAdd()}" execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </div>
+                            <p:panel class="parameterModifyPanel" rendered="#{wordView_MB.addFlag}">
+                                <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
+                                    <p:outputLabel value="Common Word:" for="commonWord"/>
+                                    <p:inputText id="commonWord" value="#{wordView_MB.commonWord}" title="Common Word" required="true" requiredMessage="The Common Word field is required." >
+                                        <f:validateLength maximum="100" />
+                                    </p:inputText>
+                                </p:panelGrid>
+                            </p:panel>
+                            <div class="panelButtons">
+                                <c:choose>
+                                    <c:when test="#{wordView_MB.addFlag}">
+                                        <p:commandButton value="Save" action="#{wordView_MB.addCommonWord()}" update="wordTable modifyTable"/>   
+                                        <p:commandButton value="Cancel" immediate="true">
+                                            <f:ajax listener="#{wordView_MB.cancel()}" execute="@form" render="@form"/>
+                                        </p:commandButton>
+                                    </c:when>
+                                </c:choose>
+                            </div>
+                        </div>
+                        <div>
+                            <p:dataTable value="#{wordView_MB.listIndexedWords}" var="word" styleClass="parameterTableSmall" 
+                                         emptyMessage="No words found with given criteria" filteredValue="#{wordView_MB.showIndexedWords}"  
+                                         paginator="true" rows="20" paginatorPosition="bottom">
+                                <f:facet name="header">
+                                    <p:outputPanel>
+                                        <h:outputText value="The indexed words used for similarity analysis are: "/>
+                                    </p:outputPanel>
+                                </f:facet>
+                                <p:column headerText="Object Type" filterBy="#{word.objectType}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{word.objectType}"/>
+                                </p:column>
+                                <p:column headerText="Object ID" filterBy="#{word.dbindexedWordPK.objectId}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{word.dbindexedWordPK.objectId}"/>
+                                </p:column>
+                                <p:column headerText="Word" filterBy="#{word.indexedWord}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{word.indexedWord}"/>
+                                </p:column>
+                            </p:dataTable>
+                            <div class="panelButtons">
+                                <p:commandButton value="Delete all and reindex database" disabled="#{wordView_MB.addFlag}" onclick="return confirm('Are you sure? This will re-index all the hazards, causes, consequences, and controls in the database')" > 
+                                    <f:ajax execute="@form" render="@form"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>

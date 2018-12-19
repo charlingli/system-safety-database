@@ -99,6 +99,10 @@ footer {
     display: flex; 
     flex-wrap: wrap;
 }
+.wordContainer >div {
+    float: left;
+    padding-right: 20px;
+}
 .tableFooter .left, .tableHeader .left {
     flex-grow: 1; 
     flex-basis: 33%; 
@@ -338,6 +342,10 @@ span.commandLinkWhite {
 .detailHazardPanel .normal,
 .detailTable .normal {
     cursor: default;
+}
+.parameterTableSmall {
+    width: 600px;
+    text-align: center;
 }
 .parameterTable, .managementTable {
     width: 800px;

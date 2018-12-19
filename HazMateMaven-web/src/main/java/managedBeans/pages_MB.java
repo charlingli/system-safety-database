@@ -142,7 +142,7 @@ public class pages_MB implements Serializable {
             }
             dbPageFacade.create(pageObject);
             clearVariables();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The page has been successfully added."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The page has been successfully added. Remember to use the permissions page to assign access for roles."));
         }
         addFlag = false;
     }
