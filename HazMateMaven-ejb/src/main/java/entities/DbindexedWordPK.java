@@ -28,13 +28,19 @@ public class DbindexedWordPK implements Serializable {
     @NotNull
     @Column(name = "objectLineNo")
     private int objectLineNo;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 45)
+    @Column(name = "objectType")
+    private String objectType;
 
     public DbindexedWordPK() {
     }
 
-    public DbindexedWordPK(String objectId, int objectLineNo) {
+    public DbindexedWordPK(String objectId, int objectLineNo, String objectType) {
         this.objectId = objectId;
         this.objectLineNo = objectLineNo;
+        this.objectType = objectType;
     }
 
     public String getObjectId() {
@@ -53,11 +59,20 @@ public class DbindexedWordPK implements Serializable {
         this.objectLineNo = objectLineNo;
     }
 
+    public String getObjectType() {
+        return objectType;
+    }
+
+    public void setObjectType(String objectType) {
+        this.objectType = objectType;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (objectId != null ? objectId.hashCode() : 0);
         hash += (int) objectLineNo;
+        hash += (objectType != null ? objectType.hashCode() : 0);
         return hash;
     }
 
@@ -74,12 +89,15 @@ public class DbindexedWordPK implements Serializable {
         if (this.objectLineNo != other.objectLineNo) {
             return false;
         }
+        if ((this.objectType == null && other.objectType != null) || (this.objectType != null && !this.objectType.equals(other.objectType))) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
-        return "entities.DbindexedWordPK[ objectId=" + objectId + ", objectLineNo=" + objectLineNo + " ]";
+        return "entities.DbindexedWordPK[ objectId=" + objectId + ", objectLineNo=" + objectLineNo + ", objectType=" + objectType + " ]";
     }
     
 }

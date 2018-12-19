@@ -12,13 +12,11 @@ import ejb.DbControlFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbcommonWordFacadeLocal;
 import ejb.DbindexedWordFacadeLocal;
-import entities.DbcommonWord;
 import entities.DbindexedWord;
 import entities.DbindexedWordPK;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
@@ -78,6 +76,7 @@ public class wordProcessing_MB {
     }
 
     public void indexDatabase() {
+        int result = dbindexedWordFacade.truncateTable();
         List<temporalObj> processingListHazards = new ArrayList<>();
         dbHazardFacade.findAll().forEach((tmp) -> {
             processingListHazards.add(new temporalObj(tmp.getHazardId(), tmp.getHazardDescription()));
@@ -85,7 +84,7 @@ public class wordProcessing_MB {
         if (!processList(processingListHazards, "hazard")) {
             System.err.println("There was an error processing the hazard table.");
         }
-        
+
         List<temporalObj> processingListCauses = new ArrayList<>();
         dbCauseFacade.findAll().forEach((tmp) -> {
             processingListCauses.add(new temporalObj(tmp.getCauseId().toString(), tmp.getCauseDescription()));
@@ -93,7 +92,23 @@ public class wordProcessing_MB {
         if (!processList(processingListCauses, "cause")) {
             System.err.println("There was an error processing the cause table.");
         }
+
+        List<temporalObj> processingListConsequences = new ArrayList<>();
+        dbConsequenceFacade.findAll().forEach((tmp) -> {
+            processingListConsequences.add(new temporalObj(tmp.getConsequenceId().toString(), tmp.getConsequenceDescription()));
+        });
+        if (!processList(processingListConsequences, "consequence")) {
+            System.err.println("There was an error processing the consequence table.");
+        }
         
+        List<temporalObj> processingListControls = new ArrayList<>();
+        dbControlFacade.findAll().forEach((tmp) -> {
+            processingListControls.add(new temporalObj(tmp.getControlId().toString(), tmp.getControlDescription()));
+        });
+        if (!processList(processingListControls, "control")) {
+            System.err.println("There was an error processing the control table.");
+        }
+
     }
 
     private boolean processList(List<temporalObj> processingList, String entityName) {
@@ -107,14 +122,14 @@ public class wordProcessing_MB {
                 for (String word : words) {
                     if (!listOfCommonWords.contains(word) && word.length() > 2 && !listOfIndexedWords.contains(word) && !isNumeric(word)) {
                         listOfIndexedWords.add(word);
-                        listIndexedWords.add(new DbindexedWord(new DbindexedWordPK(tmp.id, line), entityName, word));
+                        listIndexedWords.add(new DbindexedWord(new DbindexedWordPK(tmp.id, line, entityName), word));
                         line++;
                     }
                 }
             });
-            System.err.println(listIndexedWords.size());
+            dbindexedWordFacade.createBatch(listIndexedWords);
         } catch (Exception e) {
-            System.err.println(e);
+            System.out.println(e);
             return false;
         }
         return true;

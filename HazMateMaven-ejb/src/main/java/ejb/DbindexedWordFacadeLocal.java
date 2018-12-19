@@ -32,4 +32,8 @@ public interface DbindexedWordFacadeLocal {
     
     List<Object[]> findSimilarities(String objectType, List<String> listOfValues);
     
+    int truncateTable();
+    
+    void createBatch(List<DbindexedWord> listIndexedWords);
+    
 }

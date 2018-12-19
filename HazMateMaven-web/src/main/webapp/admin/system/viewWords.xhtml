@@ -67,8 +67,8 @@
                                         <h:outputText value="The indexed words used for similarity analysis are: "/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="Object Type" filterBy="#{word.objectType}" filterMatchMode="contains">
-                                    <p:outputLabel value="#{word.objectType}"/>
+                                <p:column headerText="Object Type" filterBy="#{word.dbindexedWordPK.objectType}" filterMatchMode="contains">
+                                    <p:outputLabel value="#{word.dbindexedWordPK.objectType}"/>
                                 </p:column>
                                 <p:column headerText="Object ID" filterBy="#{word.dbindexedWordPK.objectId}" filterMatchMode="contains">
                                     <p:outputLabel value="#{word.dbindexedWordPK.objectId}"/>
