@@ -12,6 +12,7 @@ import ejb.DbControlFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbcommonWordFacadeLocal;
 import ejb.DbindexedWordFacadeLocal;
+import entities.DbcommonWord;
 import entities.DbindexedWord;
 import entities.DbindexedWordPK;
 import java.util.ArrayList;
@@ -20,6 +21,9 @@ import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -76,6 +80,7 @@ public class wordProcessing_MB {
     }
 
     public void indexDatabase() {
+        System.out.println("Indexing called");
         int result = dbindexedWordFacade.truncateTable();
         List<temporalObj> processingListHazards = new ArrayList<>();
         dbHazardFacade.findAll().forEach((tmp) -> {
@@ -108,7 +113,18 @@ public class wordProcessing_MB {
         if (!processList(processingListControls, "control")) {
             System.err.println("There was an error processing the control table.");
         }
-
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The database has been reindexed using the current common words table."));
+    }
+    
+    public void indexDescription(String id, String description, String objectType) {
+        System.out.println(id + description + objectType);
+        dbindexedWordFacade.removeObject(id, objectType);
+        List<temporalObj> listObjects = new ArrayList<>();
+        listObjects.add(new temporalObj(id, description));
+        if (!processList(listObjects, objectType)) {
+            System.err.println("There was an error processing the " + objectType + " table.");
+        }
+        System.out.println(listObjects.size());
     }
 
     private boolean processList(List<temporalObj> processingList, String entityName) {
@@ -153,6 +169,32 @@ public class wordProcessing_MB {
             this.id = id;
             this.description = description;
         }
+    }
+    
+    public void addCommonWord(String commonWord, List<DbcommonWord> commonWords) {
+        if (!commonWords.stream().anyMatch(i -> i.getCommonWord().equalsIgnoreCase(commonWord))) {
+            DbcommonWord newWord = new DbcommonWord();
+            newWord.setCommonWord(commonWord.toLowerCase());
+            dbcommonWordFacade.create(newWord);
+            dbindexedWordFacade.removeWord(commonWord.toLowerCase());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The word has been successfully added. Remember to clear and reindex the database for this to take effect."));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The word is already in the common words table."));
+        }
+    }
+    
+    public void removeCommonWord(DbcommonWord commonWord) {
+        try {
+            dbcommonWordFacade.remove(commonWord);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The word has been successfully deleted. Remember to clear and reindex the database for this to take effect."));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The word could not be deleted."));
+            throw e;
+        }
+    }
+    
+    public List<String> getListCommonWords() {
+        return dbcommonWordFacade.findAll().stream().map(i -> i.getCommonWord()).collect(Collectors.toList());
     }
 
 }

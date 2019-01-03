@@ -740,7 +740,7 @@ public class editHazard_MB implements Serializable {
         checkedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
         savedFiles = dbHazardFilesFacade.findHeadersForHazard(savedHazard.getHazardId());
         populateTree();
-        RequestContext.getCurrentInstance().execute("PF('statusOverlay').hide()");
+        RequestContext.getCurrentInstance().execute("PF('spinnerOverlay').hide()");
     }
     
     public void constructSearchObject() {

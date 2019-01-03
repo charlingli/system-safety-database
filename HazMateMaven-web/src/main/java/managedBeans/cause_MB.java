@@ -7,10 +7,10 @@ package managedBeans;
 
 import ejb.DbCauseFacadeLocal;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbindexedWordFacadeLocal;
 import entities.DbCause;
 import entities.DbHazard;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,6 +28,9 @@ import javax.faces.view.ViewScoped;
 public class cause_MB implements Serializable {
 
     @EJB
+    private DbindexedWordFacadeLocal dbindexedWordFacade;
+
+    @EJB
     private DbHazardFacadeLocal dbHazardFacade;
 
     @EJB
@@ -43,9 +46,6 @@ public class cause_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
-    private boolean addButton = false;
-    private boolean editButton = false;
-    private boolean deleteButton = false;
 
     public cause_MB() {
     }
@@ -98,30 +98,6 @@ public class cause_MB implements Serializable {
         this.editFlag = editFlag;
     }
 
-    public boolean isAddButton() {
-        return addButton;
-    }
-
-    public void setAddButton(boolean addButton) {
-        this.addButton = addButton;
-    }
-
-    public boolean isEditButton() {
-        return editButton;
-    }
-
-    public void setEditButton(boolean editButton) {
-        this.editButton = editButton;
-    }
-
-    public boolean isDeleteButton() {
-        return deleteButton;
-    }
-
-    public void setDeleteButton(boolean deleteButton) {
-        this.deleteButton = deleteButton;
-    }
-
     public List<DbCause> getFilteredCauses() {
         return filteredCauses;
     }
@@ -150,8 +126,8 @@ public class cause_MB implements Serializable {
     public void init() {
         listDbCause = dbCauseFacade.findAll();
         listHazards = dbHazardFacade.findAll();
-        hazardObject = new DbHazard();
-        causeObject = new DbCause();
+        addFlag = false;
+        editFlag = false;
     }
 
     public void addCause() { 
@@ -169,8 +145,6 @@ public class cause_MB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
-        causeObject = new DbCause();
-        hazardObject = new DbHazard();
         init();
     }
 
@@ -189,17 +163,13 @@ public class cause_MB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
-        causeObject = new DbCause();
-        hazardObject = new DbHazard();
         init();
-        editFlag = false;
-        addButton = false;
-        deleteButton = false;
     }
 
     public void deleteCause(DbCause causeObject) {
         try {
             dbCauseFacade.remove(causeObject);
+            dbindexedWordFacade.removeObject(String.valueOf(causeObject.getCauseId()), "cause");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The cause has been successfully deleted"));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
@@ -210,25 +180,19 @@ public class cause_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
-        addButton = true;
-        editButton = true;
+        hazardObject = new DbHazard();
+        causeObject = new DbCause();
     }
 
-    public void showEdit(DbCause causeObject) {
+    public void showEdit(DbCause existingCause) {
         editFlag = true;
-        this.causeObject = causeObject;
+        causeObject = existingCause;
         hazardObject = new DbHazard(causeObject.getHazardId());
-        addButton = true;
-        deleteButton = true;
     }
 
     public void cancel() {
         addFlag = false;
         editFlag = false;
-
-        addButton = false;
-        editButton = false;
-        deleteButton = false;
 
         causeObject = new DbCause();
         hazardObject = new DbHazard();
@@ -237,6 +201,14 @@ public class cause_MB implements Serializable {
     public void showLinkedHazards(DbCause selectedCause) {
         setSelectedCause(selectedCause);
         setSelectedHazards(dbHazardFacade.getHazardsFromCause(selectedCause.getCauseId()));
+    }
+    
+    public void processPage() {
+        if (addFlag) {
+            addCause();
+        } else if (editFlag) {
+            editCause();
+        }
     }
     
 }

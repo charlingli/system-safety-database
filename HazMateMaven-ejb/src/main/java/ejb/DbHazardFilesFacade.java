@@ -98,7 +98,7 @@ public class DbHazardFilesFacade extends AbstractFacade<DbHazardFiles> implement
         List<DbHazard> resultantList = new ArrayList<>();
         try {
             querySTR = "FROM DbHazard h WHERE EXISTS (SELECT 'x' FROM DbHazardFiles hf "
-                    + "WHERE hf.dbHazardFilesPK.hazardId = ?1 "
+                    + "WHERE hf.dbHazardFilesPK.fileId = ?1 "
                     + "AND h.hazardId = hf.dbHazardFilesPK.hazardId)";
             Query query = em.createQuery(querySTR);
             query.setParameter(1, fileId);

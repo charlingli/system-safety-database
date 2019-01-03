@@ -6,17 +6,28 @@
 package managedBeans;
 
 import customObjects.fileHeaderObject;
+import customObjects.treeNodeObject;
 import ejb.DbFilesFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbHazardFilesFacadeLocal;
+import ejb.DbHazardSbsFacadeLocal;
+import ejb.DbtreeLevel1FacadeLocal;
 import entities.DbControlHazard;
 import entities.DbHazard;
 import entities.DbHazardCause;
 import entities.DbHazardConsequence;
+import entities.DbHazardSbs;
+import entities.DbtreeLevel1;
+import entities.DbtreeLevel2;
+import entities.DbtreeLevel3;
+import entities.DbtreeLevel4;
+import entities.DbtreeLevel5;
+import entities.DbtreeLevel6;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -35,6 +46,12 @@ import javax.faces.view.ViewScoped;
 public class hazardDetail_MB implements Serializable {
 
     @EJB
+    private DbtreeLevel1FacadeLocal dbtreeLevel1Facade;
+
+    @EJB
+    private DbHazardSbsFacadeLocal dbHazardSbsFacade;
+
+    @EJB
     private DbFilesFacadeLocal dbFilesFacade;
 
     @EJB
@@ -47,6 +64,7 @@ public class hazardDetail_MB implements Serializable {
     private List<DbHazardCause> detailCauses;
     private List<DbHazardConsequence> detailConsequences;
     private List<DbControlHazard> detailControls;
+    private List<String> detailSbsNames;
     private List<fileHeaderObject> fileHeaders;
     
     public DbHazard getDetailHazard() {
@@ -81,6 +99,14 @@ public class hazardDetail_MB implements Serializable {
         this.detailControls = detailControls;
     }
 
+    public List<String> getDetailSbsNames() {
+        return detailSbsNames;
+    }
+
+    public void setDetailSbsNames(List<String> detailSbsNames) {
+        this.detailSbsNames = detailSbsNames;
+    }
+
     public List<fileHeaderObject> getFileHeaders() {
         return fileHeaders;
     }
@@ -103,6 +129,12 @@ public class hazardDetail_MB implements Serializable {
         detailConsequences = dbHazardFacade.getHazardConsequence(getDetailHazard().getHazardId());
         detailControls = dbHazardFacade.getControlHazard(getDetailHazard().getHazardId());
         fileHeaders = dbHazardFilesFacade.findHeadersForHazard(hazardId);
+        
+        detailSbsNames = new ArrayList<>();
+        List<DbHazardSbs> listSbsObj = dbHazardSbsFacade.findDistinctSbs(hazardId);
+        for (DbHazardSbs detailSbsObj : listSbsObj) {
+            detailSbsNames.add(getNodeNameById(detailSbsObj.getDbHazardSbsPK().getSbsId()));
+        }
     }
     
     public String parseSize(int fileSize) {
@@ -139,4 +171,71 @@ public class hazardDetail_MB implements Serializable {
         }
         fc.responseComplete();
     }
+    
+    public String getNodeNameById(String nodeId) {
+        List<treeNodeObject> treeHazardSbsList = new ArrayList<>();
+        String nodeName = "";
+        String parts[] = nodeId.split("\\.");
+        for (int i = 1; i <= parts.length; i++) {
+            switch (i) {
+                case 1:
+                    DbtreeLevel1 tmpDbLvl1 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]));
+                    if (tmpDbLvl1.getTreeLevel1Name() != null) {
+                        treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                tmpDbLvl1.getTreeLevel1Name()));
+                        nodeName += treeHazardSbsList.get(0).getNodeName();
+                    }
+                    break;
+                case 2:
+                    DbtreeLevel2 tmpDbLvl2 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                            Integer.parseInt(parts[1]));
+                    if (tmpDbLvl2.getTreeLevel2Name() != null) {
+                        treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                tmpDbLvl2.getTreeLevel2Name()));
+                        nodeName += " - " + treeHazardSbsList.get(1).getNodeName();
+                    }
+                    break;
+                case 3:
+                    DbtreeLevel3 tmpDbLvl3 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                            Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+                    if (tmpDbLvl3.getTreeLevel3Name() != null) {
+                        treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                tmpDbLvl3.getTreeLevel3Name()));
+                        nodeName += " - " + treeHazardSbsList.get(2).getNodeName();
+                    }
+                    break;
+                case 4:
+                    DbtreeLevel4 tmpDbLvl4 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                            Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+                    if (tmpDbLvl4.getTreeLevel4Name() != null) {
+                        treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                tmpDbLvl4.getTreeLevel4Name()));
+                        nodeName += " - " + treeHazardSbsList.get(3).getNodeName();
+                    }
+                    break;
+                case 5:
+                    DbtreeLevel5 tmpDbLvl5 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                            Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                            Integer.parseInt(parts[4]));
+                    if (tmpDbLvl5.getTreeLevel5Name() != null) {
+                        treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                tmpDbLvl5.getTreeLevel5Name()));
+                        nodeName += " - " + treeHazardSbsList.get(4).getNodeName();
+                    }
+                    break;
+                case 6:
+                    DbtreeLevel6 tmpDbLvl6 = dbtreeLevel1Facade.findByIndex(Integer.parseInt(parts[0]),
+                            Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]),
+                            Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+                    if (tmpDbLvl6.getTreeLevel6Name() != null) {
+                        treeHazardSbsList.add(new treeNodeObject(nodeId,
+                                tmpDbLvl6.getTreeLevel6Name()));
+                        nodeName += " - " + treeHazardSbsList.get(5).getNodeName();
+                    }
+                    break;
+            }
+        }
+        return nodeName;
+    }
+
 }

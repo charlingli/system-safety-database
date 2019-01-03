@@ -10,15 +10,8 @@
             <ui:define name="content">
                 <h:form id="wfForm">
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <ui:include src="../../templates/detailDialog.xhtml" />
-                    <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" style="min-width: 8em; min-height: 8em">
-                        <div class="progress-back">
-                            <div class="progress-front-1"></div>
-                            <div class="progress-front-2"></div>
-                            <div class="progress-front-3"></div>
-                            <div class="progress-front-4"></div>
-                        </div>
-                    </p:dialog>
+                    <ui:include src="../../templates/detailDialog.xhtml"/>
+                    <ui:include src="../../templates/spinnerDialog.xhtml"/>
                     <p:dialog id="wfDialog" header="Workflow Detail" widgetVar="wfOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel id="workflowPanel" styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
@@ -88,7 +81,7 @@
                         </p:panel>
                     </p:fieldset>
                     <div class="panelButtons">
-                        <p:commandButton value="Search Workflows" action="#{managementWF_MB.searchWorkflows()}" update="wfForm" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/>
+                        <p:commandButton value="Search Workflows" action="#{managementWF_MB.searchWorkflows()}" update="wfForm" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()"/>
                     </div>
                     <p:dataTable value="#{managementWF_MB.listWF}" id="wfTable" widgetVar="wfTable"  var="wf" emptyMessage="No workflow entries found." styleClass="resultPanel" selection="#{managementWF_MB.selectWF}" rowSelectMode="checkbox" disabledSelection="#{wf.wfStatus != 'O'}" rowKey="#{wf.wfId}" scrollable="true" scrollHeight="600">
                         <f:facet name="header">
@@ -103,7 +96,7 @@
                         <p:ajax event="toggleSelect" update=":wfForm"/>
                         <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
                         <p:column headerText="Workflow ID" styleClass="small">
-                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{managementWF_MB.showDetail(wf)}" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('wfOverlay').show()">
+                            <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{managementWF_MB.showDetail(wf)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('wfOverlay').show()">
                                 <h:outputText value="#{wf.wfId}"/>
                             </p:commandLink>
                             <p:tooltip for="wfAjax">
@@ -112,7 +105,7 @@
                             </p:tooltip>
                         </p:column>
                         <p:column headerText="Workflow Object Type &amp; ID" styleClass="small">
-                            <p:commandLink id="objAjax" update=":wfForm" actionListener="#{hazardDetail_MB.showDetail(wf.wfObjectId)}" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('detailOverlay').show()">
+                            <p:commandLink id="objAjax" update=":wfForm" actionListener="#{hazardDetail_MB.showDetail(wf.wfObjectId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.wfObjectName}: #{wf.wfObjectId}"/>
                             </p:commandLink>
                             <p:tooltip for="objAjax">
@@ -127,15 +120,15 @@
                             <p:outputLabel value="#{wf.wfUserIdAdd.firstName} #{wf.wfUserIdAdd.lastName}"/>
                         </p:column>
                         <p:column headerText="Workflow Comments">
-                            <p:outputLabel value="#{wf.wfComment1}"/><br />
-                            <p:outputLabel value="#{wf.wfComment2}"/><br />
-                            <p:outputLabel value="#{wf.wfComment3}"/><br />
+                            <p:outputLabel value="#{wf.wfComment1}"/><br/>
+                            <p:outputLabel value="#{wf.wfComment2}"/><br/>
+                            <p:outputLabel value="#{wf.wfComment3}"/><br/>
                             <p:outputLabel value="#{wf.wfComment4}"/>
                         </p:column>
                         <p:column headerText="Approval Actions" styleClass="small">
                             <p:commandButton id="approveButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-check" styleClass="approveButton"/> 
                             <p:commandButton id="rejectButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-ban" styleClass="rejectButton"/> 
-                            <p:commandButton id="requestButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-info" styleClass="requestButton" style="#{wf.wfCompleteMethod == 'HazardApprovalWF' ? '' : 'visibility: hidden'}" />
+                            <p:commandButton id="requestButton" actionListener="#{managementWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{wf.wfStatus != 'O'}" icon="fa fa-info" styleClass="requestButton" style="#{wf.wfCompleteMethod == 'HazardApprovalWF' ? '' : 'visibility: hidden'}"/>
                             <p:tooltip for="approveButton">
                                 <h:outputText value="Approve Workflow"/>
                             </p:tooltip>
@@ -152,7 +145,7 @@
                                     <h:outputText value="Selected #{managementWF_MB.selectWF.size()} #{managementWF_MB.selectWF.size() == 1 ? 'workflow' : managementWF_MB.selectWF.size() == 0 ? 'workflows' : empty managementWF_MB.selectWF ? 'no workflows' : 'workflows'}"/>
                                 </div>
                                 <div class="right">
-                                    <h:outputText value="Bulk actions: " />
+                                    <h:outputText value="Bulk actions: "/>
                                     <p:commandButton id="approveAllButton" action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'A')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{managementWF_MB.selectWF.size() == 0 ? true : empty managementWF_MB.selectWF ? true : false}" icon="fa fa-check" styleClass="approveButton"/> 
                                     <p:commandButton id="rejectAllButton" action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'R')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{managementWF_MB.selectWF.size() == 0 ? true : empty managementWF_MB.selectWF ? true : false}" icon="fa fa-ban" styleClass="rejectButton"/> 
                                     <p:commandButton id="requestAllButton" action="#{managementWF_MB.prepareDecisions(managementWF_MB.selectWF, 'I')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{managementWF_MB.selectWF.size() == 0 ? true : empty managementWF_MB.selectWF ? true : managementWF_MB.checkRequest() ? true : false}" icon="fa fa-info" styleClass="requestButton"/>
@@ -176,7 +169,7 @@
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
                             <p:inputTextarea id="decisionComments" value="#{managementWF_MB.approvalComment}"/>
-                            <p:commandButton value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve' : managementWF_MB.approvalDecision == 'R' ? 'Reject' : managementWF_MB.approvalDecision == 'I' ? 'Request Information' : managementWF_MB.approvalDecision}" actionListener="#{managementWF_MB.sendDecision()}" update="wfForm" />
+                            <p:commandButton value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve' : managementWF_MB.approvalDecision == 'R' ? 'Reject' : managementWF_MB.approvalDecision == 'I' ? 'Request Information' : managementWF_MB.approvalDecision}" actionListener="#{managementWF_MB.sendDecision()}" update="wfForm"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                     <p:overlayPanel widgetVar="multipleOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
@@ -185,8 +178,8 @@
                                 <h:outputText value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve with comments' : managementWF_MB.approvalDecision == 'R' ? 'Reject with comments' : managementWF_MB.approvalDecision == 'I' ? 'Request for information' : managementWF_MB.approvalDecision}"/>
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
-                            <p:inputTextarea id="multipleComments" value="#{managementWF_MB.multipleComment}" />
-                            <p:commandButton value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve' : managementWF_MB.approvalDecision == 'R' ? 'Reject' : managementWF_MB.approvalDecision == 'I' ? 'Request Information' : managementWF_MB.approvalDecision}" actionListener="#{managementWF_MB.sendDecisions()}" update="wfForm" />
+                            <p:inputTextarea id="multipleComments" value="#{managementWF_MB.multipleComment}"/>
+                            <p:commandButton value="#{managementWF_MB.approvalDecision == 'A' ? 'Approve' : managementWF_MB.approvalDecision == 'R' ? 'Reject' : managementWF_MB.approvalDecision == 'I' ? 'Request Information' : managementWF_MB.approvalDecision}" actionListener="#{managementWF_MB.sendDecisions()}" update="wfForm"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                 </h:form>

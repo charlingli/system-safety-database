@@ -134,7 +134,7 @@
                             <c:when test="#{users_MB.addFlag}">
                                 <p:commandButton value="Save" update=":usersForm modifyTable"/>   
                                 <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
-                                    <p:resetInput target=":usersForm" />
+                                    <p:resetInput target=":usersForm"/>
                                 </p:commandButton>
                             </c:when>
                             <c:when test="#{users_MB.editFlag}">
@@ -142,7 +142,7 @@
                                     <f:ajax listener="#{users_MB.edit()}" execute="usersForm" render="usersForm"/>
                                 </p:commandButton>
                                 <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
-                                    <p:resetInput target=":usersForm" />
+                                    <p:resetInput target=":usersForm"/>
                                 </p:commandButton>
                             </c:when>
                             <c:when test="#{users_MB.changeFlag}">
@@ -150,7 +150,7 @@
                                     <f:ajax listener="#{users_MB.change()}" execute="usersForm" render="usersForm"/>
                                 </p:commandButton>
                                 <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
-                                    <p:resetInput target=":usersForm" />
+                                    <p:resetInput target=":usersForm"/>
                                 </p:commandButton>
                             </c:when>
                         </c:choose>

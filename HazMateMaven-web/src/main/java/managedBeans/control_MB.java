@@ -9,6 +9,7 @@ import ejb.DbControlFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbcontrolHierarchyFacadeLocal;
+import ejb.DbindexedWordFacadeLocal;
 import entities.DbControl;
 import entities.DbHazard;
 import entities.DbOwners;
@@ -29,6 +30,9 @@ import javax.faces.view.ViewScoped;
 @Named(value = "control_MB")
 @ViewScoped
 public class control_MB implements Serializable {
+
+    @EJB
+    private DbindexedWordFacadeLocal dbindexedWordFacade;
 
     @EJB
     private DbHazardFacadeLocal dbHazardFacade;
@@ -166,8 +170,8 @@ public class control_MB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         } finally {
-            reinitialize();
-            addFlag = false; 
+            addFlag = false;
+            init();
         }
     }
 
@@ -179,8 +183,8 @@ public class control_MB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         } finally {
-            reinitialize();
             editFlag = false;
+            init();
         }
 
     }
@@ -188,6 +192,7 @@ public class control_MB implements Serializable {
     public void deleteControl(DbControl controlObject) {
         try {
             dbControlFacade.remove(controlObject);
+            dbindexedWordFacade.removeObject(String.valueOf(controlObject.getControlId()), "control");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The control has been successfully deleted."));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
@@ -198,21 +203,22 @@ public class control_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
+        controlObject = new DbControl();
+        controlHierarchyId = -1;
+        ownerId = -1;
         
     }
 
-    public void showEdit(DbControl controlObject) {
+    public void showEdit(DbControl existingControl) {
         editFlag = true;
-        this.controlObject = controlObject;
-        controlHierarchyId = controlObject.getControlHierarchyId().getControlHierarchyId();
-        ownerId = controlObject.getOwnerId().getOwnerId();
+        controlObject = existingControl;
+        controlHierarchyId = existingControl.getControlHierarchyId().getControlHierarchyId();
+        ownerId = existingControl.getOwnerId().getOwnerId();
     }
 
     public void cancel() {
         addFlag = false;
         editFlag = false;
-
-        reinitialize();
     }
 
     public void fillControlObject() {
@@ -222,16 +228,17 @@ public class control_MB implements Serializable {
         controlObject.setControlHierarchyId(controlHierarchyObject);
         controlObject.setOwnerId(ownersObject);
     }
-
-    public void reinitialize() {
-        controlObject = new DbControl();
-        init();
-        controlHierarchyId = -1;
-        ownerId = -1;
-    }
     
     public void showLinkedHazards(DbControl selectedControl) {
         setSelectedControl(selectedControl);
         setSelectedHazards(dbHazardFacade.getHazardsFromCause(selectedControl.getControlId()));
+    }
+    
+    public void processPage() {
+        if (addFlag) {
+            addControl();
+        } else if (editFlag) {
+            editControl();
+        }
     }
 }

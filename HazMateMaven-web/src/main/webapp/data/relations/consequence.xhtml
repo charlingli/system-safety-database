@@ -10,8 +10,49 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
-                    <h:form id="consequenceForm">
+                    <h:form id="relationForm">
+                        <ui:include src="../../templates/spinnerDialog.xhtml"/>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:remoteCommand name="processPage" actionListener="#{consequence_MB.processPage()}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                            <f:actionListener binding="#{wordProcessing_MB.indexDescription(consequence_MB.consequenceObject.consequenceId, consequence_MB.consequenceObject.consequenceDescription, 'consequence')}"/>
+                        </p:remoteCommand>
+                        <p:dialog id="similarityDialog" header="Similarity Report" widgetVar="similarityOverlay" height="auto" width="60vw" closeOnEscape="true">
+                            <p:panel styleClass="detailHazardPanel">
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed consequence:"/>
+                                </div>
+                                <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
+                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectId}"/>
+                                    </p:column>
+                                    <p:column headerText="Description" style="width: 78%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectDescription}"/>
+                                    </p:column>
+                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.averageDistance}"/>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="similarityWords" >
+                                            <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="commonWords" >
+                                            <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel value="If the proposed consequence is different to the above, continue. Otherwise, consider changing the description."/>
+                                </div>
+                                <div class="panelButtons">
+                                    <p:commandButton value="Continue" action="#{wordProcessing_MB.indexDescription(consequence_MB.consequenceObject.consequenceId, consequence_MB.consequenceObject.consequenceDescription, 'consequence')}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                                        <f:actionListener binding="#{consequence_MB.processPage()}"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true" onclick="PF('similarityOverlay').hide()"/>
+                                </div>
+                            </p:panel>
+                        </p:dialog>
                         <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
@@ -92,85 +133,68 @@
                                          paginatorPosition="bottom" styleClass="resultPanel">
                                 <f:facet name="header">
                                     <p:outputPanel>
-                                        <p:outputLabel value="Search all fields: "/>
-                                        <p:inputText id="globalFilter" onkeyup="PF('consequenceTable').filter()" placeholder="Enter keyword"/>
+                                        <p:outputLabel value="The current consequences are: "/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="Consequence Id" filterBy="#{item.consequenceId}" filterMatchMode="exact" styleClass="small">
+                                <p:column headerText="ID" filterBy="#{item.consequenceId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.consequenceId}"/>
                                 </p:column>
-                                <p:column headerText="Consequence Description" filterBy="#{item.consequenceDescription}" filterMatchMode="contains" styleClass="tableColumn60">
+                                <p:column headerText="Description" filterBy="#{item.consequenceDescription}" filterMatchMode="contains" styleClass="tableColumn60">
                                     <p:outputLabel value="#{item.consequenceDescription}"/>
                                 </p:column>
                                 <p:column headerText="Linked Hazards" styleClass="small">
-                                    <p:commandButton action="#{consequence_MB.showLinkedHazards(item)}" update="consequenceForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
+                                    <p:commandButton action="#{consequence_MB.showLinkedHazards(item)}" update="relationForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
                                 </p:column>
                                 <p:column styleClass="small">
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" disabled="#{consequence_MB.editButton}" class="commandLink">
+                                    <h:commandLink value="Edit" disabled="#{consequence_MB.addFlag}" class="commandLink">
                                         <f:ajax listener="#{consequence_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{consequence_MB.deleteConsequence(item)}" immediate="true" oncomplete="PF('consequenceTable').filter()" 
-                                                   onclick="if (!confirm('This action may also disassociate hazards from their consequence. Do you wish to proceed?')) {
-                                                return;
-                                            }
-                                            ;" disabled="#{consequence_MB.deleteButton}" class="commandLink"/>
+                                    <h:commandLink value="Delete" action="#{consequence_MB.deleteConsequence(item)}" immediate="true" disabled="#{consequence_MB.editFlag}" onclick="return confirm('This action may also disassociate hazards from their consequences. Are you sure?')" class="commandLink"/>
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
                                 <p:panel rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" styleClass="relationTable" columns="2" class="editPanel" columnClasses="left,middle" rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" styleClass="relationTable" columns="2" columnClasses="left,middle">
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
                                                     <c:when test="#{consequence_MB.addFlag}">
-                                                        <h:outputText value="Adding consequence "/>
+                                                        <h:outputText value="Adding consequence: "/>
                                                     </c:when>
                                                     <c:when test="#{consequence_MB.editFlag}">
-                                                        <h:outputText value="Edditing consequence "/>
+                                                        <h:outputText value="Editing consequence: "/>
                                                     </c:when>
                                                 </c:choose> 
                                             </p:outputPanel>
                                         </f:facet>
                                         <c:if test="#{consequence_MB.editFlag}">
-                                            <p:outputLabel value="Consequence Id:" for="consequenceId"/>
+                                            <p:outputLabel value="ID:" for="consequenceId"/>
                                             <p:inputText id="consequenceId" value="#{consequence_MB.consequenceObject.consequenceId}" disabled="true" title="ConsequenceId" required="true" requiredMessage="The ConsequenceId field is required."/>
                                         </c:if>
-                                        <p:outputLabel value="Consequence Description:" for="consequenceDescription"/>
+                                        <p:outputLabel value="Description:" for="consequenceDescription"/>
                                         <p:inputTextarea rows="4" id="consequenceDescription" value="#{consequence_MB.consequenceObject.consequenceDescription}" title="ConsequenceDescription" required="true" requiredMessage="The ConsequenceDescription field is required."/>
                                     </p:panelGrid>
                                 </p:panel>
                                 <div class="panelButtons">
-                                    <c:choose>
-                                        <c:when test="#{consequence_MB.addFlag}">
-                                            <p:commandButton value="Save" oncomplete="PF('consequenceTable').filter()">
-                                                <f:ajax listener="#{consequence_MB.addConsequence()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-                                            <p:commandButton value="Cancel" immediate="true">
-                                                <f:ajax listener="#{consequence_MB.cancel()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-                                        </c:when>
-                                        <c:when test="#{consequence_MB.editFlag}">
-                                            <p:commandButton value="Save">
-                                                <f:ajax listener="#{consequence_MB.editConsequence()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-                                            <p:commandButton value="Cancel" immediate="true">
-                                                <f:ajax listener="#{consequence_MB.cancel()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-
-                                        </c:when>
-                                    </c:choose>
+                                    <h:panelGroup rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
+                                        <p:commandButton value="Save" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(consequence_MB.consequenceObject.consequenceDescription, 'consequence'), 'consequence', consequence_MB.consequenceObject.consequenceId)}" update="relationForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                                        <p:commandButton value="Cancel" immediate="true">
+                                            <f:ajax listener="#{consequence_MB.cancel()}" execute="@form" render="@form"/>
+                                        </p:commandButton>
+                                    </h:panelGroup>
                                 </div>
                             </p:panel>
                         </h:panelGrid>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Consequences" disabled="#{consequence_MB.addButton}"> 
+                            <p:commandButton value="Add Consequences" disabled="#{consequence_MB.addFlag or consequence_MB.editFlag}"> 
                                 <f:ajax listener="#{consequence_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
                     </h:form>
+                    <script type="text/javascript" src="../../resources/js/viewWords.js"/>
                 </f:view>
             </ui:define>
         </ui:composition>

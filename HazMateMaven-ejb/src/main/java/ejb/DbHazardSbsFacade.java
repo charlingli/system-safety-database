@@ -7,6 +7,7 @@ package ejb;
 
 import entities.DbHazardSbs;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -79,6 +80,24 @@ public class DbHazardSbsFacade extends AbstractFacade<DbHazardSbs> implements Db
             Query query = em.createQuery(querySTR)
                     .setParameter("checkHazardId", hazardId)
                     .setParameter("checkSbsId", sbsId);
+            resultantList = query.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return resultantList;
+    }
+    
+    @Override
+    public List<DbHazardSbs> findDistinctSbs(String hazardId) {
+        String querySTR;
+        List<DbHazardSbs> resultantList = new ArrayList<>();
+        try {
+            querySTR = "SELECT s1 FROM DbHazardSbs s1 WHERE s1.dbHazardSbsPK.hazardId = ?1 "
+                    + "AND NOT EXISTS (SELECT s2.dbHazardSbsPK.sbsId FROM DbHazardSbs s2 "
+                    + "WHERE s2.dbHazardSbsPK.hazardId = s1.dbHazardSbsPK.hazardId "
+                    + "AND s1.dbHazardSbsPK.sbsId LIKE CONCAT(s2.dbHazardSbsPK.sbsId, '_%'))";
+            Query query = em.createQuery(querySTR);
+            query.setParameter(1, hazardId);
             resultantList = query.getResultList();
         } catch (Exception e) {
             throw e;

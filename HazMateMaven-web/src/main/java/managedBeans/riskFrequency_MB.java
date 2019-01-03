@@ -137,10 +137,10 @@ public class riskFrequency_MB implements Serializable {
             return;
         }
         riskFrequencyObject = new DbriskFrequency();
-        init();
         editFlag = false;
         addButton = false;
         deleteButton = false;
+        init();
     }
 
     public void deleteRiskFrequency(DbriskFrequency riskFrequencyObject) {

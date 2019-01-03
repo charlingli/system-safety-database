@@ -203,6 +203,7 @@ public class files_MB implements Serializable {
     }
     
     public void showLinkedHazards(int fileId) {
-        setLinkedHazards(dbHazardFilesFacade.findLinkedHazards(fileId));
+        setFileObject(dbFilesFacade.findFileFromId(fileId).get(0));
+        linkedHazards = dbHazardFilesFacade.findLinkedHazards(fileId);
     }
 }

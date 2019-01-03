@@ -201,6 +201,8 @@ public class menus_MB implements Serializable {
 
         if ("".equals(menuObjectVariable.getMenuIcon())) {
             menuObjectVariable.setMenuIcon(null);
+        } else if (menuObjectVariable.getMenuIcon().startsWith("fa-")) {
+            menuObjectVariable.setMenuIcon("fa " + menuObjectVariable.getMenuIcon());
         }
         dbMenuFacade.create(menuObjectVariable);
         cleanVariables();
@@ -248,6 +250,8 @@ public class menus_MB implements Serializable {
 
         if ("".equals(menuObjectVariable.getMenuIcon())) {
             menuObjectVariable.setMenuIcon(null);
+        } else if (menuObjectVariable.getMenuIcon().startsWith("fa-")) {
+            menuObjectVariable.setMenuIcon("fa " + menuObjectVariable.getMenuIcon());
         }
         dbMenuFacade.edit(menuObjectVariable);
         cleanVariables();

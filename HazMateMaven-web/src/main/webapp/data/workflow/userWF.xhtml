@@ -9,7 +9,7 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="wfForm">
-                    <ui:include src="../../templates/detailDialog.xhtml" />
+                    <ui:include src="../../templates/detailDialog.xhtml"/>
                     <p:dialog id="wfDialog" header="Workflow Detail" widgetVar="wfOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
@@ -83,7 +83,7 @@
                             </p:tooltip>
                         </p:column>
                         <p:column headerText="Latest Comment" style="width: 70%; text-align:left">
-                            <h:outputText value="A comment was made on your submission by a core user. Please review and resubmit this hazard or cancel this workflow."/><br />
+                            <h:outputText value="A comment was made on your submission by a core user. Please review and resubmit this hazard or cancel this workflow."/><br/>
                             <h:outputText value="#{userWF_MB.getLatestComment(wf)}"/>
                         </p:column>
                         <p:column headerText="Approval Actions" style="width: 10%; text-align:center">
@@ -102,7 +102,7 @@
                                     <h:outputText value="Selected #{userWF_MB.selectWFHeader.size()} #{userWF_MB.selectWFHeader.size() == 1 ? 'workflow' : userWF_MB.selectWFHeader.size() == 0 ? 'workflows' : empty userWF_MB.selectWFHeader ? 'no workflows' : 'workflows'}"/>
                                 </div>
                                 <div class="right">
-                                    <h:outputText value="Bulk actions: " />
+                                    <h:outputText value="Bulk actions: "/>
                                     <p:commandButton id="cancelAllButton" action="#{userWF_MB.prepareDecisionsHeader('C')}" oncomplete="PF('cancelAllOverlay').show('#{component.clientId}')" update=":wfForm" disabled="#{userWF_MB.selectWFHeader.size() == 0 ? true : empty userWF_MB.selectWFHeader ? true : false}" icon="fa fa-times" styleClass="rejectButton"/>
                                     <p:tooltip for="cancelAllButton">
                                         <h:outputText value="Cancel selected workflows"/>
@@ -118,7 +118,7 @@
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
                             <p:inputTextarea id="approvalComments" value="#{userWF_MB.approvalComment}"/>
-                            <p:commandButton value="Send" action="#{userWF_MB.sendCancellation()}" update="wfForm" />
+                            <p:commandButton value="Send" action="#{userWF_MB.sendCancellation()}" update="wfForm"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                     <p:overlayPanel widgetVar="cancelAllOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
@@ -128,7 +128,7 @@
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
                             <p:inputTextarea id="multipleComments" value="#{userWF_MB.multipleComment}"/>
-                            <p:commandButton value="Reject all" action="#{userWF_MB.sendCancellations()}" update="wfForm" />
+                            <p:commandButton value="Reject all" action="#{userWF_MB.sendCancellations()}" update="wfForm"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                 </h:form>

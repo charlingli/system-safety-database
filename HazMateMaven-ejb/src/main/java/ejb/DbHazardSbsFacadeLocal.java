@@ -37,5 +37,7 @@ public interface DbHazardSbsFacadeLocal {
     void removeHazardSbs(String hazardId);
 
     List<DbHazardSbs> checkHazardSbs(String hazardId, String sbsId);
+    
+    List<DbHazardSbs> findDistinctSbs(String hazardId);
 
 }

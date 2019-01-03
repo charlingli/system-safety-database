@@ -57,7 +57,7 @@
                         <p:panelGrid id="modifyTable" columns="3" columnClasses="left,middle,middle">
                             <p:outputLabel value="Menu Name:" for="menuName"/>
                             <p:inputText id="menuName" value="#{menus_MB.menuObjectVariable.menuName}" required="true" requiredMessage="Menu name is required."/>
-                            <h:panelGroup />
+                            <h:panelGroup/>
                             <p:outputLabel value="Menu Type:" for="menuType"/>
                             <p:selectOneMenu id="menuType" value="#{menus_MB.menuObjectVariable.menuType}" styleClass="editInput" >
                                 <f:selectItem itemLabel="Main Menu" itemValue="M"/>
@@ -65,18 +65,18 @@
                                 <p:ajax listener="#{menus_MB.loadParents()}" update="menuParent"/>
                                 <p:ajax listener="#{menus_MB.findAvailableIndices()}" update="menuIndex"/>
                             </p:selectOneMenu>
-                            <h:panelGroup />
+                            <h:panelGroup/>
                             <p:outputLabel value="Parent Menu:"/>
                             <p:selectOneMenu id="menuParent" value="#{menus_MB.menuParent}" disabled="#{menus_MB.menuParentDisabled}" styleClass="editInput">
                                 <f:selectItems value="#{menus_MB.listParents}" var="parents" itemValue="#{parents.menuId}" itemLabel="#{parents.menuName}"/>
                                 <p:ajax listener="#{menus_MB.findAvailableIndices()}" update="menuIndex"/>
                             </p:selectOneMenu>
-                            <h:panelGroup />
+                            <h:panelGroup/>
                             <p:outputLabel value="Menu Index:" for="menuIndex"/>
                             <p:selectOneMenu id="menuIndex" value="#{menus_MB.menuIndex}" required="true" styleClass="editInput">
                                 <f:selectItems value="#{menus_MB.availableIndices}" var="index" itemValue="#{index}" itemLabel="#{index}"/>
                             </p:selectOneMenu>
-                            <h:panelGroup />
+                            <h:panelGroup/>
                             <p:outputLabel value="Menu Icon:"/>
                             <p:inputText id="menuIcon" value="#{menus_MB.menuObjectVariable.menuIcon}"/>
                             <h:panelGroup>
@@ -94,7 +94,7 @@
                                 </p:commandButton>
                             </c:when>
                             <c:when test="#{menus_MB.editFlag}">
-                                <p:commandButton value="Save" action="#{menus_MB.editMenu()}" update="@form modifyTable" />
+                                <p:commandButton value="Save" action="#{menus_MB.editMenu()}" update="@form modifyTable"/>
                                 <p:commandButton value="Cancel" immediate="true">
                                     <f:ajax listener="#{menus_MB.cleanVariables()}" execute="@form" render="@form"/>
                                 </p:commandButton>

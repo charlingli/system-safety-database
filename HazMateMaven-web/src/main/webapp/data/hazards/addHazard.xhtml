@@ -11,6 +11,53 @@
                 <f:view>
                     <h:form id="addForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <ui:include src="../../templates/spinnerDialog.xhtml"/>
+                        <p:remoteCommand name="submitOverlay" process="addForm:addTabs:uploadName, addForm:addTabs:uploadDescription"/>
+                        <p:remoteCommand name="processPage" actionListener="#{addHazard_MB.processPage()}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                            <f:actionListener binding="#{wordProcessing_MB.indexDescription(addHazard_MB.hazardObject.hazardId, addHazard_MB.hazardObject.hazardDescription, 'hazard')}"/>
+                        </p:remoteCommand>
+                        <p:dialog id="similarityDialog" header="Similarity Report" widgetVar="similarityOverlay" height="auto" width="60vw" closeOnEscape="true">
+                            <p:panel styleClass="detailHazardPanel">
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed hazard:"/>
+                                </div>
+                                <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
+                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectId}"/>
+                                    </p:column>
+                                    <p:column headerText="SBS" style="width: 36%; text-align: center;">
+                                        <ui:repeat value="#{object.objectExtra}" var="code">
+                                            <p:outputLabel>#{code}<br/></p:outputLabel>
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column headerText="Description" style="width: 42%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectDescription}"/>
+                                    </p:column>
+                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.averageDistance}"/>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="similarityWords" >
+                                            <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="commonWords" >
+                                            <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel value="If the proposed hazard is different to the above, continue. Otherwise, consider changing the description."/>
+                                </div>
+                                <div class="panelButtons">
+                                    <p:commandButton value="Continue" action="#{wordProcessing_MB.indexDescription(addHazard_MB.hazardObject.hazardId, addHazard_MB.hazardObject.hazardDescription, 'hazard')}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                                        <f:actionListener binding="#{addHazard_MB.processPage()}"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true" onclick="PF('similarityOverlay').hide()"/>
+                                </div>
+                            </p:panel>
+                        </p:dialog>
                         <p:panel styleClass="hazardModifyPanel">
                             <p:panelGrid columns="2" columnClasses="left,middle">
                                 <f:facet name="header">
@@ -111,16 +158,16 @@
                                                     <h:outputText value="Upload a new file:"/>
                                                 </p:outputPanel>
                                             </f:facet>
-                                            <p:fileUpload id="fileUploader" fileUploadListener="#{addHazard_MB.handleUpload}" onstart="PF('fileNameOverlay').hide(); submitOverlay()" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="false" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                            <p:fileUpload id="fileUploader" fileUploadListener="#{addHazard_MB.handleUpload}" onstart="PF('fileNameOverlay').hide(); submitOverlay()" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="false" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage=""/>
                                             <p:overlayPanel widgetVar="fileNameOverlay" hideEffect="fade" dismissable="true" showCloseIcon="true" styleClass="uploadDialog">
                                                 <p:panelGrid columns="1" styleClass="uploadGrid">
                                                     <f:facet name="header">
                                                         <h:outputText value="Set File Name and Description (Optional)"/>
                                                     </f:facet>
                                                     <h:outputText value="Name:"/>
-                                                    <p:inputText widgetVar="fileName" id="uploadName" value="#{addHazard_MB.uploadName}" />
+                                                    <p:inputText widgetVar="fileName" id="uploadName" value="#{addHazard_MB.uploadName}"/>
                                                     <h:outputText value="Description:"/>
-                                                    <p:inputTextarea widgetVar="fileDescription" id="uploadDescription" value="#{addHazard_MB.uploadDescription}" />
+                                                    <p:inputTextarea widgetVar="fileDescription" id="uploadDescription" value="#{addHazard_MB.uploadDescription}"/>
                                                 </p:panelGrid>
                                             </p:overlayPanel>
                                         </h:panelGrid>
@@ -169,14 +216,10 @@
                                 </p:tabView>
                             </p:panelGrid>
                         </p:panel>
-                        <div class="panelButtons">
-                            <p:commandButton value="Save Hazard">
-                                <f:ajax listener="#{addHazard_MB.processPage()}" execute="@form" render="@form"/>
-                            </p:commandButton>
-                            <p:commandButton value="Assign Relations" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}" 
-                                             action="#{addHazard_MB.assignRelations()}" ajax="false"/>
+                        <div id="panelButtons" class="panelButtons">
+                            <p:commandButton value="Save hazard" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(addHazard_MB.hazardObject.hazardDescription, 'hazard'), 'hazard', addHazard_MB.hazardObject.hazardId)}" update="addForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                            <p:commandButton id="assignButton" value="Assign relations" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}" action="#{addHazard_MB.assignRelations()}" ajax="false"/>
                         </div>
-                        <p:remoteCommand name="submitOverlay" process="addForm:addTabs:uploadName, addForm:addTabs:uploadDescription" />
                         <script>
                             $(document).on("click", ".ui-fileupload input[type=file]", function(event){
                                 var component = $(this).closest('.ui-fileupload').find('.ui-icon-close').trigger('click');
@@ -184,6 +227,7 @@
                             });
                         </script>
                     </h:form>
+                    <script type="text/javascript" src="../../resources/js/viewWords.js"/>
                 </f:view>
             </ui:define>
         </ui:composition>

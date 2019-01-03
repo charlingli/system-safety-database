@@ -730,7 +730,7 @@ public class hazardsRelation_MB implements Serializable {
         if (wfTriggered) {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/masterMenu.xhtml");
-
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been sent for approval by a core user."));
             } catch (IOException ex) {
                 Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
             }

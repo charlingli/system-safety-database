@@ -9,7 +9,7 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="wfForm">
-                    <ui:include src="../../templates/detailDialog.xhtml" />
+                    <ui:include src="../../templates/detailDialog.xhtml"/>
                     <p:dialog id="wfDialog" header="Workflow Detail" widgetVar="wfOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
@@ -72,15 +72,15 @@
                             <p:outputLabel value="#{wf.dbwfHeader.wfUserIdAdd.firstName} #{wf.dbwfHeader.wfUserIdAdd.lastName}"/>
                         </p:column>
                         <p:column headerText="Workflow Comments" style="width: 42%; text-align:left">
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment1}"/><br />
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment2}"/><br />
-                            <p:outputLabel value="#{wf.dbwfHeader.wfComment3}"/><br />
+                            <p:outputLabel value="#{wf.dbwfHeader.wfComment1}"/><br/>
+                            <p:outputLabel value="#{wf.dbwfHeader.wfComment2}"/><br/>
+                            <p:outputLabel value="#{wf.dbwfHeader.wfComment3}"/><br/>
                             <p:outputLabel value="#{wf.dbwfHeader.wfComment4}"/>
                         </p:column>
                         <p:column headerText="Approval Actions" style="width: 14%; text-align:center">
                             <p:commandButton id="approveButton" actionListener="#{userWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-check" styleClass="approveButton"/> 
                             <p:commandButton id="rejectButton" actionListener="#{userWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-ban" styleClass="rejectButton"/> 
-                            <p:commandButton id="requestButton" actionListener="#{userWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-info" styleClass="requestButton" style="#{wf.dbwfHeader.wfCompleteMethod == 'HazardApprovalWF' ? '' : 'visibility: hidden'}" />
+                            <p:commandButton id="requestButton" actionListener="#{userWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-info" styleClass="requestButton" style="#{wf.dbwfHeader.wfCompleteMethod == 'HazardApprovalWF' ? '' : 'visibility: hidden'}"/>
                             <p:tooltip for="approveButton">
                                 <h:outputText value="Approve Workflow"/>
                             </p:tooltip>
@@ -97,7 +97,7 @@
                                     <h:outputText value="Selected #{userWF_MB.selectWF.size()} #{userWF_MB.selectWF.size() == 1 ? 'workflow' : userWF_MB.selectWF.size() == 0 ? 'workflows' : empty userWF_MB.selectWF ? 'no workflows' : 'workflows'}"/>
                                 </div>
                                 <div class="right">
-                                    <h:outputText value="Bulk actions: " />
+                                    <h:outputText value="Bulk actions: "/>
                                     <p:commandButton id="approveAllButton" action="#{userWF_MB.prepareDecisions('A')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : false}" icon="fa fa-check" styleClass="approveButton"/> 
                                     <p:commandButton id="rejectAllButton" action="#{userWF_MB.prepareDecisions('R')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : false}" icon="fa fa-ban" styleClass="rejectButton"/> 
                                     <p:commandButton id="reviewAllButton" action="#{userWF_MB.prepareDecisions('I')}" oncomplete="PF('multipleOverlay').show('#{component.clientId}')" update="wfForm" disabled="#{userWF_MB.selectWF.size() == 0 ? true : empty userWF_MB.selectWF ? true : userWF_MB.checkRequest() ? true : false}" icon="fa fa-info" styleClass="requestButton"/>

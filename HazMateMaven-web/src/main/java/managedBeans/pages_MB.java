@@ -139,6 +139,8 @@ public class pages_MB implements Serializable {
             pageObject.setIndexPage(Integer.parseInt(validIndexPrefix + pageIndex));
             if ("".equals(pageObject.getPageIcon())) {
                 pageObject.setPageIcon(null);
+            } else if (pageObject.getPageIcon().startsWith("fa-")) {
+                pageObject.setPageIcon("fa " + pageObject.getPageIcon());
             }
             dbPageFacade.create(pageObject);
             clearVariables();
@@ -161,6 +163,8 @@ public class pages_MB implements Serializable {
             pageObject.setIndexPage(Integer.parseInt(validIndexPrefix + pageIndex));
             if ("".equals(pageObject.getPageIcon())) {
                 pageObject.setPageIcon(null);
+            } else if (pageObject.getPageIcon().startsWith("fa-")) {
+                pageObject.setPageIcon("fa " + pageObject.getPageIcon());
             }
             dbPageFacade.edit(pageObject);
             clearVariables();
@@ -177,10 +181,11 @@ public class pages_MB implements Serializable {
     
     public void findValidIndices() {
         DbMenu tempMenu = dbMenuFacade.find(menuObject.getMenuId());
+        int menuIndexLength = String.valueOf(tempMenu.getIndexMenu()).length();
         if (tempMenu.getMenuType().equals("M")) {
-            validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, 1) + "9";
+            validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, menuIndexLength - 3) + "9";
         } else {
-            validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, 2);
+            validIndexPrefix = String.valueOf(tempMenu.getIndexMenu()).substring(0, menuIndexLength - 2);
         }
     }
 
@@ -225,6 +230,7 @@ public class pages_MB implements Serializable {
         pageObject = new DbPage();
         menuObject = new DbMenu();
         pageIndex = "";
+        validIndexPrefix = null;
         init();
     }
 

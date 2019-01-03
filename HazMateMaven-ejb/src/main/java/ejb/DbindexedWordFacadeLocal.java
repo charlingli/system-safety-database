@@ -36,4 +36,8 @@ public interface DbindexedWordFacadeLocal {
     
     void createBatch(List<DbindexedWord> listIndexedWords);
     
+    void removeWord(String commonWord);
+    
+    void removeObject(String id, String type);
+    
 }

@@ -10,21 +10,18 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
-        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon" />
+        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon"/>
         <title>System Safety Database</title>
-        <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0" />
-        <f:event type="preRenderView" listener="#{login_MB.validateSession()}" />
+        <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0"/>
+        <f:event type="preRenderView" listener="#{login_MB.validateSession()}"/>
         
     </h:head>
     <h:body class="body">
         <header id="top">
             <ui:insert name="top">
-                <h:form>
-                    <p:idleMonitor timeout="300000">
-                        <p:ajax event="idle" listener="#{login_MB.onIdle5}" update="growl" />
-                    </p:idleMonitor>
+                <h:form id="headerForm">
                     <p:idleMonitor timeout="480000">
-                        <p:ajax event="idle" listener="#{login_MB.onIdle8}" update="growl" />
+                        <p:ajax event="idle" listener="#{login_MB.onIdle8}" update="growl"/>
                     </p:idleMonitor>
                     <p:menubar model="#{menuDynamic_MB.menuContent}">
                         <f:facet name="options">
@@ -36,7 +33,7 @@
                                     </p:menuButton>
                                     <p:tooltip id="toolTipWorkflowAdmin" for="workflowAdmin" trackMouse="true">
                                         <h:outputText value="#{userWF_MB.getWFProposedListSize()} workflows requiring approval"/>
-                                        <br />
+                                        <br/>
                                         <h:outputText value="#{userWF_MB.getWFAddressListSize()} workflows with comments"/>
                                     </p:tooltip>
                                 </c:when>
@@ -61,7 +58,7 @@
                     </p:menubar>
                     <div class="messageDiv">
                         <p:messages id="messages" autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" class="timeout" />
+                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" class="timeout"/>
                     </div>
                 </h:form>
             </ui:insert>
@@ -73,7 +70,7 @@
         </main>
         <footer class="license">
             <ui:insert name="footer">
-                <p:separator />
+                <p:separator/>
                 <h:form>
                     <h:outputText value="System Safety Database is proprietary software owned and operated by Level Crossing Removal Authority. Status: "/>
                     <h:outputText style="font-weight: bold; color: rgb(179, 139, 52)" value="in development"/>

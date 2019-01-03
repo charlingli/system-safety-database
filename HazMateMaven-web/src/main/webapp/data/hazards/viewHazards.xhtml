@@ -9,18 +9,11 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="hazardsForm">
-                    <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()" />
-                    <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}" />
+                    <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()"/>
+                    <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}"/>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                    <ui:include src="../../templates/detailDialog.xhtml" />
-                    <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" modal="true" style="min-width: 8em; min-height: 8em">
-                        <div class="progress-back">
-                            <div class="progress-front-1"></div>
-                            <div class="progress-front-2"></div>
-                            <div class="progress-front-3"></div>
-                            <div class="progress-front-4"></div>
-                        </div>
-                    </p:dialog>
+                    <ui:include src="../../templates/detailDialog.xhtml"/>
+                    <ui:include src="../../templates/spinnerDialog.xhtml"/>
                     <p:dialog id="bowtieDialog" header="Bowtie Diagram" widgetVar="bowtieOverlay" height="70vh" width="90vw" closeOnEscape="true">
                         <p:panel class="visPanel">
                             <div class="visCanvas">
@@ -329,11 +322,11 @@
                                 <p:tab title="Data Quality">
                                     <p:panel styleClass="searchPanel">
                                         <p:panelGrid columns="3" columnClasses="left,middle,right">
-                                            <p:outputLabel for="dataQuality" value="Hazard Quality:" />
+                                            <p:outputLabel for="dataQuality" value="Hazard Quality:"/>
                                             <p:selectOneRadio id="dataQuality" value="#{hazardView_MB.hazardsQuality}" layout="grid" columns="1">
-                                                <f:selectItem id="allHazardsOption" itemLabel="All hazards" itemValue="A" />
-                                                <f:selectItem id="completeHazardsOption" itemLabel="Complete hazards" itemValue="C" />
-                                                <f:selectItem id="incompleteHazardsOption" itemLabel="Incomplete hazards" itemValue="I" />
+                                                <f:selectItem id="allHazardsOption" itemLabel="All hazards" itemValue="A"/>
+                                                <f:selectItem id="completeHazardsOption" itemLabel="Complete hazards" itemValue="C"/>
+                                                <f:selectItem id="incompleteHazardsOption" itemLabel="Incomplete hazards" itemValue="I"/>
                                             </p:selectOneRadio>
                                         </p:panelGrid>  
                                     </p:panel>
@@ -345,7 +338,7 @@
                         </h:panelGrid>
                     </p:fieldset>
                     <div class="panelButtons">
-                        <p:commandButton value="Search Hazards" action="#{hazardView_MB.constructSearchObject()}" update="hazardsForm" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()" />
+                        <p:commandButton value="Search Hazards" action="#{hazardView_MB.constructSearchObject()}" update="hazardsForm" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()"/>
                         <p:commandButton value="Reset Fields" update="hazardsForm:fieldset" process="@this" action="#{hazardView_MB.resetFields()}">
                             <p:resetInput target="hazardsForm:fieldset"/>
                         </p:commandButton>
@@ -360,15 +353,15 @@
                                 </div>
                                 <div class="right">
                                     <h:outputText id="exportMessage" value="Export #{hazardView_MB.checkedHazards.size()} #{hazardView_MB.checkedHazards.size() == 1 ? 'hazard' : hazardView_MB.checkedHazards.size() == 0 ? 'hazards' : empty hazardView_MB.checkedHazards ? 'no hazards' : 'hazards'}: "/>
-                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.exportExcel()}" ajax="false" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()"/> 
+                                    <p:commandButton id="exportButton" actionListener="#{hazardView_MB.exportExcel()}" ajax="false" disabled="#{hazardView_MB.checkedHazards.size() == 0 ? true : empty hazardView_MB.checkedHazards ? true : false}" icon="fa fa-download" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()"/> 
                                 </div>
                             </p:outputPanel>
                         </f:facet>
-                        <p:ajax event="rowSelect"  update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
-                        <p:ajax event="rowUnselect" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
-                        <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
-                        <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this" />
-                        <p:ajax event="toggleSelect" update="exportMessage, exportButton" listener="#{hazardView_MB.selectAll()}" process="@this" />
+                        <p:ajax event="rowSelect"  update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this"/>
+                        <p:ajax event="rowUnselect" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this"/>
+                        <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this"/>
+                        <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this"/>
+                        <p:ajax event="toggleSelect" update="exportMessage, exportButton" listener="#{hazardView_MB.selectAll()}" process="@this"/>
                         <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
                         <p:column style="width: 5%; text-align:center">
                             <f:facet name="header">
@@ -378,14 +371,14 @@
                             <p:tooltip for="missingIcon">
                                 <h:outputText value="A visualisation cannot be generated since this hazard is missing causes, consequences, or controls!"/>
                             </p:tooltip>
-                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" rendered="#{hazard.missingInfo ? false : true}"/>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" rendered="#{hazard.missingInfo ? false : true}"/>
                         </p:column>
                         <p:column style="width: 5%; text-align:center" headerText="Rating">
                             <h:outputText>
-                                <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}" />
+                                <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}"/>
                                 </h:outputText>
                             <p:rating id="averageRating" stars="3" cancel="false" value="#{hazardView_MB.qualityRating}" >
-                                <p:ajax event="rate" ignoreAutoUpdate="true" listener="#{hazardView_MB.prepareRating(hazard.hazardObj.hazardId, rowIndex, hazard.sumOfRateTimesWeighting, hazard.sumOfWeight, hazard.rateCount)}" oncomplete="PF('ratingOverlay').show('#{component.clientId}');" />
+                                <p:ajax event="rate" ignoreAutoUpdate="true" listener="#{hazardView_MB.prepareRating(hazard.hazardObj.hazardId, rowIndex, hazard.sumOfRateTimesWeighting, hazard.sumOfWeight, hazard.rateCount)}" oncomplete="PF('ratingOverlay').show('#{component.clientId}');"/>
                             </p:rating>
                             <p:tooltip for="averageRating">
                                 <h:outputText value="Rated #{hazardView_MB.qualityRating} from #{hazard.rateCount} users."/>
@@ -408,7 +401,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Hazard ID"/>
                             </f:facet>
-                            <p:commandLink id="viewLink" update="hazardsForm:detailDialog" actionListener="#{hazardDetail_MB.showDetail(hazard.hazardObj.hazardId)}" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide(); PF('detailOverlay').show()">
+                            <p:commandLink id="viewLink" update="hazardsForm:detailDialog" actionListener="#{hazardDetail_MB.showDetail(hazard.hazardObj.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('detailOverlay').show()">
                                 <h:outputText value="#{hazard.hazardObj.hazardId}"/>
                             </p:commandLink>
                             <p:tooltip for="viewLink">
@@ -473,20 +466,20 @@
                     <p:overlayPanel my="top right" at="top right" class="ratingPanel" widgetVar="ratingOverlay" hideEffect="fade" dismissable="false" showCloseIcon="false">
                         <p:commandLink id="averageRating" class="averageRating">
                             <h:outputText value="#{hazardView_MB.averageRating}"/>
-                        </p:commandLink><br />
+                        </p:commandLink><br/>
                         <p:commandLink id="countRating" class="countRating">
-                            <i class="fa fa-user" /><h:outputText value=" #{hazardView_MB.ratingCount} total"/>
+                            <i class="fa fa-user"/><h:outputText value=" #{hazardView_MB.ratingCount} total"/>
                         </p:commandLink>
                         <p:tooltip id="averageTooltip" for="averageRating">
                             <h:outputText value="Average rating"/>
                         </p:tooltip>
                         <p:tooltip id="countTooltip" for="countRating">
                             <h:outputText value="Number of ratings"/>
-                        </p:tooltip><br />
+                        </p:tooltip><br/>
                         <h:outputText value="Your rating:" style="font-size: 1.2em;"/>
                         <p:rating id="userRating" value="#{hazardView_MB.userRating}" stars="3" cancel="false">
                             <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazardView_MB.ratingId, hazardView_MB.userRating)}" update="hazardsForm:averageRating, hazardsForm:countRating, hazardsForm:averageTooltip, hazardsForm:countTooltip">
-                                <f:attribute name="hazardId" value="#{hazard.hazardObj}" />
+                                <f:attribute name="hazardId" value="#{hazard.hazardObj}"/>
                             </p:ajax>
                         </p:rating>
                     </p:overlayPanel>
@@ -497,7 +490,7 @@
                             </f:facet>
                             <h:outputText value="Leave a comment:"/>
                             <p:inputTextarea id="suggestionComments" value="#{hazardView_MB.suggestionComment}"/>
-                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendSuggestion()}" update="suggestionComments" oncomplete="PF('suggestionOverlay').hide()" />
+                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendSuggestion()}" update="suggestionComments" oncomplete="PF('suggestionOverlay').hide()"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                     <p:overlayPanel widgetVar="deletionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
@@ -510,11 +503,11 @@
                         </p:panelGrid>
                         <p:panelGrid columns="2" class="suggestionPanel">
                             <p:selectOneMenu id="deletionReason" value="#{hazardView_MB.deletionReason}">
-                                <f:selectItem itemLabel="Duplicate" itemValue="Duplicate" />
-                                <f:selectItem itemLabel="Poor Quality" itemValue="Poor Quality" />
-                                <f:selectItem itemLabel="Other (see comment)" itemValue="Other (see comment)" />
+                                <f:selectItem itemLabel="Duplicate" itemValue="Duplicate"/>
+                                <f:selectItem itemLabel="Poor Quality" itemValue="Poor Quality"/>
+                                <f:selectItem itemLabel="Other (see comment)" itemValue="Other (see comment)"/>
                             </p:selectOneMenu>
-                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendDeletion()}" update="deletionComments, deletionReason" oncomplete="PF('deletionOverlay').hide()" />
+                            <p:commandButton value="Send" actionListener="#{hazardView_MB.sendDeletion()}" update="deletionComments, deletionReason" oncomplete="PF('deletionOverlay').hide()"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                 </h:form>

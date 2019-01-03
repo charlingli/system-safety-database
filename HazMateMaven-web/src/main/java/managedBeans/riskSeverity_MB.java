@@ -136,10 +136,10 @@ public class riskSeverity_MB implements Serializable {
             return;
         }
         riskSeverityObject = new DbriskSeverity();
-        init();
         editFlag = false;
         addButton = false;
         deleteButton = false;
+        init();
     }
 
     public void deleteRiskSeverity(DbriskSeverity riskSeverityObject) {

@@ -7,10 +7,10 @@ package managedBeans;
 
 import ejb.DbConsequenceFacadeLocal;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbindexedWordFacadeLocal;
 import entities.DbConsequence;
 import entities.DbHazard;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -28,6 +28,9 @@ import javax.faces.view.ViewScoped;
 public class consequence_MB implements Serializable {
 
     @EJB
+    private DbindexedWordFacadeLocal dbindexedWordFacade;
+
+    @EJB
     private DbHazardFacadeLocal dbHazardFacade;
 
     @EJB
@@ -43,9 +46,6 @@ public class consequence_MB implements Serializable {
 
     private boolean addFlag = false;
     private boolean editFlag = false;
-    private boolean addButton = false;
-    private boolean editButton = false;
-    private boolean deleteButton = false;
 
     public consequence_MB() {
     }
@@ -98,30 +98,6 @@ public class consequence_MB implements Serializable {
         this.editFlag = editFlag;
     }
 
-    public boolean isAddButton() {
-        return addButton;
-    }
-
-    public void setAddButton(boolean addButton) {
-        this.addButton = addButton;
-    }
-
-    public boolean isEditButton() {
-        return editButton;
-    }
-
-    public void setEditButton(boolean editButton) {
-        this.editButton = editButton;
-    }
-
-    public boolean isDeleteButton() {
-        return deleteButton;
-    }
-
-    public void setDeleteButton(boolean deleteButton) {
-        this.deleteButton = deleteButton;
-    }
-
     public List<DbConsequence> getFilteredConsequences() {
         return filteredConsequences;
     }
@@ -150,8 +126,8 @@ public class consequence_MB implements Serializable {
     public void init() {
         listDbConsequence = dbConsequenceFacade.findAll();
         listHazards = dbHazardFacade.findAll();
-        hazardObject = new DbHazard();
-        consequenceObject = new DbConsequence();
+        addFlag = false;
+        editFlag = false;
     }
 
     public void addConsequence() {
@@ -169,7 +145,6 @@ public class consequence_MB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
-        consequenceObject = new DbConsequence();
         init();
 
     }
@@ -189,17 +164,13 @@ public class consequence_MB implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
         }
-        consequenceObject = new DbConsequence();
         init();
-        editFlag = false;
-        addButton = false;
-        deleteButton = false;
-
     }
 
     public void deleteConsequence(DbConsequence consequenceObject) {
         try {
             dbConsequenceFacade.remove(consequenceObject);
+            dbindexedWordFacade.removeObject(String.valueOf(consequenceObject.getConsequenceId()), "consequence");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The consequence has been successfully deleted."));
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", e.getMessage()));
@@ -210,25 +181,19 @@ public class consequence_MB implements Serializable {
 
     public void showAdd() {
         addFlag = true;
-        addButton = true;
-        editButton = true;
+        hazardObject = new DbHazard();
+        consequenceObject = new DbConsequence();
     }
 
-    public void showEdit(DbConsequence consequenceObject) {
+    public void showEdit(DbConsequence existingConsequence) {
         editFlag = true;
-        this.consequenceObject = consequenceObject;
+        consequenceObject = existingConsequence;
         hazardObject = new DbHazard(consequenceObject.getHazardId());
-        addButton = true;
-        deleteButton = true;
     }
 
     public void cancel() {
         addFlag = false;
         editFlag = false;
-
-        addButton = false;
-        editButton = false;
-        deleteButton = false;
 
         consequenceObject = new DbConsequence();
         hazardObject = new DbHazard();
@@ -237,6 +202,14 @@ public class consequence_MB implements Serializable {
     public void showLinkedHazards(DbConsequence selectedConsequence) {
         setSelectedConsequence(selectedConsequence);
         setSelectedHazards(dbHazardFacade.getHazardsFromConsequence(selectedConsequence.getConsequenceId()));
+    }
+    
+    public void processPage() {
+        if (addFlag) {
+            addConsequence();
+        } else if (editFlag) {
+            editConsequence();
+        }
     }
 
 }

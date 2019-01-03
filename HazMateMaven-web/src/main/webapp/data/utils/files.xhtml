@@ -10,16 +10,12 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
-                    <h:form>
+                    <h:form id="filesForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                         <p:dialog id="linkedDialog" header="Linked Hazards" widgetVar="linkedOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
-                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with cause ##{cause_MB.selectedCause.causeId}:"/>
-                                    <p:panelGrid columns="2" class="detailTable" columnClasses="label"> 
-                                        <p:outputLabel value="Cause Description: "/>
-                                        <p:outputLabel value="#{cause_MB.selectedCause.causeDescription}"/>
-                                    </p:panelGrid>
+                                    <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with #{files_MB.fileObject.fileName}.#{files_MB.fileObject.fileExtension}:"/>
                                 </div>
                                 <p:dataTable id="hazardsTable" value="#{files_MB.linkedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria" 
                                      scrollable="true" scrollHeight="400" scrollRows="100" liveScroll="true" styleClass="resultPanel">
@@ -28,7 +24,7 @@
                                             <h:outputText value="The associated hazards are: "/>
                                         </p:outputPanel>
                                     </f:facet>
-                                    <p:column style="width: 6%; text-align:center">
+                                    <p:column style="width: 8%; text-align:center">
                                         <f:facet name="header">
                                             <h:outputText value="Hazard ID"/>
                                         </f:facet>
@@ -40,7 +36,7 @@
                                         </f:facet>
                                         <h:outputText value="#{hazard.hazardDescription}"/>
                                     </p:column>
-                                    <p:column style="width: 24%">
+                                    <p:column style="width: 22%">
                                         <f:facet name="header">
                                             <h:outputText value="Comment"/>
                                         </f:facet>
@@ -107,7 +103,7 @@
                                 <p:outputLabel value="#{files_MB.parseSize(file.fileSize)}"/>
                             </p:column>
                             <p:column headerText="Linked Hazards" style="width: 8%">
-                                <p:commandButton action="#{files_MB.showLinkedHazards(file.fileId)}" oncomplete="PF('linkedOverlay').show();" icon="fa fa-share-alt"/>
+                                <p:commandButton action="#{files_MB.showLinkedHazards(file.fileId)}" update="filesForm:linkedDialog" oncomplete="PF('linkedOverlay').show();" icon="fa fa-share-alt"/>
                             </p:column>
                             <p:column headerText="Download"  style="width: 8%">
                                 <p:commandButton action="#{files_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
@@ -132,7 +128,7 @@
                                         <h:outputText value="Upload a new file:"/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:fileUpload fileUploadListener="#{files_MB.handleUpload}" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                <p:fileUpload fileUploadListener="#{files_MB.handleUpload}" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage=""/>
                             </p:panelGrid>
                             <div class="panelButtons">
                                 <p:commandButton value="Cancel" immediate="true">
@@ -150,7 +146,7 @@
                                 <p:outputLabel value="File Name:" for="fileName"/>
                                 <p:inputText id="fileName" value="#{files_MB.fileObject.fileName}" title="FileName" required="true" requiredMessage="The FileName field is required."/>
                                 <p:outputLabel value="File Description:" for="fileDescription"/>
-                                <p:inputText id="fileDescription" value="#{files_MB.fileObject.fileDescription}" title="fileDescription" required="false" />
+                                <p:inputText id="fileDescription" value="#{files_MB.fileObject.fileDescription}" title="fileDescription" required="false"/>
                             </p:panelGrid>
                             <div class="panelButtons">
                                 <p:commandButton value="Save">

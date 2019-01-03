@@ -4,49 +4,86 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui">
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
                     <h:form id="editForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:dialog id="statusDialog" width="120px" widgetVar="statusOverlay" draggable="false" closable="false" resizable="false" showHeader="false" modal="true" style="min-width: 8em; min-height: 8em">
-                            <div class="progress-back">
-                                <div class="progress-front-1"></div>
-                                <div class="progress-front-2"></div>
-                                <div class="progress-front-3"></div>
-                                <div class="progress-front-4"></div>
-                            </div>
+                        <p:remoteCommand name="processPage" actionListener="#{editHazard_MB.editHazard()}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                            <f:actionListener binding="#{wordProcessing_MB.indexDescription(editHazard_MB.currentHazard.hazardId, editHazard_MB.currentHazard.hazardDescription, 'hazard')}"/>
+                        </p:remoteCommand>
+                        <ui:include src="../../templates/spinnerDialog.xhtml"/>
+                        <p:dialog id="similarityDialog" header="Similarity Report" widgetVar="similarityOverlay" height="auto" width="60vw" closeOnEscape="true">
+                            <p:panel styleClass="detailHazardPanel">
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed hazard:"/>
+                                </div>
+                                <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
+                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectId}"/>
+                                    </p:column>
+                                    <p:column headerText="SBS" style="width: 36%; text-align: center;">
+                                        <ui:repeat value="#{object.objectExtra}" var="code">
+                                            <p:outputLabel>#{code}<br/></p:outputLabel>
+                                        </ui:repeat>
+                                    </p:column>
+                                    <p:column headerText="Description" style="width: 42%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectDescription}"/>
+                                    </p:column>
+                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.averageDistance}"/>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="similarityWords" >
+                                            <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="commonWords" >
+                                            <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel value="If the proposed hazard is different to the above, continue. Otherwise, consider changing the description."/>
+                                </div>
+                                <div class="panelButtons">
+                                    <p:commandButton value="Continue" action="#{wordProcessing_MB.indexDescription(editHazard_MB.currentHazard.hazardId, editHazard_MB.currentHazard.hazardDescription, 'hazard')}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                                        <f:actionListener binding="#{editHazard_MB.editHazard()}"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true" onclick="PF('similarityOverlay').hide()"/>
+                                </div>
+                            </p:panel>
                         </p:dialog>
                         <p:fieldset id="fieldset" rendered="#{not editHazard_MB.showEdit}" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
                             <h:panelGrid columns="2" columnClasses="fields,explanation">
                                 <p:panel styleClass="searchPanel" style="width: 500px;">
                                     <p:panelGrid columns="3" columnClasses="left,middle,right">
                                         <p:outputLabel>Hazard ID</p:outputLabel>
-                                        <p:inputText id="HIInput" value="#{editHazard_MB.searchHI}" class="searchInput" />
+                                        <p:inputText id="HIInput" value="#{editHazard_MB.searchHI}" class="searchInput"/>
                                         <h:panelGroup styleClass="remove">
                                             <p:commandLink id="HIClear" update="editForm" action="#{editHazard_MB.clearField(component.id)}" process="@this" rendered="#{not empty editHazard_MB.searchHI}">
                                                 <i class="fa fa-remove"/>
                                             </p:commandLink>
                                         </h:panelGroup>
                                         <p:outputLabel>Hazard Date</p:outputLabel>
-                                        <p:calendar id="DTInput" inputStyleClass="searchInput" value="#{editHazard_MB.searchDT}" title="HazardDate1" maxdate="#{editHazard_MB.todaysDate()}" />
+                                        <p:calendar id="DTInput" inputStyleClass="searchInput" value="#{editHazard_MB.searchDT}" title="HazardDate1" maxdate="#{editHazard_MB.todaysDate()}"/>
                                         <h:panelGroup styleClass="remove">
                                             <p:commandLink id="DTClear" update="editForm" action="#{editHazard_MB.clearField(component.id)}" process="@this" rendered="#{not empty editHazard_MB.searchDT}">
                                                 <i class="fa fa-remove"/>
                                             </p:commandLink>
                                         </h:panelGroup>
                                         <p:outputLabel>Hazard Description:</p:outputLabel>
-                                        <p:inputText id="HDInput" value="#{editHazard_MB.searchHD}" class="searchInput" />
+                                        <p:inputText id="HDInput" value="#{editHazard_MB.searchHD}" class="searchInput"/>
                                         <h:panelGroup styleClass="remove">
                                             <p:commandLink id="HDClear" update="editForm" action="#{editHazard_MB.clearField(component.id)}" process="@this" rendered="#{not empty editHazard_MB.searchHD}">
                                                 <i class="fa fa-remove"/>
                                             </p:commandLink>
                                         </h:panelGroup>
                                         <p:outputLabel>Hazard Comments:</p:outputLabel>
-                                        <p:inputText id="HMInput" value="#{editHazard_MB.searchHM}" class="searchInput" />
+                                        <p:inputText id="HMInput" value="#{editHazard_MB.searchHM}" class="searchInput"/>
                                         <h:panelGroup styleClass="remove">
                                             <p:commandLink id="HMClear" update="editForm" action="#{editHazard_MB.clearField(component.id)}" process="@this" rendered="#{not empty editHazard_MB.searchHM}"> 
                                                 <i class="fa fa-remove"/>
@@ -159,7 +196,7 @@
                             </h:panelGrid>
                         </p:fieldset>
                         <div class="panelButtons" style="display: #{(not editHazard_MB.showEdit) ? 'block' : 'none'}">
-                            <p:commandButton value="Search Hazards" onstart="PF('statusOverlay').show()" oncomplete="PF('statusOverlay').hide()">
+                            <p:commandButton value="Search Hazards" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
                                 <f:ajax listener="#{editHazard_MB.constructSearchObject()}" execute="@form" render="@form"/>
                             </p:commandButton> 
                             <p:commandButton value="Reset Fields" update="editForm" process="@this" action="#{editHazard_MB.resetFields()}">
@@ -200,7 +237,7 @@
                                 <h:outputText value="#{item.ownerId.ownerName}"/>
                             </p:column>
                             <p:column style="width: 4%; text-align:center" headerText="Options">
-                                <h:commandLink value="Edit" class="commandLink" actionListener="#{editHazard_MB.populateTree()}" onclick="PF('statusOverlay').show()">
+                                <h:commandLink value="Edit" class="commandLink" actionListener="#{editHazard_MB.populateTree()}" onclick="PF('spinnerOverlay').show()">
                                     <f:ajax event="click" listener="#{editHazard_MB.editHazard(item)}" execute="@form" render="@form"/>
                                 </h:commandLink>
                             </p:column>
@@ -217,15 +254,15 @@
                                         <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
                                             <p:outputLabel value="Hazard Date:"/>
                                             <p:calendar value="#{editHazard_MB.currentHazard.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{editHazard_MB.currentDate()}"/>
-                                            <p:outputLabel value="Hazard Description:"  />
+                                            <p:outputLabel value="Hazard Description:" />
                                             <p:inputTextarea rows="3" cols="60"  value="#{editHazard_MB.currentHazard.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
                                             <p:outputLabel value="Hazard Comment:"/>
                                             <p:inputTextarea rows="3" cols="60" value="#{editHazard_MB.currentHazard.hazardComment}" title="HazardComment"/>
-                                            <p:outputLabel value="Hazard Activity:"  />
+                                            <p:outputLabel value="Hazard Activity:" />
                                             <p:selectOneMenu value="#{editHazard_MB.editingHA}" required="true" requiredMessage="The Hazard Activity field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHA}" var="ha" itemLabel="#{ha.activityName}" itemValue="#{ha.activityId}"/>
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Hazard Context:"  />
+                                            <p:outputLabel value="Hazard Context:" />
                                             <p:selectOneMenu  value="#{editHazard_MB.editingHC}"  required="true" requiredMessage="The HazardContextId field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHC}" var="hc" itemLabel="#{hc.hazardContextName}" itemValue="#{hc.hazardContextId}"/>
                                             </p:selectOneMenu>
@@ -237,13 +274,13 @@
                                             <p:selectOneMenu  value="#{editHazard_MB.editingHS}" required="true" requiredMessage="The HazardStatusId field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHS}" var="hs" itemLabel="#{hs.hazardStatusName}" itemValue="#{hs.hazardStatusId}"/>
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Hazard Owner:"  />
+                                            <p:outputLabel value="Hazard Owner:" />
                                             <p:selectOneMenu  value="#{editHazard_MB.editingHO}" required="true" requiredMessage="The OwnerId field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHO}" var="ho" itemLabel="#{ho.ownerName}" itemValue="#{ho.ownerId}"/>
                                             </p:selectOneMenu>
                                             <p:outputLabel value="Hazard Workshop:"/>
                                             <p:inputTextarea rows="2" cols="60"  value="#{editHazard_MB.currentHazard.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
-                                            <p:outputLabel value="Hazard Review:"  />
+                                            <p:outputLabel value="Hazard Review:" />
                                             <p:selectOneMenu  value="#{editHazard_MB.currentHazard.hazardReview}" required="true" requiredMessage="The Hazard Review field is required." class="editInput" autoWidth="false">
                                                 <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                                 <f:selectItem itemLabel="No" itemValue="N"/>
@@ -289,16 +326,16 @@
                                                     <h:outputText value="Upload a new file:"/>
                                                 </p:outputPanel>
                                             </f:facet>
-                                            <p:fileUpload fileUploadListener="#{editHazard_MB.handleUpload}" onstart="PF('fileNameOverlay').hide(); submitOverlay()" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage="" />
+                                            <p:fileUpload fileUploadListener="#{editHazard_MB.handleUpload}" onstart="PF('fileNameOverlay').hide(); submitOverlay()" update="fileTable" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="true" sizeLimit="10000000" allowTypes="/(\.|\/)(pdf|docx?m?|xlsx?m?|pptx?m?)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 10 MB in size." invalidFileMessage="Please choose a valid .pdf, .doc(x/m), .ppt(x/m), or .xls(x/m) file." fileLimitMessage=""/>
                                             <p:overlayPanel widgetVar="fileNameOverlay" hideEffect="fade" dismissable="true" showCloseIcon="true" styleClass="uploadDialog">
                                                 <p:panelGrid columns="1" styleClass="uploadGrid">
                                                     <f:facet name="header">
                                                         <h:outputText value="Set File Name and Description (Optional)"/>
                                                     </f:facet>
                                                     <h:outputText value="Name:"/>
-                                                    <p:inputText widgetVar="fileName" id="uploadName" value="#{editHazard_MB.uploadName}" />
+                                                    <p:inputText widgetVar="fileName" id="uploadName" value="#{editHazard_MB.uploadName}"/>
                                                     <h:outputText value="Description:"/>
-                                                    <p:inputTextarea widgetVar="fileDescription" id="uploadDescription" value="#{editHazard_MB.uploadDescription}" />
+                                                    <p:inputTextarea widgetVar="fileDescription" id="uploadDescription" value="#{editHazard_MB.uploadDescription}"/>
                                                 </p:panelGrid>
                                             </p:overlayPanel>
                                         </h:panelGrid>
@@ -348,12 +385,12 @@
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons" style="display: #{(editHazard_MB.showEdit) ? 'block' : 'none'}">
-                            <p:commandButton value="#{editHazard_MB.redirectionSource == 'UserWorkflow' ? 'Save changes and assign relations' : 'Save changes'}" action="#{editHazard_MB.editHazard()}" update="@form" />
+                            <p:commandButton value="#{editHazard_MB.redirectionSource == 'UserWorkflow' ? 'Save changes and assign relations' : 'Save changes'}" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(editHazard_MB.currentHazard.hazardDescription, 'hazard'), 'hazard', editHazard_MB.currentHazard.hazardId)}" update="editForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
                             <p:commandButton value="Cancel" immediate="true">
                                 <f:ajax listener="#{editHazard_MB.cancelEdit()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
-                        <p:remoteCommand name="submitOverlay" process="editForm:editTabs:uploadName, editForm:editTabs:uploadDescription" />
+                        <p:remoteCommand name="submitOverlay" process="editForm:editTabs:uploadName, editForm:editTabs:uploadDescription"/>
                         <script>
                             $(document).on("click", ".ui-fileupload input[type=file]", function(event){
                                 var component = $(this).closest('.ui-fileupload').find('.ui-icon-close').trigger('click');
@@ -361,6 +398,7 @@
                             });
                         </script>
                     </h:form>
+                    <script type="text/javascript" src="../../resources/js/viewWords.js"/>
                 </f:view>
             </ui:define>
         </ui:composition>

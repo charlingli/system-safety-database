@@ -206,7 +206,7 @@ public class trees_MB implements Serializable {
 
             for (TreeNode node : nodes) {
                 builder.append(node.getData().toString());
-                builder.append("<br />");
+                builder.append("<br/>");
             }
 
             FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Selected", builder.toString());

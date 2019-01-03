@@ -10,8 +10,49 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <f:view>
-                    <h:form id="causeForm">
+                    <h:form id="relationForm">
+                        <ui:include src="../../templates/spinnerDialog.xhtml"/>
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                        <p:remoteCommand name="processPage" actionListener="#{cause_MB.processPage()}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                            <f:actionListener binding="#{wordProcessing_MB.indexDescription(cause_MB.causeObject.causeId, cause_MB.causeObject.causeDescription, 'cause')}"/>
+                        </p:remoteCommand>
+                        <p:dialog id="similarityDialog" header="Similarity Report" widgetVar="similarityOverlay" height="auto" width="60vw" closeOnEscape="true">
+                            <p:panel styleClass="detailHazardPanel">
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed cause:"/>
+                                </div>
+                                <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
+                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectId}"/>
+                                    </p:column>
+                                    <p:column headerText="Description" style="width: 78%; text-align: center;">
+                                        <p:outputLabel value="#{object.objectDescription}"/>
+                                    </p:column>
+                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                        <p:outputLabel value="#{object.averageDistance}"/>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="similarityWords" >
+                                            <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column style="display: none">
+                                        <h:panelGroup id="commonWords" >
+                                            <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                                <div class="p-heading-spacer">
+                                    <p:outputLabel value="If the proposed cause is different to the above, continue. Otherwise, consider changing the description."/>
+                                </div>
+                                <div class="panelButtons">
+                                    <p:commandButton value="Continue" action="#{wordProcessing_MB.indexDescription(cause_MB.causeObject.causeId, cause_MB.causeObject.causeDescription, 'cause')}" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()">
+                                        <f:actionListener binding="#{cause_MB.processPage()}"/>
+                                    </p:commandButton>
+                                    <p:commandButton value="Cancel" immediate="true" onclick="PF('similarityOverlay').hide()"/>
+                                </div>
+                            </p:panel>
+                        </p:dialog>
                         <p:dialog id="detailDialog" header="Linked Hazards" widgetVar="detailOverlay" height="50vh" width="70vw">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
@@ -92,36 +133,31 @@
                                          paginatorPosition="bottom" styleClass="resultPanel">
                                 <f:facet name="header">
                                     <p:outputPanel>
-                                        <p:outputLabel value="Search all fields: "/>
-                                        <p:inputText id="globalFilter" onkeyup="PF('causeTable').filter()" placeholder="Enter keyword"/>
+                                        <p:outputLabel value="The current causes are: "/>
                                     </p:outputPanel>
                                 </f:facet>
-                                <p:column headerText="Cause Id" filterBy="#{item.causeId}" filterMatchMode="exact" styleClass="small">
+                                <p:column headerText="ID" filterBy="#{item.causeId}" filterMatchMode="exact" styleClass="small">
                                     <p:outputLabel value="#{item.causeId}"/>
                                 </p:column>
-                                <p:column headerText="Cause Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60">
+                                <p:column headerText="Description" filterBy="#{item.causeDescription}" filterMatchMode="contains" styleClass="tableColumn60">
                                     <p:outputLabel value="#{item.causeDescription}"/>
                                 </p:column>
                                 <p:column headerText="Linked Hazards" styleClass="small">
-                                    <p:commandButton action="#{cause_MB.showLinkedHazards(item)}" update="causeForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
+                                    <p:commandButton action="#{cause_MB.showLinkedHazards(item)}" update="relationForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
                                 </p:column>
                                 <p:column styleClass="small">
                                     <f:facet name="header">
                                         <p:outputLabel value="Options"/>
                                     </f:facet>
-                                    <h:commandLink value="Edit" disabled="#{cause_MB.editButton}" class="commandLink">
+                                    <h:commandLink value="Edit" disabled="#{cause_MB.addFlag}" class="commandLink">
                                         <f:ajax listener="#{cause_MB.showEdit(item)}" execute="@form" render="@form"/>
                                     </h:commandLink> |
-                                    <p:commandLink value="Delete" action="#{cause_MB.deleteCause(item)}" immediate="true" oncomplete="PF('causeTable').filter()" 
-                                                   onclick="if (!confirm('This action may also disassociate hazards from their cause. Do you wish to proceed?')) {
-                                                               return;
-                                                           }
-                                                           ;" disabled="#{cause_MB.deleteButton}" class="commandLink"/>
+                                    <h:commandLink value="Delete" action="#{cause_MB.deleteCause(item)}" immediate="true" disabled="#{cause_MB.editFlag}" onclick="return confirm('This action may also disassociate hazards from their cause. Are you sure?')" class="commandLink"/>
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
                                 <p:panel rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
-                                    <p:panelGrid id="modifyTable" styleClass="relationTable" columns="2" columnClasses="left,middle" rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
+                                    <p:panelGrid id="modifyTable" styleClass="relationTable" columns="2" columnClasses="left,middle" >
                                         <f:facet name="header">
                                             <p:outputPanel>
                                                 <c:choose>
@@ -135,42 +171,30 @@
                                             </p:outputPanel>
                                         </f:facet>
                                         <c:if test="#{cause_MB.editFlag}">
-                                            <p:outputLabel value="Cause Id:" for="causeId"/>
+                                            <p:outputLabel value="ID:" for="causeId"/>
                                             <p:inputText id="causeId" value="#{cause_MB.causeObject.causeId}" disabled="true" title="CauseId" required="true" requiredMessage="The Cause Id field is required."/>
                                         </c:if>
-                                        <p:outputLabel value="Cause Description:" for="causeDescription"/>
+                                        <p:outputLabel value="Description:" for="causeDescription"/>
                                         <p:inputTextarea rows="4" id="causeDescription" value="#{cause_MB.causeObject.causeDescription}" title="CauseDescription" required="true" requiredMessage="The Cause Description field is required."/>
                                     </p:panelGrid>
                                 </p:panel>
                                 <div class="panelButtons">
-                                    <c:choose>
-                                        <c:when test="#{cause_MB.addFlag}">
-                                            <p:commandButton value="Save">
-                                                <f:ajax listener="#{cause_MB.addCause()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-                                            <p:commandButton value="Cancel" immediate="true">
-                                                <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-                                        </c:when>
-                                        <c:when test="#{cause_MB.editFlag}">
-                                            <p:commandButton value="Save">
-                                                <f:ajax listener="#{cause_MB.editCause()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-                                            <p:commandButton value="Cancel" immediate="true">
-                                                <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
-                                            </p:commandButton>
-
-                                        </c:when>
-                                    </c:choose>
+                                    <h:panelGroup rendered="#{cause_MB.addFlag or cause_MB.editFlag}">
+                                        <p:commandButton value="Save" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(cause_MB.causeObject.causeDescription, 'cause'), 'cause', cause_MB.causeObject.causeId)}" update="relationForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                                        <p:commandButton value="Cancel" immediate="true">
+                                            <f:ajax listener="#{cause_MB.cancel()}" execute="@form" render="@form"/>
+                                        </p:commandButton>
+                                    </h:panelGroup>
                                 </div>
                             </p:panel>
                         </h:panelGrid>
                         <div class="panelButtons">
-                            <p:commandButton value="Add Causes" disabled="#{cause_MB.addButton}"> 
+                            <p:commandButton value="Add Causes" disabled="#{cause_MB.addFlag or cause_MB.editFlag}"> 
                                 <f:ajax listener="#{cause_MB.showAdd()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
                     </h:form>
+                    <script type="text/javascript" src="../../resources/js/viewWords.js"/>
                 </f:view>
             </ui:define>
         </ui:composition>

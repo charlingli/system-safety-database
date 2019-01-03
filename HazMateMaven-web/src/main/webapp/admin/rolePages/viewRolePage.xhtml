@@ -18,10 +18,10 @@
                             </p:outputPanel>
                         </f:facet>
                         <p:column headerText="Page Name" style="width: 25%">
-                            <h:outputText value="#{role_page_MB.getPageName(p.pageId)}" />
+                            <h:outputText value="#{role_page_MB.getPageName(p.pageId)}"/>
                         </p:column>
                         <p:columns var="r" value="#{role_page_MB.listRoles}" columnIndexVar="colIndex" headerText="#{r.roleName} Access">
-                            <p:selectBooleanCheckbox value="#{p.permission[r.roleName]}" />
+                            <p:selectBooleanCheckbox value="#{p.permission[r.roleName]}"/>
                         </p:columns>
                     </p:dataTable>
                     <div class="panelButtons">

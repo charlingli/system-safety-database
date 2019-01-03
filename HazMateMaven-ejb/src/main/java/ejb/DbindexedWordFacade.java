@@ -104,5 +104,60 @@ public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implement
             em.createNativeQuery(query).executeUpdate();
         }
     }
+    
+    @Override
+    public void removeWord(String commonWord) {
+        String findQuerySTR = "";
+        String deleteQuerySTR = "";
+        String updateQuerySTR = "";
+        List<DbindexedWord> affectedObjects = new ArrayList<>();
+        int deletedRows = 0;
+        int updatedRows = 0;
+        try {
+            findQuerySTR = "FROM DbindexedWord i2 WHERE i2.dbindexedWordPK.objectId "
+                    + "IN (SELECT i1.dbindexedWordPK.objectId FROM DbindexedWord i1 "
+                    + "WHERE i1.indexedWord = ?1 AND i2.dbindexedWordPK.objectLineNo "
+                    + "> i1.dbindexedWordPK.objectLineNo)";
+            Query findQuery = em.createQuery(findQuerySTR);
+            findQuery.setParameter(1, commonWord);
+            affectedObjects = findQuery.getResultList();
+            
+            deleteQuerySTR = "DELETE FROM DbindexedWord iw WHERE iw.indexedWord = ?1";
+            Query deleteQuery = em.createQuery(deleteQuerySTR);
+            deleteQuery.setParameter(1, commonWord);
+            deletedRows = deleteQuery.executeUpdate();
+            
+            for (DbindexedWord line : affectedObjects) {
+                updateQuerySTR = "UPDATE DbindexedWord iw "
+                        + "SET iw.dbindexedWordPK.objectLineNo = "
+                        + "iw.dbindexedWordPK.objectLineNo - 1 "
+                        + "WHERE iw.dbindexedWordPK.objectId = ?1 "
+                        + "AND iw.dbindexedWordPK.objectType = ?2";
+                Query updateQuery = em.createQuery(updateQuerySTR);
+                updateQuery.setParameter(1, line.getDbindexedWordPK().getObjectId());
+                updateQuery.setParameter(2, line.getDbindexedWordPK().getObjectType());
+                updatedRows = updateQuery.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    
+    @Override
+    public void removeObject(String id, String type) {
+        String querySTR;
+        int deletedRows;
+        try {
+            querySTR = "DELETE FROM DbindexedWord iw "
+                    + "WHERE iw.dbindexedWordPK.objectId = ?1 "
+                    + "AND iw.dbindexedWordPK.objectType = ?2";
+            Query deleteQuery = em.createQuery(querySTR);
+            deleteQuery.setParameter(1, id);
+            deleteQuery.setParameter(2, type);
+            deletedRows = deleteQuery.executeUpdate();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
 }

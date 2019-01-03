@@ -102,21 +102,12 @@ public class wordView_MB implements Serializable {
         addFlag = true;
     }
     
-    public void addCommonWord() {
-        if (!listCommonWords.stream().anyMatch(i -> i.getCommonWord().equalsIgnoreCase(getCommonWord()))) {
-            DbcommonWord newWord = new DbcommonWord();
-            newWord.setCommonWord(commonWord.toLowerCase());
-            dbcommonWordFacade.create(newWord);
-            init();
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The word has been successfully added."));
-        } else {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The word is already in the common words table."));
-        }
+    public void hideAdd() {
+        init();
     }
     
     public void cancel() {
         setCommonWord("");
         addFlag = false;
     }
-    
 }
