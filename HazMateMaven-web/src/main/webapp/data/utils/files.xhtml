@@ -12,7 +12,7 @@
                 <f:view>
                     <h:form id="filesForm">
                         <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
-                        <p:dialog id="linkedDialog" header="Linked Hazards" widgetVar="linkedOverlay" height="50vh" width="70vw">
+                        <p:dialog id="linkedDialog" header="Linked Hazards" widgetVar="linkedOverlay" height="50vh" width="70vw" closeOnEscape="true">
                             <p:panel styleClass="detailHazardPanel">
                                 <div class="p-heading-spacer">
                                     <p:outputLabel styleClass="p-heading" value="Viewing hazards associated with #{files_MB.fileObject.fileName}.#{files_MB.fileObject.fileExtension}:"/>
