@@ -1805,11 +1805,7 @@ public class trees_MB implements Serializable {
             }
             importHeader.setTotalLines(listOfImportedLines.size());
 
-            // Storing the entites in the database
-            System.out.println("Header: " + importHeader.toString());
-            System.out.println("Lines: " + listOfImportedLines.size());
-            System.out.println("Errors: " + listOfErrors.size());
-
+            // Saving entites in the database
             dbimportHeaderFacade.create(importHeader);
             if (listOfImportedLines.size() > 0) {
                 listOfImportedLines.forEach((line) -> {
