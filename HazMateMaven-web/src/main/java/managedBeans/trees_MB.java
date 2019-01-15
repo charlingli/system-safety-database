@@ -1787,7 +1787,9 @@ public class trees_MB implements Serializable {
                     importLineObj processedLine = checkImportLine(row, importHeader.getProcessId(), lineNo);
                     if (processedLine != null) {
                         listOfImportedLines.add(processedLine.lineData);
-                        listOfErrors.add(processedLine.lineError);
+                        if (processedLine.lineError.size() > 0) {
+                            listOfErrors.add(processedLine.lineError);
+                        }
                     }
                 }
             }
@@ -1829,16 +1831,19 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardContextId(tmpVar.getHazardContextId());
                                     tmpObj.lineData.setHazardContext(tmpVar.getHazardContextName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardContext", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardContext", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing description    
                         case 1:
                             if ("".equals(row.getCell(i).toString())) {
-                                checkLineError(tmpObj, "hazardDescription", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
+                                if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), "Hazard").size() > 0) {
+                                    createLineError(tmpObj, "hazardContext", 3);
+                                }
                             }
                             break;
                         // Processing hazard location
@@ -1849,10 +1854,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardLocationId(tmpVar.getLocationId());
                                     tmpObj.lineData.setHazardLocation(tmpVar.getLocationName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardLocation", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardLocation", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard activity
@@ -1863,10 +1868,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardActivityId(tmpVar.getActivityId());
                                     tmpObj.lineData.setHazardActivity(tmpVar.getActivityName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardActivity", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardActivity", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard owner
@@ -1877,10 +1882,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardOwnerId(tmpVar.getOwnerId());
                                     tmpObj.lineData.setHazardOwner(tmpVar.getOwnerName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardOwner", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardOwner", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard type
@@ -1891,10 +1896,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardTypeId(tmpVar.getHazardTypeId());
                                     tmpObj.lineData.setHazardType(tmpVar.getHazardTypeName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardType", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardType", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard status
@@ -1905,10 +1910,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardStatusId(tmpVar.getHazardStatusId());
                                     tmpObj.lineData.setHazardStatus(tmpVar.getHazardStatusName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardStatus", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardStatus", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard risk class
@@ -1919,10 +1924,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setHazardRiskClassId(tmpVar.getRiskClassId());
                                     tmpObj.lineData.setHazardRiskClass(tmpVar.getRiskClassName());
                                 } else {
-                                    checkLineError(tmpObj, "hazardRiskClass", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardRiskClass", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing current frequency Id
@@ -1932,10 +1937,10 @@ public class trees_MB implements Serializable {
                                 if (tmpVar.getFrequencyScore() != null) {
                                     tmpObj.lineData.setHazardCurrentFrequencyId(tmpVar.getRiskFrequencyId());
                                 } else {
-                                    checkLineError(tmpObj, "hazardCurrentFrequency", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardCurrentFrequency", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing current severity Id
@@ -1945,10 +1950,10 @@ public class trees_MB implements Serializable {
                                 if (tmpVar.getSeverityScore() != null) {
                                     tmpObj.lineData.setHazardCurrentSeverityId(tmpVar.getRiskSeverityId());
                                 } else {
-                                    checkLineError(tmpObj, "hazardCurrentSeverity", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardCurrentSeverity", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing target frequency Id
@@ -1958,10 +1963,10 @@ public class trees_MB implements Serializable {
                                 if (tmpVar.getFrequencyScore() != null) {
                                     tmpObj.lineData.setHazardTargetFrequencyId(tmpVar.getRiskFrequencyId());
                                 } else {
-                                    checkLineError(tmpObj, "hazardTargetFrequency", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardTargetFrequency", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing target severity Id
@@ -1971,10 +1976,10 @@ public class trees_MB implements Serializable {
                                 if (tmpVar.getSeverityScore() != null) {
                                     tmpObj.lineData.setHazardTargetSeverityId(tmpVar.getRiskSeverityId());
                                 } else {
-                                    checkLineError(tmpObj, "hazardTargetSeverity", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardTargetSeverity", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard comment
@@ -1990,7 +1995,7 @@ public class trees_MB implements Serializable {
                                     Logger.getLogger(trees_MB.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             } else {
-                                checkLineError(tmpObj, "hazardDate", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard workshop
@@ -1998,7 +2003,7 @@ public class trees_MB implements Serializable {
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setHazardWorkshop(row.getCell(i).toString());
                             } else {
-                                checkLineError(tmpObj, "hazardWorkshop", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard legacy Id    
@@ -2010,7 +2015,7 @@ public class trees_MB implements Serializable {
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setHazardHFReview(row.getCell(i).toString());
                             } else {
-                                checkLineError(tmpObj, "hazardHFReview", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing hazard sbs codes 
@@ -2018,7 +2023,7 @@ public class trees_MB implements Serializable {
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setHazardSbs(row.getCell(i).toString());
                             } else {
-                                checkLineError(tmpObj, "hazardSbs", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing relation type
@@ -2026,15 +2031,18 @@ public class trees_MB implements Serializable {
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setRelationType(row.getCell(i).toString());
                             } else {
-                                checkLineError(tmpObj, "relationType", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing relation description
                         case 19:
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setHazardDescription(row.getCell(i).toString());
+                                if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), row.getCell(18).toString()).size() > 0) {
+                                    createLineError(tmpObj, row.getCell(18).toString(), 3);
+                                }
                             } else {
-                                checkLineError(tmpObj, "relationDescription", false, row.getCell(i).toString(), false, 0);
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing control owner
@@ -2045,12 +2053,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setControlOwnerId(tmpVar.getOwnerId());
                                     tmpObj.lineData.setControlOwner(tmpVar.getOwnerName());
                                 } else {
-                                    checkLineError(tmpObj, "controlOwner", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
-                            } else {
-                                if (row.getCell(18).toString().equals("Control")) {
-                                    checkLineError(tmpObj, "controlOwner", false, row.getCell(i).toString(), false, 0);
-                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing control hierarchy
@@ -2061,22 +2067,18 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setControlHierarchyId(tmpVar.getControlHierarchyId());
                                     tmpObj.lineData.setControlHierarchy(tmpVar.getControlHierarchyName());
                                 } else {
-                                    checkLineError(tmpObj, "controlHierarchy", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
-                            } else {
-                                if (row.getCell(18).toString().equals("Control")) {
-                                    checkLineError(tmpObj, "controlHierarchy", false, row.getCell(i).toString(), false, 0);
-                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing control type
                         case 22:
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setControlType(row.getCell(i).toString());
-                            } else {
-                                if (row.getCell(18).toString().equals("Control")) {
-                                    checkLineError(tmpObj, "controlType", false, row.getCell(i).toString(), false, 0);
-                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing control recommendation
@@ -2087,12 +2089,10 @@ public class trees_MB implements Serializable {
                                     tmpObj.lineData.setControlHierarchyId(tmpVar.getControlRecommendId());
                                     tmpObj.lineData.setControlHierarchy(tmpVar.getControlRecommendName());
                                 } else {
-                                    checkLineError(tmpObj, "controlRecommend", false, row.getCell(i).toString(), true, -1);
+                                    createLineError(tmpObj, "hazardContext", 2);
                                 }
-                            } else {
-                                if (row.getCell(18).toString().equals("Control")) {
-                                    checkLineError(tmpObj, "controlRecommend", false, row.getCell(i).toString(), false, 0);
-                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         // Processing control justify
@@ -2105,10 +2105,8 @@ public class trees_MB implements Serializable {
                         case 25:
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setControlExistingOrProposed(row.getCell(i).toString());
-                            } else {
-                                if (row.getCell(18).toString().equals("Control")) {
-                                    checkLineError(tmpObj, "controlStatus", false, row.getCell(i).toString(), false, 0);
-                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "hazardContext", 1);
                             }
                             break;
                         default:
@@ -2124,21 +2122,25 @@ public class trees_MB implements Serializable {
         return tmpObj;
     }
 
-    // Creating the list of errors per line
-    private importLineObj checkLineError(importLineObj tmpObj, String fieldName, boolean nullable, String value, boolean requiredId, int id) {
-        if (!nullable && "".equals(value)) {
-            DbimportLineError tmpError = new DbimportLineError(tmpObj.lineData.getDbimportLinePK().getProcessId(), tmpObj.lineData.getDbimportLinePK().getProcessIdLine(), tmpObj.lineError.size() + 1);
-            tmpError.setProcessErrorCode(new DbimportErrorCode(1));
-            tmpError.setProcessErrorLocation(fieldName);
-            tmpObj.lineError.add(tmpError);
+// Creating the list of errors per line
+    private importLineObj createLineError(importLineObj tmpObj, String fieldName, int errorCode) {
+        DbimportLineError tmpError = new DbimportLineError(tmpObj.lineData.getDbimportLinePK().getProcessId(),
+                tmpObj.lineData.getDbimportLinePK().getProcessIdLine(), tmpObj.lineError.size() + 1);
+        tmpError.setProcessErrorLocation(fieldName);
+        switch (errorCode) {
+            case 1:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(1));
+                break;
+            case 2:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(2));
+                break;
+            case 3:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(3));
+                break;
         }
-        if (requiredId && id == -1) {
-            DbimportLineError tmpError = new DbimportLineError(tmpObj.lineData.getDbimportLinePK().getProcessId(), tmpObj.lineData.getDbimportLinePK().getProcessIdLine(), tmpObj.lineError.size() + 1);
-            tmpError.setProcessErrorCode(new DbimportErrorCode(2));
-            tmpError.setProcessErrorLocation(fieldName);
-            tmpObj.lineError.add(tmpError);
-        }
+        tmpObj.lineError.add(tmpError);
         return tmpObj;
+
     }
 
     class importLineObj {

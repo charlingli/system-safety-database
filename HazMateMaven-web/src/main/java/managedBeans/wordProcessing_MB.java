@@ -53,37 +53,10 @@ public class wordProcessing_MB {
     }
 
     public List<similarityObject> findSimilarity(String newDescription, String objectType) {
-        // Processing the entered text against the recognised common words in the database
-        String[] words = newDescription.replaceAll("/", " ").replaceAll("[^A-z\\s\\d\\-][\\\\\\^]?", "").toLowerCase().split("\\s+");
-        List<String> listOfCommonWords = dbcommonWordFacade.findAll().stream().map(h -> h.getCommonWord()).collect(Collectors.toList());
-        List<String> listOfValues = new ArrayList<>();
-        for (String word : words) {
-            if (!listOfCommonWords.contains(word) && word.length() > 2 && !listOfValues.contains(word)) {
-                listOfValues.add(word);
-            }
-        }
-
-        // Getting from the database the hazards that matches with the typed words
-        List<Object[]> resultantList = dbindexedWordFacade.findSimilarities(objectType, listOfValues);
-
-        // Calculating the distance between the stored data and the new data
-        List<similarityObject> listPotentialDuplicates = new ArrayList<>();
-        resultantList.forEach((tmp) -> {
-            int percentageFromIndexed = (Integer.parseInt(tmp[1].toString()) * 100) / Integer.parseInt(tmp[2].toString());
-            int percentageFromNew = (Integer.parseInt(tmp[1].toString()) * 100) / listOfValues.size();
-            int averageDistance = (percentageFromIndexed + percentageFromNew) / 2;
-            //System.out.println(tmp[0].toString() + " " + tmp[1].toString() + " " + tmp[2].toString() + " " + tmp[3].toString() + " " + averageDistance);
-            //System.out.println("percentageFromIndexed -> ( " + tmp[1].toString() + " / " + tmp[2].toString() + " * 100 ) = " + percentageFromIndexed);
-            //System.out.println("percentageFromNew -> ( " + tmp[1].toString() + " / " + listOfValues.size() + " * 100 ) = " + percentageFromNew);
-            if (averageDistance > dbsystemParametersFacade.find(1).getSimilarityThreshold()) {
-                listPotentialDuplicates.add(new similarityObject(tmp[0].toString(), averageDistance, tmp[3].toString().split(",")));
-            }
-        });
-        return listPotentialDuplicates;
+        return dbindexedWordFacade.findPotentialDuplicates(newDescription, objectType);
     }
 
     public void indexDatabase() {
-        System.out.println("Indexing called");
         int result = dbindexedWordFacade.truncateTable();
         List<temporalObj> processingListHazards = new ArrayList<>();
         dbHazardFacade.findAll().forEach((tmp) -> {
