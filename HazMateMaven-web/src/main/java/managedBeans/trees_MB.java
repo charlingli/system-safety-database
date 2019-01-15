@@ -1676,7 +1676,7 @@ public class trees_MB implements Serializable {
         sheet.lockFormatRows(true);
         sheet.lockInsertColumns(true);
         sheet.lockInsertRows(true);
-        sheet.protectSheet(dbsystemParametersFacade.find(1).getExcelLayoutPassword());  // Bring from the database
+        sheet.protectSheet(dbsystemParametersFacade.find(1).getExcelLayoutPassword());
         sheet.enableLocking();
         //workbook.lockStructure();
         workbook.setSheetHidden(1, true);
@@ -2153,6 +2153,7 @@ public class trees_MB implements Serializable {
         DbimportLineError tmpError = new DbimportLineError(tmpObj.lineData.getDbimportLinePK().getProcessId(),
                 tmpObj.lineData.getDbimportLinePK().getProcessIdLine(), tmpObj.lineError.size() + 1);
         tmpError.setProcessErrorLocation(fieldName);
+        tmpError.setProcessErrorStatus("P");
         switch (errorCode) {
             case 1:
                 tmpError.setProcessErrorCode(new DbimportErrorCode(1));

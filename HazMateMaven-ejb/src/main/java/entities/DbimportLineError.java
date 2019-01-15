@@ -6,6 +6,7 @@
 package entities;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -30,16 +32,24 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DbimportLineError.findAll", query = "SELECT d FROM DbimportLineError d")
     , @NamedQuery(name = "DbimportLineError.findByProcessId", query = "SELECT d FROM DbimportLineError d WHERE d.dbimportLineErrorPK.processId = :processId")
     , @NamedQuery(name = "DbimportLineError.findByProcessIdLine", query = "SELECT d FROM DbimportLineError d WHERE d.dbimportLineErrorPK.processIdLine = :processIdLine")
-    , @NamedQuery(name = "DbimportLineError.findByProcessIdLineError", query = "SELECT d FROM DbimportLineError d WHERE d.dbimportLineErrorPK.processIdLineError = :processIdLineError")})
+    , @NamedQuery(name = "DbimportLineError.findByProcessIdLineError", query = "SELECT d FROM DbimportLineError d WHERE d.dbimportLineErrorPK.processIdLineError = :processIdLineError")
+    , @NamedQuery(name = "DbimportLineError.findByProcessErrorStatus", query = "SELECT d FROM DbimportLineError d WHERE d.processErrorStatus = :processErrorStatus")})
 public class DbimportLineError implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DbimportLineErrorPK dbimportLineErrorPK;
+    @Basic(optional = false)
+    @NotNull
     @Lob
-    @Size(max = 65535)
+    @Size(min = 1, max = 65535)
     @Column(name = "processErrorLocation")
     private String processErrorLocation;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1)
+    @Column(name = "processErrorStatus")
+    private String processErrorStatus;
     @JoinColumn(name = "processErrorCode", referencedColumnName = "errorId")
     @ManyToOne(optional = false)
     private DbimportErrorCode processErrorCode;
@@ -54,6 +64,12 @@ public class DbimportLineError implements Serializable {
 
     public DbimportLineError(DbimportLineErrorPK dbimportLineErrorPK) {
         this.dbimportLineErrorPK = dbimportLineErrorPK;
+    }
+
+    public DbimportLineError(DbimportLineErrorPK dbimportLineErrorPK, String processErrorLocation, String processErrorStatus) {
+        this.dbimportLineErrorPK = dbimportLineErrorPK;
+        this.processErrorLocation = processErrorLocation;
+        this.processErrorStatus = processErrorStatus;
     }
 
     public DbimportLineError(String processId, int processIdLine, int processIdLineError) {
@@ -74,6 +90,14 @@ public class DbimportLineError implements Serializable {
 
     public void setProcessErrorLocation(String processErrorLocation) {
         this.processErrorLocation = processErrorLocation;
+    }
+
+    public String getProcessErrorStatus() {
+        return processErrorStatus;
+    }
+
+    public void setProcessErrorStatus(String processErrorStatus) {
+        this.processErrorStatus = processErrorStatus;
     }
 
     public DbimportErrorCode getProcessErrorCode() {
