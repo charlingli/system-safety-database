@@ -8,7 +8,6 @@ package entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -22,7 +21,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -75,171 +73,105 @@ public class DbimportLine implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DbimportLinePK dbimportLinePK;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardContextId")
-    private int hazardContextId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 70)
+    private Integer hazardContextId;
+    @Size(max = 70)
     @Column(name = "hazardContext")
     private String hazardContext;
-    @Basic(optional = false)
-    @NotNull
     @Lob
-    @Size(min = 1, max = 65535)
+    @Size(max = 65535)
     @Column(name = "hazardDescription")
     private String hazardDescription;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardLocationId")
-    private int hazardLocationId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer hazardLocationId;
+    @Size(max = 45)
     @Column(name = "hazardLocation")
     private String hazardLocation;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardActivityId")
-    private int hazardActivityId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer hazardActivityId;
+    @Size(max = 45)
     @Column(name = "hazardActivity")
     private String hazardActivity;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardOwnerId")
-    private int hazardOwnerId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
+    private Integer hazardOwnerId;
+    @Size(max = 100)
     @Column(name = "hazardOwner")
     private String hazardOwner;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardTypeId")
-    private int hazardTypeId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer hazardTypeId;
+    @Size(max = 45)
     @Column(name = "hazardType")
     private String hazardType;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardStatusId")
-    private int hazardStatusId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer hazardStatusId;
+    @Size(max = 45)
     @Column(name = "hazardStatus")
     private String hazardStatus;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardRiskClassId")
-    private int hazardRiskClassId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer hazardRiskClassId;
+    @Size(max = 45)
     @Column(name = "hazardRiskClass")
     private String hazardRiskClass;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardCurrentFrequencyId")
-    private int hazardCurrentFrequencyId;
-    @Basic(optional = false)
-    @NotNull
+    private Integer hazardCurrentFrequencyId;
     @Column(name = "hazardCurrentSeverityId")
-    private int hazardCurrentSeverityId;
-    @Basic(optional = false)
-    @NotNull
+    private Integer hazardCurrentSeverityId;
     @Column(name = "hazardTargetFrequencyId")
-    private int hazardTargetFrequencyId;
-    @Basic(optional = false)
-    @NotNull
+    private Integer hazardTargetFrequencyId;
     @Column(name = "hazardTargetSeverityId")
-    private int hazardTargetSeverityId;
+    private Integer hazardTargetSeverityId;
     @Lob
     @Size(max = 65535)
     @Column(name = "hazardComment")
     private String hazardComment;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "hazardDate")
     @Temporal(TemporalType.DATE)
     private Date hazardDate;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 500)
+    @Size(max = 500)
     @Column(name = "hazardWorkshop")
     private String hazardWorkshop;
     @Size(max = 20)
     @Column(name = "hazardLegacyId")
     private String hazardLegacyId;
-    @Size(max = 1)
+    @Size(max = 20)
     @Column(name = "hazardHFReview")
     private String hazardHFReview;
-    @Basic(optional = false)
-    @NotNull
     @Lob
-    @Size(min = 1, max = 65535)
+    @Size(max = 65535)
     @Column(name = "hazardSbs")
     private String hazardSbs;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
+    @Size(max = 20)
     @Column(name = "relationType")
     private String relationType;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "relationId")
-    private int relationId;
-    @Basic(optional = false)
-    @NotNull
+    private Integer relationId;
     @Lob
-    @Size(min = 1, max = 65535)
+    @Size(max = 65535)
     @Column(name = "relationDescription")
     private String relationDescription;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "controlOwnerId")
-    private int controlOwnerId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
+    private Integer controlOwnerId;
+    @Size(max = 100)
     @Column(name = "controlOwner")
     private String controlOwner;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "controlHierarchyId")
-    private int controlHierarchyId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer controlHierarchyId;
+    @Size(max = 45)
     @Column(name = "controlHierarchy")
     private String controlHierarchy;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "controlRecommendId")
-    private int controlRecommendId;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 45)
+    private Integer controlRecommendId;
+    @Size(max = 45)
     @Column(name = "controlRecommend")
     private String controlRecommend;
     @Lob
     @Size(max = 65535)
     @Column(name = "controlJustify")
     private String controlJustify;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1)
+    @Size(max = 20)
     @Column(name = "controlType")
     private String controlType;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1)
+    @Size(max = 20)
     @Column(name = "controlExistingOrProposed")
     private String controlExistingOrProposed;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dbimportLine")
@@ -255,43 +187,6 @@ public class DbimportLine implements Serializable {
         this.dbimportLinePK = dbimportLinePK;
     }
 
-    public DbimportLine(DbimportLinePK dbimportLinePK, int hazardContextId, String hazardContext, String hazardDescription, int hazardLocationId, String hazardLocation, int hazardActivityId, String hazardActivity, int hazardOwnerId, String hazardOwner, int hazardTypeId, String hazardType, int hazardStatusId, String hazardStatus, int hazardRiskClassId, String hazardRiskClass, int hazardCurrentFrequencyId, int hazardCurrentSeverityId, int hazardTargetFrequencyId, int hazardTargetSeverityId, Date hazardDate, String hazardWorkshop, String hazardSbs, String relationType, int relationId, String relationDescription, int controlOwnerId, String controlOwner, int controlHierarchyId, String controlHierarchy, int controlRecommendId, String controlRecommend, String controlType, String controlExistingOrProposed) {
-        this.dbimportLinePK = dbimportLinePK;
-        this.hazardContextId = hazardContextId;
-        this.hazardContext = hazardContext;
-        this.hazardDescription = hazardDescription;
-        this.hazardLocationId = hazardLocationId;
-        this.hazardLocation = hazardLocation;
-        this.hazardActivityId = hazardActivityId;
-        this.hazardActivity = hazardActivity;
-        this.hazardOwnerId = hazardOwnerId;
-        this.hazardOwner = hazardOwner;
-        this.hazardTypeId = hazardTypeId;
-        this.hazardType = hazardType;
-        this.hazardStatusId = hazardStatusId;
-        this.hazardStatus = hazardStatus;
-        this.hazardRiskClassId = hazardRiskClassId;
-        this.hazardRiskClass = hazardRiskClass;
-        this.hazardCurrentFrequencyId = hazardCurrentFrequencyId;
-        this.hazardCurrentSeverityId = hazardCurrentSeverityId;
-        this.hazardTargetFrequencyId = hazardTargetFrequencyId;
-        this.hazardTargetSeverityId = hazardTargetSeverityId;
-        this.hazardDate = hazardDate;
-        this.hazardWorkshop = hazardWorkshop;
-        this.hazardSbs = hazardSbs;
-        this.relationType = relationType;
-        this.relationId = relationId;
-        this.relationDescription = relationDescription;
-        this.controlOwnerId = controlOwnerId;
-        this.controlOwner = controlOwner;
-        this.controlHierarchyId = controlHierarchyId;
-        this.controlHierarchy = controlHierarchy;
-        this.controlRecommendId = controlRecommendId;
-        this.controlRecommend = controlRecommend;
-        this.controlType = controlType;
-        this.controlExistingOrProposed = controlExistingOrProposed;
-    }
-
     public DbimportLine(String processId, int processIdLine) {
         this.dbimportLinePK = new DbimportLinePK(processId, processIdLine);
     }
@@ -304,11 +199,11 @@ public class DbimportLine implements Serializable {
         this.dbimportLinePK = dbimportLinePK;
     }
 
-    public int getHazardContextId() {
+    public Integer getHazardContextId() {
         return hazardContextId;
     }
 
-    public void setHazardContextId(int hazardContextId) {
+    public void setHazardContextId(Integer hazardContextId) {
         this.hazardContextId = hazardContextId;
     }
 
@@ -328,11 +223,11 @@ public class DbimportLine implements Serializable {
         this.hazardDescription = hazardDescription;
     }
 
-    public int getHazardLocationId() {
+    public Integer getHazardLocationId() {
         return hazardLocationId;
     }
 
-    public void setHazardLocationId(int hazardLocationId) {
+    public void setHazardLocationId(Integer hazardLocationId) {
         this.hazardLocationId = hazardLocationId;
     }
 
@@ -344,11 +239,11 @@ public class DbimportLine implements Serializable {
         this.hazardLocation = hazardLocation;
     }
 
-    public int getHazardActivityId() {
+    public Integer getHazardActivityId() {
         return hazardActivityId;
     }
 
-    public void setHazardActivityId(int hazardActivityId) {
+    public void setHazardActivityId(Integer hazardActivityId) {
         this.hazardActivityId = hazardActivityId;
     }
 
@@ -360,11 +255,11 @@ public class DbimportLine implements Serializable {
         this.hazardActivity = hazardActivity;
     }
 
-    public int getHazardOwnerId() {
+    public Integer getHazardOwnerId() {
         return hazardOwnerId;
     }
 
-    public void setHazardOwnerId(int hazardOwnerId) {
+    public void setHazardOwnerId(Integer hazardOwnerId) {
         this.hazardOwnerId = hazardOwnerId;
     }
 
@@ -376,11 +271,11 @@ public class DbimportLine implements Serializable {
         this.hazardOwner = hazardOwner;
     }
 
-    public int getHazardTypeId() {
+    public Integer getHazardTypeId() {
         return hazardTypeId;
     }
 
-    public void setHazardTypeId(int hazardTypeId) {
+    public void setHazardTypeId(Integer hazardTypeId) {
         this.hazardTypeId = hazardTypeId;
     }
 
@@ -392,11 +287,11 @@ public class DbimportLine implements Serializable {
         this.hazardType = hazardType;
     }
 
-    public int getHazardStatusId() {
+    public Integer getHazardStatusId() {
         return hazardStatusId;
     }
 
-    public void setHazardStatusId(int hazardStatusId) {
+    public void setHazardStatusId(Integer hazardStatusId) {
         this.hazardStatusId = hazardStatusId;
     }
 
@@ -408,11 +303,11 @@ public class DbimportLine implements Serializable {
         this.hazardStatus = hazardStatus;
     }
 
-    public int getHazardRiskClassId() {
+    public Integer getHazardRiskClassId() {
         return hazardRiskClassId;
     }
 
-    public void setHazardRiskClassId(int hazardRiskClassId) {
+    public void setHazardRiskClassId(Integer hazardRiskClassId) {
         this.hazardRiskClassId = hazardRiskClassId;
     }
 
@@ -424,35 +319,35 @@ public class DbimportLine implements Serializable {
         this.hazardRiskClass = hazardRiskClass;
     }
 
-    public int getHazardCurrentFrequencyId() {
+    public Integer getHazardCurrentFrequencyId() {
         return hazardCurrentFrequencyId;
     }
 
-    public void setHazardCurrentFrequencyId(int hazardCurrentFrequencyId) {
+    public void setHazardCurrentFrequencyId(Integer hazardCurrentFrequencyId) {
         this.hazardCurrentFrequencyId = hazardCurrentFrequencyId;
     }
 
-    public int getHazardCurrentSeverityId() {
+    public Integer getHazardCurrentSeverityId() {
         return hazardCurrentSeverityId;
     }
 
-    public void setHazardCurrentSeverityId(int hazardCurrentSeverityId) {
+    public void setHazardCurrentSeverityId(Integer hazardCurrentSeverityId) {
         this.hazardCurrentSeverityId = hazardCurrentSeverityId;
     }
 
-    public int getHazardTargetFrequencyId() {
+    public Integer getHazardTargetFrequencyId() {
         return hazardTargetFrequencyId;
     }
 
-    public void setHazardTargetFrequencyId(int hazardTargetFrequencyId) {
+    public void setHazardTargetFrequencyId(Integer hazardTargetFrequencyId) {
         this.hazardTargetFrequencyId = hazardTargetFrequencyId;
     }
 
-    public int getHazardTargetSeverityId() {
+    public Integer getHazardTargetSeverityId() {
         return hazardTargetSeverityId;
     }
 
-    public void setHazardTargetSeverityId(int hazardTargetSeverityId) {
+    public void setHazardTargetSeverityId(Integer hazardTargetSeverityId) {
         this.hazardTargetSeverityId = hazardTargetSeverityId;
     }
 
@@ -512,11 +407,11 @@ public class DbimportLine implements Serializable {
         this.relationType = relationType;
     }
 
-    public int getRelationId() {
+    public Integer getRelationId() {
         return relationId;
     }
 
-    public void setRelationId(int relationId) {
+    public void setRelationId(Integer relationId) {
         this.relationId = relationId;
     }
 
@@ -528,11 +423,11 @@ public class DbimportLine implements Serializable {
         this.relationDescription = relationDescription;
     }
 
-    public int getControlOwnerId() {
+    public Integer getControlOwnerId() {
         return controlOwnerId;
     }
 
-    public void setControlOwnerId(int controlOwnerId) {
+    public void setControlOwnerId(Integer controlOwnerId) {
         this.controlOwnerId = controlOwnerId;
     }
 
@@ -544,11 +439,11 @@ public class DbimportLine implements Serializable {
         this.controlOwner = controlOwner;
     }
 
-    public int getControlHierarchyId() {
+    public Integer getControlHierarchyId() {
         return controlHierarchyId;
     }
 
-    public void setControlHierarchyId(int controlHierarchyId) {
+    public void setControlHierarchyId(Integer controlHierarchyId) {
         this.controlHierarchyId = controlHierarchyId;
     }
 
@@ -560,11 +455,11 @@ public class DbimportLine implements Serializable {
         this.controlHierarchy = controlHierarchy;
     }
 
-    public int getControlRecommendId() {
+    public Integer getControlRecommendId() {
         return controlRecommendId;
     }
 
-    public void setControlRecommendId(int controlRecommendId) {
+    public void setControlRecommendId(Integer controlRecommendId) {
         this.controlRecommendId = controlRecommendId;
     }
 
