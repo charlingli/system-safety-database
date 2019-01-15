@@ -26,6 +26,9 @@ public class systemParams_MB implements Serializable {
 
     private String licenseText;
     private String managerEmail;
+    private String excelPassword;
+    private String excelNumberOfRows;
+    private String thresholdSimilarity;
     private boolean infoBox;
     private boolean editBox;
     private DbsystemParameters systemParamObj;
@@ -73,28 +76,60 @@ public class systemParams_MB implements Serializable {
         this.systemParamObj = systemParamObj;
     }
 
+    public String getExcelPassword() {
+        return excelPassword;
+    }
+
+    public void setExcelPassword(String excelPassword) {
+        this.excelPassword = excelPassword;
+    }
+
+    public String getExcelNumberOfRows() {
+        return excelNumberOfRows;
+    }
+
+    public void setExcelNumberOfRows(String excelNumberOfRows) {
+        this.excelNumberOfRows = excelNumberOfRows;
+    }
+
+    public String getThresholdSimilarity() {
+        return thresholdSimilarity;
+    }
+
+    public void setThresholdSimilarity(String thresholdSimilarity) {
+        this.thresholdSimilarity = thresholdSimilarity;
+    }
+
     @PostConstruct
     public void init() {
         infoBox = true;
         editBox = false;
         licenseText = dbsystemParametersFacade.find(1).getSystemLicense();
         managerEmail = dbsystemParametersFacade.find(1).getSystemAdminEmail();
+        excelPassword = dbsystemParametersFacade.find(1).getExcelLayoutPassword();
+        excelNumberOfRows = Integer.toString(dbsystemParametersFacade.find(1).getExcelLayoutRows());
+        thresholdSimilarity = Integer.toString(dbsystemParametersFacade.find(1).getSimilarityThreshold());
         setSystemParamObj(dbsystemParametersFacade.find(1));
     }
-    
-    public void editParameters(){
+
+    public void editParameters() {
         infoBox = false;
         editBox = true;
     }
-    
-    public void saveParameters(){
+
+    public void saveParameters() {
+        systemParamObj.setExcelLayoutRows(Integer.parseInt(excelNumberOfRows));
+        systemParamObj.setSimilarityThreshold(Integer.parseInt(thresholdSimilarity));
         dbsystemParametersFacade.edit(systemParamObj);
         init();
     }
-    
-    public void cancel(){
+
+    public void cancel() {
         licenseText = "";
         managerEmail = "";
+        excelPassword = "";
+        excelNumberOfRows = "";
+        thresholdSimilarity = "";
         systemParamObj = new DbsystemParameters();
         init();
     }

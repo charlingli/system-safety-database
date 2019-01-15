@@ -111,7 +111,22 @@
                             <p:commandButton value="Index Db" action="#{wordProcessing_MB.indexDatabase()}" ajax="false"/>
                         </p:panel>
                     </div> 
+
+                    <div class="actionButtonsDiv">
+                        <p:panel>
+                            <p:outputLabel>Get the import layout: </p:outputLabel>
+                            <p:commandButton value="Get file" action="#{trees_MB.generateLayout()}" ajax="false"/>
+                        </p:panel>
+                    </div> 
                 </h:form>
+                <div class="actionButtonsDiv">
+                    <p:panel>
+                        <h:form enctype="multipart/form-data">
+                            <p:fileUpload value="#{trees_MB.uploadedFile}" mode="simple" skinSimple="true" allowTypes="/(\.|\/)(xls|xlsx)$/" />
+                            <p:commandButton action="#{trees_MB.processFile()}" value="Submit" ajax="false"/>
+                        </h:form>
+                    </p:panel>
+                </div>
             </ui:define>
         </ui:composition>
     </body>

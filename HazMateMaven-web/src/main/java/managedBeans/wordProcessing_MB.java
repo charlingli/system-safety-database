@@ -12,6 +12,7 @@ import ejb.DbControlFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbcommonWordFacadeLocal;
 import ejb.DbindexedWordFacadeLocal;
+import ejb.DbsystemParametersFacadeLocal;
 import entities.DbcommonWord;
 import entities.DbindexedWord;
 import entities.DbindexedWordPK;
@@ -23,7 +24,6 @@ import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import org.primefaces.context.RequestContext;
 
 /**
  *
@@ -33,6 +33,8 @@ import org.primefaces.context.RequestContext;
 @RequestScoped
 public class wordProcessing_MB {
 
+    @EJB
+    private DbsystemParametersFacadeLocal dbsystemParametersFacade;
     @EJB
     private DbControlFacadeLocal dbControlFacade;
     @EJB
@@ -45,6 +47,7 @@ public class wordProcessing_MB {
     private DbindexedWordFacadeLocal dbindexedWordFacade;
     @EJB
     private DbcommonWordFacadeLocal dbcommonWordFacade;
+    
 
     public wordProcessing_MB() {
     }
@@ -72,7 +75,7 @@ public class wordProcessing_MB {
             //System.out.println(tmp[0].toString() + " " + tmp[1].toString() + " " + tmp[2].toString() + " " + tmp[3].toString() + " " + averageDistance);
             //System.out.println("percentageFromIndexed -> ( " + tmp[1].toString() + " / " + tmp[2].toString() + " * 100 ) = " + percentageFromIndexed);
             //System.out.println("percentageFromNew -> ( " + tmp[1].toString() + " / " + listOfValues.size() + " * 100 ) = " + percentageFromNew);
-            if (averageDistance > 75) {
+            if (averageDistance > dbsystemParametersFacade.find(1).getSimilarityThreshold()) {
                 listPotentialDuplicates.add(new similarityObject(tmp[0].toString(), averageDistance, tmp[3].toString().split(",")));
             }
         });
