@@ -5,9 +5,13 @@
  */
 package ejb;
 
+import customObjects.similarityObject;
+import entities.DbcommonWord;
 import entities.DbindexedWord;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -19,6 +23,9 @@ import javax.persistence.Query;
  */
 @Stateless
 public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implements DbindexedWordFacadeLocal {
+
+    @EJB
+    private DbcommonWordFacadeLocal dbcommonWordFacade;
 
     @PersistenceContext(unitName = "HazMate-ejbPU")
     private EntityManager em;
@@ -158,6 +165,41 @@ public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implement
         } catch (Exception e) {
             throw e;
         }
+    }
+    
+    @Override
+    public List<similarityObject> findPotentialDuplicates(String newDescription, String objectType) {
+        // Processing the entered text against the recognised common words in the database
+        String[] words = newDescription.replaceAll("/", " ").replaceAll("[^A-z\\s\\d\\-][\\\\\\^]?", "").toLowerCase().split("\\s+");
+        List<String> listOfCommonWords = new ArrayList<>();
+        for (DbcommonWord word : dbcommonWordFacade.findAll()) {
+            listOfCommonWords.add(word.getCommonWord());
+        }
+        List<String> listOfValues = new ArrayList<>();
+        for (String word : words) {
+            if (!listOfCommonWords.contains(word) && word.length() > 2 && !listOfValues.contains(word)) {
+                listOfValues.add(word);
+            }
+        }
+
+        // Getting from the database the hazards that matches with the typed words
+        List<Object[]> resultantList = findSimilarities(objectType, listOfValues);
+
+        // Calculating the distance between the stored data and the new data
+        List<similarityObject> listPotentialDuplicates = new ArrayList<>();
+        
+        for (Object[] tmp : resultantList) {
+            int percentageFromIndexed = (Integer.parseInt(tmp[1].toString()) * 100) / Integer.parseInt(tmp[2].toString());
+            int percentageFromNew = (Integer.parseInt(tmp[1].toString()) * 100) / listOfValues.size();
+            int averageDistance = (percentageFromIndexed + percentageFromNew) / 2;
+            //System.out.println(tmp[0].toString() + " " + tmp[1].toString() + " " + tmp[2].toString() + " " + tmp[3].toString() + " " + averageDistance);
+            //System.out.println("percentageFromIndexed -> ( " + tmp[1].toString() + " / " + tmp[2].toString() + " * 100 ) = " + percentageFromIndexed);
+            //System.out.println("percentageFromNew -> ( " + tmp[1].toString() + " / " + listOfValues.size() + " * 100 ) = " + percentageFromNew);
+            if (averageDistance > 75) {
+                listPotentialDuplicates.add(new similarityObject(tmp[0].toString(), averageDistance, tmp[3].toString().split(",")));
+            }
+        }
+        return listPotentialDuplicates;
     }
 
 }

@@ -5,6 +5,7 @@
  */
 package ejb;
 
+import customObjects.similarityObject;
 import entities.DbindexedWord;
 import java.util.List;
 import javax.ejb.Local;
@@ -39,5 +40,7 @@ public interface DbindexedWordFacadeLocal {
     void removeWord(String commonWord);
     
     void removeObject(String id, String type);
+    
+    List<similarityObject> findPotentialDuplicates(String newDescription, String objectType);
     
 }
