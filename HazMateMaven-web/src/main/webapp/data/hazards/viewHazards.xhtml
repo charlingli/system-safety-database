@@ -8,7 +8,7 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <h:form id="hazardsForm">
+                <h:form id="hazardsForm" onclick="closeRating();">
                     <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()"/>
                     <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}"/>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
@@ -513,6 +513,11 @@
                 </h:form>
                 <script type="text/javascript" src="../../resources/js/svg.min.js"/>
                 <script type="text/javascript" src="../../resources/js/viewVis.js"/>
+                <script type="text/javascript">
+                    function closeRating() {
+                        PF('ratingOverlay').hide();
+                    }
+                </script>
             </ui:define>
         </ui:composition>
     </body>

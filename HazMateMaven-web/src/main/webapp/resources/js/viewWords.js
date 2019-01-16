@@ -12,21 +12,14 @@ function viewWords() {
     } else if ($('#addForm').length > 0) {
         formReference = "#addForm\\:";
     }
-    console.log($('#relationForm').length);
-    console.log($('#editForm').length);
-    console.log($('#addForm').length);
-    console.log(formReference);
     
     var numDuplicates = $(formReference + 'similarityTable_data tr').length;
-    console.log(numDuplicates);
     
     let sharedWordsElem = $(formReference + 'similarityTable tr:first-child td:nth-last-child(2)');
     let sharedWordsText = sharedWordsElem.text().split(" ");
     
     let commonWordsElem = $(formReference + 'similarityTable tr:first-child td:last-child');
     let commonWordsText = commonWordsElem.text().split(" ");
-    
-    console.log(commonWordsText);
     
     for (let i = 1; i <= numDuplicates; i ++) {
         let descriptionElem = $(formReference + 'similarityTable tr:nth-child(' + i + ') td:nth-last-child(4)');

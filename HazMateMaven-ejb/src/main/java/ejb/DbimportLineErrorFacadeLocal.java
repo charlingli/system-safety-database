@@ -30,4 +30,5 @@ public interface DbimportLineErrorFacadeLocal {
 
     int count();
     
+    List<DbimportLineError> listErrorsByLine(String processId, int processIdLine);
 }

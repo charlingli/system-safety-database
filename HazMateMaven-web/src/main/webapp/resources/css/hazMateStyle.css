@@ -150,6 +150,11 @@ footer {
     background-color: #008080;
     background-image: linear-gradient(to bottom, #008080, #008080);
 }
+.ui-editable-column.ui-state-highlight.ui-cell-editing.ui-state-error {
+    border: 1px solid #eed3d7;
+    background: #f2dede 50% 50% repeat-x;
+    color: #b94a48;
+}
 .ui-dialog-title {
     color: black;
     border-radius: 4px;
@@ -397,8 +402,18 @@ span.commandLinkWhite {
     text-align: center;
     font-weight: lighter;
 }
-.ui-commandlink.ui-widget.missingIcon {
+.ui-commandlink.ui-widget.missingIcon, .ui-commandlink.ui-widget.errorIcon {
     color: #d61d3c;
+    font-size: 1.6em;
+    cursor: default;
+}
+.ui-commandlink.ui-widget.warningIcon {
+    color: #f2bb47;
+    font-size: 1.6em;
+    cursor: default;
+}
+.ui-commandlink.ui-widget.goodIcon {
+    color: #6ebe49;
     font-size: 1.6em;
     cursor: default;
 }

@@ -1,0 +1,374 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <body>
+        <ui:composition template="./../../templates/masterTemplate.xhtml">
+            <ui:define name="content">
+                <h:form id="hazardsForm">
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
+                    <ui:include src="../../templates/spinnerDialog.xhtml"/>
+                    <p:overlayPanel my="top left" at="top left" widgetVar="sbsOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
+                        <p:panelGrid columns="1" class="suggestionPanel">
+                            <f:facet name="header">
+                                <h:outputText value="Select SBS codes"/>
+                            </f:facet>
+                            <p:tree id="sbsTree" value="#{importHazard_MB.root}" var="node" selectionMode="checkbox" selection="#{importHazard_MB.currentTree}">
+                                <p:treeNode>
+                                    <p:outputLabel value="#{node}"/>
+                                </p:treeNode>
+                            </p:tree>
+                            <p:commandButton value="Save SBS codes" action="#{importHazard_MB.editTree()}" oncomplete="PF('sbsOverlay').hide()"/>
+                        </p:panelGrid>
+                    </p:overlayPanel>                                            
+                    <p:dataTable id="hazardsTable" value="#{importHazard_MB.listLoadedLines}" var="line" emptyMessage="No hazard entries found with given criteria." 
+                                 scrollable="true" scrollHeight="600" scrollWidth="100%" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" 
+                                 rowKey="#{line.lineObject.dbimportLinePK.processId}.#{line.lineObject.dbimportLinePK.processIdLine}" selection="#{importHazard_MB.listCheckedLines}" 
+                                 disabledSelection="#{line.listErrorObjects.size() > 0}" rowSelectMode="checkbox" editable="true" editMode="cell" sortBy="#{line.lineObject.dbimportLinePK.processId}">
+                        <f:facet name="header">
+                            <p:outputPanel styleClass="tableHeader">
+                                <div class="left"></div>
+                                <div class="center">
+                                    <h:outputText value="The hazards to be uploaded are: "/>
+                                </div>
+                                <div class="right"></div>
+                            </p:outputPanel>
+                        </f:facet>
+                        <p:ajax event="cellEdit" listener="#{importHazard_MB.editCell}" update="hazardsForm:hazardsTable" onsuccess="buildValidation()"/>
+                        <p:ajax event="rowSelect" update="hazardsForm:submitButton" process="@this"/>
+                        <p:ajax event="rowUnselect" update="hazardsForm:submitButton" process="@this"/>
+                        <p:ajax event="rowSelectCheckbox" update="hazardsForm:submitButton" process="@this"/>
+                        <p:ajax event="rowUnselectCheckbox" update="hazardsForm:submitButton" process="@this"/>
+                        <p:ajax event="toggleSelect" update="hazardsForm:submitButton" process="@this"/>
+                        <p:column id="VLCol" style="text-align:center; width: 80px">
+                            <p:commandLink id="warningIcon" class="warningIcon" rendered="#{line.listWarningObjects.size() > 0 ? 'true' : 'false'}"><i class="fa fa-exclamation-triangle"></i></p:commandLink>
+                            <p:tooltip id="warningTooltip" for="warningIcon">
+                                <h:outputText value="#{line.warningMessage}"/>
+                            </p:tooltip>
+                            <p:commandLink id="errorIcon" class="errorIcon" rendered="#{line.listErrorObjects.size() > 0 ? 'true' : 'false'}"><i class="fa fa-times-circle"></i></p:commandLink>
+                            <p:tooltip id="errorTooltip" for="errorIcon">
+                                <h:outputText value="#{line.errorMessage}"/>
+                            </p:tooltip>
+                            <p:commandLink id="goodIcon" class="goodIcon" rendered="#{line.listErrorObjects.size() == 0 and line.listWarningObjects.size() == 0 ? 'true' : 'false'}"><i class="fa fa-check-square"></i></p:commandLink>
+                            <p:tooltip for="goodIcon">
+                                <h:outputText value="No issues found; this line is ready to import."/>
+                            </p:tooltip>
+                        </p:column>
+                        <p:column selectionMode="multiple" style="text-align:center; width: 20px"/>
+                        <p:column id="DTCol" style="text-align:center; width: 80px">
+                            <f:facet name="header">
+                                <h:outputText value="Date"/>
+                            </f:facet>
+                            <p:cellEditor id="DTCell">
+                                <f:facet id="DTOutput" name="output"><h:outputText value="#{line.lineObject.hazardDate}"/></f:facet>
+                                <f:facet name="input">
+                                    <p:calendar disabled="#{line.DAError or line.DAWarning ? 'false' : 'true'}" autocomplete="off" id="hazardDate" value="#{line.lineObject.hazardDate}" title="HazardDate" required="true" requiredMessage="A date is required." maxdate="#{importHazard_MB.todaysDate()}"/>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="LICol" style="text-align:center; width: 80px">
+                            <f:facet name="header">
+                                <h:outputText value="Legacy ID"/>
+                            </f:facet>
+                            <h:outputText value="#{line.lineObject.hazardLegacyId}" />
+                        </p:column>
+                        <p:column id="HDCol" style="text-align:center; width: 240px">
+                            <f:facet name="header">
+                                <h:outputText value="Description"/>
+                            </f:facet>
+                            <p:cellEditor id="HDCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardDescription}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText disabled="#{line.HDError or line.HDWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardDescription}" required="true" requiredMessage="A description is required." />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HMCol" style="text-align:center; width: 240px">
+                            <f:facet name="header">
+                                <h:outputText value="Comment"/>
+                            </f:facet>
+                            <h:outputText value="#{line.lineObject.hazardComment}" />
+                        </p:column>
+                        <p:column id="HWCol" style="text-align:center; width: 240px">
+                            <f:facet name="header">
+                                <h:outputText value="Workshop"/>
+                            </f:facet>
+                            <p:cellEditor id="HWCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardWorkshop}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText disabled="#{line.HWError or line.HWWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardWorkshop}" required="true" requiredMessage="A workshop is required." />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HCCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Context"/>
+                            </f:facet>
+                            <p:cellEditor id="HCCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardContext}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.HCError or line.HCWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardContextId}" required="true" requiredMessage="A context is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHC}" var="hc" itemLabel="#{hc.hazardContextName}" itemValue="#{hc.hazardContextId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HLCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Location"/>
+                            </f:facet>
+                            <p:cellEditor id="HLCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardLocation}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.HLError or line.HLWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardLocationId}" required="true" requiredMessage="A location is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHL}" var="hl" itemLabel="#{hl.locationDescription}" itemValue="#{hl.locationId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HACol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Activity"/>
+                            </f:facet>
+                            <p:cellEditor id="HACell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardActivity}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.HAError or line.HAWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardActivityId}" required="true" requiredMessage="An activity is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHA}" var="ha" itemLabel="#{ha.activityName}" itemValue="#{ha.activityId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HTCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Type"/>
+                            </f:facet>
+                            <p:cellEditor id="HTCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardType}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.HTError or line.HTWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardTypeId}" required="true" requiredMessage="A type is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHT}" var="ht" itemLabel="#{ht.hazardTypeName}" itemValue="#{ht.hazardTypeId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HSCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Status"/>
+                            </f:facet>
+                            <p:cellEditor id="HSCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardStatus}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.HSError or line.HSWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardStatusId}" required="true" requiredMessage="A status is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHS}" var="hs" itemLabel="#{hs.hazardStatusName}" itemValue="#{hs.hazardStatusId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="HOCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Owner"/>
+                            </f:facet>
+                            <p:cellEditor id="HOCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardOwner}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.HOError or line.HOWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardOwnerId}" required="true" requiredMessage="An owner is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHO}" var="ho" itemLabel="#{ho.ownerName}" itemValue="#{ho.ownerId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="RCCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Risk Class"/>
+                            </f:facet>
+                            <p:cellEditor id="RCCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.hazardRiskClass}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.RCError or line.RCWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardRiskClassId}" required="true" requiredMessage="A risk class is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listRC}" var="rc" itemLabel="#{rc.riskClassName}" itemValue="#{rc.riskClassId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CFCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Current Frequency"/>
+                            </f:facet>
+                            <p:cellEditor id="CFCell">
+                                <f:facet name="output"><h:outputText value="#{importHazard_MB.convertFrequencyIdToString(line.lineObject.hazardCurrentFrequencyId)}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.CFError or line.CFWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardCurrentFrequencyId}" required="true" requiredMessage="A current frequency is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listRF}" var="rf" itemLabel="#{rf.frequencyScore}" itemValue="#{rf.frequencyValue}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CSCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Current Severity"/>
+                            </f:facet>
+                            <p:cellEditor id="CSCell">
+                                <f:facet name="output"><h:outputText value="#{importHazard_MB.convertSeverityIdToString(line.lineObject.hazardCurrentSeverityId)}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.CSError or line.CSWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardCurrentSeverityId}" required="true" requiredMessage="A current severity is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listRS}" var="rs" itemLabel="#{rs.severityScore}" itemValue="#{rs.riskSeverityId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="TFCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Target Frequency"/>
+                            </f:facet>
+                            <p:cellEditor id="TFCell">
+                                <f:facet name="output"><h:outputText value="#{importHazard_MB.convertFrequencyIdToString(line.lineObject.hazardTargetFrequencyId)}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.TFError or line.TFWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardTargetFrequencyId}" required="true" requiredMessage="A target frequency is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listRF}" var="rf" itemLabel="#{rf.frequencyScore}" itemValue="#{rf.frequencyValue}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="TSCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Target Severity"/>
+                            </f:facet>
+                            <p:cellEditor id="TSCell">
+                                <f:facet name="output"><h:outputText value="#{importHazard_MB.convertSeverityIdToString(line.lineObject.hazardTargetSeverityId)}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.TSError or line.TSWarning ? 'false' : 'true'}" value="#{line.lineObject.hazardTargetSeverityId}" required="true" requiredMessage="A target severity is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listRS}" var="rs" itemLabel="#{rs.severityScore}" itemValue="#{rs.riskSeverityId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="SCCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="SBS Codes"/>
+                            </f:facet>
+                            <p:commandButton disabled="#{line.SCError or line.SCWarning ? 'false' : 'true'}" id="SCBtn" icon="fa fa-sitemap" update="@form" action="#{importHazard_MB.populateTree(line.lineObject)}" oncomplete="PF('sbsOverlay').show('#{component.clientId}')"/>
+                        </p:column>
+                        <p:column id="RTCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Relation Type"/>
+                            </f:facet>
+                            <h:outputText value="#{line.lineObject.relationType}" />
+                        </p:column>
+                        <p:column id="RDCol" style="text-align:center; width: 240px">
+                            <f:facet name="header">
+                                <h:outputText value="Relation Description"/>
+                            </f:facet>
+                            <p:cellEditor id="RDCell">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.relationDescription}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:autoComplete id="CAAdd" multiple="false"  value="#{line.lineObject.relationDescription}" completeMethod="#{importHazard_MB.listCauses}"
+                                                    var="ca" itemLabel="#{ca}" itemValue="#{ca}" forceSelection="true" disabled="#{line.RDError or line.RDWarning ? 'false' : 'true'}" 
+                                                    rendered="#{line.lineObject.relationType == 'Cause' ? 'true' : 'false'}" />
+                                    <p:autoComplete id="CQAdd" multiple="false" value="#{line.lineObject.relationDescription}" completeMethod="#{importHazard_MB.listConsequences}"
+                                                    var="cq" itemLabel="#{cq}" itemValue="#{cq}" forceSelection="true" disabled="#{line.RDError or line.RDWarning ? 'false' : 'true'}" 
+                                                    rendered="#{line.lineObject.relationType == 'Consequence' ? 'true' : 'false'}" />
+                                    <p:autoComplete id="COAdd" multiple="false" value="#{line.lineObject.relationDescription}" completeMethod="#{importHazard_MB.listControls}"
+                                                    var="co" itemLabel="#{co}" itemValue="#{co}" forceSelection="true" disabled="#{line.RDError or line.RDWarning ? 'false' : 'true'}" 
+                                                    rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="COCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Control Owner"/>
+                            </f:facet>
+                            <p:cellEditor id="COCell" rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.controlOwner}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.COError or line.COWarning ? 'false' : 'true'}" value="#{line.lineObject.controlOwnerId}" required="true" requiredMessage="An owner is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listHO}" var="ho" itemLabel="#{ho.ownerName}" itemValue="#{ho.ownerId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CHCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Control Hierarchy"/>
+                            </f:facet>
+                            <p:cellEditor id="CHCell" rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.controlHierarchy}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.CHError or line.CHWarning ? 'false' : 'true'}" value="#{line.lineObject.controlHierarchyId}" required="true" requiredMessage="A hierarchy is required." autoWidth="false">
+                                        <f:selectItems value="#{importHazard_MB.listCH}" var="ch" itemLabel="#{ch.controlHierarchyName}" itemValue="#{ch.controlHierarchyId}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CTCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Control Type"/>
+                            </f:facet>
+                            <p:cellEditor id="CTCell" rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.controlType == 'M' ? 'Mitigative' : 'Preventive'}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.CTError or line.CTWarning ? 'false' : 'true'}" value="#{line.lineObject.controlType}">
+                                        <f:selectItem itemValue="M" itemLabel="Mitigative"/>
+                                        <f:selectItem itemValue="P" itemLabel="Preventive"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CRCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Control Recommendation"/>
+                            </f:facet>
+                            <p:cellEditor id="CRCell" rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.controlRecommend}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.CRError or line.CRWarning ? 'false' : 'true'}" value="#{line.lineObject.controlRecommendId}" required="true">
+                                        <f:selectItems value="#{importHazard_MB.listCR}" var="cr" itemValue="#{cr.controlRecommendId}" itemLabel="#{cr.controlRecommendName}"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CJCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Control Justification"/>
+                            </f:facet>
+                            <p:cellEditor id="CJCell" rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.controlJustify}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:inputText disabled="#{line.CJError or line.CJWarning ? 'false' : 'true'}" id="CJInput" value="#{line.lineObject.controlJustify}" required="#{line.lineObject.controlRecommend == 'Refer to Control Justification' ? 'true' : 'false'}" />
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <p:column id="CUCol" style="text-align:center; width: 120px">
+                            <f:facet name="header">
+                                <h:outputText value="Control Status"/>
+                            </f:facet>
+                            <p:cellEditor id="CUCell" rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}">
+                                <f:facet name="output"><h:outputText value="#{line.lineObject.controlExistingOrProposed == 'E' ? 'Existing' : 'Proposed'}" /></f:facet>
+                                <f:facet name="input">
+                                    <p:selectOneMenu disabled="#{line.CUError or line.CUWarning ? 'false' : 'true'}" value="#{line.lineObject.controlExistingOrProposed}">
+                                        <f:selectItem itemValue="E" itemLabel="Existing"/>
+                                        <f:selectItem itemValue="P" itemLabel="Proposed"/>
+                                    </p:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:outputPanel>
+                                <h:outputText value="Testing"/>
+                            </p:outputPanel>
+                        </f:facet>
+                    </p:dataTable>
+                    <div class="panelButtons">
+                        <p:commandButton id="submitButton" disabled="#{empty importHazard_MB.listCheckedLines ? 'true' : importHazard_MB.listCheckedLines.size() == 0 ? 'true' : 'false'}" value="Submit #{importHazard_MB.listCheckedLines.size()} hazard #{empty importHazard_MB.listCheckedLines ? 'lines' : importHazard_MB.listCheckedLines.size() == 0 ? 'lines' : importHazard_MB.listCheckedLines.size() == 1 ? 'line' : 'lines'} for review" action="#{importHazard_MB.submitTable()}" onclick="return confirm('Only the selected hazards will be submitted for review; any unchecked hazards will be lost.')" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide();"/>
+                        <p:commandButton value="Cancel import" immediate="true">
+                        </p:commandButton>
+                    </div>
+                </h:form>
+                <script type="text/javascript" src="../../resources/js/viewImports.js"/>
+            </ui:define>
+        </ui:composition>
+    </body>
+</html>
