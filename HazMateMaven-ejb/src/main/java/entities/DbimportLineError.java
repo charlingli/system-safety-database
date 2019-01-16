@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author lxra
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_importLineError")

@@ -6,8 +6,8 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author lxra
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_importHeader")
@@ -72,7 +72,7 @@ public class DbimportHeader implements Serializable {
     @Column(name = "processStatus")
     private String processStatus;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dbimportHeader")
-    private Collection<DbimportLine> dbimportLineCollection;
+    private List<DbimportLine> dbimportLineList;
 
     public DbimportHeader() {
     }
@@ -139,12 +139,12 @@ public class DbimportHeader implements Serializable {
     }
 
     @XmlTransient
-    public Collection<DbimportLine> getDbimportLineCollection() {
-        return dbimportLineCollection;
+    public List<DbimportLine> getDbimportLineList() {
+        return dbimportLineList;
     }
 
-    public void setDbimportLineCollection(Collection<DbimportLine> dbimportLineCollection) {
-        this.dbimportLineCollection = dbimportLineCollection;
+    public void setDbimportLineList(List<DbimportLine> dbimportLineList) {
+        this.dbimportLineList = dbimportLineList;
     }
 
     @Override

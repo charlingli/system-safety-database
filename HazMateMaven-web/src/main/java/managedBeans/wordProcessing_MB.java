@@ -12,6 +12,7 @@ import ejb.DbControlFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbcommonWordFacadeLocal;
 import ejb.DbindexedWordFacadeLocal;
+import ejb.DbsystemParametersFacadeLocal;
 import entities.DbcommonWord;
 import entities.DbindexedWord;
 import entities.DbindexedWordPK;
@@ -33,6 +34,8 @@ import javax.faces.context.FacesContext;
 public class wordProcessing_MB {
 
     @EJB
+    private DbsystemParametersFacadeLocal dbsystemParametersFacade;
+    @EJB
     private DbControlFacadeLocal dbControlFacade;
     @EJB
     private DbConsequenceFacadeLocal dbConsequenceFacade;
@@ -44,6 +47,7 @@ public class wordProcessing_MB {
     private DbindexedWordFacadeLocal dbindexedWordFacade;
     @EJB
     private DbcommonWordFacadeLocal dbcommonWordFacade;
+    
 
     public wordProcessing_MB() {
     }

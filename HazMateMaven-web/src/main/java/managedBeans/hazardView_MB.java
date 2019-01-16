@@ -1387,10 +1387,6 @@ public class hazardView_MB implements Serializable {
         {"Risk Status ", "Yellow", "14"},
         {"Human Factors review required? ", "Yellow", "14"}};
 
-        // Defining the colours palette
-        HSSFPalette palette = workbook.getCustomPalette();
-        palette.setColorAtIndex((short) 22, (byte) 172, (byte) 185, (byte) 202); // Grey
-
         // Creating headers from the row number 6
         Row headerRow = sheet.createRow(5);
         headerRow.setHeight((short) 1200);

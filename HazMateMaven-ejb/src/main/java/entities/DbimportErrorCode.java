@@ -6,7 +6,7 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author lxra
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_importErrorCode")
@@ -58,7 +58,7 @@ public class DbimportErrorCode implements Serializable {
     @Column(name = "errorAction")
     private String errorAction;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "processErrorCode")
-    private Collection<DbimportLineError> dbimportLineErrorCollection;
+    private List<DbimportLineError> dbimportLineErrorList;
 
     public DbimportErrorCode() {
     }
@@ -107,12 +107,12 @@ public class DbimportErrorCode implements Serializable {
     }
 
     @XmlTransient
-    public Collection<DbimportLineError> getDbimportLineErrorCollection() {
-        return dbimportLineErrorCollection;
+    public List<DbimportLineError> getDbimportLineErrorList() {
+        return dbimportLineErrorList;
     }
 
-    public void setDbimportLineErrorCollection(Collection<DbimportLineError> dbimportLineErrorCollection) {
-        this.dbimportLineErrorCollection = dbimportLineErrorCollection;
+    public void setDbimportLineErrorList(List<DbimportLineError> dbimportLineErrorList) {
+        this.dbimportLineErrorList = dbimportLineErrorList;
     }
 
     @Override

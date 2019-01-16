@@ -6,8 +6,8 @@
 package entities;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author lxra
+ * @author David Ortega <david.ortega@levelcrossings.vic.gov.au>
  */
 @Entity
 @Table(name = "db_importLine")
@@ -175,7 +175,7 @@ public class DbimportLine implements Serializable {
     @Column(name = "controlExistingOrProposed")
     private String controlExistingOrProposed;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dbimportLine")
-    private Collection<DbimportLineError> dbimportLineErrorCollection;
+    private List<DbimportLineError> dbimportLineErrorList;
     @JoinColumn(name = "processId", referencedColumnName = "processId", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private DbimportHeader dbimportHeader;
@@ -496,12 +496,12 @@ public class DbimportLine implements Serializable {
     }
 
     @XmlTransient
-    public Collection<DbimportLineError> getDbimportLineErrorCollection() {
-        return dbimportLineErrorCollection;
+    public List<DbimportLineError> getDbimportLineErrorList() {
+        return dbimportLineErrorList;
     }
 
-    public void setDbimportLineErrorCollection(Collection<DbimportLineError> dbimportLineErrorCollection) {
-        this.dbimportLineErrorCollection = dbimportLineErrorCollection;
+    public void setDbimportLineErrorList(List<DbimportLineError> dbimportLineErrorList) {
+        this.dbimportLineErrorList = dbimportLineErrorList;
     }
 
     public DbimportHeader getDbimportHeader() {
