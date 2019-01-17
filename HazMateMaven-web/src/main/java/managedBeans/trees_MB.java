@@ -2248,7 +2248,7 @@ public class trees_MB implements Serializable {
                                         }
                                     }
                                     if (!errorFound) {
-                                        tmpObj.lineData.setHazardSbs(row.getCell(i).toString());
+                                        tmpObj.lineData.setHazardSbs(row.getCell(i).toString().replaceAll("\\s+", ""));
                                     }
                                 }
                             } else {
