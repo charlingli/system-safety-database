@@ -52,10 +52,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -92,13 +92,11 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.RegionUtil;
-import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
@@ -111,6 +109,8 @@ import org.primefaces.model.UploadedFile;
 @ViewScoped
 public class trees_MB implements Serializable {
 
+    @EJB
+    private DbtreeLevel1FacadeLocal dbtreeLevel1Facade1;
     @EJB
     private DbimportLineErrorFacadeLocal dbimportLineErrorFacade;
     @EJB
@@ -729,7 +729,8 @@ public class trees_MB implements Serializable {
         {"Workshop/Source ", "Yellow", "25"},
         {"Close Out Commentary", "Grey", "14"},
         {"Risk Status ", "Yellow", "14"},
-        {"Human Factors review required? ", "Yellow", "14"}};
+        {"Human Factors review required? ", "Yellow", "14"},
+        {"Stored Files", "Grey", "14"}};
 
         // Creating headers from the row number 6
         Row headerRow = sheet.createRow(5);
@@ -787,10 +788,11 @@ public class trees_MB implements Serializable {
                 String hazardWorkshop = checkNullString(exportedInfo.get(i)[27]);
                 String hazardStatusName = checkNullString(exportedInfo.get(i)[28]);
                 String humanFactors = checkNullString(exportedInfo.get(i)[29]);
+                String files = checkNullString(exportedInfo.get(i)[30]);
 
                 exportedHazard curHazard = new exportedHazard(hazardId1, locationName, hazardContextName, hazardCauses, hazardDescription, ownerName, hazardConsequences,
                         hazardTypeName, riskClassName, currentSeverityScore, currentFrequencyScore, currentRiskScore, targetSeverityScore, targetFrequencyScore,
-                        targetRiskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName, humanFactors);
+                        targetRiskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName, humanFactors, files);
 
                 // Getting the controls information
                 List<exportedExsControl> listExsCtl = new ArrayList<>();
@@ -1003,6 +1005,15 @@ public class trees_MB implements Serializable {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
                 }
 
+                // files field is in column AL
+                column = "AL";
+                BodyCell = bodyRow.createCell(37);
+                BodyCell.setCellValue(curHazard.files);
+                BodyCell.setCellStyle(bodyCellStyle);
+                if (numberOfRowsperHazard > 1) {
+                    sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
+                }
+
                 // -------------------------------> Second step, writing the controls. <---------------------------------------
                 Iterator<exportedExsControl> exsIterator = listExsCtl.iterator();
                 Iterator<exportedProControl> proIterator = listProCtl.iterator();
@@ -1145,6 +1156,14 @@ public class trees_MB implements Serializable {
             case "LightTurq":
                 headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
                 break;
+            case "Teal":
+                headerFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.TEAL.getIndex());
+                break;
+            case "Green":
+                headerFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREEN.getIndex());
+                break;
             default:
                 headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
                 break;
@@ -1262,11 +1281,12 @@ public class trees_MB implements Serializable {
         public String hazardWorkshop;
         public String hazardStatusName;
         public String humanFactors;
+        public String files;
 
         public exportedHazard(String hazardId, String locationName, String hazardContextName, String hazardCauses, String hazardDescription, String ownerName,
                 String hazardConsequences, String hazardTypeName, String riskClassName, String currentSeverityScore, String currentFrequencyScore,
                 String currentRiskScore, String targetSeverityScore, String targetFrequencyScore, String targetRiskScore, String hazardComment,
-                String hazardDate, String hazardWorkshop, String hazardStatusName, String humanFactors) {
+                String hazardDate, String hazardWorkshop, String hazardStatusName, String humanFactors, String files) {
             this.hazardId = hazardId;
             this.locationName = locationName;
             this.hazardContextName = hazardContextName;
@@ -1287,6 +1307,7 @@ public class trees_MB implements Serializable {
             this.hazardWorkshop = hazardWorkshop;
             this.hazardStatusName = hazardStatusName;
             this.humanFactors = humanFactors;
+            this.files = files;
         }
 
     }
@@ -1383,15 +1404,15 @@ public class trees_MB implements Serializable {
         //The produced excel will be on xslx format.
         String filename = "SSD_Import.xlsx";
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Format");
-        XSSFSheet hidden = workbook.createSheet("hidden");
-        sheet.setZoom(90);
+        XSSFSheet sheet = workbook.createSheet("Import");
+        XSSFSheet hidden = workbook.createSheet("Hidden");
+        XSSFSheet sbs = workbook.createSheet("Sbs_Codes");
 
-        // ---------------------------> Creating the spreadsheet headers <--------------------------------------
+        // ---------------------------> Creating the Import sheet headers <--------------------------------------
         // Creating headers from the row number 0
+        sheet.setZoom(90);
         Row headerRow = sheet.createRow(0);
         headerRow.setHeight((short) 600);
-        IndexedColorMap colorMap = workbook.getStylesSource().getIndexedColors();
 
         // Creating the Initial headers
         Cell cell = headerRow.createCell(0);
@@ -1437,10 +1458,10 @@ public class trees_MB implements Serializable {
         {"Owner", "PaleBlue", "25"},
         {"Type", "PaleBlue", "16"},
         {"Status", "PaleBlue", "12"},
-        {"Class", "PaleBlue", "12"},
-        {"Cur. Freq", "PaleBlue", "12"},
+        {"Class", "PaleBlue", "20"},
+        {"Cur. Freq", "PaleBlue", "18"},
         {"Cur. Sev.", "PaleBlue", "11"},
-        {"Tar. Freq", "PaleBlue", "11"},
+        {"Tar. Freq", "PaleBlue", "18"},
         {"Tar. Sev", "PaleBlue", "11"},
         {"Comment", "PaleBlue", "24"},
         {"Date", "PaleBlue", "12"},
@@ -1493,7 +1514,7 @@ public class trees_MB implements Serializable {
             cellTmp.setCellStyle(cellStyle);
         }
 
-        // ---------------------------> Creating the spreadsheet content <--------------------------------------
+        // ---------------------------> Creating the import sheet content <--------------------------------------
         // Creating list of context in the hidden sheet
         int numberOfRows = dbsystemParametersFacade.find(1).getExcelLayoutRows();
         List<Integer> numberOfItems = new ArrayList<>();
@@ -1645,8 +1666,8 @@ public class trees_MB implements Serializable {
         sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 25, 25), "hidden!$O$1:$O$" + listOfControlStatuses.size()));
 
         // Creating the comment for the Sbs Codes
-        addComment(workbook, sheet, 2, 17, "LXRA", "The sbs codes should be provided according to the node id and be separed by commas in case of multiple entries.\n"
-                + "e.g. 1.2, 1.1.3, 2");
+        addComment(workbook, sheet, 2, 17, "LXRA", "The sbs codes should be provided according to the node id and be separated by commas in case of multiple entries.\n"
+                + "e.g. 1.2, 1.1.3, 2 \nFor additional information please refer to the Sbs_Codes sheet at the bottom of this spreadsheet.");
 
         // Setting up date validation
         sheet.addValidationData(generateDateValidation(sheet, new CellRangeAddressList(3, numberOfRows + 2, 13, 13)));
@@ -1668,7 +1689,102 @@ public class trees_MB implements Serializable {
             }
         }
 
-        // Additional sheet configurations
+        // ---------------------------> Creating the sbs sheet content <--------------------------------------
+        // Creating headers from the row number 0
+        sbs.setZoom(90);
+        Row headerSbsRow = sbs.createRow(0);
+
+        // Creating the Initial headers
+        Cell cellSbs = headerSbsRow.createCell(0);
+        cellSbs.setCellValue("1. Rail");
+        cellSbs.setCellStyle(styleHeaderGenerator("Teal", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sbs.addMergedRegion(CellRangeAddress.valueOf("A1:H1"));
+
+        cellSbs = headerSbsRow.createCell(8);
+        cellSbs.setCellValue("2. Non-Rail");
+        cellSbs.setCellStyle(styleHeaderGenerator("Green", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sbs.addMergedRegion(CellRangeAddress.valueOf("I1:N1"));
+
+        //Creating the levels 2 and 3 data structure
+        List<sbsNodes> sbsList = new ArrayList<>();
+        sbsList.add(new sbsNodes("1.1 Civil Infrastructure", 20, Arrays.asList(new String[]{"1.1.1 Corridor - civil elements", "1.1.2 Embankments", "1.1.3 Retaining walls / Ramps",
+            "1.1.4 Bridges", "1.1.5 Culverts", "1.1.6 Utilities", "1.1.7 Drainage", "1.1.8 Access roads", "1.1.9 Walkways", "1.1.10 Fencing"})));
+        sbsList.add(new sbsNodes("1.2 Track", 18, Arrays.asList(new String[]{"1.2.1 Formation", "1.2.2 Trackbed (ballast or slab)", "1.2.3 Sleepers", "1.2.4 Rail",
+            "1.2.5 Fixings", "1.2.6 Monuments & Signage"})));
+        sbsList.add(new sbsNodes("1.3 Station", 18, Arrays.asList(new String[]{"1.3.1 Station buildings (architecture & urban design), access stairs & ramps",
+            "1.3.2 Platforms, platform extensions", "1.3.3 Carparks, drainage, landscaping, etc", "1.3.4 Vertical Transport", "1.3.5 Services"})));
+        sbsList.add(new sbsNodes("1.4 ICT/OCS", 16, Arrays.asList(new String[]{"1.4.1 OCS", "1.4.2 ICT System (ROMS, ORS, etc.)", "1.4.3 Intranet"})));
+        sbsList.add(new sbsNodes("1.5 Communications", 18, Arrays.asList(new String[]{"1.5.1 Radio Frequency", "1.5.2 Backbone cabling ", "1.5.3 VicTrack Managed Services",
+            "1.5.4 Communication Equipment Room (CER)"})));
+        sbsList.add(new sbsNodes("1.6 Traction Power", 18, Arrays.asList(new String[]{"1.6.1 Traction Substation", "1.6.2 OHLE & cabling", "1.6.3 Electrolysis"})));
+        sbsList.add(new sbsNodes("1.7 Signalling", 18, Arrays.asList(new String[]{"1.7.1 Centralised Train Control System (incl SCC (Signal Control Centre))",
+            "1.7.2 Local Train Control System", "1.7.3 Interlocking", "1.7.4 Wayside (conventional)", "1.7.5 CBTC Wayside"})));
+        sbsList.add(new sbsNodes("1.8 CSR - Civil", 18, Arrays.asList(new String[]{"1.8.1 CSR Above ground", "1.8.2 CSR Underground"})));
+        sbsList.add(new sbsNodes("2.1 Buses", 14, Arrays.asList(new String[]{"2.1.1 Bus PIDS", "2.1.2 Signage"})));
+        sbsList.add(new sbsNodes("2.2 Trams", 18, Arrays.asList(new String[]{"2.2.1 Tram civil works", "2.2.2 Tram PIDS", "2.2.3 Tram Signage"})));
+        sbsList.add(new sbsNodes("2.3 Roads", 18, Arrays.asList(new String[]{"2.3.1 Road civil works",
+            "2.3.2 Other (furniture, bus interchange, bus shelter, bike lane, fencing signage, etc)"})));
+        sbsList.add(new sbsNodes("2.4 Pedestrians/Bicycles", 22, Arrays.asList(new String[]{"2.4.1 Pedestrian Structures", "2.4.2 Shared user path (SUP)", "2.4.3 Cycle path"})));
+        sbsList.add(new sbsNodes("2.5 IDOs", 18, Arrays.asList(new String[]{"2.5.1 Enabling Works for IDO"})));
+        sbsList.add(new sbsNodes("2.6 Others", 18, Arrays.asList(new String[]{"2.6.1 Linear Park", "2.6.2 Landscaping"})));
+
+        // Setting up the columns width
+        for (int i = 0; i < sbsList.size(); i++) {
+            int width = ((int) (sbsList.get(i).columnSize * 1.14388 * 256));
+            sbs.setColumnWidth(i, width);
+        }
+
+        //Creating the first level
+        Row BodySbsRow = sbs.createRow(1);
+        for (int i = 0; i < sbsList.size(); i++) {
+            Cell lvl1SbsCell = BodySbsRow.createCell(i);
+            lvl1SbsCell.setCellValue(sbsList.get(i).levelTwo);
+            CellStyle cellStyle = workbook.createCellStyle();
+            if (sbsList.get(i).levelTwo.startsWith("1")) {
+                cellStyle.setFont(getBodySbsFont(workbook.createFont(), ""));
+                cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.AQUA.getIndex());
+            } else if (sbsList.get(i).levelTwo.startsWith("2")) {
+                cellStyle.setFont(getBodySbsFont(workbook.createFont(), "White"));
+                cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.SEA_GREEN.getIndex());
+            }
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            cellStyle.setWrapText(true);
+            lvl1SbsCell.setCellStyle(cellStyle);
+        }
+
+        // Getting the maximum rows number
+        Integer maxSbs = sbsList
+                .stream()
+                .map(i -> i.columnSize)
+                .collect(Collectors.toList())
+                .stream()
+                .mapToInt(v -> v)
+                .max().orElseThrow(NoSuchElementException::new);
+
+        //Creating the second level
+        for (int row = 0; row < max; row++) {
+            BodySbsRow = sbs.createRow(row + 2);
+            for (int col = 0; col < sbsList.size(); col++) {
+                if (row < sbsList.get(col).levelThreeList.size()) {
+                    Cell lvl2SbsCell = BodySbsRow.createCell(col);
+                    lvl2SbsCell.setCellValue(sbsList.get(col).levelThreeList.get(row));
+                    CellStyle cellStyle = workbook.createCellStyle();
+                    if (sbsList.get(col).levelThreeList.get(row).startsWith("1")) {
+                        cellStyle.setFont(getBodySbsFont(workbook.createFont(), ""));
+                        cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
+                    } else if (sbsList.get(col).levelThreeList.get(row).startsWith("2")) {
+                        cellStyle.setFont(getBodySbsFont(workbook.createFont(), ""));
+                        cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_GREEN.getIndex());
+                    }
+                    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                    cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+                    cellStyle.setWrapText(true);
+                    lvl2SbsCell.setCellStyle(cellStyle);
+                }
+            }
+        }
+
+        // Additional security sheet configurations
         sheet.lockDeleteColumns(true);
         sheet.lockDeleteRows(true);
         sheet.lockFormatCells(true);
@@ -1678,7 +1794,6 @@ public class trees_MB implements Serializable {
         sheet.lockInsertRows(true);
         sheet.protectSheet(dbsystemParametersFacade.find(1).getExcelLayoutPassword());
         sheet.enableLocking();
-        //workbook.lockStructure();
         workbook.setSheetHidden(1, true);
 
         try {
@@ -1705,6 +1820,15 @@ public class trees_MB implements Serializable {
         headerFont.setFontHeightInPoints((short) 11);
         headerFont.setFontName("Arial");
         return headerFont;
+    }
+
+    private Font getBodySbsFont(Font bodyFont, String color) {
+        bodyFont.setFontHeightInPoints((short) 11);
+        bodyFont.setFontName("Arial");
+        if (color.equals("White")) {
+            bodyFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+        }
+        return bodyFont;
     }
 
     private DataValidation generateDropDownList(XSSFSheet sheet, CellRangeAddressList cellRange, String hiddenReference) {
@@ -1748,7 +1872,7 @@ public class trees_MB implements Serializable {
         anchor.setCol1(cell.getColumnIndex() + 1); //the box of the comment starts at this given column...
         anchor.setCol2(cell.getColumnIndex() + 3); //...and ends at that given column
         anchor.setRow1(rowIdx + 1); //one row below the cell...
-        anchor.setRow2(rowIdx + 5); //...and 4 rows high
+        anchor.setRow2(rowIdx + 6); //...and 4 rows high
 
         Drawing drawing = sheet.createDrawingPatriarch();
         Comment comment = drawing.createCellComment(anchor);
@@ -1771,6 +1895,25 @@ public class trees_MB implements Serializable {
         }
 
         return cell;
+    }
+
+    class sbsNodes {
+
+        public String levelTwo;
+        public int columnSize;
+        public List<String> levelThreeList;
+
+        public sbsNodes() {
+            levelTwo = "";
+            columnSize = 0;
+            levelThreeList = new ArrayList<>();
+        }
+
+        public sbsNodes(String levelTwo, int columnSize, List<String> levelThreeList) {
+            this.levelTwo = levelTwo;
+            this.columnSize = columnSize;
+            this.levelThreeList = levelThreeList;
+        }
     }
 
     // This method processes the uploaded file.
@@ -2016,6 +2159,7 @@ public class trees_MB implements Serializable {
                                 try {
                                     tmpObj.lineData.setHazardDate(new SimpleDateFormat("dd-MMM-yyyy").parse(row.getCell(i).toString()));
                                 } catch (ParseException ex) {
+                                    createLineError(tmpObj, "hazardDate", 4);
                                     Logger.getLogger(trees_MB.class.getName()).log(Level.SEVERE, null, ex);
                                 }
                             } else {
@@ -2038,14 +2182,75 @@ public class trees_MB implements Serializable {
                         case 16:
                             if (!"".equals(row.getCell(i).toString())) {
                                 tmpObj.lineData.setHazardHFReview(row.getCell(i).toString());
-                            } else {
-                                createLineError(tmpObj, "hazardHFReview", 1);
                             }
                             break;
                         // Processing hazard sbs codes 
                         case 17:
                             if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setHazardSbs(row.getCell(i).toString());
+                                String[] sbsValues = row.getCell(i).toString().replaceAll("\\s+", "").split(",");
+                                if (sbsValues.length == 0) {
+                                    createLineError(tmpObj, "hazardSbs", 2);
+                                } else if (sbsValues.length > 0) {
+                                    boolean errorFound = false;
+                                    for (String sbsValue : sbsValues) {
+                                        if (sbsValue.matches("^\\d+(\\.\\d+)*") && !errorFound) {
+                                            String[] sbsCodes = sbsValue.split("\\.");
+                                            int[] sbsInt = Arrays.stream(sbsCodes).mapToInt(Integer::parseInt).toArray();
+                                            switch (sbsCodes.length) {
+                                                case 1:
+                                                    DbtreeLevel1 lvl1 = dbtreeLevel1Facade1.findByIndex(sbsInt[0]);
+                                                    if (lvl1.getTreeLevel1Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    DbtreeLevel2 lvl2 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1]);
+                                                    if (lvl2.getTreeLevel2Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 3:
+                                                    DbtreeLevel3 lvl3 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2]);
+                                                    if (lvl3.getTreeLevel3Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 4:
+                                                    DbtreeLevel4 lvl4 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3]);
+                                                    if (lvl4.getTreeLevel4Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 5:
+                                                    DbtreeLevel5 lvl5 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4]);
+                                                    if (lvl5.getTreeLevel5Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 6:
+                                                    DbtreeLevel6 lvl6 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4], sbsInt[5]);
+                                                    if (lvl6.getTreeLevel6Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                default:
+                                                    errorFound = true;
+                                                    break;
+                                            }
+                                            if (errorFound) {
+                                                createLineError(tmpObj, "hazardSbs", 2);
+                                                break;
+                                            }
+                                        } else {
+                                            createLineError(tmpObj, "hazardSbs", 2);
+                                            errorFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!errorFound) {
+                                        tmpObj.lineData.setHazardSbs(row.getCell(i).toString());
+                                    }
+                                }
                             } else {
                                 createLineError(tmpObj, "hazardSbs", 1);
                             }
@@ -2163,6 +2368,9 @@ public class trees_MB implements Serializable {
                 break;
             case 3:
                 tmpError.setProcessErrorCode(new DbimportErrorCode(3));
+                break;
+            case 4:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(4));
                 break;
         }
         tmpObj.lineError.add(tmpError);

@@ -1384,8 +1384,9 @@ public class hazardView_MB implements Serializable {
         {"Date Raised ", "Yellow", "14"},
         {"Workshop/Source ", "Yellow", "25"},
         {"Close Out Commentary", "Grey", "14"},
-        {"Risk Status ", "Yellow", "14"},
-        {"Human Factors review required? ", "Yellow", "14"}};
+        {"Risk Status", "Yellow", "14"},
+        {"Human Factors review required?", "Yellow", "14"},
+        {"Stored Files", "Grey", "14"}};
 
         // Creating headers from the row number 6
         Row headerRow = sheet.createRow(5);
@@ -1443,10 +1444,11 @@ public class hazardView_MB implements Serializable {
                 String hazardWorkshop = checkNullString(exportedInfo.get(i)[27]);
                 String hazardStatusName = checkNullString(exportedInfo.get(i)[28]);
                 String humanFactors = checkNullString(exportedInfo.get(i)[29]);
+                String files = checkNullString(exportedInfo.get(i)[30]);
 
                 exportedHazard curHazard = new exportedHazard(hazardId1, locationName, hazardContextName, hazardCauses, hazardDescription, ownerName, hazardConsequences,
                         hazardTypeName, riskClassName, currentSeverityScore, currentFrequencyScore, currentRiskScore, targetSeverityScore, targetFrequencyScore, 
-                        targetRiskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName, humanFactors);
+                        targetRiskScore, hazardComment, hazardDate, hazardWorkshop, hazardStatusName, humanFactors, files);
 
                 // Getting the controls information
                 List<exportedExsControl> listExsCtl = new ArrayList<>();
@@ -1657,7 +1659,16 @@ public class hazardView_MB implements Serializable {
                 BodyCell.setCellStyle(bodyCellStyle);
                 if (numberOfRowsperHazard > 1) {
                     sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
-                }                
+                } 
+                
+                // files field is in column AL
+                column = "AL";
+                BodyCell = bodyRow.createCell(37);
+                BodyCell.setCellValue(curHazard.files);
+                BodyCell.setCellStyle(bodyCellStyle);
+                if (numberOfRowsperHazard > 1) {
+                    sheet.addMergedRegion(CellRangeAddress.valueOf(column + (currentRow + 1) + ":" + column + (currentRow + numberOfRowsperHazard)));
+                }         
 
                 // -------------------------------> Second step, writing the controls. <---------------------------------------
                 Iterator<exportedExsControl> exsIterator = listExsCtl.iterator();
@@ -1906,11 +1917,12 @@ public class hazardView_MB implements Serializable {
         public String hazardWorkshop;
         public String hazardStatusName;
         public String humanFactors;
+        public String files;
 
         public exportedHazard(String hazardId, String locationName, String hazardContextName, String hazardCauses, String hazardDescription, String ownerName, 
                 String hazardConsequences, String hazardTypeName, String riskClassName, String currentSeverityScore, String currentFrequencyScore, 
                 String currentRiskScore, String targetSeverityScore, String targetFrequencyScore, String targetRiskScore, String hazardComment, 
-                String hazardDate, String hazardWorkshop, String hazardStatusName, String humanFactors) {
+                String hazardDate, String hazardWorkshop, String hazardStatusName, String humanFactors, String files) {
             this.hazardId = hazardId;
             this.locationName = locationName;
             this.hazardContextName = hazardContextName;
@@ -1931,6 +1943,7 @@ public class hazardView_MB implements Serializable {
             this.hazardWorkshop = hazardWorkshop;
             this.hazardStatusName = hazardStatusName;
             this.humanFactors = humanFactors;
+            this.files = files;
         }
 
         
