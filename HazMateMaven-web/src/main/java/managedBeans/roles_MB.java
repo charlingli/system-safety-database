@@ -23,7 +23,7 @@ import javax.faces.view.ViewScoped;
 @Named(value = "roles_MB")
 @ViewScoped
 public class roles_MB implements Serializable {
-
+    
     @EJB
     private DbRoleFacadeLocal dbRoleFacade;
     private List<DbRole> listDbRole;
@@ -31,58 +31,67 @@ public class roles_MB implements Serializable {
     private String strStatus;
     private List listDbUser;
     private boolean wfApprover;
+    private boolean doubleScore;
     
     private boolean addFlag;
     private boolean editFlag;
-
+    
     public roles_MB() {
-
+        
     }
- 
-   public List<DbRole> getListDbRole() {
+    
+    public List<DbRole> getListDbRole() {
         return listDbRole;
     }
-
+    
     public void setListDbRole(List<DbRole> listDbRole) {
         this.listDbRole = listDbRole;
     }
-
+    
     public DbRole getRoleObject() {
         return roleObject;
     }
-
+    
     public void setRoleObject(DbRole roleObject) {
         this.roleObject = roleObject;
     }
-
+    
     public String getStrStatus() {
         return strStatus;
     }
-
+    
     public void setStrStatus(String strStatus) {
         this.strStatus = strStatus;
     }
-
+    
     public boolean isWfApprover() {
         return wfApprover;
     }
-
+    
     public void setWfApprover(boolean wfApprover) {
         this.wfApprover = wfApprover;
     }
-
+    
+    public boolean isDoubleScore() {
+        return doubleScore;
+    }
+    
+    public void setDoubleScore(boolean doubleScore) {
+        this.doubleScore = doubleScore;
+    }
+    
     public boolean isAddFlag() {
         return addFlag;
     }
-
+    
     public void setAddFlag(boolean addFlag) {
         this.addFlag = addFlag;
     }
-
+    
     public boolean isEditFlag() {
         return editFlag;
     }
-
+    
     public void setEditFlag(boolean editFlag) {
         this.editFlag = editFlag;
     }
@@ -92,6 +101,7 @@ public class roles_MB implements Serializable {
         listDbRole = dbRoleFacade.findAll();
         roleObject = new DbRole();
         wfApprover = false;
+        doubleScore = false;
         addFlag = false;
         editFlag = false;
     }
@@ -100,18 +110,19 @@ public class roles_MB implements Serializable {
         roleObject = new DbRole();
         addFlag = true;
     }
-
+    
     public void add() {
         if (duplicateValidations()) {
             error1();
         }
         setWfApprover();
+        setDoubleScore();
         dbRoleFacade.create(roleObject);
         roleObject = new DbRole();      //re-initialise roleObject for future calls of this method
         init();     //Update listDbRole so that the newly created role appears in the roles table
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The role has been successfully added. Remember to use the permissions page to assign access to pages."));
     }
-
+    
     public void delete(DbRole roleObject) {
         listDbUser = dbRoleFacade.checkUser(roleObject.getRoleId());
         if (listDbUser.isEmpty()) {
@@ -123,31 +134,35 @@ public class roles_MB implements Serializable {
         init();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The role has been successfully deleted."));
     }
-
+    
     public void edit(DbRole roleObject) {
         this.roleObject = roleObject;
         strStatus = Short.toString(this.roleObject.getRoleStatus()); //pre-populate role status field 
-        System.out.println(strStatus);
-        if (roleObject.getRoleWFApprover().equals("Y")) 
+        if (roleObject.getRoleWFApprover().equals("Y")) {
             wfApprover = true;
+        }
+        if (roleObject.getRoleDoubleScore().equals("Y")) {
+            doubleScore = true;
+        }
         editFlag = true;
     }
-
+    
     public void edit() {
         if (duplicateValidations()) {
             error1();
         }
         setWfApprover();
+        setDoubleScore();
         dbRoleFacade.edit(roleObject);
         roleObject = new DbRole();
         init();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info: ", "The role has been successfully edited."));
     }
-
+    
     public void cancel() {
         init();
     }
-
+    
     public String printStatus(Short roleStatus) {
         switch (roleStatus) {
             case 0:
@@ -162,28 +177,36 @@ public class roles_MB implements Serializable {
         return strStatus;
     }
     
-    public void setWfApprover(){
-        if (wfApprover){
+    public void setWfApprover() {
+        if (wfApprover) {
             roleObject.setRoleWFApprover("Y");
         } else {
             roleObject.setRoleWFApprover("N");
         }
     }
     
+    public void setDoubleScore() {
+        if (doubleScore) {
+            roleObject.setRoleDoubleScore("Y");
+        } else {
+            roleObject.setRoleDoubleScore("N");
+        }
+    }
+    
     public boolean duplicateValidations() {
         List<DbRole> validateDuplicates = dbRoleFacade.findByName("roleName", roleObject.getRoleName());
         if (!validateDuplicates.isEmpty() && validateDuplicates.get(0).equals(roleObject)) {
-                return false;
+            return false;
         }
         return !validateDuplicates.isEmpty();
     }
-
+    
     public void error() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The role is currently assigned to one or more users!"));
     }
-
+    
     public void error1() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The role name already exists!"));
     }
-
+    
 }

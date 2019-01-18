@@ -26,6 +26,9 @@
                         <p:column headerText="Workflow Approver" class="tableColumn80p">
                             <p:outputLabel value="#{item.roleWFApprover}"/>
                         </p:column>
+                        <p:column headerText="Double Hazard Score" class="tableColumn80p">
+                            <p:outputLabel value="#{item.roleDoubleScore}"/>
+                        </p:column>                        
                         <p:column headerText="Option" class="tableColumn80p">
                             <h:commandLink value="Edit" disabled="#{roles_MB.addFlag}" class="commandLink">
                                 <f:ajax listener="#{roles_MB.edit(item)}" execute="@form" render="@form"/>
@@ -58,6 +61,8 @@
                             </p:selectOneMenu>
                             <p:outputLabel for="@next" value="Workflow Approver: "/>
                             <p:selectBooleanCheckbox value="#{roles_MB.wfApprover}"/>
+                            <p:outputLabel for="@next" value="Double Hazard Score: "/>
+                            <p:selectBooleanCheckbox value="#{roles_MB.doubleScore}"/>
                         </p:panelGrid>
                     </p:panel>
                     <div class="panelButtons">
