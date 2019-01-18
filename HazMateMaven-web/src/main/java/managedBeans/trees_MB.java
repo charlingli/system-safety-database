@@ -2324,7 +2324,7 @@ public class trees_MB implements Serializable {
                             break;
                         // Processing control justify
                         case 24:
-                            if (row.getCell(18).toString().equals("Control") && row.getCell(23).toString().equals("Refer to Control Justification")) {
+                            if (row.getCell(18).toString().equals("Control") && dbcontrolRecommendFacade.findByName("controlJustifyName", row.getCell(23).toString()).get(0).getControlJustifyRequired().equals("Y")){
                                 if (!"".equals(row.getCell(i).toString())) {
                                     tmpObj.lineData.setControlJustify(row.getCell(i).toString());
                                 } else {
