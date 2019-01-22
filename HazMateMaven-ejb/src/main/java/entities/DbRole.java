@@ -6,7 +6,9 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,14 +16,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author lxra
+ * @author Juan David
  */
 @Entity
 @Table(name = "db_role")
@@ -30,9 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "DbRole.findAll", query = "SELECT d FROM DbRole d")
     , @NamedQuery(name = "DbRole.findByRoleId", query = "SELECT d FROM DbRole d WHERE d.roleId = :roleId")
     , @NamedQuery(name = "DbRole.findByRoleName", query = "SELECT d FROM DbRole d WHERE d.roleName = :roleName")
-    , @NamedQuery(name = "DbRole.findByRoleStatus", query = "SELECT d FROM DbRole d WHERE d.roleStatus = :roleStatus")
-    , @NamedQuery(name = "DbRole.findByRoleWFApprover", query = "SELECT d FROM DbRole d WHERE d.roleWFApprover = :roleWFApprover")
-    , @NamedQuery(name = "DbRole.findByRoleDoubleScore", query = "SELECT d FROM DbRole d WHERE d.roleDoubleScore = :roleDoubleScore")})
+    , @NamedQuery(name = "DbRole.findByRoleStatus", query = "SELECT d FROM DbRole d WHERE d.roleStatus = :roleStatus")})
 public class DbRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -50,7 +52,7 @@ public class DbRole implements Serializable {
     private short roleStatus;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 1)
+    @Size(max = 1)
     @Column(name = "roleWFApprover")
     private String roleWFApprover;
     @Basic(optional = false)
@@ -58,6 +60,10 @@ public class DbRole implements Serializable {
     @Size(min = 1, max = 1)
     @Column(name = "roleDoubleScore")
     private String roleDoubleScore;
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "dbRole")
+    private List<DbRolePage> dbRolePageList;
+    @OneToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH}, mappedBy = "roleId")
+    private List<DbUser> dbUserList;
 
     public DbRole() {
     }
@@ -66,11 +72,9 @@ public class DbRole implements Serializable {
         this.roleId = roleId;
     }
 
-    public DbRole(Integer roleId, short roleStatus, String roleWFApprover, String roleDoubleScore) {
+    public DbRole(Integer roleId, short roleStatus) {
         this.roleId = roleId;
         this.roleStatus = roleStatus;
-        this.roleWFApprover = roleWFApprover;
-        this.roleDoubleScore = roleDoubleScore;
     }
 
     public Integer getRoleId() {
@@ -113,6 +117,24 @@ public class DbRole implements Serializable {
         this.roleDoubleScore = roleDoubleScore;
     }
 
+    @XmlTransient
+    public List<DbRolePage> getDbRolePageList() {
+        return dbRolePageList;
+    }
+
+    public void setDbRolePageList(List<DbRolePage> dbRolePageList) {
+        this.dbRolePageList = dbRolePageList;
+    }
+
+    @XmlTransient
+    public List<DbUser> getDbUserList() {
+        return dbUserList;
+    }
+
+    public void setDbUserList(List<DbUser> dbUserList) {
+        this.dbUserList = dbUserList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -135,7 +157,6 @@ public class DbRole implements Serializable {
 
     @Override
     public String toString() {
-        return "entities.DbRole[ roleId=" + roleId + " ]";
+        return roleName;
     }
-    
 }
