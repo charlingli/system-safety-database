@@ -1166,7 +1166,7 @@ public class hazardView_MB implements Serializable {
             qualityObject.setRating(rating);
             if (rating == 0) {
                 qualityObject.setWeighting(0);
-            } else if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+            } else if (activeUser.getRoleId().getRoleDoubleScore().equals("Y")) {
                 qualityObject.setWeighting(2);
             } else {
                 qualityObject.setWeighting(1);
@@ -1181,7 +1181,7 @@ public class hazardView_MB implements Serializable {
             qualityObject.setRating(rating);
             if (rating == 0) {
                 qualityObject.setWeighting(0);
-            } else if (activeUser.getRoleId().getRoleWFApprover().equals("Y")) {
+            } else if (activeUser.getRoleId().getRoleDoubleScore().equals("Y")) {
                 qualityObject.setWeighting(2);
             } else {
                 qualityObject.setWeighting(1);

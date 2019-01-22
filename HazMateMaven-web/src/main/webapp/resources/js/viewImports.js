@@ -3,6 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+$(document).ready(function() {
+    buildValidation();
+});
+
 function buildValidation() {
     let headers = $("#hazardsForm\\:hazardsTable_head tr").eq(0).children();
     let data = $("#hazardsForm\\:hazardsTable_data tr");
@@ -83,6 +88,12 @@ function findCell(cellHeader, rowIndex) {
             break;
         case "relationdescription":
             return "#hazardsForm\\:hazardsTable\\:" + rowIndex + "\\:RDCell";
+            break;
+        case "controlowner":
+            return "#hazardsForm\\:hazardsTable\\:" + rowIndex + "\\:COCell";
+            break;
+        case "controlhierarchy":
+            return "#hazardsForm\\:hazardsTable\\:" + rowIndex + "\\:CHCell";
             break;
         case "controltype":
             return "#hazardsForm\\:hazardsTable\\:" + rowIndex + "\\:CTCell";

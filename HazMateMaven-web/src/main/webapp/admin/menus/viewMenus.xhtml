@@ -59,7 +59,7 @@
                             <p:inputText id="menuName" value="#{menus_MB.menuObjectVariable.menuName}" required="true" requiredMessage="Menu name is required."/>
                             <h:panelGroup/>
                             <p:outputLabel value="Menu Type:" for="menuType"/>
-                            <p:selectOneMenu id="menuType" value="#{menus_MB.menuObjectVariable.menuType}" styleClass="editInput" >
+                            <p:selectOneMenu id="menuType" value="#{menus_MB.menuObjectVariable.menuType}" styleClass="editInput">
                                 <f:selectItem itemLabel="Main Menu" itemValue="M"/>
                                 <f:selectItem itemLabel="Submenu" itemValue="S"/>
                                 <p:ajax listener="#{menus_MB.loadParents()}" update="menuParent"/>

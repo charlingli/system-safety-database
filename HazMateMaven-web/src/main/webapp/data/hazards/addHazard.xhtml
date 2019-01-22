@@ -37,12 +37,12 @@
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
                                     <p:column style="display: none">
-                                        <h:panelGroup id="similarityWords" >
+                                        <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column style="display: none">
-                                        <h:panelGroup id="commonWords" >
+                                        <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>

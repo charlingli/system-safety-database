@@ -35,12 +35,12 @@
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
                                     <p:column style="display: none">
-                                        <h:panelGroup id="similarityWords" >
+                                        <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column style="display: none">
-                                        <h:panelGroup id="commonWords" >
+                                        <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
@@ -145,7 +145,7 @@
                                 <p:column headerText="Hierarchy" filterBy="#{item.controlHierarchyId.controlHierarchyName}" filterMatchMode="in" styleClass="small">
                                     <f:facet name="filter">
                                         <p:selectCheckboxMenu id="hierarchyFilter" label="Select" onchange="PF('controlTable').filter()" scrollHeight="150">
-                                            <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="searchHierarchy" itemLabel="#{searchHierarchy.controlHierarchyName}" itemValue="#{searchHierarchy.controlHierarchyName}" />
+                                            <f:selectItems value="#{control_MB.listDbControlHierarchy}" var="searchHierarchy" itemLabel="#{searchHierarchy.controlHierarchyName}" itemValue="#{searchHierarchy.controlHierarchyName}"/>
                                         </p:selectCheckboxMenu>
                                     </f:facet>
                                     <p:outputLabel value="#{item.controlHierarchyId.controlHierarchyName}"/>

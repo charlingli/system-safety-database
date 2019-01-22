@@ -344,7 +344,7 @@
                         </p:commandButton>
                     </div>
                     <p:dataTable id="hazardsTable" value="#{hazardView_MB.listSearchedHazards}" var="hazard" emptyMessage="No hazard entries found with given criteria. Adjust parameters and click 'Search Hazards' to begin." 
-                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox" >
+                                 scrollable="true" scrollHeight="600" scrollRows="100" liveScroll="true" styleClass="resultPanel" rowIndexVar="rowIndex" rowKey="#{hazard.hazardObj.hazardId}" selection="#{hazardView_MB.checkedHazards}" rowSelectMode="checkbox">
                         <f:facet name="header">
                             <p:outputPanel styleClass="tableHeader">
                                 <div class="left"></div>
@@ -377,15 +377,11 @@
                             <h:outputText>
                                 <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}"/>
                                 </h:outputText>
-                            <p:rating id="averageRating" stars="3" cancel="false" value="#{hazardView_MB.qualityRating}" >
+                            <p:rating id="averageRating" stars="3" cancel="false" value="#{hazardView_MB.qualityRating}">
                                 <p:ajax event="rate" ignoreAutoUpdate="true" listener="#{hazardView_MB.prepareRating(hazard.hazardObj.hazardId, rowIndex, hazard.sumOfRateTimesWeighting, hazard.sumOfWeight, hazard.rateCount)}" oncomplete="PF('ratingOverlay').show('#{component.clientId}');"/>
                             </p:rating>
                             <p:tooltip for="averageRating">
                                 <h:outputText value="Rated #{hazardView_MB.qualityRating} from #{hazard.rateCount} users."/>
-                            </p:tooltip>
-                            <p:commandLink id="ratedIcon" class="ratedIcon" rendered="#{hazardView_MB.userRating == 0 ? false : true}"><i class="fa fa-check-circle"></i></p:commandLink>
-                            <p:tooltip for="ratedIcon">
-                                <h:outputText value="You have rated this hazard."/>
                             </p:tooltip>
                         </p:column>
                         <p:column style="width: 4%; text-align:center" headerText="Tagging">
@@ -483,7 +479,7 @@
                             </p:ajax>
                         </p:rating>
                     </p:overlayPanel>
-                    <p:overlayPanel widgetVar="suggestionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true" >
+                    <p:overlayPanel widgetVar="suggestionOverlay" hideEffect="fade" dismissable="false" showCloseIcon="true">
                         <p:panelGrid columns="1" class="suggestionPanel">
                             <f:facet name="header">
                                 <h:outputText value="Suggest a change"/>

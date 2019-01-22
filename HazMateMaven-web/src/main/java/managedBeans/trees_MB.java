@@ -108,9 +108,7 @@ import org.primefaces.model.UploadedFile;
 @Named(value = "trees_MB")
 @ViewScoped
 public class trees_MB implements Serializable {
-
-    @EJB
-    private DbtreeLevel1FacadeLocal dbtreeLevel1Facade1;
+    
     @EJB
     private DbimportLineErrorFacadeLocal dbimportLineErrorFacade;
     @EJB
@@ -2198,37 +2196,37 @@ public class trees_MB implements Serializable {
                                             int[] sbsInt = Arrays.stream(sbsCodes).mapToInt(Integer::parseInt).toArray();
                                             switch (sbsCodes.length) {
                                                 case 1:
-                                                    DbtreeLevel1 lvl1 = dbtreeLevel1Facade1.findByIndex(sbsInt[0]);
+                                                    DbtreeLevel1 lvl1 = dbtreeLevel1Facade.findByIndex(sbsInt[0]);
                                                     if (lvl1.getTreeLevel1Name() == null) {
                                                         errorFound = true;
                                                     }
                                                     break;
                                                 case 2:
-                                                    DbtreeLevel2 lvl2 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1]);
+                                                    DbtreeLevel2 lvl2 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1]);
                                                     if (lvl2.getTreeLevel2Name() == null) {
                                                         errorFound = true;
                                                     }
                                                     break;
                                                 case 3:
-                                                    DbtreeLevel3 lvl3 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2]);
+                                                    DbtreeLevel3 lvl3 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2]);
                                                     if (lvl3.getTreeLevel3Name() == null) {
                                                         errorFound = true;
                                                     }
                                                     break;
                                                 case 4:
-                                                    DbtreeLevel4 lvl4 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3]);
+                                                    DbtreeLevel4 lvl4 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3]);
                                                     if (lvl4.getTreeLevel4Name() == null) {
                                                         errorFound = true;
                                                     }
                                                     break;
                                                 case 5:
-                                                    DbtreeLevel5 lvl5 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4]);
+                                                    DbtreeLevel5 lvl5 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4]);
                                                     if (lvl5.getTreeLevel5Name() == null) {
                                                         errorFound = true;
                                                     }
                                                     break;
                                                 case 6:
-                                                    DbtreeLevel6 lvl6 = dbtreeLevel1Facade1.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4], sbsInt[5]);
+                                                    DbtreeLevel6 lvl6 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4], sbsInt[5]);
                                                     if (lvl6.getTreeLevel6Name() == null) {
                                                         errorFound = true;
                                                     }
@@ -2324,7 +2322,7 @@ public class trees_MB implements Serializable {
                             break;
                         // Processing control justify
                         case 24:
-                            if (row.getCell(18).toString().equals("Control") && dbcontrolRecommendFacade.findByName("controlJustifyName", row.getCell(23).toString()).get(0).getControlJustifyRequired().equals("Y")){
+                            if (row.getCell(18).toString().equals("Control") && dbcontrolRecommendFacade.findByName("controlJustifyRequired", row.getCell(23).toString()).get(0).getControlJustifyRequired().equals("Y")){
                                 if (!"".equals(row.getCell(i).toString())) {
                                     tmpObj.lineData.setControlJustify(row.getCell(i).toString());
                                 } else {

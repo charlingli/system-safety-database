@@ -5,6 +5,7 @@
  */
 package managedBeans;
 
+import customObjects.similarityObject;
 import customObjects.treeNodeObject;
 import customObjects.validateIdObject;
 import ejb.DbCauseFacadeLocal;
@@ -14,6 +15,7 @@ import ejb.DbControlHazardFacadeLocal;
 import ejb.DbHazardCauseFacadeLocal;
 import ejb.DbHazardConsequenceFacadeLocal;
 import ejb.DbHazardFacadeLocal;
+import ejb.DbHazardSbsFacadeLocal;
 import ejb.DbLocationFacadeLocal;
 import ejb.DbOwnersFacadeLocal;
 import ejb.DbProjectFacadeLocal;
@@ -29,9 +31,11 @@ import ejb.DbimportErrorCodeFacadeLocal;
 import ejb.DbimportHeaderFacadeLocal;
 import ejb.DbimportLineErrorFacadeLocal;
 import ejb.DbimportLineFacadeLocal;
+import ejb.DbindexedWordFacadeLocal;
 import ejb.DbriskClassFacadeLocal;
 import ejb.DbriskFrequencyFacadeLocal;
 import ejb.DbriskSeverityFacadeLocal;
+import ejb.DbsystemParametersFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
 import ejb.DbtreeLevel2FacadeLocal;
 import ejb.DbtreeLevel3FacadeLocal;
@@ -44,25 +48,61 @@ import javax.faces.view.ViewScoped;
 import java.io.Serializable;
 
 import entities.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.RegionUtil;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -71,6 +111,15 @@ import org.primefaces.model.TreeNode;
 @Named(value = "importHazard_MB")
 @ViewScoped
 public class importHazard_MB implements Serializable {
+
+    @EJB
+    private DbHazardSbsFacadeLocal dbHazardSbsFacade;
+
+    @EJB
+    private DbindexedWordFacadeLocal dbindexedWordFacade;
+
+    @EJB
+    private DbsystemParametersFacadeLocal dbsystemParametersFacade;
 
     @EJB
     private DbimportLineErrorFacadeLocal dbimportLineErrorFacade;
@@ -190,6 +239,10 @@ public class importHazard_MB implements Serializable {
     private List<DbriskSeverity> listRS;
     private List<DbcontrolHierarchy> listCH;
     private List<DbcontrolRecommend> listCR;
+    
+    private boolean showUpload;
+    
+    private wordProcessing_MB wordProcessing_MB;
     
     public importHazard_MB() {
     
@@ -330,12 +383,26 @@ public class importHazard_MB implements Serializable {
     public void setRoot(TreeNode root) {
         this.root = root;
     }
+
+    public boolean isShowUpload() {
+        return showUpload;
+    }
+
+    public void setShowUpload(boolean showUpload) {
+        this.showUpload = showUpload;
+    }
     
     @PostConstruct
     public void init() {
         activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         
         listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
+        
+        if (listLoadedLines.size() > 0) {
+            setShowUpload(false);
+        } else {
+            setShowUpload(true);
+        }
         
         setListHL(dbLocationFacade.findAll());
         setListHP(dbProjectFacade.findAll());
@@ -350,6 +417,8 @@ public class importHazard_MB implements Serializable {
         setListCH(dbcontrolHierarchyFacade.findAll());
         setListCR(dbcontrolRecommendFacade.findAll());
         selectedLine = new DbimportLine();
+        
+        wordProcessing_MB = (wordProcessing_MB) FacesContext.getCurrentInstance().getApplication().createValueBinding("#{wordProcessing_MB}").getValue(FacesContext.getCurrentInstance());
     }
     
     public void editCell(CellEditEvent event) {
@@ -362,106 +431,752 @@ public class importHazard_MB implements Serializable {
         int processIdLine = Integer.valueOf(lineIndex[1]);
         
         DbimportLine lineObject = dbimportLineFacade.findLineById(processId, processIdLine).get(0);
+        DbimportLineError errorObject;
+        List<DbimportLineError> errorList;
         
         if(newValue != null && !newValue.equals(oldValue)) {
+            boolean existingLine;
             switch(event.getColumn().getClientId().split(":")[3]) {
                 case "DTCol":
                     Date newDate = (Date) newValue;
-                    lineObject.setHazardDate(newDate);
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardDate");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 30));
+                    }
+                    errorObject.setProcessErrorLocation("hazardDate");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardDate(newDate);
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A date is required."));
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "LICol":
                     lineObject.setHazardLegacyId(newValue.toString());
                     break;
                 case "HDCol":
-                    lineObject.setHazardDescription(newValue.toString());
+                    List<DbimportLineError> dErrorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardDescription");
+                    List<DbimportLineError> warningList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazard");
+                    existingLine = false;
+                    if (dErrorList.size() > 0) {
+                        errorObject = dErrorList.get(0);
+                        existingLine = true;
+                    } else if (warningList.size() > 0) {
+                        errorObject = warningList.get(0);
+                        existingLine = true;
+                    } else { 
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 31));
+                    }
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardDescription(newValue.toString());
+                        List<similarityObject> similarityList = dbindexedWordFacade.findPotentialDuplicates(newValue.toString(), "hazard");
+                        errorObject.setProcessErrorLocation("hazard");
+                        if (similarityList.size() > 0) { // The hazard has similar entries
+                            errorObject.setProcessErrorCode(new DbimportErrorCode(3));
+                            errorObject.setProcessErrorStatus("P");
+                            if (existingLine) {
+                                dbimportLineErrorFacade.edit(errorObject);
+                            } else {
+                                dbimportLineErrorFacade.create(errorObject);
+                            }
+                        } else { // The hazard is entirely new
+                            if (existingLine) {
+                                errorObject.setProcessErrorStatus("F");
+                                dbimportLineErrorFacade.edit(errorObject);
+                            }
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard description is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorLocation("hazardDescription");
+                        errorObject.setProcessErrorStatus("P");
+                        dbimportLineErrorFacade.edit(errorObject);
+                    }
                     break;
                 case "HMCol":
                     lineObject.setHazardComment(newValue.toString());
                     break;
                 case "HWCol":
-                    lineObject.setHazardWorkshop(newValue.toString());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardWorkshop");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 32));
+                    }
+                    errorObject.setProcessErrorLocation("hazardWorkshop");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardWorkshop(newValue.toString());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard workshop is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "HCCol":
-                    lineObject.setHazardContextId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardContext(dbhazardContextFacade.findByName("hazardContextId", newValue.toString()).get(0).getHazardContextName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardContext");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 33));
+                    }
+                    errorObject.setProcessErrorLocation("hazardContext");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardContextId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardContext(dbhazardContextFacade.findByName("hazardContextId", newValue.toString()).get(0).getHazardContextName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard context is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "HLCol":
-                    lineObject.setHazardLocationId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardLocation(dbLocationFacade.findByName("locationId", newValue.toString()).get(0).getLocationName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardLocation");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 34));
+                    }
+                    errorObject.setProcessErrorLocation("hazardLocation");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardLocationId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardLocation(dbLocationFacade.findByName("locationId", newValue.toString()).get(0).getLocationName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard location is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "HACol":
-                    lineObject.setHazardActivityId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardActivity(dbhazardActivityFacade.findByName("activityId", newValue.toString()).get(0).getActivityName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardActivity");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 35));
+                    }
+                    errorObject.setProcessErrorLocation("hazardActivity");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardActivityId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardActivity(dbhazardActivityFacade.findByName("activityId", newValue.toString()).get(0).getActivityName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard activity is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "HTCol":
-                    lineObject.setHazardTypeId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardType(dbhazardTypeFacade.findByName("hazardTypeId", newValue.toString()).get(0).getHazardTypeName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardType");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 36));
+                    }
+                    errorObject.setProcessErrorLocation("hazardType");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardTypeId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardType(dbhazardTypeFacade.findByName("hazardTypeId", newValue.toString()).get(0).getHazardTypeName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard type is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "HSCol":
-                    lineObject.setHazardStatusId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardStatus(dbhazardStatusFacade.findByName("hazardStatusId", newValue.toString()).get(0).getHazardStatusName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardStatus");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 37));
+                    }
+                    errorObject.setProcessErrorLocation("hazardStatus");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardStatusId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardStatus(dbhazardStatusFacade.findByName("hazardStatusId", newValue.toString()).get(0).getHazardStatusName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard status is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "HOCol":
-                    lineObject.setHazardOwnerId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardOwner(dbOwnersFacade.findByName("ownerId", newValue.toString()).get(0).getOwnerName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardOwner");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 38));
+                    }
+                    errorObject.setProcessErrorLocation("hazardOwner");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardOwnerId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardOwner(dbOwnersFacade.findByName("ownerId", newValue.toString()).get(0).getOwnerName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A hazard owner is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
+                case "HFCol":
+                    lineObject.setHazardHFReview(newValue.toString());
                 case "RCCol":
-                    lineObject.setHazardRiskClassId(Integer.valueOf(newValue.toString()));
-                    lineObject.setHazardRiskClass(dbriskClassFacade.findByName("riskClassId", newValue.toString()).get(0).getRiskClassName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardRiskClass");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 39));
+                    }
+                    errorObject.setProcessErrorLocation("hazardRiskClass");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardRiskClassId(Integer.valueOf(newValue.toString()));
+                        lineObject.setHazardRiskClass(dbriskClassFacade.findByName("riskClassId", newValue.toString()).get(0).getRiskClassName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "A risk class is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "CFCol":
-                    lineObject.setHazardCurrentFrequencyId(Integer.valueOf(newValue.toString()));
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardCurrentFreq");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 40));
+                    }
+                    errorObject.setProcessErrorLocation("hazardCurrentFreq");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardCurrentFrequencyId(Integer.valueOf(newValue.toString()));
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The current risk frequency is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "CSCol":
-                    lineObject.setHazardCurrentSeverityId(Integer.valueOf(newValue.toString()));
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardCurrentSev");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 41));
+                    }
+                    errorObject.setProcessErrorLocation("hazardCurrentSev");
+                    if (!"".equals(newValue.toString())) {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The current risk severity is required."));
+                        lineObject.setHazardCurrentSeverityId(Integer.valueOf(newValue.toString()));
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "TFCol":
-                    lineObject.setHazardTargetFrequencyId(Integer.valueOf(newValue.toString()));
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardTargetFreq");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 42));
+                    }
+                    errorObject.setProcessErrorLocation("hazardTargetFreq");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardTargetFrequencyId(Integer.valueOf(newValue.toString()));
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The target risk frequency is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "TSCol":
-                    lineObject.setHazardTargetSeverityId(Integer.valueOf(newValue.toString()));
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardTargetSev");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 43));
+                    }
+                    errorObject.setProcessErrorLocation("hazardTargetFreq");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setHazardTargetSeverityId(Integer.valueOf(newValue.toString()));
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The target risk severity is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "RTCol":
                     lineObject.setRelationType(newValue.toString());
                     break;
                 case "RDCol":
-                    List<String> newList = (List<String>) newValue;
-                    lineObject.setRelationDescription(newList.get(0));
-                    switch (lineObject.getRelationType()) {
-                        case "Cause":
-                            lineObject.setRelationId(dbCauseFacade.findByName("causeDescription", newList.get(0)).get(0).getCauseId());
-                            break;
-                        case "Consequence":
-                            lineObject.setRelationId(dbConsequenceFacade.findByName("consequenceDescription", newList.get(0)).get(0).getConsequenceId());
-                            break;
-                        case "Control":
-                            DbControl newControl = dbControlFacade.findByName("controlDescription", newList.get(0)).get(0);
-                            lineObject.setRelationId(newControl.getControlId());
-                            lineObject.setControlOwnerId(newControl.getOwnerId().getOwnerId());
-                            lineObject.setControlOwner(newControl.getOwnerId().getOwnerName());
-                            lineObject.setControlHierarchyId(newControl.getControlHierarchyId().getControlHierarchyId());
-                            lineObject.setControlHierarchy(newControl.getControlHierarchyId().getControlHierarchyName());
-                            break;
+                    String newString = ((List<String>) newValue).get(0);
+                    existingLine = false;
+                    List<DbimportLineError> relationErrorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "relationDescription");
+                    List<DbimportLineError> causeErrorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "Cause");
+                    List<DbimportLineError> consequenceErrorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "Consequence");
+                    List<DbimportLineError> controlErrorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "Control");
+                    if (relationErrorList.size() > 0) {
+                        errorObject = relationErrorList.get(0);
+                        existingLine = true;
+                    } else if (causeErrorList.size() > 0) {
+                        errorObject = causeErrorList.get(0);
+                        existingLine = true;
+                    } else if (consequenceErrorList.size() > 0) {
+                        errorObject = consequenceErrorList.get(0);
+                        existingLine = true;
+                    } else if (controlErrorList.size() > 0) {
+                        errorObject = controlErrorList.get(0);
+                        existingLine = true;
+                    } else { 
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 44));
+                    }
+                    
+                    if (!"".equals(newString)) {
+                        lineObject.setRelationDescription(newString);
+                        List<similarityObject> similarityList;
+                        switch (lineObject.getRelationType()) {
+                            case "Cause":
+                                List<DbCause> causeList = dbCauseFacade.findByName("causeDescription", newString);
+                                similarityList = dbindexedWordFacade.findPotentialDuplicates(newString, "cause");
+                                errorObject.setProcessErrorLocation("Cause");
+                                if (causeList.size() > 0) { // The cause already exists
+                                    lineObject.setRelationId(causeList.get(0).getCauseId());
+                                    if (existingLine) {
+                                        errorObject.setProcessErrorStatus("F");
+                                        dbimportLineErrorFacade.edit(errorObject);
+                                    }
+                                } else { // The cause does not already exist in the DB
+                                    lineObject.setRelationId(processIdLine);
+                                    if (similarityList.size() > 0) { // The cause has similar entries
+                                        errorObject.setProcessErrorCode(new DbimportErrorCode(3));
+                                        errorObject.setProcessErrorStatus("P");
+                                        if (existingLine) {
+                                            dbimportLineErrorFacade.edit(errorObject);
+                                        } else {
+                                            dbimportLineErrorFacade.create(errorObject);
+                                        }
+                                    } else { // The cause is entirely new
+                                        if (existingLine) {
+                                            errorObject.setProcessErrorStatus("F");
+                                            dbimportLineErrorFacade.edit(errorObject);
+                                        }
+                                    }
+                                }
+                                break;
+                            case "Consequence":
+                                List<DbConsequence> consequenceList = dbConsequenceFacade.findByName("consequenceDescription", newString);
+                                similarityList = dbindexedWordFacade.findPotentialDuplicates(newString, "consequence");
+                                errorObject.setProcessErrorLocation("Consequence");
+                                if (consequenceList.size() > 0) { 
+                                    lineObject.setRelationId(consequenceList.get(0).getConsequenceId());
+                                    if (existingLine) {
+                                        errorObject.setProcessErrorStatus("F");
+                                        dbimportLineErrorFacade.edit(errorObject);
+                                    }
+                                } else { 
+                                    lineObject.setRelationId(processIdLine);
+                                    if (similarityList.size() > 0) { 
+                                        errorObject.setProcessErrorCode(new DbimportErrorCode(3));
+                                        errorObject.setProcessErrorStatus("P");
+                                        if (existingLine) {
+                                            dbimportLineErrorFacade.edit(errorObject);
+                                        } else {
+                                            dbimportLineErrorFacade.create(errorObject);
+                                        }
+                                    } else { // The cause is entirely new
+                                        if (existingLine) {
+                                            errorObject.setProcessErrorStatus("F");
+                                            dbimportLineErrorFacade.edit(errorObject);
+                                        }
+                                    }
+                                }
+                                break;
+                            case "Control":
+                                List<DbControl> controlList = dbControlFacade.findByName("controlDescription", newString);
+                                similarityList = dbindexedWordFacade.findPotentialDuplicates(newString, "control");
+                                errorObject.setProcessErrorLocation("Control");
+                                if (controlList.size() > 0) { 
+                                    lineObject.setRelationId(controlList.get(0).getControlId());
+                                    if (existingLine) {
+                                        errorObject.setProcessErrorStatus("F");
+                                        dbimportLineErrorFacade.edit(errorObject);
+                                    }
+                                } else { 
+                                    lineObject.setRelationId(processIdLine);
+                                    if (similarityList.size() > 0) { 
+                                        errorObject.setProcessErrorCode(new DbimportErrorCode(3));
+                                        errorObject.setProcessErrorStatus("P");
+                                        if (existingLine) {
+                                            dbimportLineErrorFacade.edit(errorObject);
+                                        } else {
+                                            dbimportLineErrorFacade.create(errorObject);
+                                        }
+                                    } else { // The cause is entirely new
+                                        if (existingLine) {
+                                            errorObject.setProcessErrorStatus("F");
+                                            dbimportLineErrorFacade.edit(errorObject);
+                                        }
+                                    }
+                                }
+                                break;
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The relation description is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorLocation("relationDescription");
+                        errorObject.setProcessErrorStatus("P");
+                        dbimportLineErrorFacade.edit(errorObject);
                     }
                     break;
                 case "COCol":
-                    lineObject.setControlOwnerId(Integer.valueOf(newValue.toString()));
-                    lineObject.setControlOwner(dbOwnersFacade.findByName("ownerId", newValue.toString()).get(0).getOwnerName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "controlOwner");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 45));
+                    }
+                    errorObject.setProcessErrorLocation("controlOwner");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setControlOwnerId(Integer.valueOf(newValue.toString()));
+                        lineObject.setControlOwner(dbOwnersFacade.findByName("ownerId", newValue.toString()).get(0).getOwnerName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control owner is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
+                    break;
                 case "CHCol":
-                    lineObject.setControlHierarchyId(Integer.valueOf(newValue.toString()));
-                    lineObject.setControlHierarchy(dbcontrolHierarchyFacade.findByName("controlHierarchyId", newValue.toString()).get(0).getControlHierarchyName());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "controlHierarchy");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 46));
+                    }
+                    errorObject.setProcessErrorLocation("controlHierarchy");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setControlHierarchyId(Integer.valueOf(newValue.toString()));
+                        lineObject.setControlHierarchy(dbcontrolHierarchyFacade.findByName("controlHierarchyId", newValue.toString()).get(0).getControlHierarchyName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control hierarchy is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
+                    break;
                 case "CTCol":
-                    lineObject.setControlType(newValue.toString());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "controlType");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 47));
+                    }
+                    errorObject.setProcessErrorLocation("controlType");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setControlType(newValue.toString());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control type is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 case "CRCol":
-                    lineObject.setControlRecommendId(Integer.valueOf(newValue.toString()));
-                    lineObject.setControlRecommend(dbcontrolRecommendFacade.findByName("controlRecommendId", newValue.toString()).get(0).getControlRecommendName());
-                    break;
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "controlRecommend");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 48));
+                    }
+                    errorObject.setProcessErrorLocation("controlRecommend");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setControlRecommendId(Integer.valueOf(newValue.toString()));
+                        lineObject.setControlRecommend(dbcontrolRecommendFacade.findByName("controlRecommendId", newValue.toString()).get(0).getControlRecommendName());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control recommendation is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
+                    newValue = "";
                 case "CJCol":
-                    lineObject.setControlJustify(newValue.toString());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "controlJustify");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 49));
+                    }
+                    errorObject.setProcessErrorLocation("controlJustify");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setControlJustify(newValue.toString());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        if (dbcontrolRecommendFacade.findByName("controlRecommendId", lineObject.getControlRecommendId().toString()).get(0).getControlJustifyRequired().equals("Y")) {
+                            // Only add a new error if the field is blank AND if the recommendation type requires a justification
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control justification is required."));
+                            errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                            errorObject.setProcessErrorStatus("P");
+                            if (existingLine) {
+                                dbimportLineErrorFacade.edit(errorObject);
+                            } else {
+                                dbimportLineErrorFacade.create(errorObject);
+                            }
+                        } else {
+                            lineObject.setControlJustify("");
+                        }
+                    }
                     break;
                 case "CUCol":
-                    lineObject.setControlExistingOrProposed(newValue.toString());
+                    errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "controlStatus");
+                    existingLine = false;
+                    if (errorList.size() > 0) {
+                        errorObject = errorList.get(0);
+                        existingLine = true;
+                    } else {
+                        errorObject = new DbimportLineError();
+                        errorObject.setDbimportLine(lineObject);
+                        errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 50));
+                    }
+                    errorObject.setProcessErrorLocation("controlStatus");
+                    if (!"".equals(newValue.toString())) {
+                        lineObject.setControlExistingOrProposed(newValue.toString());
+                        errorObject.setProcessErrorStatus("F");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        }
+                    } else {
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control status is required."));
+                        errorObject.setProcessErrorCode(new DbimportErrorCode(1));
+                        errorObject.setProcessErrorStatus("P");
+                        if (existingLine) {
+                            dbimportLineErrorFacade.edit(errorObject);
+                        } else {
+                            dbimportLineErrorFacade.create(errorObject);
+                        }
+                    }
                     break;
                 default:
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Old: " + oldValue + ", New: " + newValue));
@@ -469,8 +1184,10 @@ public class importHazard_MB implements Serializable {
                     
             }
             dbimportLineFacade.edit(lineObject);
+            
         }
         listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
+        RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable");
     }
     
     public Date todaysDate() {
@@ -546,38 +1263,122 @@ public class importHazard_MB implements Serializable {
         // Create the hazard object
         dbHazardFacade.create(hazardObject);
         
+        // Add words to indexed table
+        wordProcessing_MB.indexDescription(hazardObject.getHazardId(), hazardObject.getHazardDescription(), "hazard");
+        
+        // Add SBS nodes
+        DbHazardSbsPK hazardSbsPKObject = new DbHazardSbsPK();
+        DbHazardSbs hazardSbsObject = new DbHazardSbs();
+        DbHazard hazardFKObject = new DbHazard();
+
+        hazardSbsPKObject.setHazardId(hazardObject.getHazardId());
+        hazardFKObject.setHazardId(hazardObject.getHazardId());
+        hazardSbsObject.setDbHazard(hazardFKObject);
+
+        List<TreeNode> treeNodesList = populateTree(lineObject);
+        
+        List<treeNodeObject> treeNodeObjectsList = new ArrayList<>();
+        DbtreeLevel1 tmpTreeNode = dbtreeLevel1Facade.findByName(root.getChildren().get(0).toString());
+        Integer rootId = tmpTreeNode.getTreeLevel1Index();
+
+        for (TreeNode node : treeNodesList) {
+            if (node.getParent().toString().equals("Root")) {
+                //Add the tree Node and include the root index in each child node
+                rootId = tmpTreeNode.getTreeLevel1Index();
+                treeNodeObject tmpNode = new treeNodeObject();
+                tmpNode.setNodeId(rootId.toString() + ".");
+                tmpNode.setNodeName(node.getData().toString());
+                tmpNode.setRowKey(node.getRowKey());
+                treeNodeObjectsList.add(tmpNode);
+            } else {
+                String parts[] = node.getData().toString().split(" ", 2);
+                treeNodeObject tmpNode = new treeNodeObject();
+                tmpNode.setNodeId(rootId.toString() + "." + parts[0]);
+                tmpNode.setNodeName(parts[1]);
+                tmpNode.setRowKey(node.getRowKey());
+                treeNodeObjectsList.add(tmpNode);
+            }
+        }
+        
+        for (int i = 0; i < treeNodeObjectsList.size(); i++) {
+            hazardSbsPKObject.setSbsId(treeNodeObjectsList.get(i).getNodeId());
+            hazardSbsObject.setDbHazardSbsPK(hazardSbsPKObject);
+            dbHazardSbsFacade.create(hazardSbsObject);
+        }
+        
         return hazardObject;
     }
     
     public void createRelation(DbimportLine lineObject, DbHazard hazardObject) {
         switch (lineObject.getRelationType()) {
             case "Cause":
-                DbCause tmpCause = dbCauseFacade.find(lineObject.getRelationId());
+                DbCause tmpCause;
+                if (Optional.ofNullable(lineObject.getRelationId()).orElse(0) > 0) { // The cause is found in the database by ID
+                    tmpCause = dbCauseFacade.find(lineObject.getRelationId());
+                } else { 
+                    if (dbCauseFacade.findByName("causeDescription", lineObject.getRelationDescription()).size() > 0) { // The cause is found in the database by description
+                        tmpCause = dbCauseFacade.findByName("causeDescription", lineObject.getRelationDescription()).get(0);
+                    } else { // The cause doesn't exist and needs to be created
+                        tmpCause = new DbCause();
+                        tmpCause.setCauseDescription(lineObject.getRelationDescription());
+                        dbCauseFacade.create(tmpCause);
+                    }
+                }
                 DbHazardCause tmpHazardCause = new DbHazardCause();
-                DbHazardCausePK tmpHazardCausePK = new DbHazardCausePK(hazardObject.getHazardId(), lineObject.getRelationId());
+                DbHazardCausePK tmpHazardCausePK = new DbHazardCausePK(hazardObject.getHazardId(), tmpCause.getCauseId());
                 tmpHazardCause.setDbHazardCausePK(tmpHazardCausePK);
                 tmpHazardCause.setDbCause(tmpCause);
                 tmpHazardCause.setDbHazard(hazardObject);
                 tmpHazardCause.setDbHazardCauseDummyvar(null);
                 dbHazardCauseFacade.create(tmpHazardCause);
+                
+                wordProcessing_MB.indexDescription(tmpCause.getCauseId().toString(), tmpCause.getCauseDescription(), "cause");
                 break;
             case "Consequence":
-                DbConsequence tmpConsequence = dbConsequenceFacade.find(lineObject.getRelationId());
+                DbConsequence tmpConsequence;
+                if (Optional.ofNullable(lineObject.getRelationId()).orElse(0) > 0) {
+                    tmpConsequence = dbConsequenceFacade.find(lineObject.getRelationId());
+                } else {
+                    if (dbConsequenceFacade.findByName("consequenceDescription", lineObject.getRelationDescription()).size() > 0) {
+                        tmpConsequence = dbConsequenceFacade.findByName("consequenceDescription", lineObject.getRelationDescription()).get(0);
+                    } else {
+                        tmpConsequence = new DbConsequence();
+                        tmpConsequence.setConsequenceDescription(lineObject.getRelationDescription());
+                        dbConsequenceFacade.create(tmpConsequence);
+                    }
+                }
                 DbHazardConsequence tmpHazardConsequence = new DbHazardConsequence();
-                DbHazardConsequencePK tmpHazardConsequencePK = new DbHazardConsequencePK(hazardObject.getHazardId(), lineObject.getRelationId());
+                DbHazardConsequencePK tmpHazardConsequencePK = new DbHazardConsequencePK(hazardObject.getHazardId(), tmpConsequence.getConsequenceId());
                 tmpHazardConsequence.setDbHazardConsequencePK(tmpHazardConsequencePK);
                 tmpHazardConsequence.setDbConsequence(tmpConsequence);
                 tmpHazardConsequence.setDbHazard(hazardObject);
                 tmpHazardConsequence.setDbHazardConsequenceDummyvar(null);
                 dbHazardConsequenceFacade.create(tmpHazardConsequence);
+                
+                wordProcessing_MB.indexDescription(tmpConsequence.getConsequenceId().toString(), tmpConsequence.getConsequenceDescription(), "consequence");
                 break;
             case "Control":
+                DbControl tmpControl;
+                if (Optional.ofNullable(lineObject.getRelationId()).orElse(0) > 0) {
+                    tmpControl = dbControlFacade.find(lineObject.getRelationId());
+                } else {
+                    if (dbControlFacade.findByName("controlDescription", lineObject.getRelationDescription()).size() > 0) {
+                        tmpControl = dbControlFacade.findByName("controlDescription", lineObject.getRelationDescription()).get(0);
+                    } else {
+                        tmpControl = new DbControl();
+                        tmpControl.setControlDescription(lineObject.getRelationDescription());
+                        tmpControl.setOwnerId(dbOwnersFacade.find(lineObject.getControlOwnerId()));
+                        tmpControl.setControlHierarchyId(dbcontrolHierarchyFacade.find(lineObject.getControlHierarchyId()));
+                        dbControlFacade.create(tmpControl);
+                    }
+                }
                 DbControlHazard controlHazardObject = new DbControlHazard();
                 DbcontrolRecommend tmpCtlRecommend = dbcontrolRecommendFacade.find(lineObject.getControlRecommendId());
                 controlHazardObject.setDbHazard(hazardObject);
-                controlHazardObject.setControlType(lineObject.getControlType());
-                controlHazardObject.setControlExistingOrProposed(lineObject.getControlExistingOrProposed());
-                controlHazardObject.setDbControlHazardPK(new DbControlHazardPK(hazardObject.getHazardId(), lineObject.getRelationId()));
+                controlHazardObject.setDbControl(tmpControl);
+                controlHazardObject.setControlType(lineObject.getControlType().substring(0, 1));
+                controlHazardObject.setControlExistingOrProposed(lineObject.getControlExistingOrProposed().substring(0, 1));
+                controlHazardObject.setDbControlHazardPK(new DbControlHazardPK(hazardObject.getHazardId(), tmpControl.getControlId()));
                 controlHazardObject.setControlRecommendId(new DbcontrolRecommend(lineObject.getControlRecommendId()));
                 if ("".equals(lineObject.getControlJustify()) && tmpCtlRecommend.getControlJustifyRequired().equals("N")) {
                     controlHazardObject.setControlJustify(null);
@@ -589,6 +1390,8 @@ public class importHazard_MB implements Serializable {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Justification: ", "The selected recommendation requires a justification."));
                 }
                 dbControlHazardFacade.create(controlHazardObject);
+                
+                wordProcessing_MB.indexDescription(tmpControl.getControlId().toString(), tmpControl.getControlDescription(), "control");
                 break;
         }
     }
@@ -612,6 +1415,7 @@ public class importHazard_MB implements Serializable {
             } else if (i == listCheckedLines.size() - 1) {
                 // Last line of the submission - always need to trigger a workflow and end the header
                 if (!sameLineObject(lineObject, currentHazard)) {
+                    triggerWorkflow(currentHazard);
                     currentHazard = createHazard(lineObject);
                 }
                 createRelation(lineObject, currentHazard);
@@ -641,6 +1445,7 @@ public class importHazard_MB implements Serializable {
             Logger.getLogger(hazardsRelation_MB.class.getName()).log(Level.SEVERE, null, ex);
         }
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazards have been sent for approval by a core user."));
+        init();
     }
     
     public boolean sameLineObject(DbimportLine lineObject, DbHazard hazardObject) {
@@ -694,9 +1499,14 @@ public class importHazard_MB implements Serializable {
         return Arrays.asList(lineObject.getHazardSbs().split(",")).stream().map(i -> getNodeNameById(i)).collect(Collectors.toList());
     }
     
-    public void populateTree(DbimportLine lineObject) {
+    public List<TreeNode> populateTree(DbimportLine lineObject) {
         selectedLine = lineObject;
-        List<String> sbsCodes = Arrays.asList(lineObject.getHazardSbs().replace(" ", "").split(","));
+        List<String> sbsCodes;
+        if (lineObject.getHazardSbs() == null) {
+            sbsCodes = new ArrayList<>();
+        } else {
+            sbsCodes = Arrays.asList(lineObject.getHazardSbs().replace(" ", "").split(","));
+        }
         
         // To account for the lack of dots, add them if the code terminates in a number before a comma
         // This is necessary because the tree tables all have full stops (e.g. 1., 2.1.) but users might
@@ -840,6 +1650,7 @@ public class importHazard_MB implements Serializable {
 
         }
         currentTree = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
+        return listTreeNode;
     }
     
     public String getNodeNameById(String nodeId) {
@@ -909,13 +1720,29 @@ public class importHazard_MB implements Serializable {
     }
     
     public void editTree() {
+        List<DbimportLineError> errorList = dbimportLineErrorFacade.findErrorByCell(selectedLine.getDbimportLinePK().getProcessId(), selectedLine.getDbimportLinePK().getProcessIdLine(), "hazardsbs");
         if (currentTree.length > 1) {
             String sbsCodes = Arrays.asList(currentTree).stream().map(i -> "1." + i.getData().toString().replaceAll("[^\\d+\\.]", "")).reduce("", (a, b) -> a + "," + b);
             selectedLine.setHazardSbs(sbsCodes.substring(1));
             dbimportLineFacade.edit(selectedLine);
+            if (errorList.size() > 0) {
+                DbimportLineError errorObject = errorList.get(0);
+                errorObject.setProcessErrorStatus("F");
+                dbimportLineErrorFacade.edit(errorObject);
+            }
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The SBS tree must not be empty!"));
         }
+        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
+        RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable");
+    }
+    
+    public void cancelImport() {
+        DbimportHeader headerObject = dbimportHeaderFacade.find(listLoadedLines.get(0).lineObject.getDbimportHeader().getProcessId());
+        headerObject.setProcessStatus("C");
+        dbimportHeaderFacade.edit(headerObject);
+        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
+        init();
     }
     
     public class importWrapperObject {
@@ -935,6 +1762,7 @@ public class importHazard_MB implements Serializable {
         public boolean HTError;
         public boolean HSError;
         public boolean HOError;
+        public boolean HFError;
         public boolean RCError;
         public boolean CFError;
         public boolean CSError;
@@ -950,31 +1778,8 @@ public class importHazard_MB implements Serializable {
         public boolean CJError;
         public boolean CUError;
         public boolean SCError;
-        public boolean DAWarning;
         public boolean HDWarning;
-        public boolean HMWarning;
-        public boolean HWWarning;
-        public boolean HCWarning;
-        public boolean HLWarning;
-        public boolean HAWarning;
-        public boolean HTWarning;
-        public boolean HSWarning;
-        public boolean HOWarning;
-        public boolean RCWarning;
-        public boolean CFWarning;
-        public boolean CSWarning;
-        public boolean TFWarning;
-        public boolean TSWarning;
-        public boolean SBSWarning;
-        public boolean RTWarning;
         public boolean RDWarning;
-        public boolean COWarning;
-        public boolean CHWarning;
-        public boolean CTWarning;
-        public boolean CRWarning;
-        public boolean CJWarning;
-        public boolean CUWarning;
-        public boolean SCWarning;
 
         public DbimportLine getLineObject() {
             return lineObject;
@@ -1192,14 +1997,6 @@ public class importHazard_MB implements Serializable {
             this.CUError = CUError;
         }
 
-        public boolean isDAWarning() {
-            return DAWarning;
-        }
-
-        public void setDAWarning(boolean DAWarning) {
-            this.DAWarning = DAWarning;
-        }
-
         public boolean isHDWarning() {
             return HDWarning;
         }
@@ -1208,164 +2005,12 @@ public class importHazard_MB implements Serializable {
             this.HDWarning = HDWarning;
         }
 
-        public boolean isHMWarning() {
-            return HMWarning;
-        }
-
-        public void setHMWarning(boolean HMWarning) {
-            this.HMWarning = HMWarning;
-        }
-
-        public boolean isHWWarning() {
-            return HWWarning;
-        }
-
-        public void setHWWarning(boolean HWWarning) {
-            this.HWWarning = HWWarning;
-        }
-
-        public boolean isHCWarning() {
-            return HCWarning;
-        }
-
-        public void setHCWarning(boolean HCWarning) {
-            this.HCWarning = HCWarning;
-        }
-
-        public boolean isHLWarning() {
-            return HLWarning;
-        }
-
-        public void setHLWarning(boolean HLWarning) {
-            this.HLWarning = HLWarning;
-        }
-
-        public boolean isHAWarning() {
-            return HAWarning;
-        }
-
-        public void setHAWarning(boolean HAWarning) {
-            this.HAWarning = HAWarning;
-        }
-
-        public boolean isHTWarning() {
-            return HTWarning;
-        }
-
-        public void setHTWarning(boolean HTWarning) {
-            this.HTWarning = HTWarning;
-        }
-
-        public boolean isHSWarning() {
-            return HSWarning;
-        }
-
-        public void setHSWarning(boolean HSWarning) {
-            this.HSWarning = HSWarning;
-        }
-
-        public boolean isHOWarning() {
-            return HOWarning;
-        }
-
-        public void setHOWarning(boolean HOWarning) {
-            this.HOWarning = HOWarning;
-        }
-
-        public boolean isRCWarning() {
-            return RCWarning;
-        }
-
-        public void setRCWarning(boolean RCWarning) {
-            this.RCWarning = RCWarning;
-        }
-
-        public boolean isCFWarning() {
-            return CFWarning;
-        }
-
-        public void setCFWarning(boolean CFWarning) {
-            this.CFWarning = CFWarning;
-        }
-
-        public boolean isCSWarning() {
-            return CSWarning;
-        }
-
-        public void setCSWarning(boolean CSWarning) {
-            this.CSWarning = CSWarning;
-        }
-
-        public boolean isTFWarning() {
-            return TFWarning;
-        }
-
-        public void setTFWarning(boolean TFWarning) {
-            this.TFWarning = TFWarning;
-        }
-
-        public boolean isTSWarning() {
-            return TSWarning;
-        }
-
-        public void setTSWarning(boolean TSWarning) {
-            this.TSWarning = TSWarning;
-        }
-
-        public boolean isSBSWarning() {
-            return SBSWarning;
-        }
-
-        public void setSBSWarning(boolean SBSWarning) {
-            this.SBSWarning = SBSWarning;
-        }
-
-        public boolean isRTWarning() {
-            return RTWarning;
-        }
-
-        public void setRTWarning(boolean RTWarning) {
-            this.RTWarning = RTWarning;
-        }
-
         public boolean isRDWarning() {
             return RDWarning;
         }
 
         public void setRDWarning(boolean RDWarning) {
             this.RDWarning = RDWarning;
-        }
-
-        public boolean isCTWarning() {
-            return CTWarning;
-        }
-
-        public void setCTWarning(boolean CTWarning) {
-            this.CTWarning = CTWarning;
-        }
-
-        public boolean isCRWarning() {
-            return CRWarning;
-        }
-
-        public void setCRWarning(boolean CRWarning) {
-            this.CRWarning = CRWarning;
-        }
-
-        public boolean isCJWarning() {
-            return CJWarning;
-        }
-
-        public void setCJWarning(boolean CJWarning) {
-            this.CJWarning = CJWarning;
-        }
-
-        public boolean isCUWarning() {
-            return CUWarning;
-        }
-
-        public void setCUWarning(boolean CUWarning) {
-            this.CUWarning = CUWarning;
         }
 
         public boolean isCOError() {
@@ -1384,36 +2029,12 @@ public class importHazard_MB implements Serializable {
             this.CHError = CHError;
         }
 
-        public boolean isCOWarning() {
-            return COWarning;
-        }
-
-        public void setCOWarning(boolean COWarning) {
-            this.COWarning = COWarning;
-        }
-
-        public boolean isCHWarning() {
-            return CHWarning;
-        }
-
-        public void setCHWarning(boolean CHWarning) {
-            this.CHWarning = CHWarning;
-        }
-
         public boolean isSCError() {
             return SCError;
         }
 
         public void setSCError(boolean SCError) {
             this.SCError = SCError;
-        }
-
-        public boolean isSCWarning() {
-            return SCWarning;
-        }
-
-        public void setSCWarning(boolean SCWarning) {
-            this.SCWarning = SCWarning;
         }
         
         public importWrapperObject(DbimportLine lineObject) {
@@ -1435,11 +2056,13 @@ public class importHazard_MB implements Serializable {
             this.HDError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardDescription"));
             this.HMError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardComment"));
             this.HCError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardContext"));
+            this.HWError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardWorkshop"));
             this.HLError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardLocation"));
             this.HAError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardActivity"));
             this.HTError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardType"));
             this.HSError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardStatus"));
             this.HOError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardOwner"));
+            this.HFError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardHFReview"));
             this.RCError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardRiskClass"));
             this.CFError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardCurrentFreq"));
             this.CSError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardCurrentSev"));
@@ -1456,31 +2079,939 @@ public class importHazard_MB implements Serializable {
             this.CTError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlType"));
             this.CUError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlStatus"));
             this.SCError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardSbs"));
-            this.DAWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardDate"));
             this.HDWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazard"));
-            this.HMWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardComment"));
-            this.HCWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardContext"));
-            this.HLWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardLocation"));
-            this.HAWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardActivity"));
-            this.HTWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardType"));
-            this.HSWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardStatus"));
-            this.HOWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardOwner"));
-            this.RCWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardRiskClass"));
-            this.CFWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardCurrentFreq"));
-            this.CSWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardCurrentSev"));
-            this.TFWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardTargetFreq"));
-            this.TSWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardTargetSev"));
             this.RDWarning = listWarningObjects.stream().anyMatch(i -> (i.getProcessErrorLocation().equalsIgnoreCase("relationDescription") 
                     || i.getProcessErrorLocation().equalsIgnoreCase("Cause")
                     || i.getProcessErrorLocation().equalsIgnoreCase("Consequence")
                     || i.getProcessErrorLocation().equalsIgnoreCase("Control")));
-            this.COWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlOwner"));
-            this.CHWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlHierarchy"));
-            this.CRWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlRecommend"));
-            this.CJWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlJustify"));
-            this.CTWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlType"));
-            this.CUWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlStatus"));
-            this.SCWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardSbs"));
+        }
+    }
+    
+    private CellStyle styleHeaderGenerator(String style, CellStyle headerCellStyle, Font headerFont) {
+        switch (style) {
+            case "Blue":
+                headerFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.DARK_BLUE.getIndex());
+                break;
+            case "Grey":
+                headerFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                headerCellStyle.setFillForegroundColor((short) 22);
+                break;
+            case "Pink":
+                headerFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PINK.getIndex());
+                break;
+            case "Red":
+                headerFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.BROWN.getIndex());
+                break;
+            case "Yellow":
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+                break;
+            case "Gold":
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GOLD.getIndex());
+                break;
+            case "LightOrange":
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_ORANGE.getIndex());
+                break;
+            case "Tan":
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.TAN.getIndex());
+                break;
+            case "LightTurq":
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
+                break;
+            default:
+                headerCellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                break;
+        }
+
+        headerFont.setFontHeightInPoints((short) 11);
+        headerCellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        headerCellStyle.setFont(headerFont);
+        headerCellStyle.setWrapText(true);
+        headerCellStyle.setAlignment(HorizontalAlignment.CENTER);
+        headerCellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        return headerCellStyle;
+    }
+    
+    public void generateLayout() {
+        //The produced excel will be on xslx format.
+        String filename = "SSD_Import.xlsx";
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Format");
+        XSSFSheet hidden = workbook.createSheet("hidden");
+        sheet.setZoom(90);
+
+        // ---------------------------> Creating the spreadsheet headers <--------------------------------------
+        // Creating headers from the row number 0
+        Row headerRow = sheet.createRow(0);
+        headerRow.setHeight((short) 600);
+        IndexedColorMap colorMap = workbook.getStylesSource().getIndexedColors();
+
+        // Creating the Initial headers
+        Cell cell = headerRow.createCell(0);
+        cell.setCellValue("Hazard Columns");
+        cell.setCellStyle(styleHeaderGenerator("Blue", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:R2"));
+
+        cell = headerRow.createCell(18);
+        cell.setCellValue("Hazard Relations");
+        cell.setCellStyle(styleHeaderGenerator("Red", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sheet.addMergedRegion(CellRangeAddress.valueOf("S1:Z1"));
+
+        headerRow = sheet.createRow(1);
+        headerRow.setHeight((short) 600);
+
+        cell = headerRow.createCell(18);
+        cell.setCellValue("Causes - Consequences - Controls");
+        cell.setCellStyle(styleHeaderGenerator("LightOrange", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sheet.addMergedRegion(CellRangeAddress.valueOf("S2:T2"));
+
+        cell = headerRow.createCell(20);
+        cell.setCellValue("Fields just for controls");
+        cell.setCellStyle(styleHeaderGenerator("Gold", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sheet.addMergedRegion(CellRangeAddress.valueOf("U2:Z2"));
+
+        // Setting borders for nall merged regions
+        int numMerged = sheet.getNumMergedRegions();
+        for (int i = 0; i < numMerged; i++) {
+            CellRangeAddress mergedRegions = sheet.getMergedRegion(i);
+            RegionUtil.setBorderLeft(BorderStyle.THIN, mergedRegions, sheet);
+            RegionUtil.setBorderRight(BorderStyle.THIN, mergedRegions, sheet);
+            RegionUtil.setBorderTop(BorderStyle.THIN, mergedRegions, sheet);
+            RegionUtil.setBorderBottom(BorderStyle.THIN, mergedRegions, sheet);
+        }
+
+        // Creating the title for each column
+        headerRow = sheet.createRow(2);
+
+        String[][] columnsHeaders = {{"Context", "PaleBlue", "12"},
+        {"Description", "PaleBlue", "24"},
+        {"Location", "PaleBlue", "12"},
+        {"Activity", "PaleBlue", "15"},
+        {"Owner", "PaleBlue", "25"},
+        {"Type", "PaleBlue", "16"},
+        {"Status", "PaleBlue", "12"},
+        {"Class", "PaleBlue", "12"},
+        {"Cur. Freq", "PaleBlue", "12"},
+        {"Cur. Sev.", "PaleBlue", "11"},
+        {"Tar. Freq", "PaleBlue", "11"},
+        {"Tar. Sev", "PaleBlue", "11"},
+        {"Comment", "PaleBlue", "24"},
+        {"Date", "PaleBlue", "12"},
+        {"Workshop", "PaleBlue", "19"},
+        {"Legacy Id", "PaleBlue", "12"},
+        {"HF Review", "PaleBlue", "12"},
+        {"Sbs Codes", "PaleBlue", "20"},
+        {"Type", "Tan", "11"},
+        {"Description", "Tan", "35"},
+        {"Owner", "Yellow", "25"},
+        {"Hierarchy", "Yellow", "13"},
+        {"Type", "Yellow", "9"},
+        {"Recommendation", "Yellow", "24"},
+        {"Justification", "Yellow", "20"},
+        {"Status", "Yellow", "9"}};
+
+        // Setting up the column sizes
+        for (int i = 0; i < columnsHeaders.length; i++) {
+            int width = ((int) (Integer.parseInt(columnsHeaders[i][2]) * 1.14388 * 256));
+            sheet.setColumnWidth(i, width);
+        }
+
+        // Setting up the column headers style and content
+        for (int i = 0; i < columnsHeaders.length; i++) {
+            Cell cellTmp = headerRow.createCell(i);
+            cellTmp.setCellValue(columnsHeaders[i][0]);
+            CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setFont(getHeaderFont(workbook.createFont()));
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            cellStyle.setBorderBottom(BorderStyle.THIN);
+            cellStyle.setBorderLeft(BorderStyle.THIN);
+            cellStyle.setBorderRight(BorderStyle.THIN);
+            cellStyle.setBorderTop(BorderStyle.THIN);
+            switch (columnsHeaders[i][1]) {
+                case "Yellow":
+                    cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_YELLOW.getIndex());
+                    break;
+                case "Tan":
+                    cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.TAN.getIndex());
+                    break;
+                case "PaleBlue":
+                    cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.PALE_BLUE.getIndex());
+                    break;
+                default:
+                    cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+                    break;
+            }
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            cellTmp.setCellStyle(cellStyle);
+        }
+
+        // ---------------------------> Creating the spreadsheet content <--------------------------------------
+        // Creating list of context in the hidden sheet
+        int numberOfRows = dbsystemParametersFacade.find(1).getExcelLayoutRows();
+        List<Integer> numberOfItems = new ArrayList<>();
+
+        // Getting all the required lists to populated drop down lists
+        List<DbhazardContext> listOfContexts = dbhazardContextFacade.findAll();
+        numberOfItems.add(listOfContexts.size());
+        List<DbLocation> listOfLocations = dbLocationFacade.findAll();
+        numberOfItems.add(listOfLocations.size());
+        List<DbhazardActivity> listOfActivities = dbhazardActivityFacade.findAll();
+        numberOfItems.add(listOfActivities.size());
+        List<DbOwners> listOfOwners = dbOwnersFacade.findAll();
+        numberOfItems.add(listOfOwners.size());
+        List<DbhazardType> listOfTypes = dbhazardTypeFacade.findAll();
+        numberOfItems.add(listOfTypes.size());
+        List<DbhazardStatus> listOfStatuses = dbhazardStatusFacade.findAll();
+        numberOfItems.add(listOfStatuses.size());
+        List<DbriskClass> listOfRiskClasses = dbriskClassFacade.findAll();
+        numberOfItems.add(listOfRiskClasses.size());
+        List<DbriskFrequency> listOfFrequencies = dbriskFrequencyFacade.findAll();
+        numberOfItems.add(listOfFrequencies.size());
+        List<DbriskSeverity> listOfSeverities = dbriskSeverityFacade.findAll();
+        numberOfItems.add(listOfSeverities.size());
+        List<String> listOfHFReview = new ArrayList<>();
+        listOfHFReview.add("Yes");
+        listOfHFReview.add("No");
+        List<String> listOfRelationTypes = new ArrayList<>();
+        listOfRelationTypes.add("Cause");
+        listOfRelationTypes.add("Consequence");
+        listOfRelationTypes.add("Control");
+        numberOfItems.add(listOfRelationTypes.size());
+        List<DbcontrolHierarchy> listOfHierarchies = dbcontrolHierarchyFacade.findAll();
+        numberOfItems.add(listOfHierarchies.size());
+        List<String> listOfControlTypes = new ArrayList<>();
+        listOfControlTypes.add("Mitigative");
+        listOfControlTypes.add("Preventive");
+        numberOfItems.add(listOfControlTypes.size());
+        List<DbcontrolRecommend> listOfRecommendations = dbcontrolRecommendFacade.findAll();
+        numberOfItems.add(listOfRecommendations.size());
+        List<String> listOfControlStatuses = new ArrayList<>();
+        listOfControlStatuses.add("Existing");
+        listOfControlStatuses.add("Proposed");
+        numberOfItems.add(listOfControlStatuses.size());
+
+        Integer max = numberOfItems
+                .stream()
+                .mapToInt(v -> v)
+                .max().orElseThrow(NoSuchElementException::new);
+
+        // Creating the dropdown lists values in the hidden sheet
+        for (int i = 0; i < max; i++) {
+            XSSFRow row = hidden.createRow(i);
+            if (i < listOfContexts.size()) {
+                XSSFCell cell1 = row.createCell(0);
+                cell1.setCellValue(listOfContexts.get(i).getHazardContextName());
+            }
+
+            if (i < listOfLocations.size()) {
+                XSSFCell cell1 = row.createCell(1);
+                cell1.setCellValue(listOfLocations.get(i).getLocationName());
+            }
+
+            if (i < listOfActivities.size()) {
+                XSSFCell cell1 = row.createCell(2);
+                cell1.setCellValue(listOfActivities.get(i).getActivityName());
+            }
+
+            if (i < listOfOwners.size()) {
+                XSSFCell cell1 = row.createCell(3);
+                cell1.setCellValue(listOfOwners.get(i).getOwnerName());
+            }
+
+            if (i < listOfTypes.size()) {
+                XSSFCell cell1 = row.createCell(4);
+                cell1.setCellValue(listOfTypes.get(i).getHazardTypeName());
+            }
+
+            if (i < listOfStatuses.size()) {
+                XSSFCell cell1 = row.createCell(5);
+                cell1.setCellValue(listOfStatuses.get(i).getHazardStatusName());
+            }
+
+            if (i < listOfRiskClasses.size()) {
+                XSSFCell cell1 = row.createCell(6);
+                cell1.setCellValue(listOfRiskClasses.get(i).getRiskClassName());
+            }
+
+            if (i < listOfFrequencies.size()) {
+                XSSFCell cell1 = row.createCell(7);
+                cell1.setCellValue(listOfFrequencies.get(i).getFrequencyScore());
+            }
+
+            if (i < listOfSeverities.size()) {
+                XSSFCell cell1 = row.createCell(8);
+                cell1.setCellValue(listOfSeverities.get(i).getSeverityScore());
+            }
+
+            if (i < listOfHFReview.size()) {
+                XSSFCell cell1 = row.createCell(9);
+                cell1.setCellValue(listOfHFReview.get(i));
+            }
+
+            if (i < listOfRelationTypes.size()) {
+                XSSFCell cell1 = row.createCell(10);
+                cell1.setCellValue(listOfRelationTypes.get(i));
+            }
+
+            if (i < listOfHierarchies.size()) {
+                XSSFCell cell1 = row.createCell(11);
+                cell1.setCellValue(listOfHierarchies.get(i).getControlHierarchyName());
+            }
+
+            if (i < listOfControlTypes.size()) {
+                XSSFCell cell1 = row.createCell(12);
+                cell1.setCellValue(listOfControlTypes.get(i));
+            }
+
+            if (i < listOfRecommendations.size()) {
+                XSSFCell cell1 = row.createCell(13);
+                cell1.setCellValue(listOfRecommendations.get(i).getControlRecommendName());
+            }
+
+            if (i < listOfControlStatuses.size()) {
+                XSSFCell cell1 = row.createCell(14);
+                cell1.setCellValue(listOfControlStatuses.get(i));
+            }
+
+        }
+
+        // Setting up dropdown lists
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 0, 0), "hidden!$A$1:$A$" + listOfContexts.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 2, 2), "hidden!$B$1:$B$" + listOfLocations.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 3, 3), "hidden!$C$1:$C$" + listOfActivities.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 4, 4), "hidden!$D$1:$D$" + listOfOwners.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 5, 5), "hidden!$E$1:$E$" + listOfTypes.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 6, 6), "hidden!$F$1:$F$" + listOfStatuses.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 7, 7), "hidden!$G$1:$G$" + listOfRiskClasses.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 8, 8), "hidden!$H$1:$H$" + listOfFrequencies.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 9, 9), "hidden!$I$1:$I$" + listOfSeverities.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 10, 10), "hidden!$H$1:$H$" + listOfFrequencies.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 11, 11), "hidden!$I$1:$I$" + listOfSeverities.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 11, 11), "hidden!$I$1:$I$" + listOfSeverities.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 16, 16), "hidden!$J$1:$J$" + listOfHFReview.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 18, 18), "hidden!$K$1:$K$" + listOfRelationTypes.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 20, 20), "hidden!$D$1:$D$" + listOfOwners.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 21, 21), "hidden!$L$1:$L$" + listOfHierarchies.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 22, 22), "hidden!$M$1:$M$" + listOfControlTypes.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 23, 23), "hidden!$N$1:$N$" + listOfRecommendations.size()));
+        sheet.addValidationData(generateDropDownList(sheet, new CellRangeAddressList(3, numberOfRows + 2, 25, 25), "hidden!$O$1:$O$" + listOfControlStatuses.size()));
+
+        // Creating the comment for the Sbs Codes
+        addComment(workbook, sheet, 2, 17, "LXRA", "The sbs codes should be provided according to the node id and be separed by commas in case of multiple entries.\n"
+                + "e.g. 1.2, 1.1.3, 2");
+
+        // Setting up date validation
+        sheet.addValidationData(generateDateValidation(sheet, new CellRangeAddressList(3, numberOfRows + 2, 13, 13)));
+
+        // Defining body cell borders for template
+        CellStyle cellBodyStyle = workbook.createCellStyle();
+        cellBodyStyle.setBorderBottom(BorderStyle.THIN);
+        cellBodyStyle.setBorderLeft(BorderStyle.THIN);
+        cellBodyStyle.setBorderRight(BorderStyle.THIN);
+        cellBodyStyle.setBorderTop(BorderStyle.THIN);
+        cellBodyStyle.setLocked(false);
+
+        CellRangeAddress region = CellRangeAddress.valueOf("A4:Z" + (numberOfRows + 4));
+        for (int i = region.getFirstRow(); i < region.getLastRow(); i++) {
+            XSSFRow row = sheet.createRow(i);
+            for (int j = region.getFirstColumn(); j < region.getLastColumn() + 1; j++) {
+                Cell cellTmp = row.createCell(j);
+                cellTmp.setCellStyle(cellBodyStyle);
+            }
+        }
+
+        // Additional sheet configurations
+        sheet.lockDeleteColumns(true);
+        sheet.lockDeleteRows(true);
+        sheet.lockFormatCells(true);
+        sheet.lockFormatColumns(true);
+        sheet.lockFormatRows(true);
+        sheet.lockInsertColumns(true);
+        sheet.lockInsertRows(true);
+        sheet.protectSheet(dbsystemParametersFacade.find(1).getExcelLayoutPassword());
+        sheet.enableLocking();
+        //workbook.lockStructure();
+        workbook.setSheetHidden(1, true);
+
+        try {
+            // Prepare response.
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            ExternalContext externalContext = facesContext.getExternalContext();
+            externalContext.setResponseContentType("application/vnd.ms-excel");
+            externalContext.setResponseHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+            // Write file to response body.
+            workbook.write(externalContext.getResponseOutputStream());
+
+            // Inform JSF that response is completed and it thus doesn"t have to navigate.
+            facesContext.responseComplete();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ex.toString());
+        } catch (IOException ex) {
+            Logger.getLogger(ex.toString());
+        }
+    }
+
+    private Font getHeaderFont(Font headerFont) {
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 11);
+        headerFont.setFontName("Arial");
+        return headerFont;
+    }
+
+    private DataValidation generateDropDownList(XSSFSheet sheet, CellRangeAddressList cellRange, String hiddenReference) {
+        DataValidation dataValidation = null;
+        DataValidationConstraint constraint = null;
+        DataValidationHelper validationHelper = null;
+
+        validationHelper = new XSSFDataValidationHelper(sheet);
+        CellRangeAddressList hazardContext = cellRange;
+        constraint = validationHelper.createFormulaListConstraint(hiddenReference);
+        dataValidation = validationHelper.createValidation(constraint, hazardContext);
+        dataValidation.setSuppressDropDownArrow(true);
+        dataValidation.setShowErrorBox(true);
+
+        return dataValidation;
+    }
+
+    private DataValidation generateDateValidation(XSSFSheet sheet, CellRangeAddressList cellRange) {
+        DataValidation dataValidation = null;
+        DataValidationConstraint constraint = null;
+        DataValidationHelper validationHelper = null;
+
+        validationHelper = new XSSFDataValidationHelper(sheet);
+        CellRangeAddressList hazardContext = cellRange;
+        constraint = validationHelper.createDateConstraint(7, "=TODAY()", null, "dd/MM/yyyy");
+        dataValidation = validationHelper.createValidation(constraint, hazardContext);
+        dataValidation.setSuppressDropDownArrow(true);
+        dataValidation.setShowErrorBox(true);
+        dataValidation.createErrorBox("Date Validation Error", "The hazard date should have the format dd/mm/yyyy i.e. 01/01/2019 and not be after the current date.");
+
+        return dataValidation;
+    }
+
+    public void addComment(XSSFWorkbook workbook, XSSFSheet sheet, int rowIdx, int colIdx, String author, String commentText) {
+        CreationHelper factory = workbook.getCreationHelper();
+        //get an existing cell or create it otherwise:
+        Cell cell = getOrCreateCell(sheet, rowIdx, colIdx);
+
+        ClientAnchor anchor = factory.createClientAnchor();
+        //i found it useful to show the comment box at the bottom right corner
+        anchor.setCol1(cell.getColumnIndex() + 1); //the box of the comment starts at this given column...
+        anchor.setCol2(cell.getColumnIndex() + 3); //...and ends at that given column
+        anchor.setRow1(rowIdx + 1); //one row below the cell...
+        anchor.setRow2(rowIdx + 5); //...and 4 rows high
+
+        Drawing drawing = sheet.createDrawingPatriarch();
+        Comment comment = drawing.createCellComment(anchor);
+        //set the comment text and author
+        comment.setString(factory.createRichTextString(commentText));
+        comment.setAuthor(author);
+
+        cell.setCellComment(comment);
+    }
+
+    public Cell getOrCreateCell(XSSFSheet sheet, int rowIdx, int colIdx) {
+        Row row = sheet.getRow(rowIdx);
+        if (row == null) {
+            row = sheet.createRow(rowIdx);
+        }
+
+        Cell cell = row.getCell(colIdx);
+        if (cell == null) {
+            cell = row.createCell(colIdx);
+        }
+
+        return cell;
+    }
+
+    // This method processes the uploaded file.
+    public void processFile(FileUploadEvent event) {
+        try {
+            UploadedFile uploadedFile = event.getFile();
+            InputStream input = uploadedFile.getInputstream();
+            XSSFWorkbook workbook = new XSSFWorkbook(input);
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            Iterator<Row> itr = sheet.iterator();
+
+            // Defining key variables
+            activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
+            DbimportHeader importHeader = new DbimportHeader(dbglobalIdFacade.nextConsecutive("MAS", "IMP", "-", 4).getAnswerString(), new Date(), activeUser.getUserId(),
+                    uploadedFile.getFileName(), 0, "P");
+            List<DbimportLine> listOfImportedLines = new ArrayList<>();
+            List<List<DbimportLineError>> listOfErrors = new ArrayList<>();
+            int lineNo = 1;
+
+            // Iterating over Excel file in Java
+            while (itr.hasNext()) {
+                Row row = itr.next();
+                if (row.getRowNum() > 2) {
+                    importLineObj processedLine = checkImportLine(row, importHeader.getProcessId(), lineNo);
+                    if (processedLine != null) {
+                        listOfImportedLines.add(processedLine.lineData);
+                        lineNo++;
+                        if (processedLine.lineError.size() > 0) {
+                            listOfErrors.add(processedLine.lineError);
+                        }
+                    }
+                } else if (row.getRowNum() == 0) {
+                    if (!row.getCell(0).getStringCellValue().equals("Hazard Columns")) { // Lazy check of headers to make sure the file is the same as requested
+                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The selected file is not in the correct format. Please download the template above and try again."));
+                        return;
+                    }
+                }
+            }
+            importHeader.setTotalLines(listOfImportedLines.size());
+
+            // Saving entites in the database
+            dbimportHeaderFacade.create(importHeader);
+            if (listOfImportedLines.size() > 0) {
+                listOfImportedLines.forEach((line) -> {
+                    dbimportLineFacade.create(line);
+                });
+            }
+            if (listOfErrors.size() > 0) {
+                listOfErrors.forEach((sublist) -> {
+                    sublist.forEach((errorLine) -> {
+                        dbimportLineErrorFacade.create(errorLine);
+                    });
+                });
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(trees_MB.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (OLE2NotOfficeXmlFileException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The selected file has been saved using an unsupported spreadsheet program. Please save this as a valid Microsoft Excel file and try again."));
+            return;
+        }
+        init();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Hazards have been uploaded successfully. Fix any identified errors and submit."));
+    }
+
+    // Checking the file has some content and proccessing lines
+    private importLineObj checkImportLine(Row row, String processId, int lineNo) {
+        importLineObj tmpObj = null;
+        boolean rowContent = false;
+//        try {
+            for (int i = 0; i < 26; i++) {
+                if (!"".equals(row.getCell(i).toString())) {
+                    rowContent = true;
+                    break;
+                }
+            }
+
+            if (rowContent) {
+                for (int i = 0; i < 26; i++) {
+                    // tmpObj = processLine(tmpObj, i, row.getCell(i).toString(), processId, lineNo);
+                    if (tmpObj == null) {
+                        tmpObj = new importLineObj();
+                        tmpObj.lineData.setDbimportLinePK(new DbimportLinePK(processId, lineNo));
+                    }
+                    switch (i) {
+                        // Processing hazard context
+                        case 0:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbhazardContext tmpVar = dbhazardContextFacade.findByName("hazardContextName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getHazardContextId() != null) {
+                                    tmpObj.lineData.setHazardContextId(tmpVar.getHazardContextId());
+                                    tmpObj.lineData.setHazardContext(tmpVar.getHazardContextName());
+                                } else {
+                                    createLineError(tmpObj, "hazardContext", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardContext", 1);
+                            }
+                            break;
+                        // Processing hazard description    
+                        case 1:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setHazardDescription(row.getCell(i).toString());
+                                if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), "Hazard").size() > 0) {
+                                    createLineError(tmpObj, "hazard", 3);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardDescription", 1);
+                            }
+                            break;
+                        // Processing hazard location
+                        case 2:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbLocation tmpVar = dbLocationFacade.findByName("locationName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getLocationName() != null) {
+                                    tmpObj.lineData.setHazardLocationId(tmpVar.getLocationId());
+                                    tmpObj.lineData.setHazardLocation(tmpVar.getLocationName());
+                                } else {
+                                    createLineError(tmpObj, "hazardLocation", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardLocation", 1);
+                            }
+                            break;
+                        // Processing hazard activity
+                        case 3:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbhazardActivity tmpVar = dbhazardActivityFacade.findByName("activityName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getActivityName() != null) {
+                                    tmpObj.lineData.setHazardActivityId(tmpVar.getActivityId());
+                                    tmpObj.lineData.setHazardActivity(tmpVar.getActivityName());
+                                } else {
+                                    createLineError(tmpObj, "hazardActivity", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardActivity", 1);
+                            }
+                            break;
+                        // Processing hazard owner
+                        case 4:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbOwners tmpVar = dbOwnersFacade.findByName("ownerName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getOwnerName() != null) {
+                                    tmpObj.lineData.setHazardOwnerId(tmpVar.getOwnerId());
+                                    tmpObj.lineData.setHazardOwner(tmpVar.getOwnerName());
+                                } else {
+                                    createLineError(tmpObj, "hazardOwner", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardOwner", 1);
+                            }
+                            break;
+                        // Processing hazard type
+                        case 5:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbhazardType tmpVar = dbhazardTypeFacade.findByName("hazardTypeName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getHazardTypeName() != null) {
+                                    tmpObj.lineData.setHazardTypeId(tmpVar.getHazardTypeId());
+                                    tmpObj.lineData.setHazardType(tmpVar.getHazardTypeName());
+                                } else {
+                                    createLineError(tmpObj, "hazardType", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardType", 1);
+                            }
+                            break;
+                        // Processing hazard status
+                        case 6:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbhazardStatus tmpVar = dbhazardStatusFacade.findByName("hazardStatusName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getHazardStatusName() != null) {
+                                    tmpObj.lineData.setHazardStatusId(tmpVar.getHazardStatusId());
+                                    tmpObj.lineData.setHazardStatus(tmpVar.getHazardStatusName());
+                                } else {
+                                    createLineError(tmpObj, "hazardStatus", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardStatus", 1);
+                            }
+                            break;
+                        // Processing hazard risk class
+                        case 7:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbriskClass tmpVar = dbriskClassFacade.findByName("riskClassName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getRiskClassName() != null) {
+                                    tmpObj.lineData.setHazardRiskClassId(tmpVar.getRiskClassId());
+                                    tmpObj.lineData.setHazardRiskClass(tmpVar.getRiskClassName());
+                                } else {
+                                    createLineError(tmpObj, "hazardRiskClass", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardRiskClass", 1);
+                            }
+                            break;
+                        // Processing current frequency Id
+                        case 8:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbriskFrequency tmpVar = dbriskFrequencyFacade.findByName("frequencyScore", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getFrequencyScore() != null) {
+                                    tmpObj.lineData.setHazardCurrentFrequencyId(tmpVar.getRiskFrequencyId());
+                                } else {
+                                    createLineError(tmpObj, "hazardCurrentFreq", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardCurrentFreq", 1);
+                            }
+                            break;
+                        // Processing current severity Id
+                        case 9:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbriskSeverity tmpVar = dbriskSeverityFacade.findByName("severityScore", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getSeverityScore() != null) {
+                                    tmpObj.lineData.setHazardCurrentSeverityId(tmpVar.getRiskSeverityId());
+                                } else {
+                                    createLineError(tmpObj, "hazardCurrentSev", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardCurrentSev", 1);
+                            }
+                            break;
+                        // Processing target frequency Id
+                        case 10:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbriskFrequency tmpVar = dbriskFrequencyFacade.findByName("frequencyScore", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getFrequencyScore() != null) {
+                                    tmpObj.lineData.setHazardTargetFrequencyId(tmpVar.getRiskFrequencyId());
+                                } else {
+                                    createLineError(tmpObj, "hazardTargetFreq", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardTargetFreq", 1);
+                            }
+                            break;
+                        // Processing target severity Id
+                        case 11:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbriskSeverity tmpVar = dbriskSeverityFacade.findByName("severityScore", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getSeverityScore() != null) {
+                                    tmpObj.lineData.setHazardTargetSeverityId(tmpVar.getRiskSeverityId());
+                                } else {
+                                    createLineError(tmpObj, "hazardTargetSev", 2);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardTargetSev", 1);
+                            }
+                            break;
+                        // Processing hazard comment
+                        case 12:
+                            tmpObj.lineData.setHazardComment(row.getCell(i).toString());
+                            break;
+                        // Processing hazard date
+                        case 13:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                try {
+                                    tmpObj.lineData.setHazardDate(new SimpleDateFormat("dd-MMM-yyyy").parse(row.getCell(i).toString()));
+                                } catch (ParseException ex) {
+                                    createLineError(tmpObj, "hazardDate", 4);
+                                    Logger.getLogger(trees_MB.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardDate", 1);
+                            }
+                            break;
+                        // Processing hazard workshop
+                        case 14:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setHazardWorkshop(row.getCell(i).toString());
+                            } else {
+                                createLineError(tmpObj, "hazardWorkshop", 1);
+                            }
+                            break;
+                        // Processing hazard legacy Id    
+                        case 15:
+                            tmpObj.lineData.setHazardLegacyId(row.getCell(i).toString());
+                            break;
+                        // Processing hazard HF Review
+                        case 16:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setHazardHFReview(row.getCell(i).toString());
+                            }
+                            break;
+                        // Processing hazard sbs codes 
+                        case 17:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                String[] sbsValues = row.getCell(i).toString().replaceAll("\\s+", "").split(",");
+                                if (sbsValues.length == 0) {
+                                    createLineError(tmpObj, "hazardSbs", 2);
+                                } else if (sbsValues.length > 0) {
+                                    boolean errorFound = false;
+                                    for (String sbsValue : sbsValues) {
+                                        if (sbsValue.matches("^\\d+(\\.\\d+)*") && !errorFound) {
+                                            String[] sbsCodes = sbsValue.split("\\.");
+                                            int[] sbsInt = Arrays.stream(sbsCodes).mapToInt(Integer::parseInt).toArray();
+                                            switch (sbsCodes.length) {
+                                                case 1:
+                                                    DbtreeLevel1 lvl1 = dbtreeLevel1Facade.findByIndex(sbsInt[0]);
+                                                    if (lvl1.getTreeLevel1Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    DbtreeLevel2 lvl2 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1]);
+                                                    if (lvl2.getTreeLevel2Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 3:
+                                                    DbtreeLevel3 lvl3 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2]);
+                                                    if (lvl3.getTreeLevel3Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 4:
+                                                    DbtreeLevel4 lvl4 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3]);
+                                                    if (lvl4.getTreeLevel4Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 5:
+                                                    DbtreeLevel5 lvl5 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4]);
+                                                    if (lvl5.getTreeLevel5Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                case 6:
+                                                    DbtreeLevel6 lvl6 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4], sbsInt[5]);
+                                                    if (lvl6.getTreeLevel6Name() == null) {
+                                                        errorFound = true;
+                                                    }
+                                                    break;
+                                                default:
+                                                    errorFound = true;
+                                                    break;
+                                            }
+                                            if (errorFound) {
+                                                createLineError(tmpObj, "hazardSbs", 2);
+                                                break;
+                                            }
+                                        } else {
+                                            createLineError(tmpObj, "hazardSbs", 2);
+                                            errorFound = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!errorFound) {
+                                        tmpObj.lineData.setHazardSbs(row.getCell(i).toString().replaceAll("\\s+", ""));
+                                    }
+                                }
+                            } else {
+                                createLineError(tmpObj, "hazardSbs", 1);
+                            }
+                            break;
+                        // Processing relation type
+                        case 18:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setRelationType(row.getCell(i).toString());
+                            }
+                            break;
+                        // Processing relation description
+                        case 19:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setRelationDescription(row.getCell(i).toString());
+                                if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), row.getCell(18).toString()).size() > 0) {
+                                    createLineError(tmpObj, row.getCell(18).toString(), 3);
+                                }
+                            } else if (!"".equals(row.getCell(18).toString())) {
+                                createLineError(tmpObj, "relationDescription", 1);
+                            }
+                            break;
+                        // Processing control owner
+                        case 20:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbOwners tmpVar = dbOwnersFacade.findByName("ownerName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getOwnerName() != null) {
+                                    tmpObj.lineData.setControlOwnerId(tmpVar.getOwnerId());
+                                    tmpObj.lineData.setControlOwner(tmpVar.getOwnerName());
+                                } else {
+                                    createLineError(tmpObj, "controlOwner", 2);
+                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "controlOwner", 1);
+                            }
+                            break;
+                        // Processing control hierarchy
+                        case 21:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbcontrolHierarchy tmpVar = dbcontrolHierarchyFacade.findByName("controlHierarchyName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getControlHierarchyName() != null) {
+                                    tmpObj.lineData.setControlHierarchyId(tmpVar.getControlHierarchyId());
+                                    tmpObj.lineData.setControlHierarchy(tmpVar.getControlHierarchyName());
+                                } else {
+                                    createLineError(tmpObj, "controlHierarchy", 2);
+                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "controlHierarchy", 1);
+                            }
+                            break;
+                        // Processing control type
+                        case 22:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setControlType(row.getCell(i).toString());
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "controlType", 1);
+                            }
+                            break;
+                        // Processing control recommendation
+                        case 23:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                DbcontrolRecommend tmpVar = dbcontrolRecommendFacade.findByName("controlRecommendName", row.getCell(i).toString()).get(0);
+                                if (tmpVar.getControlRecommendName() != null) {
+                                    tmpObj.lineData.setControlRecommendId(tmpVar.getControlRecommendId());
+                                    tmpObj.lineData.setControlRecommend(tmpVar.getControlRecommendName());
+                                } else {
+                                    createLineError(tmpObj, "controlRecommend", 2);
+                                }
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "controlRecommend", 1);
+                            }
+                            break;
+                        // Processing control Status
+                        case 25:
+                            if (!"".equals(row.getCell(i).toString())) {
+                                tmpObj.lineData.setControlExistingOrProposed(row.getCell(i).toString().substring(0, 1));
+                            } else if (row.getCell(18).toString().equals("Control")) {
+                                createLineError(tmpObj, "controlStatus", 1);
+                            }
+                            break;
+                        // Processing control justify
+                        case 24:
+                            if (row.getCell(18).toString().equals("Control") && dbcontrolRecommendFacade.findByName("controlRecommendName", row.getCell(23).toString()).get(0).getControlJustifyRequired().equals("Y")){
+                                if (!"".equals(row.getCell(i).toString())) {
+                                    tmpObj.lineData.setControlJustify(row.getCell(i).toString());
+                                } else {
+                                    createLineError(tmpObj, "controlJustify", 1);
+                                }
+                            }
+                            break;
+                        default:
+                            System.out.println("The value does not match with the expected columns. Value: " + row.getCell(i).toString() + " column index: " + i);
+                            break;
+                    }
+                }
+            }
+
+//        } catch (Exception e) {
+//            System.err.println(e);
+//        }
+        return tmpObj;
+    }
+
+// Creating the list of errors per line
+    private importLineObj createLineError(importLineObj tmpObj, String fieldName, int errorCode) {
+        DbimportLineError tmpError = new DbimportLineError(tmpObj.lineData.getDbimportLinePK().getProcessId(),
+                tmpObj.lineData.getDbimportLinePK().getProcessIdLine(), tmpObj.lineError.size() + 1);
+        tmpError.setProcessErrorLocation(fieldName);
+        tmpError.setProcessErrorStatus("P");
+        switch (errorCode) {
+            case 1:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(1));
+                break;
+            case 2:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(2));
+                break;
+            case 3:
+                tmpError.setProcessErrorCode(new DbimportErrorCode(3));
+                break;
+        }
+        tmpObj.lineError.add(tmpError);
+        return tmpObj;
+
+    }
+
+    class importLineObj {
+
+        public DbimportLine lineData;
+        public List<DbimportLineError> lineError;
+
+        public importLineObj() {
+            lineData = new DbimportLine();
+            lineError = new ArrayList<>();
+        }
+
+        public importLineObj(DbimportLine lineData, List<DbimportLineError> lineError) {
+            this.lineData = lineData;
+            this.lineError = lineError;
         }
     }
 }

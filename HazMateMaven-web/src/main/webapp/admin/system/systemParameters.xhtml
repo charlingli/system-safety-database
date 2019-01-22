@@ -36,11 +36,11 @@
                             <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="input"/>
                             <p:outputLabel value="Similarity Threshold: " for="Threshold"/>
                             <p:inputText id="Threshold" maxlength="3" value="#{systemParams_MB.thresholdSimilarity}" styleClass="input" validatorMessage="Threshold should be between 0 and 100.">
-                                <f:validateLongRange minimum="0" maximum="100" />
+                                <f:validateLongRange minimum="0" maximum="100"/>
                             </p:inputText>
                             <p:outputLabel value="Number of Rows (Import Layout): " for="numberOfRows"/>
                             <p:inputTextarea id="numberOfRows" value="#{systemParams_MB.excelNumberOfRows}" styleClass="input">
-                                <f:validateLongRange minimum="0" maximum="65000" />
+                                <f:validateLongRange minimum="0" maximum="65000"/>
                             </p:inputTextarea>
                             <p:outputLabel value="Excel password (Import Layout): " for="excelPassword"/>
                             <p:inputText id="excelPassword" maxlength="20" value="#{systemParams_MB.excelPassword}" styleClass="input" validatorMessage="Password should have more than 7 characters and less or equal than 20">

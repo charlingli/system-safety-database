@@ -36,12 +36,12 @@
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
                                     <p:column style="display: none">
-                                        <h:panelGroup id="similarityWords" >
+                                        <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
                                     <p:column style="display: none">
-                                        <h:panelGroup id="commonWords" >
+                                        <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
@@ -254,15 +254,15 @@
                                         <p:panelGrid id="modifyTable" columns="2" columnClasses="left,middle">
                                             <p:outputLabel value="Hazard Date:"/>
                                             <p:calendar value="#{editHazard_MB.currentHazard.hazardDate}" title="HazardDate" required="true" requiredMessage="The HazardDate field is required." maxdate="#{editHazard_MB.currentDate()}"/>
-                                            <p:outputLabel value="Hazard Description:" />
+                                            <p:outputLabel value="Hazard Description:"/>
                                             <p:inputTextarea rows="3" cols="60"  value="#{editHazard_MB.currentHazard.hazardDescription}" title="HazardDescription" required="true" requiredMessage="The HazardDescription field is required."/>
                                             <p:outputLabel value="Hazard Comment:"/>
                                             <p:inputTextarea rows="3" cols="60" value="#{editHazard_MB.currentHazard.hazardComment}" title="HazardComment"/>
-                                            <p:outputLabel value="Hazard Activity:" />
+                                            <p:outputLabel value="Hazard Activity:"/>
                                             <p:selectOneMenu value="#{editHazard_MB.editingHA}" required="true" requiredMessage="The Hazard Activity field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHA}" var="ha" itemLabel="#{ha.activityName}" itemValue="#{ha.activityId}"/>
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Hazard Context:" />
+                                            <p:outputLabel value="Hazard Context:"/>
                                             <p:selectOneMenu  value="#{editHazard_MB.editingHC}"  required="true" requiredMessage="The HazardContextId field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHC}" var="hc" itemLabel="#{hc.hazardContextName}" itemValue="#{hc.hazardContextId}"/>
                                             </p:selectOneMenu>
@@ -274,13 +274,13 @@
                                             <p:selectOneMenu  value="#{editHazard_MB.editingHS}" required="true" requiredMessage="The HazardStatusId field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHS}" var="hs" itemLabel="#{hs.hazardStatusName}" itemValue="#{hs.hazardStatusId}"/>
                                             </p:selectOneMenu>
-                                            <p:outputLabel value="Hazard Owner:" />
+                                            <p:outputLabel value="Hazard Owner:"/>
                                             <p:selectOneMenu  value="#{editHazard_MB.editingHO}" required="true" requiredMessage="The OwnerId field is required." class="editInput" autoWidth="false">
                                                 <f:selectItems value="#{editHazard_MB.listHO}" var="ho" itemLabel="#{ho.ownerName}" itemValue="#{ho.ownerId}"/>
                                             </p:selectOneMenu>
                                             <p:outputLabel value="Hazard Workshop:"/>
                                             <p:inputTextarea rows="2" cols="60"  value="#{editHazard_MB.currentHazard.hazardWorkshop}" title="HazardWorkshop" required="true" requiredMessage="The HazardWorkshop field is required."/>
-                                            <p:outputLabel value="Hazard Review:" />
+                                            <p:outputLabel value="Hazard Review:"/>
                                             <p:selectOneMenu  value="#{editHazard_MB.currentHazard.hazardReview}" required="true" requiredMessage="The Hazard Review field is required." class="editInput" autoWidth="false">
                                                 <f:selectItem itemLabel="Yes" itemValue="Y"/>
                                                 <f:selectItem itemLabel="No" itemValue="N"/>

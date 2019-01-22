@@ -50,4 +50,24 @@ public class DbimportLineErrorFacade extends AbstractFacade<DbimportLineError> i
         return resultantList;
     }
     
+    @Override
+    public List<DbimportLineError> findErrorByCell(String processId, int processIdLine, String errorLocation) {
+        List<DbimportLineError> resultantList = new ArrayList<>();
+        String queryString;
+        try {
+            queryString = "FROM DbimportLineError e WHERE e.dbimportLineErrorPK.processId = ?1 "
+                    + "AND e.dbimportLineErrorPK.processIdLine = ?2 "
+                    + "AND e.processErrorLocation = ?3";
+            Query query = em.createQuery(queryString);
+            query.setParameter(1, processId);
+            query.setParameter(2, processIdLine);
+            query.setParameter(3, errorLocation);
+            
+            resultantList = query.getResultList();
+        } catch (Exception e) {
+            throw e;
+        }
+        return resultantList;
+    }
+    
 }
