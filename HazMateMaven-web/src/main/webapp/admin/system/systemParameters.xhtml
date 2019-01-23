@@ -16,7 +16,7 @@
                         <p:outputLabel value="#{systemParams_MB.managerEmail}"/>
                         <p:outputLabel value="SSD License: "/>
                         <h:outputText value="#{systemParams_MB.licenseText}" styleClass="resultBox"/>
-                        <p:outputLabel value="Similarity Threshold: "/>
+                        <p:outputLabel value="Similarity Threshold (%): "/>
                         <h:outputText value="#{systemParams_MB.thresholdSimilarity}" styleClass="resultBox"/>
                         <p:outputLabel value="Number of Rows (Import Layout): "/>
                         <h:outputText value="#{systemParams_MB.excelNumberOfRows}" styleClass="resultBox"/>
@@ -34,7 +34,7 @@
                             <p:inputText id="email" value="#{systemParams_MB.systemParamObj.systemAdminEmail}" styleClass="input"/>
                             <p:outputLabel value="License Text: " for="license"/>
                             <p:inputTextarea id="license" value="#{systemParams_MB.systemParamObj.systemLicense}" styleClass="input"/>
-                            <p:outputLabel value="Similarity Threshold: " for="Threshold"/>
+                            <p:outputLabel value="Similarity Threshold (%): " for="Threshold"/>
                             <p:inputText id="Threshold" maxlength="3" value="#{systemParams_MB.thresholdSimilarity}" styleClass="input" validatorMessage="Threshold should be between 0 and 100.">
                                 <f:validateLongRange minimum="0" maximum="100"/>
                             </p:inputText>

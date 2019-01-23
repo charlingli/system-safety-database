@@ -20,7 +20,9 @@
     </h:head>
     <body>
         <form jsf:id="hazardsForm" jsf:prependId="false">
-            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+            <p:messages showDetail="true" showSummary="false">
+                <p:autoUpdate/>
+            </p:messages>
             <div id="progress-modal" class="progress-back">
                 <div class="progress-text">Loaded: <span id="nLoaded"></span><span id="nHazards">#{hazardViewExtend_MB.getnHazards()}</span></div>
                 <div class="progress-front">

@@ -9,13 +9,9 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <br/>
                 <h:form id="viewTree">
                     <p:growl id="msgs" showDetail="true" escape="false"/>
-
-                    <div class="pagePath"><p:outputLabel value="You are here : #{pagePath_MB.pagePath}"/></div>
-                    <br></br>
-                    <br></br>
+                    <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
 
                     <h3>System Breakdown Structure (SBS)</h3>
                     <p:tree value="#{trees_MB.root}" var="node" dynamic="true" styleClass="treeWidth">
@@ -127,6 +123,27 @@
                         </h:form>
                     </p:panel>
                 </div>
+                <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+                <script>
+                    $(function () {
+                        // Set the unload message whenever any input element get changed.
+                        $(':input').on('change', function () {
+                            setConfirmUnload(true);
+                        });
+
+                        // Turn off the unload message whenever a form get submitted properly.
+                        $('form').on('submit', function () {
+                            setConfirmUnload(false);
+                        });
+                    });
+
+                    function setConfirmUnload(on) {
+                        var message = "You have unsaved data. Are you sure to leave the page?";
+                        window.onbeforeunload = (on) ? function () {
+                            return message;
+                        } : null;
+                    }
+                </script>
             </ui:define>
         </ui:composition>
     </body>

@@ -57,8 +57,12 @@
                         </f:facet>
                     </p:menubar>
                     <div class="messageDiv">
-                        <p:messages id="messages" autoUpdate="true" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv"/>
-                        <p:growl id="growl" autoUpdate="true" showDetail="true" showSummary="false" severity="info" class="timeout"/>
+                        <p:messages id="messages" showDetail="true" showSummary="false" severity="error, warn" closable="true" styleClass="messageDiv">
+                            <p:autoUpdate/>
+                        </p:messages>
+                        <p:growl id="growl" showDetail="true" showSummary="false" severity="info" class="timeout">
+                            <p:autoUpdate/>
+                        </p:growl>
                     </div>
                 </h:form>
             </ui:insert>

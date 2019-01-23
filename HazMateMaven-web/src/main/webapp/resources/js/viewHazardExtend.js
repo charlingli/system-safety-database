@@ -49,10 +49,6 @@ function filterRows() {
     }
 }
 
-function toggleColumn(id) {
-    
-}
-
 window.onload = function() {
     $("#progress-modal").css("transition", "opacity .5s, top .5s");
     $("#progress-modal").css("opacity", "0");

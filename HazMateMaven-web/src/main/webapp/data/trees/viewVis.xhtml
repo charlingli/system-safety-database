@@ -9,7 +9,9 @@
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
                 <h:form id="visForm">
-                    <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+                    <p:messages showDetail="true" showSummary="false">
+                        <p:autoUpdate/>
+                    </p:messages>
                     <p:panel class="visPanel">
                         <div class="visCanvas">
                             <div id="graphic"></div>
