@@ -24,7 +24,7 @@
                                             <h:outputText value="The associated hazards are: "/>
                                         </p:outputPanel>
                                     </f:facet>
-                                    <p:column style="width: 8%; text-align:center">
+                                    <p:column class="centerColumn" style="width: 8%">
                                         <f:facet name="header">
                                             <h:outputText value="Hazard ID"/>
                                         </f:facet>
@@ -103,7 +103,7 @@
                                 <p:outputLabel value="#{files_MB.parseSize(file.fileSize)}"/>
                             </p:column>
                             <p:column headerText="Linked Hazards" style="width: 8%">
-                                <p:commandButton action="#{files_MB.showLinkedHazards(file.fileId)}" update="filesForm:linkedDialog" oncomplete="PF('linkedOverlay').show();" icon="fa fa-share-alt"/>
+                                <p:commandButton action="#{files_MB.showLinkedHazards(file.fileId)}" update="filesForm:linkedDialog" oncomplete="PF('linkedOverlay').show()" icon="fa fa-share-alt"/>
                             </p:column>
                             <p:column headerText="Download"  style="width: 8%">
                                 <p:commandButton action="#{files_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>

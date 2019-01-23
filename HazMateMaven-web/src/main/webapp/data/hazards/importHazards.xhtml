@@ -12,33 +12,33 @@
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <ui:include src="../../templates/spinnerDialog.xhtml"/>
                     <p:remoteCommand name="onCellEdit" update="hazardsForm:hazardsTable"/>
-                    <p:ajaxStatus onstart="PF('spinnerOverlay').show();" oncomplete="PF('spinnerOverlay').hide(); buildValidation();"/>
+                    <p:ajaxStatus onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); buildValidation()"/>
                     <p:dialog id="similarityDialog" header="Similarity Report" widgetVar="similarityOverlay" height="auto" width="60vw" closeOnEscape="true">
                         <p:panel styleClass="detailHazardPanel">
                             <div class="p-heading-spacer">
                                 <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed object:"/>
                             </div>
                             <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
-                                <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                <p:column headerText="ID" class="centerColumn" style="width: 11%">
                                     <p:outputLabel value="#{object.objectId}"/>
                                 </p:column>
-                                <p:column headerText="SBS/Owner" style="width: 36%; text-align: center;">
+                                <p:column headerText="SBS/Owner" class="centerColumn" style="width: 36%">
                                     <ui:repeat value="#{object.objectExtra}" var="code">
                                         <p:outputLabel>#{code}<br/></p:outputLabel>
                                     </ui:repeat>
                                 </p:column>
-                                <p:column headerText="Description" style="width: 42%; text-align: center;">
+                                <p:column headerText="Description" class="centerColumn" style="width: 42%">
                                     <p:outputLabel value="#{object.objectDescription}"/>
                                 </p:column>
-                                <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                <p:column headerText="% Similarity" class="centerColumn" style="width: 11%">
                                     <p:outputLabel value="#{object.averageDistance}"/>
                                 </p:column>
-                                <p:column style="display: none">
+                                <p:column class="hiddenCell">
                                     <h:panelGroup id="similarityWords">
                                         <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                     </h:panelGroup>
                                 </p:column>
-                                <p:column style="display: none">
+                                <p:column class="hiddenCell">
                                     <h:panelGroup id="commonWords">
                                         <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                     </h:panelGroup>
@@ -62,20 +62,20 @@
                                     <p:outputLabel value="#{node}"/>
                                 </p:treeNode>
                             </p:tree>
-                            <p:commandButton value="Save SBS codes" action="#{importHazard_MB.editTree()}" oncomplete="PF('sbsOverlay').hide();"/>
+                            <p:commandButton value="Save SBS codes" action="#{importHazard_MB.editTree()}" oncomplete="PF('sbsOverlay').hide()"/>
                         </p:panelGrid>
                     </p:overlayPanel>
                     <p:panel styleClass="searchPanel">
                         <p:panelGrid columns="2" columnClasses="left,middle" rendered="#{importHazard_MB.showUpload ? 'true' : 'false'}">
-                            <p:outputLabel><span style="font-weight: bold">Step 1:</span> Download and populate the template:</p:outputLabel>
+                            <p:outputLabel><span class="p-emphasis">Step 1:</span> Download and populate the template:</p:outputLabel>
                             <p:commandButton value="Get file" action="#{importHazard_MB.generateLayout()}" ajax="false"/>
-                            <p:outputLabel><span style="font-weight: bold">Step 2:</span> Choose and upload the file:</p:outputLabel>
+                            <p:outputLabel><span class="p-emphasis">Step 2:</span> Choose and upload the file:</p:outputLabel>
                             <h:panelGroup>
                                 <p:fileUpload fileUploadListener="#{importHazard_MB.processFile}" update="@form" oncomplete="buildValidation()" skinSimple="true" mode="advanced" dragDropSupport="true" multiple="false" sizeLimit="1000000" allowTypes="/(\.|\/)(xls|xlsx)$/" messageTemplate=" " invalidSizeMessage="Please choose a file under 1 MB in size." invalidFileMessage="Please choose a valid .xls(x) file." fileLimitMessage=""/>
                             </h:panelGroup>
                         </p:panelGrid>
                         <p:panelGrid columns="1" columnClasses="left" rendered="#{importHazard_MB.showUpload ? 'false' : 'true'}">
-                            <p:outputLabel><span style="font-weight: bold">Step 3:</span> Make any necessary changes and submit the lines.</p:outputLabel>
+                            <p:outputLabel><span class="p-emphasis">Step 3:</span> Make any necessary changes and submit the lines.</p:outputLabel>
                         </p:panelGrid>
                     </p:panel>
                     <h:panelGroup rendered="#{importHazard_MB.showUpload ? 'false' : 'true'}">
@@ -92,13 +92,13 @@
                                     <div class="right"></div>
                                 </p:outputPanel>
                             </f:facet>
-                            <p:ajax event="cellEdit" listener="#{importHazard_MB.editCell}" onsuccess="onCellEdit();"/>
+                            <p:ajax event="cellEdit" listener="#{importHazard_MB.editCell}" onsuccess="onCellEdit()"/>
                             <p:ajax event="rowSelect" update="hazardsForm:submitButton" process="@this"/>
                             <p:ajax event="rowUnselect" update="hazardsForm:submitButton" process="@this"/>
                             <p:ajax event="rowSelectCheckbox" update="hazardsForm:submitButton" process="@this"/>
                             <p:ajax event="rowUnselectCheckbox" update="hazardsForm:submitButton" process="@this"/>
                             <p:ajax event="toggleSelect" update="hazardsForm:submitButton" process="@this"/>
-                            <p:column id="VLCol" style="text-align:center; width: 80px">
+                            <p:column id="VLCol" class="centerColumn" style="width: 80px">
                                 <p:commandLink id="warningIcon" class="warningIcon" rendered="#{line.listWarningObjects.size() > 0 ? 'true' : 'false'}"><i class="fa fa-exclamation-triangle"></i></p:commandLink>
                                 <p:tooltip id="warningTooltip" for="warningIcon">
                                     <h:outputText value="#{line.warningMessage}"/>
@@ -112,8 +112,8 @@
                                     <h:outputText value="No issues found; this line is ready to import."/>
                                 </p:tooltip>
                             </p:column>
-                            <p:column selectionMode="multiple" style="text-align:center; width: 20px"/>
-                            <p:column id="DTCol" style="text-align:center; width: 80px">
+                            <p:column selectionMode="multiple" class="centerColumn" style="width: 20px"/>
+                            <p:column id="DTCol" class="centerColumn" style="width: 80px">
                                 <f:facet name="header">
                                     <h:outputText value="Date"/>
                                 </f:facet>
@@ -124,13 +124,13 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="LICol" style="text-align:center; width: 80px">
+                            <p:column id="LICol" class="centerColumn" style="width: 80px">
                                 <f:facet name="header">
                                     <h:outputText value="Legacy ID"/>
                                 </f:facet>
                                 <h:outputText value="#{line.lineObject.hazardLegacyId}"/>
                             </p:column>
-                            <p:column id="HDCol" style="text-align:center; width: 240px">
+                            <p:column id="HDCol" class="centerColumn" style="width: 240px">
                                 <f:facet name="header">
                                     <h:outputText value="Description"/>
                                 </f:facet>
@@ -142,17 +142,17 @@
                                         <p:inputText value="#{line.lineObject.hazardDescription}" required="true" requiredMessage="A description is required."/>
                                     </f:facet>
                                 </p:cellEditor>
-                                <p:commandLink rendered="#{line.HDWarning ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.hazardDescription, 'hazard'), 'hazard', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show()">
+                                <p:commandLink rendered="#{line.HDWarning ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.hazardDescription, 'hazard'), 'hazard', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show(); viewWords()">
                                     <h:outputText value="(Potential duplicates)"/>
                                 </p:commandLink>
                             </p:column>
-                            <p:column id="HMCol" style="text-align:center; width: 240px">
+                            <p:column id="HMCol" class="centerColumn" style="width: 240px">
                                 <f:facet name="header">
                                     <h:outputText value="Comment"/>
                                 </f:facet>
                                 <h:outputText value="#{line.lineObject.hazardComment}"/>
                             </p:column>
-                            <p:column id="HWCol" style="text-align:center; width: 240px">
+                            <p:column id="HWCol" class="centerColumn" style="width: 240px">
                                 <f:facet name="header">
                                     <h:outputText value="Workshop"/>
                                 </f:facet>
@@ -163,7 +163,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HCCol" style="text-align:center; width: 120px">
+                            <p:column id="HCCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Context"/>
                                 </f:facet>
@@ -176,7 +176,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HLCol" style="text-align:center; width: 120px">
+                            <p:column id="HLCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Location"/>
                                 </f:facet>
@@ -189,7 +189,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HACol" style="text-align:center; width: 120px">
+                            <p:column id="HACol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Activity"/>
                                 </f:facet>
@@ -202,7 +202,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HTCol" style="text-align:center; width: 120px">
+                            <p:column id="HTCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Type"/>
                                 </f:facet>
@@ -215,7 +215,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HSCol" style="text-align:center; width: 120px">
+                            <p:column id="HSCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Status"/>
                                 </f:facet>
@@ -228,7 +228,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HOCol" style="text-align:center; width: 120px">
+                            <p:column id="HOCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Owner"/>
                                 </f:facet>
@@ -241,13 +241,13 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="HFCol" style="text-align:center; width: 120px">
+                            <p:column id="HFCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Human Factors Review Required?"/>
                                 </f:facet>
                                 <h:outputText value="#{line.lineObject.hazardHFReview}"/>
                             </p:column>
-                            <p:column id="RCCol" style="text-align:center; width: 120px">
+                            <p:column id="RCCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Risk Class"/>
                                 </f:facet>
@@ -260,7 +260,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CFCol" style="text-align:center; width: 120px">
+                            <p:column id="CFCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Current Frequency"/>
                                 </f:facet>
@@ -273,7 +273,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CSCol" style="text-align:center; width: 120px">
+                            <p:column id="CSCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Current Severity"/>
                                 </f:facet>
@@ -286,7 +286,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="TFCol" style="text-align:center; width: 120px">
+                            <p:column id="TFCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Target Frequency"/>
                                 </f:facet>
@@ -299,7 +299,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="TSCol" style="text-align:center; width: 120px">
+                            <p:column id="TSCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Target Severity"/>
                                 </f:facet>
@@ -312,19 +312,19 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="SCCol" style="text-align:center; width: 120px">
+                            <p:column id="SCCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="SBS Codes"/>
                                 </f:facet>
-                                <p:commandButton id="SCBtn" icon="fa fa-sitemap" update="@form" action="#{importHazard_MB.populateTree(line.lineObject)}" oncomplete="PF('sbsOverlay').show('#{component.clientId}'); onCellEdit();"/>
+                                <p:commandButton id="SCBtn" icon="fa fa-sitemap" update="@form" action="#{importHazard_MB.populateTree(line.lineObject)}" oncomplete="PF('sbsOverlay').show('#{component.clientId}'); onCellEdit()"/>
                             </p:column>
-                            <p:column id="RTCol" style="text-align:center; width: 120px">
+                            <p:column id="RTCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Relation Type"/>
                                 </f:facet>
                                 <h:outputText value="#{line.lineObject.relationType}"/>
                             </p:column>
-                            <p:column id="RDCol" style="text-align:center; width: 240px">
+                            <p:column id="RDCol" class="centerColumn" style="width: 240px">
                                 <f:facet name="header">
                                     <h:outputText value="Relation Description"/>
                                 </f:facet>
@@ -342,17 +342,17 @@
                                                         rendered="#{line.lineObject.relationType == 'Control' ? 'true' : 'false'}"/>
                                     </f:facet>
                                 </p:cellEditor>
-                                <p:commandLink rendered="#{line.RDWarning and line.lineObject.relationType == 'Control' ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.relationDescription, 'control'), 'control', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show()">
+                                <p:commandLink rendered="#{line.RDWarning and line.lineObject.relationType == 'Control' ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.relationDescription, 'control'), 'control', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show(); viewWords()">
                                     <h:outputText value="(Potential duplicates)"/>
                                 </p:commandLink>
-                                <p:commandLink rendered="#{line.RDWarning and line.lineObject.relationType == 'Cause' ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.relationDescription, 'cause'), 'cause', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show()">
+                                <p:commandLink rendered="#{line.RDWarning and line.lineObject.relationType == 'Cause' ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.relationDescription, 'cause'), 'cause', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show(); viewWords()">
                                     <h:outputText value="(Potential duplicates)"/>
                                 </p:commandLink>
-                                <p:commandLink rendered="#{line.RDWarning and line.lineObject.relationType == 'Consequence' ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.relationDescription, 'consequence'), 'consequence', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show()">
+                                <p:commandLink rendered="#{line.RDWarning and line.lineObject.relationType == 'Consequence' ? 'true' : 'false'}" update="hazardsForm:similarityDialog" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(line.lineObject.relationDescription, 'consequence'), 'consequence', addHazard_MB.hazardObject.hazardId)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('similarityOverlay').show(); viewWords()">
                                     <h:outputText value="(Potential duplicates)"/>
                                 </p:commandLink>
                             </p:column>
-                            <p:column id="COCol" style="text-align:center; width: 120px">
+                            <p:column id="COCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Control Owner"/>
                                 </f:facet>
@@ -365,7 +365,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CHCol" style="text-align:center; width: 120px">
+                            <p:column id="CHCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Control Hierarchy"/>
                                 </f:facet>
@@ -378,7 +378,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CTCol" style="text-align:center; width: 120px">
+                            <p:column id="CTCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Control Type"/>
                                 </f:facet>
@@ -392,7 +392,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CRCol" style="text-align:center; width: 120px">
+                            <p:column id="CRCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Control Recommendation"/>
                                 </f:facet>
@@ -405,7 +405,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CJCol" style="text-align:center; width: 120px">
+                            <p:column id="CJCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Control Justification"/>
                                 </f:facet>
@@ -416,7 +416,7 @@
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
-                            <p:column id="CUCol" style="text-align:center; width: 120px">
+                            <p:column id="CUCol" class="centerColumn" style="width: 120px">
                                 <f:facet name="header">
                                     <h:outputText value="Control Status"/>
                                 </f:facet>
@@ -437,7 +437,7 @@
                             </f:facet>
                         </p:dataTable>
                         <div class="panelButtons">
-                            <p:commandButton id="submitButton" disabled="#{empty importHazard_MB.listCheckedLines ? 'true' : importHazard_MB.listCheckedLines.size() == 0 ? 'true' : 'false'}" value="Submit #{importHazard_MB.listCheckedLines.size()} hazard #{empty importHazard_MB.listCheckedLines ? 'lines' : importHazard_MB.listCheckedLines.size() == 0 ? 'lines' : importHazard_MB.listCheckedLines.size() == 1 ? 'line' : 'lines'} for review" action="#{importHazard_MB.submitTable()}" onclick="return confirm('Only the selected hazards will be submitted for review; any unchecked hazards will be lost.')" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide();"/>
+                            <p:commandButton id="submitButton" disabled="#{empty importHazard_MB.listCheckedLines ? 'true' : importHazard_MB.listCheckedLines.size() == 0 ? 'true' : 'false'}" value="Submit #{importHazard_MB.listCheckedLines.size()} hazard #{empty importHazard_MB.listCheckedLines ? 'lines' : importHazard_MB.listCheckedLines.size() == 0 ? 'lines' : importHazard_MB.listCheckedLines.size() == 1 ? 'line' : 'lines'} for review" action="#{importHazard_MB.submitTable()}" onclick="return confirm('Only the selected hazards will be submitted for review; any unchecked hazards will be lost.')" update="@form" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide()"/>
                             <p:commandButton value="Cancel import" immediate="true" onclick="return confirm('All the above data will be lost, and will need to be reuploaded through the template.')" actionListener="#{importHazard_MB.cancelImport()}" update="hazardsForm"/>
                         </div>
                     </h:panelGroup>

@@ -8,7 +8,7 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <h:form id="hazardsForm" onclick="closeRating();">
+                <h:form id="hazardsForm" onclick="closeRating()">
                     <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()"/>
                     <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}"/>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
@@ -362,8 +362,8 @@
                         <p:ajax event="rowSelectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this"/>
                         <p:ajax event="rowUnselectCheckbox" update="exportMessage, exportButton" listener="#{hazardView_MB.unSelectAll()}" process="@this"/>
                         <p:ajax event="toggleSelect" update="exportMessage, exportButton" listener="#{hazardView_MB.selectAll()}" process="@this"/>
-                        <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
-                        <p:column style="width: 5%; text-align:center">
+                        <p:column selectionMode="multiple" class="centerColumn" style="width: 2%"/>
+                        <p:column class="centerColumn" style="width: 5%">
                             <f:facet name="header">
                                 <h:outputText value="Visualise"/>
                             </f:facet>
@@ -371,20 +371,20 @@
                             <p:tooltip for="missingIcon">
                                 <h:outputText value="A visualisation cannot be generated since this hazard is missing causes, consequences, or controls!"/>
                             </p:tooltip>
-                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('bowtieOverlay').show(); buildVis();" icon="fa fa-sitemap" rendered="#{hazard.missingInfo ? false : true}"/>
+                            <p:commandButton action="#{hazardViewVis_MB.constructObject(hazard.hazardObj.hazardId)}" update="hazardsForm:bowtieDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('bowtieOverlay').show(); buildVis()" icon="fa fa-sitemap" rendered="#{hazard.missingInfo ? false : true}"/>
                         </p:column>
-                        <p:column style="width: 5%; text-align:center" headerText="Rating">
+                        <p:column class="centerColumn" style="width: 5%" headerText="Rating">
                             <h:outputText>
                                 <f:event type="preRenderComponent" listener="#{hazardView_MB.setQualityRating(hazardView_MB.getHazardRating(hazard.hazardObj.hazardId))}"/>
                                 </h:outputText>
                             <p:rating id="averageRating" stars="3" cancel="false" value="#{hazardView_MB.qualityRating}">
-                                <p:ajax event="rate" ignoreAutoUpdate="true" listener="#{hazardView_MB.prepareRating(hazard.hazardObj.hazardId, rowIndex, hazard.sumOfRateTimesWeighting, hazard.sumOfWeight, hazard.rateCount)}" oncomplete="PF('ratingOverlay').show('#{component.clientId}');"/>
+                                <p:ajax event="rate" ignoreAutoUpdate="true" listener="#{hazardView_MB.prepareRating(hazard.hazardObj.hazardId, rowIndex, hazard.sumOfRateTimesWeighting, hazard.sumOfWeight, hazard.rateCount)}" oncomplete="PF('ratingOverlay').show('#{component.clientId}')"/>
                             </p:rating>
                             <p:tooltip for="averageRating">
                                 <h:outputText value="Rated #{hazardView_MB.qualityRating} from #{hazard.rateCount} users."/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 4%; text-align:center" headerText="Tagging">
+                        <p:column class="centerColumn" style="width: 4%" headerText="Tagging">
                             <p:menuButton icon="fa fa-tag" id="tagButton">
                                 <p:menuitem id="suggestionButton" value="Suggest a change" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('suggestionOverlay').show('#{component.clientId}')" icon="fa fa-pencil"/>
                                 <p:menuitem id="deletionButton" value="Mark for deletion" actionListener="#{hazardView_MB.setDetailHazard(hazard.hazardObj)}" oncomplete="PF('deletionOverlay').show('#{component.clientId}')" icon="fa fa-trash"/>
@@ -393,7 +393,7 @@
                                 <h:outputText value="Tag a change or mark for deletion"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column style="width: 7%; text-align:center">
+                        <p:column class="centerColumn" style="width: 7%">
                             <f:facet name="header">
                                 <h:outputText value="Hazard ID"/>
                             </f:facet>
@@ -472,7 +472,7 @@
                         <p:tooltip id="countTooltip" for="countRating">
                             <h:outputText value="Number of ratings"/>
                         </p:tooltip><br/>
-                        <h:outputText value="Your rating:" style="font-size: 1.2em;"/>
+                        <h:outputText value="Your rating:" style="font-size: 1.2em"/>
                         <p:rating id="userRating" value="#{hazardView_MB.userRating}" stars="3" cancel="false">
                             <p:ajax event="rate" listener="#{hazardView_MB.rateHazard(hazardView_MB.ratingId, hazardView_MB.userRating)}" update="hazardsForm:averageRating, hazardsForm:countRating, hazardsForm:averageTooltip, hazardsForm:countTooltip">
                                 <f:attribute name="hazardId" value="#{hazard.hazardObj}"/>
@@ -509,11 +509,7 @@
                 </h:form>
                 <script type="text/javascript" src="../../resources/js/svg.min.js"/>
                 <script type="text/javascript" src="../../resources/js/viewVis.js"/>
-                <script type="text/javascript">
-                    function closeRating() {
-                        PF('ratingOverlay').hide();
-                    }
-                </script>
+                <script type="text/javascript" src="../../resources/js/viewRating.js"/>
             </ui:define>
         </ui:composition>
     </body>

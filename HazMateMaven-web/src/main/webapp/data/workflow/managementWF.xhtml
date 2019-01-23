@@ -94,7 +94,7 @@
                         <p:ajax event="rowSelectCheckbox" update=":wfForm"/>
                         <p:ajax event="rowUnselectCheckbox" update=":wfForm"/>
                         <p:ajax event="toggleSelect" update=":wfForm"/>
-                        <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                        <p:column selectionMode="multiple" class="centerColumn" style="width:16px"/>
                         <p:column headerText="Workflow ID" styleClass="small">
                             <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{managementWF_MB.showDetail(wf)}" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); PF('wfOverlay').show()">
                                 <h:outputText value="#{wf.wfId}"/>

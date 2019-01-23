@@ -6,7 +6,7 @@
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" media="all" href="../resources/css/loginStyle.css"/>
-        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon"/> 
+        <link rel="shortcut icon" href="#{resource['../img/hazMateLogo.png']}" type="image/x-icon"/> 
         <title>System Safety Database Login</title>
     </h:head>
     <h:body>
@@ -16,17 +16,12 @@
                 <div class="content-box">
                     <h2>System Safety Database</h2>
                     <h:form>
-                        <p style="color: white;">Your session has timed out.</p>
-                        <p style="color: white;">Click anywhere to login again.</p>
+                        <p class="navpagetext">Your session has timed out.</p>
+                        <p class="navpagetext">Click anywhere to login again.</p>
                     </h:form>
                 </div>
             </div>
         </div>
-        <script language="JavaScript">
-            document.onclick = myClickHandler;
-            function myClickHandler() {
-                window.location.replace('../login.xhtml');
-            }
-        </script>
+        <script type="text/javascript" src="../resources/js/navigatePage.js"/>
     </h:body>
 </html>

@@ -22,26 +22,26 @@
                                     <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed hazard:"/>
                                 </div>
                                 <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
-                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                    <p:column headerText="ID" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.objectId}"/>
                                     </p:column>
-                                    <p:column headerText="SBS" style="width: 36%; text-align: center;">
+                                    <p:column headerText="SBS" class="centerColumn" style="width: 36%">
                                         <ui:repeat value="#{object.objectExtra}" var="code">
                                             <p:outputLabel>#{code}<br/></p:outputLabel>
                                         </ui:repeat>
                                     </p:column>
-                                    <p:column headerText="Description" style="width: 42%; text-align: center;">
+                                    <p:column headerText="Description" class="centerColumn" style="width: 42%">
                                         <p:outputLabel value="#{object.objectDescription}"/>
                                     </p:column>
-                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                    <p:column headerText="% Similarity" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
@@ -188,23 +188,23 @@
                                                 <p:ajax event="rowSelectCheckbox" update="fileTable"/>
                                                 <p:ajax event="rowUnselectCheckbox" update="fileTable"/>
                                                 <p:ajax event="toggleSelect" update="fileTable"/>
-                                                <p:column selectionMode="multiple" style="width: 8%; text-align:center"/>
-                                                <p:column style="width: 8%; text-align:center" headerText="ID">
+                                                <p:column selectionMode="multiple" class="centerColumn" style="width: 8%"/>
+                                                <p:column class="centerColumn" style="width: 8%" headerText="ID">
                                                     <h:outputText value="#{file.fileId}"/>
                                                 </p:column>
-                                                <p:column style="width: 15%; text-align:center" headerText="Name">
+                                                <p:column class="centerColumn" style="width: 15%" headerText="Name">
                                                     <h:outputText value="#{file.fileName}"/>
                                                 </p:column>
-                                                <p:column style="width: 20%; text-align:center" headerText="Description">
+                                                <p:column class="centerColumn" style="width: 20%" headerText="Description">
                                                     <h:outputText value="#{file.fileDescription}"/>
                                                 </p:column>
-                                                <p:column style="width: 14%; text-align:center" headerText="Type">
+                                                <p:column class="centerColumn" style="width: 14%" headerText="Type">
                                                     <h:outputText value="#{file.fileExtension}"/>
                                                 </p:column>
-                                                <p:column style="width: 16%; text-align:center" headerText="Size">
+                                                <p:column class="centerColumn" style="width: 16%" headerText="Size">
                                                     <h:outputText value="#{addHazard_MB.parseSize(file.fileSize)}"/>
                                                 </p:column>
-                                                <p:column style="width: 15%; text-align:center" headerText="Download">
+                                                <p:column class="centerColumn" style="width: 15%" headerText="Download">
                                                     <p:commandButton action="#{addHazard_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
                                                 </p:column>
                                                 <f:facet name="footer">
@@ -217,16 +217,11 @@
                             </p:panelGrid>
                         </p:panel>
                         <div id="panelButtons" class="panelButtons">
-                            <p:commandButton value="Save hazard" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(addHazard_MB.hazardObject.hazardDescription, 'hazard'), 'hazard', addHazard_MB.hazardObject.hazardId)}" update="addForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                            <p:commandButton value="Save hazard" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(addHazard_MB.hazardObject.hazardDescription, 'hazard'), 'hazard', addHazard_MB.hazardObject.hazardId)}" update="addForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords()"/>
                             <p:commandButton id="assignButton" value="Assign relations" rendered="#{addHazard_MB.hazardObject.hazardId == null ? false : true}" action="#{addHazard_MB.assignRelations()}" ajax="false"/>
                         </div>
-                        <script>
-                            $(document).on("click", ".ui-fileupload input[type=file]", function(event){
-                                var component = $(this).closest('.ui-fileupload').find('.ui-icon-close').trigger('click');
-                                PF('fileNameOverlay').show();
-                            });
-                        </script>
                     </h:form>
+                    <script type="text/javascript" src="../../resources/js/viewUpload.js"/>
                     <script type="text/javascript" src="../../resources/js/viewWords.js"/>
                 </f:view>
             </ui:define>

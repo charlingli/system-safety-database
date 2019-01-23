@@ -244,10 +244,7 @@ a.commandLinkWhite {
     text-decoration: underline;
     font-weight: bold;
 }
-a.commandLinkWhite:hover {
-    color: #ffffff;
-}
-span.commandLinkWhite {
+a.commandLinkWhite:hover, span.commandLinkWhite {
     color: #ffffff;
 }
 .ui-state-default.approveButton {
@@ -426,6 +423,10 @@ span.commandLinkWhite {
 /**
  * Searching & Results Set
 **/
+.resultBox {
+    margin-top: 10px;
+    width: calc(100% - 10px);
+}
 .resultPanel .small {
     width: 12%;
     text-align: center;
@@ -945,8 +946,11 @@ span.commandLinkWhite {
 .extendTable .utilityDiv .globalExportDiv {
     text-align: right;
 }
-.extendTable .utilityDiv .globalColumnsDiv {
+.extendTable .utilityDiv .globalColumnsDiv, .centerColumn {
     text-align: center;
+}
+.hiddenCell {
+    display: none;
 }
 .extendTable .utilityDiv p {
     font-size: 18px;

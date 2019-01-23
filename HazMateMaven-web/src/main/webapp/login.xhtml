@@ -6,48 +6,39 @@
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" media="all" href="resources/css/loginStyle.css"/>
-        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon"/> 
+        <link rel="shortcut icon" href="#{resource['img/landing_favicon.png']}" type="image/x-icon"/> 
         <title>System Safety Database Login</title>
     </h:head>
     <h:body>
         <div class="body">
-            <p:messages autoUpdate="true" showDetail="true" showSummary="false"/>
+            <img class="logo" src="#{resource['img/landing_logo.png']}" />
             <div class="feature">
                 <div class="feature-introduction">
                   <h1 class="feature-heading">System Safety Database</h1>
                   <p class="feature-text">Welcome to the cloud-based, community-curated railway system safety hazards log developed at LXRA.</p>
                 </div>
             </div>
-            <div class="content">
-                <div class="feature-logo">
-                    <img src="resources/img/hazMateLogo.png"/>
-                </div>
-                <div class="content-box">
-                    <h2>Login</h2>
-                    <h:form>
-                        <div>  
-                            <div class="inputBox">
-                                <h:inputText styleClass="input" required="true" value="#{login_MB.userEmail}" requiredMessage="Email is required."/>
-                                <label>email</label>
-                            </div>
-                            <div class="inputBox">
-                                <h:inputSecret styleClass="input" required="true" value="#{login_MB.password}" requiredMessage="Password is required."/>
-                                <label>password</label>
-                            </div>
-                            <p:commandButton icon="ui-icon-key" value="Login" action="#{login_MB.initSession()}"/>
-                        </div>
-                    </h:form>
-                </div>
+            <div class="content-box">
+                    <p:messages id="login-message" autoUpdate="true" showDetail="true" showSummary="false" closable="true"></p:messages>
+                <h2>Login</h2>
+                <h:form>
+                    <div class="inputBox">
+                        <h:inputText styleClass="input" required="true" value="#{login_MB.userEmail}" requiredMessage="Email is required."/>
+                        <label>email</label>
+                    </div>
+                    <div class="inputBox">
+                        <h:inputSecret styleClass="input" required="true" value="#{login_MB.password}" requiredMessage="Password is required."/>
+                        <label>password</label>
+                    </div>
+                    <div class="buttonBox">
+                        <p:commandButton id="button" value="ENTER" action="#{login_MB.initSession()}"/>
+                    </div>
+                </h:form>
             </div>
         </div>
         <footer>
             <div class="footer-logo1"><a href="https://levelcrossings.vic.gov.au"><span class="footer-link"></span></a></div>
-            <div class="footer-text">System Safety Database is proprietary software owned and operated by Level Crossing Removal Authority. Status: 
-            <span style="font-weight: bold; color: rgb(179, 139, 52)">in development</span><span>. Track our changes on our </span>
-            <a class="commandLink" href="https://trello.com/b/MkVdC6k7/system-safety-database">Trello board</a>
-            <span> and find release notes on our </span>
-            <a class="commandLink" href="https://dtpli.sharepoint.com/sites/lxra-team/ssd">SharePoint subsite</a><span>. Please send all feedback to </span>
-            <a class="commandLink" href="mailto:#{login_MB.systemEmail}">the developers</a><span>.</span></div>
+            <div class="footer-text">System Safety Database is proprietary software owned and operated by Level Crossing Removal Authority. </div>
             <div class="footer-logo2"><a href="https://levelcrossings.vic.gov.au"><span class="footer-link"></span></a></div>
         </footer>
     </h:body>

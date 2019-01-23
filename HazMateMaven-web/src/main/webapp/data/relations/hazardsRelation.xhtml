@@ -243,7 +243,10 @@
                         </div>
                     </p:panel>
                     <div class="panelButtons" style="display:#{(hazardsRelation_MB.infoBox)?'block':'none'}">
-                        <p:commandButton value="#{hazardsRelation_MB.finalActionButton}">
+                        <p:commandButton value="#{hazardsRelation_MB.finalActionButton}" rendered="#{!hazardsRelation_MB.hasRelations()}" onclick="return confirm('The hazard is still missing a cause, consequence, or control. Continue to save?')">
+                            <f:ajax listener="#{hazardsRelation_MB.sendToApproval()}" execute="@form" render="@form"/>
+                        </p:commandButton>
+                        <p:commandButton value="#{hazardsRelation_MB.finalActionButton}" rendered="#{hazardsRelation_MB.hasRelations()}">
                             <f:ajax listener="#{hazardsRelation_MB.sendToApproval()}" execute="@form" render="@form"/>
                         </p:commandButton>
                     </div>

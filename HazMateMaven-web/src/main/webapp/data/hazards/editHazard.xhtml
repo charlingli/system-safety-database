@@ -21,26 +21,26 @@
                                     <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed hazard:"/>
                                 </div>
                                 <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
-                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                    <p:column headerText="ID" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.objectId}"/>
                                     </p:column>
-                                    <p:column headerText="SBS" style="width: 36%; text-align: center;">
+                                    <p:column headerText="SBS" class="centerColumn" style="width: 36%">
                                         <ui:repeat value="#{object.objectExtra}" var="code">
                                             <p:outputLabel>#{code}<br/></p:outputLabel>
                                         </ui:repeat>
                                     </p:column>
-                                    <p:column headerText="Description" style="width: 42%; text-align: center;">
+                                    <p:column headerText="Description" class="centerColumn" style="width: 42%">
                                         <p:outputLabel value="#{object.objectDescription}"/>
                                     </p:column>
-                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                    <p:column headerText="% Similarity" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
@@ -59,7 +59,7 @@
                         </p:dialog>
                         <p:fieldset id="fieldset" rendered="#{not editHazard_MB.showEdit}" legend="Search parameters" toggleable="true" toggleSpeed="1000" styleClass="searchFieldset" collapsed="true">
                             <h:panelGrid columns="2" columnClasses="fields,explanation">
-                                <p:panel styleClass="searchPanel" style="width: 500px;">
+                                <p:panel styleClass="searchPanel" style="width: 500px">
                                     <p:panelGrid columns="3" columnClasses="left,middle,right">
                                         <p:outputLabel>Hazard ID</p:outputLabel>
                                         <p:inputText id="HIInput" value="#{editHazard_MB.searchHI}" class="searchInput"/>
@@ -209,7 +209,7 @@
                                     <h:outputText value="Select from the following hazards: "/>
                                 </p:outputPanel>
                             </f:facet>
-                            <p:column style="width: 7%; text-align:center" headerText="Hazard ID">
+                            <p:column class="centerColumn" style="width: 7%" headerText="Hazard ID">
                                 <h:outputText value="#{item.hazardId}"/>
                             </p:column>
                             <p:column style="width: 23%" headerText="Description">
@@ -236,7 +236,7 @@
                             <p:column style="width: 7%" headerText="Owner">
                                 <h:outputText value="#{item.ownerId.ownerName}"/>
                             </p:column>
-                            <p:column style="width: 4%; text-align:center" headerText="Options">
+                            <p:column class="centerColumn" style="width: 4%" headerText="Options">
                                 <h:commandLink value="Edit" class="commandLink" actionListener="#{editHazard_MB.populateTree()}" onclick="PF('spinnerOverlay').show()">
                                     <f:ajax event="click" listener="#{editHazard_MB.editHazard(item)}" execute="@form" render="@form"/>
                                 </h:commandLink>
@@ -356,23 +356,23 @@
                                                 <p:ajax event="rowSelectCheckbox" update="fileTable"/>
                                                 <p:ajax event="rowUnselectCheckbox" update="fileTable"/>
                                                 <p:ajax event="toggleSelect" update="fileTable"/>
-                                                <p:column selectionMode="multiple" style="width: 10%; text-align:center"/>
-                                                <p:column style="width: 8%; text-align:center" headerText="ID">
+                                                <p:column selectionMode="multiple" class="centerColumn" style="width: 10%"/>
+                                                <p:column class="centerColumn" style="width: 8%" headerText="ID">
                                                     <h:outputText value="#{file.fileId}"/>
                                                 </p:column>
-                                                <p:column style="width: 15%; text-align:center" headerText="Name">
+                                                <p:column class="centerColumn" style="width: 15%" headerText="Name">
                                                     <h:outputText value="#{file.fileName}"/>
                                                 </p:column>
-                                                <p:column style="width: 20%; text-align:center" headerText="Description">
+                                                <p:column class="centerColumn" style="width: 20%" headerText="Description">
                                                     <h:outputText value="#{file.fileDescription}"/>
                                                 </p:column>
-                                                <p:column style="width: 14%; text-align:center" headerText="Type">
+                                                <p:column class="centerColumn" style="width: 14%" headerText="Type">
                                                     <h:outputText value="#{file.fileExtension}"/>
                                                 </p:column>
-                                                <p:column style="width: 16%; text-align:center" headerText="Size">
+                                                <p:column class="centerColumn" style="width: 16%" headerText="Size">
                                                     <h:outputText value="#{addHazard_MB.parseSize(file.fileSize)}"/>
                                                 </p:column>
-                                                <p:column style="width: 15%; text-align:center" headerText="Download">
+                                                <p:column class="centerColumn" style="width: 15%" headerText="Download">
                                                     <p:commandButton action="#{addHazard_MB.handleDownload(file)}" immediate="true" ajax="false" icon="fa fa-download"/>
                                                 </p:column>
                                                 <f:facet name="footer">
@@ -385,19 +385,14 @@
                             </p:panelGrid>
                         </p:panel>
                         <div class="panelButtons" style="display: #{(editHazard_MB.showEdit) ? 'block' : 'none'}">
-                            <p:commandButton value="#{editHazard_MB.redirectionSource == 'UserWorkflow' ? 'Save changes and assign relations' : 'Save changes'}" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(editHazard_MB.currentHazard.hazardDescription, 'hazard'), 'hazard', editHazard_MB.currentHazard.hazardId)}" update="editForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                            <p:commandButton value="#{editHazard_MB.redirectionSource == 'UserWorkflow' ? 'Save changes and assign relations' : 'Save changes'}" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(editHazard_MB.currentHazard.hazardDescription, 'hazard'), 'hazard', editHazard_MB.currentHazard.hazardId)}" update="editForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords()"/>
                             <p:commandButton value="Cancel" immediate="true">
                                 <f:ajax listener="#{editHazard_MB.cancelEdit()}" execute="@form" render="@form"/>
                             </p:commandButton>
                         </div>
                         <p:remoteCommand name="submitOverlay" process="editForm:editTabs:uploadName, editForm:editTabs:uploadDescription"/>
-                        <script>
-                            $(document).on("click", ".ui-fileupload input[type=file]", function(event){
-                                var component = $(this).closest('.ui-fileupload').find('.ui-icon-close').trigger('click');
-                                PF('fileNameOverlay').show();
-                            });
-                        </script>
                     </h:form>
+                    <script type="text/javascript" src="../../resources/js/viewUpload.js"/>
                     <script type="text/javascript" src="../../resources/js/viewWords.js"/>
                 </f:view>
             </ui:define>

@@ -46,8 +46,8 @@
                         <p:ajax event="rowSelectCheckbox" update=":wfForm"/>
                         <p:ajax event="rowUnselectCheckbox" update=":wfForm"/>
                         <p:ajax event="toggleSelect" update=":wfForm"/>
-                        <p:column selectionMode="multiple" style="width: 2%; text-align:center"/>
-                        <p:column headerText="Workflow ID" style="width: 7%; text-align:center">
+                        <p:column selectionMode="multiple" class="centerColumn" style="width: 2%"/>
+                        <p:column headerText="Workflow ID" class="centerColumn" style="width: 7%">
                             <p:commandLink id="wfAjax" update="wfForm" actionListener="#{userWF_MB.showDetail(wf.dbwfHeader)}" oncomplete="PF('wfOverlay').show()">
                                 <h:outputText value="#{wf.dbwfHeader.wfId}"/>
                             </p:commandLink>
@@ -56,7 +56,7 @@
                                 <h:outputText value=" View Workflow"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column headerText="Workflow Object Type : ID" style="width: 11%; text-align:center">
+                        <p:column headerText="Workflow Object Type : ID" class="centerColumn" style="width: 11%">
                             <p:commandLink id="objAjax" update=":wfForm" actionListener="#{hazardDetail_MB.showDetail(wf.dbwfHeader.wfObjectId)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.dbwfHeader.wfObjectName}: #{wf.dbwfHeader.wfObjectId}"/>
                             </p:commandLink>
@@ -65,19 +65,19 @@
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column headerText="Workflow Status" style="width: 16%; text-align:center">
+                        <p:column headerText="Workflow Status" class="centerColumn" style="width: 16%">
                             <p:outputLabel value="#{wf.dbwfHeader.wfStatus == 'O' ? 'Open' : wf.dbwfHeader.wfStatus == 'A' ? 'Approved' : wf.dbwfHeader.wfStatus == 'R' ? 'Rejected' : wf.dbwfHeader.wfStatus == 'I' ? 'Information Requested' : wf.dbwfHeader.wfStatus} as of #{wf.dbwfHeader.wfUpdatedDateTime == null ? wf.dbwfHeader.wfAddedDateTime : wf.dbwfHeader.wfUpdatedDateTime}"/>
                         </p:column>
-                        <p:column headerText="Workflow Owner" style="width: 8%; text-align:center">
+                        <p:column headerText="Workflow Owner" class="centerColumn" style="width: 8%">
                             <p:outputLabel value="#{wf.dbwfHeader.wfUserIdAdd.firstName} #{wf.dbwfHeader.wfUserIdAdd.lastName}"/>
                         </p:column>
-                        <p:column headerText="Workflow Comments" style="width: 42%; text-align:left">
+                        <p:column headerText="Workflow Comments" style="width: 42%">
                             <p:outputLabel value="#{wf.dbwfHeader.wfComment1}"/><br/>
                             <p:outputLabel value="#{wf.dbwfHeader.wfComment2}"/><br/>
                             <p:outputLabel value="#{wf.dbwfHeader.wfComment3}"/><br/>
                             <p:outputLabel value="#{wf.dbwfHeader.wfComment4}"/>
                         </p:column>
-                        <p:column headerText="Approval Actions" style="width: 14%; text-align:center">
+                        <p:column headerText="Approval Actions" class="centerColumn" style="width: 14%">
                             <p:commandButton id="approveButton" actionListener="#{userWF_MB.prepareDecision(wf, 'A')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-check" styleClass="approveButton"/> 
                             <p:commandButton id="rejectButton" actionListener="#{userWF_MB.prepareDecision(wf, 'R')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-ban" styleClass="rejectButton"/> 
                             <p:commandButton id="requestButton" actionListener="#{userWF_MB.prepareDecision(wf, 'I')}" oncomplete="PF('singleOverlay').show('#{component.clientId}')" update="wfForm" icon="fa fa-info" styleClass="requestButton" style="#{wf.dbwfHeader.wfCompleteMethod == 'HazardApprovalWF' ? '' : 'visibility: hidden'}"/>

@@ -63,8 +63,8 @@
                         <p:ajax event="rowSelectCheckbox" update=":wfForm"/>
                         <p:ajax event="rowUnselectCheckbox" update=":wfForm"/>
                         <p:ajax event="toggleSelect" update=":wfForm"/>
-                        <p:column selectionMode="multiple" style="width: 2%;text-align:center"/>
-                        <p:column headerText="Workflow ID" style="width: 7%; text-align:center">
+                        <p:column selectionMode="multiple" class="centerColumn" style="width: 2%"/>
+                        <p:column headerText="Workflow ID" class="centerColumn" style="width: 7%">
                             <p:commandLink id="wfAjax" update=":wfForm" actionListener="#{userWF_MB.showDetail(wf)}" oncomplete="PF('wfOverlay').show()">
                                 <h:outputText value="#{wf.wfId}"/>
                             </p:commandLink>
@@ -73,7 +73,7 @@
                                 <h:outputText value=" View Workflow"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column headerText="Workflow Object Type &amp; ID" style="width: 11%; text-align:center">
+                        <p:column headerText="Workflow Object Type &amp; ID" class="centerColumn" style="width: 11%">
                             <p:commandLink id="objAjax" update=":wfForm" actionListener="#{hazardDetail_MB.showDetail(wf.wfObjectId)}" oncomplete="PF('detailOverlay').show()">
                                 <h:outputText value="#{wf.wfObjectName}: #{wf.wfObjectId}"/>
                             </p:commandLink>
@@ -82,11 +82,11 @@
                                 <h:outputText value=" View Hazard"/>
                             </p:tooltip>
                         </p:column>
-                        <p:column headerText="Latest Comment" style="width: 70%; text-align:left">
+                        <p:column headerText="Latest Comment" style="width: 70%">
                             <h:outputText value="A comment was made on your submission by a core user. Please review and resubmit this hazard or cancel this workflow."/><br/>
                             <h:outputText value="#{userWF_MB.getLatestComment(wf)}"/>
                         </p:column>
-                        <p:column headerText="Approval Actions" style="width: 10%; text-align:center">
+                        <p:column headerText="Approval Actions" class="centerColumn" style="width: 10%">
                             <p:commandButton id="editButton" action="#{userWF_MB.editHazard(wf)}" ajax="false" icon="fa fa-pencil" styleClass="editButton"/> 
                             <p:commandButton id="cancelButton" actionListener="#{userWF_MB.prepareDecisionHeader(wf, 'C')}" oncomplete="PF('cancelOverlay').show('#{component.clientId}')" update=":wfForm" icon="fa fa-times" styleClass="rejectButton"/>
                             <p:tooltip for="editButton">
