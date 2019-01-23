@@ -111,7 +111,7 @@ public class riskSeverity_MB implements Serializable {
         
         if (existingSeverity.isEmpty()) {
             dbriskSeverityFacade.create(riskSeverityObject);
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Info:", "The risk severity has been successfully added."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The risk severity has been successfully added."));
             if (riskSeverityObject.getSeverityValue() > 5 || riskSeverityObject.getSeverityValue() < 0) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning:", "The severity value provided cannot be mapped to the risk matrix and will not be used to calculate a risk score."));
             }

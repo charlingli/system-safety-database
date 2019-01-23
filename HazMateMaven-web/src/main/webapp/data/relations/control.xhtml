@@ -22,24 +22,24 @@
                                     <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed control:"/>
                                 </div>
                                 <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
-                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                    <p:column headerText="ID" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.objectId}"/>
                                     </p:column>
-                                    <p:column headerText="Owner" style="width: 36%; text-align: center;">
+                                    <p:column headerText="Owner" class="centerColumn" style="width: 36%">
                                         <p:outputLabel value="#{object.objectExtra.get(0)}"/>
                                     </p:column>
-                                    <p:column id="similarityDescription" headerText="Description" style="width: 42%; text-align: center;">
+                                    <p:column id="similarityDescription" headerText="Description" class="centerColumn" style="width: 42%">
                                         <p:outputLabel value="#{object.objectDescription}"/>
                                     </p:column>
-                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                    <p:column headerText="% Similarity" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
@@ -72,7 +72,7 @@
                                             <h:outputText value="The associated hazards are: "/>
                                         </p:outputPanel>
                                     </f:facet>
-                                    <p:column style="width: 6%; text-align:center">
+                                    <p:column class="centerColumn" style="width: 6%">
                                         <f:facet name="header">
                                             <h:outputText value="Hazard ID"/>
                                         </f:facet>
@@ -157,7 +157,7 @@
                                     <p:outputLabel value="#{item.controlDescription}"/>
                                 </p:column>
                                 <p:column headerText="Linked Hazards" styleClass="small">
-                                    <p:commandButton action="#{control_MB.showLinkedHazards(item)}" update="@form" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
+                                    <p:commandButton action="#{control_MB.showLinkedHazards(item)}" update="@form" oncomplete="PF('detailOverlay').show()" icon="fa fa-share-alt"/>
                                 </p:column>
                                 <p:column styleClass="small">
                                     <f:facet name="header">
@@ -170,7 +170,7 @@
                                                    onclick="if (!confirm('This action may also disassociate hazards from their control. Do you wish to proceed?')) {
                                                                return;
                                                            }
-                                                           ;" disabled="#{control_MB.editFlag or control_MB.addFlag}" class="commandLink"/> 
+                                                           " disabled="#{control_MB.editFlag or control_MB.addFlag}" class="commandLink"/> 
                                 </p:column>
                             </p:dataTable>
                             <p:panel class="relationModifyPanel">
@@ -208,7 +208,7 @@
                                 </p:panel>
                                 <div class="panelButtons">
                                     <h:panelGroup rendered="#{control_MB.addFlag or control_MB.editFlag}">
-                                        <p:commandButton value="Save" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(control_MB.controlObject.controlDescription, 'control'), 'control', control_MB.controlObject.controlId)}" update="relationForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                                        <p:commandButton value="Save" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(control_MB.controlObject.controlDescription, 'control'), 'control', control_MB.controlObject.controlId)}" update="relationForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords()"/>
                                         <p:commandButton value="Cancel" immediate="true">
                                             <f:ajax listener="#{control_MB.cancel()}" execute="@form" render="@form"/>
                                         </p:commandButton>

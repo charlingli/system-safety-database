@@ -11,6 +11,8 @@ function viewWords() {
         formReference = "#editForm\\:";
     } else if ($('#addForm').length > 0) {
         formReference = "#addForm\\:";
+    } else if ($('#hazardsForm').length > 0) {
+        formReference = "#hazardsForm\\:";
     }
     
     var numDuplicates = $(formReference + 'similarityTable_data tr').length;

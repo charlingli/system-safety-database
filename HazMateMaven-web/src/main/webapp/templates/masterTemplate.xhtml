@@ -10,7 +10,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/default.css"/>
         <link rel="stylesheet" type="text/css" media="all" href="../../resources/css/hazMateStyle.css"/>
-        <link rel="shortcut icon" href="#{resource['img/hazMateLogo.png']}" type="image/x-icon"/>
+        <link rel="shortcut icon" href="#{resource['img/landing_favicon.png']}" type="image/x-icon"/>
         <title>System Safety Database</title>
         <meta name="viewport" content="width=device-width, maximum-scale=1.0, minimum-scale=1.0, initial-scale=1.0"/>
         <f:event type="preRenderView" listener="#{login_MB.validateSession()}"/>
@@ -76,14 +76,8 @@
             <ui:insert name="footer">
                 <p:separator/>
                 <h:form>
-                    <h:outputText value="System Safety Database is proprietary software owned and operated by Level Crossing Removal Authority. Status: "/>
-                    <h:outputText style="font-weight: bold; color: rgb(179, 139, 52)" value="in development"/>
-                    <h:outputText value=". Track our changes on our "/>
-                    <a class="commandLink" href="https://trello.com/b/MkVdC6k7/system-safety-database">Trello board</a>
-                    <h:outputText value=" and find release notes on our "/>
-                    <a class="commandLink" href="https://dtpli.sharepoint.com/sites/lxra-team/ssd">SharePoint subsite</a>
-                    <h:outputText value=". Please send all feedback to "/>
-                    <a class="commandLink" href="mailto:#{activeUser_MB.systemEmail}">the developers</a>
+                    <h:outputText value="System Safety Database is proprietary software owned and operated by Level Crossing Removal Authority. Licensing information "/>
+                    <h:commandLink class="commandLink" action="/license/ssdLicense.xhtml" value="here"/>
                     <h:outputText value="."/>
                 </h:form>
             </ui:insert>

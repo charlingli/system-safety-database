@@ -22,21 +22,21 @@
                                     <p:outputLabel styleClass="p-heading" value="The following items may be similar to the proposed consequence:"/>
                                 </div>
                                 <p:dataTable id="similarityTable" value="#{wordSimilarity_MB.listSimilarityObjects}" var="object" emptyMessage="No potential duplicates found.">
-                                    <p:column headerText="ID" style="width: 11%; text-align: center;">
+                                    <p:column headerText="ID" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.objectId}"/>
                                     </p:column>
-                                    <p:column headerText="Description" style="width: 78%; text-align: center;">
+                                    <p:column headerText="Description" class="centerColumn" style="width: 78%">
                                         <p:outputLabel value="#{object.objectDescription}"/>
                                     </p:column>
-                                    <p:column headerText="% Similarity" style="width: 11%; text-align: center;">
+                                    <p:column headerText="% Similarity" class="centerColumn" style="width: 11%">
                                         <p:outputLabel value="#{object.averageDistance}"/>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="similarityWords">
                                             <ui:repeat value="#{object.coincidentWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
                                     </p:column>
-                                    <p:column style="display: none">
+                                    <p:column class="hiddenCell">
                                         <h:panelGroup id="commonWords">
                                             <ui:repeat value="#{wordProcessing_MB.listCommonWords}" var="word">#{word} </ui:repeat>
                                         </h:panelGroup>
@@ -69,7 +69,7 @@
                                             <h:outputText value="The associated hazards are: "/>
                                         </p:outputPanel>
                                     </f:facet>
-                                    <p:column style="width: 6%; text-align:center">
+                                    <p:column class="centerColumn" style="width: 6%">
                                         <f:facet name="header">
                                             <h:outputText value="Hazard ID"/>
                                         </f:facet>
@@ -143,7 +143,7 @@
                                     <p:outputLabel value="#{item.consequenceDescription}"/>
                                 </p:column>
                                 <p:column headerText="Linked Hazards" styleClass="small">
-                                    <p:commandButton action="#{consequence_MB.showLinkedHazards(item)}" update="relationForm" oncomplete="PF('detailOverlay').show();" icon="fa fa-share-alt"/>
+                                    <p:commandButton action="#{consequence_MB.showLinkedHazards(item)}" update="relationForm" oncomplete="PF('detailOverlay').show()" icon="fa fa-share-alt"/>
                                 </p:column>
                                 <p:column styleClass="small">
                                     <f:facet name="header">
@@ -180,7 +180,7 @@
                                 </p:panel>
                                 <div class="panelButtons">
                                     <h:panelGroup rendered="#{consequence_MB.addFlag or consequence_MB.editFlag}">
-                                        <p:commandButton value="Save" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(consequence_MB.consequenceObject.consequenceDescription, 'consequence'), 'consequence', consequence_MB.consequenceObject.consequenceId)}" update="relationForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords();"/>
+                                        <p:commandButton value="Save" action="#{wordSimilarity_MB.constructSimilarityObject(wordProcessing_MB.findSimilarity(consequence_MB.consequenceObject.consequenceDescription, 'consequence'), 'consequence', consequence_MB.consequenceObject.consequenceId)}" update="relationForm:similarityDialog" onstart="PF('spinnerOverlay').show()" oncomplete="PF('spinnerOverlay').hide(); viewWords()"/>
                                         <p:commandButton value="Cancel" immediate="true">
                                             <f:ajax listener="#{consequence_MB.cancel()}" execute="@form" render="@form"/>
                                         </p:commandButton>

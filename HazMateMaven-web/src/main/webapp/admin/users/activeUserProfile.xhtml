@@ -53,14 +53,14 @@
                                     To request permissions to access restricted pages, please contact the <a href="mailto:#{activeUser_MB.systemEmail}">administrator</a>.
                                 </p>
                                 <div class="permissionsTable">
-                                    <p:dataTable id="availablePermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.availablePageList}" emptyMessage="No available pages.">
+                                    <p:dataTable id="availablePermissions" tableStyle="width:auto" resizableColumns="true" var="permission" value="#{activeUser_MB.availablePageList}" emptyMessage="No available pages.">
                                         <p:column headerText ="Available Pages: ">
                                             <h:outputText value="#{permission}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </div>
                                 <div class="permissionsTable">
-                                    <p:dataTable id="restrictedPermissions" tableStyle="width:auto;" resizableColumns="true" var="permission" value="#{activeUser_MB.restrictedPageList}" emptyMessage="No restricted pages.">
+                                    <p:dataTable id="restrictedPermissions" tableStyle="width:auto" resizableColumns="true" var="permission" value="#{activeUser_MB.restrictedPageList}" emptyMessage="No restricted pages.">
                                         <p:column headerText ="Restricted Pages: ">
                                             <h:outputText value="#{permission}"/>
                                         </p:column>
