@@ -192,3 +192,9 @@ footer {
     margin-top: -20px;
     font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
 }
+.ui-messages-error {
+    border: 2px solid #b94a48;
+    margin-bottom: 10px;
+    margin-top: -20px;
+    font-family: Calibri, Candara, Segoe, Segoe UI, Optima, Arial, sans-serif;
+}
