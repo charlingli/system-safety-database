@@ -11,7 +11,6 @@ import customObjects.treeNodeObject;
 import ejb.DbFilesFacadeLocal;
 import ejb.DbHazardFacadeLocal;
 import ejb.DbHazardFilesFacadeLocal;
-import ejb.DbUserFacadeLocal;
 import ejb.DbtreeLevel1FacadeLocal;
 import ejb.DbwfDecisionFacadeLocal;
 import ejb.DbwfHeaderFacadeLocal;
@@ -32,19 +31,13 @@ import entities.DbtreeLevel5;
 import entities.DbtreeLevel6;
 import entities.DbwfDecision;
 import entities.DbwfLine;
-import entities.DbwfLinePK;
 import entities.DbwfType;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
@@ -106,6 +99,7 @@ public class managementWF_MB implements Serializable {
     private String wfComment2;
     private String wfComment3;
     private String wfComment4;
+    private String wfSource;
     private List<DbwfType> listwfType;
     private List<DbwfDecision> listwfDecision;
     private DbUser activeUser;
@@ -306,6 +300,14 @@ public class managementWF_MB implements Serializable {
         this.wfComment4 = wfComment4;
     }
 
+    public String getWfSource() {
+        return wfSource;
+    }
+
+    public void setWfSource(String wfSource) {
+        this.wfSource = wfSource;
+    }
+    
     public List<DbwfType> getListwfType() {
         return listwfType;
     }
@@ -407,6 +409,14 @@ public class managementWF_MB implements Serializable {
             tmpSearchObj.setUserInput(wfStatus);
             searchList.add(tmpSearchObj);
         }
+        if (!"select".equals(wfSource)) {
+            tmpSearchObj.setEntity1Name("DbwfHeader");
+            tmpSearchObj.setFieldName("wfId");
+            tmpSearchObj.setFieldType("string");
+            tmpSearchObj.setRelationType("like");
+            tmpSearchObj.setUserInput(wfSource);
+            searchList.add(tmpSearchObj);
+        }        
 
         return searchList;
     }

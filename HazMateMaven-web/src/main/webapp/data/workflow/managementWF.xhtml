@@ -76,7 +76,13 @@
                                     <f:selectItem itemValue="I" itemLabel="Information Requested"/>
                                     <f:selectItem itemValue="O" itemLabel="Open"/>
                                 </p:selectOneMenu>
-                                
+                                <p:outputLabel value="Workflow Source:"/>
+                                <p:selectOneMenu class="searchInput" value="#{managementWF_MB.wfSource}">
+                                    <f:selectItem itemValue="select" itemLabel="Select"/>
+                                    <f:selectItem itemValue="WKF-HRD" itemLabel="Add Hazard"/>
+                                    <f:selectItem itemValue="WKF-DEL" itemLabel="Mark for deletion"/>
+                                    <f:selectItem itemValue="WKF-SUG" itemLabel="Suggested change"/>
+                                </p:selectOneMenu>                                
                             </h:panelGrid>
                         </p:panel>
                     </p:fieldset>
