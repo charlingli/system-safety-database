@@ -103,6 +103,7 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 import org.primefaces.model.UploadedFile;
+import org.primefaces.util.ArrayUtils;
 
 /**
  *
@@ -174,13 +175,13 @@ public class importHazard_MB implements Serializable {
 
     @EJB
     private DbCauseFacadeLocal dbCauseFacade;
-    
+
     @EJB
     private DbimportLineFacadeLocal dbimportLineFacade;
 
     @EJB
     private DbimportHeaderFacadeLocal dbimportHeaderFacade;
-    
+
     @EJB
     private DbriskSeverityFacadeLocal dbriskSeverityFacade;
 
@@ -213,17 +214,17 @@ public class importHazard_MB implements Serializable {
 
     @EJB
     private DbLocationFacadeLocal dbLocationFacade;
-    
+
     private DbUser activeUser;
     
     private List<importObject> listLoadedLines;
     private List<importObject> listCheckedLines;
     
     private DbimportLine selectedLine;
-    
+
     private TreeNode[] currentTree;
     private TreeNode root;
-    
+
     private List<DbLocation> listHL;
     private List<DbProject> listHP;
     private List<DbhazardActivity> listHA;
@@ -236,13 +237,13 @@ public class importHazard_MB implements Serializable {
     private List<DbriskSeverity> listRS;
     private List<DbcontrolHierarchy> listCH;
     private List<DbcontrolRecommend> listCR;
-    
+
     private boolean showUpload;
-    
+
     private wordProcessing_MB wordProcessing_MB;
-    
+
     public importHazard_MB() {
-    
+
     }
 
     public List<importObject> getListLoadedLines() {
@@ -388,7 +389,7 @@ public class importHazard_MB implements Serializable {
     public void setShowUpload(boolean showUpload) {
         this.showUpload = showUpload;
     }
-    
+
     @PostConstruct
     public void init() {
         activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
@@ -415,26 +416,26 @@ public class importHazard_MB implements Serializable {
         setListCH(dbcontrolHierarchyFacade.findAll());
         setListCR(dbcontrolRecommendFacade.findAll());
         selectedLine = new DbimportLine();
-        
+
         wordProcessing_MB = (wordProcessing_MB) FacesContext.getCurrentInstance().getApplication().createValueBinding("#{wordProcessing_MB}").getValue(FacesContext.getCurrentInstance());
     }
-    
+
     public void editCell(CellEditEvent event) {
         Object oldValue = event.getOldValue();
         Object newValue = event.getNewValue();
         String editedRow = event.getRowKey();
         String[] lineIndex = editedRow.split("\\.");
-        
+
         String processId = lineIndex[0];
         int processIdLine = Integer.valueOf(lineIndex[1]);
-        
+
         DbimportLine lineObject = dbimportLineFacade.findLineById(processId, processIdLine).get(0);
         DbimportLineError errorObject;
         List<DbimportLineError> errorList;
-        
-        if(newValue != null && !newValue.equals(oldValue)) {
+
+        if (newValue != null && !newValue.equals(oldValue)) {
             boolean existingLine;
-            switch(event.getColumn().getClientId().split(":")[3]) {
+            switch (event.getColumn().getClientId().split(":")[3]) {
                 case "DTCol":
                     Date newDate = (Date) newValue;
                     errorList = dbimportLineErrorFacade.findErrorByCell(processId, processIdLine, "hazardDate");
@@ -478,7 +479,7 @@ public class importHazard_MB implements Serializable {
                     } else if (warningList.size() > 0) {
                         errorObject = warningList.get(0);
                         existingLine = true;
-                    } else { 
+                    } else {
                         errorObject = new DbimportLineError();
                         errorObject.setDbimportLine(lineObject);
                         errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 31));
@@ -891,12 +892,12 @@ public class importHazard_MB implements Serializable {
                     } else if (controlErrorList.size() > 0) {
                         errorObject = controlErrorList.get(0);
                         existingLine = true;
-                    } else { 
+                    } else {
                         errorObject = new DbimportLineError();
                         errorObject.setDbimportLine(lineObject);
                         errorObject.setDbimportLineErrorPK(new DbimportLineErrorPK(processId, processIdLine, 44));
                     }
-                    
+
                     if (!"".equals(newString)) {
                         lineObject.setRelationDescription(newString);
                         List<similarityObject> similarityList;
@@ -933,15 +934,15 @@ public class importHazard_MB implements Serializable {
                                 List<DbConsequence> consequenceList = dbConsequenceFacade.findByName("consequenceDescription", newString);
                                 similarityList = dbindexedWordFacade.findPotentialDuplicates(newString, "consequence");
                                 errorObject.setProcessErrorLocation("Consequence");
-                                if (consequenceList.size() > 0) { 
+                                if (consequenceList.size() > 0) {
                                     lineObject.setRelationId(consequenceList.get(0).getConsequenceId());
                                     if (existingLine) {
                                         errorObject.setProcessErrorStatus("F");
                                         dbimportLineErrorFacade.edit(errorObject);
                                     }
-                                } else { 
+                                } else {
                                     lineObject.setRelationId(processIdLine);
-                                    if (similarityList.size() > 0) { 
+                                    if (similarityList.size() > 0) {
                                         errorObject.setProcessErrorCode(new DbimportErrorCode(3));
                                         errorObject.setProcessErrorStatus("P");
                                         if (existingLine) {
@@ -961,15 +962,15 @@ public class importHazard_MB implements Serializable {
                                 List<DbControl> controlList = dbControlFacade.findByName("controlDescription", newString);
                                 similarityList = dbindexedWordFacade.findPotentialDuplicates(newString, "control");
                                 errorObject.setProcessErrorLocation("Control");
-                                if (controlList.size() > 0) { 
+                                if (controlList.size() > 0) {
                                     lineObject.setRelationId(controlList.get(0).getControlId());
                                     if (existingLine) {
                                         errorObject.setProcessErrorStatus("F");
                                         dbimportLineErrorFacade.edit(errorObject);
                                     }
-                                } else { 
+                                } else {
                                     lineObject.setRelationId(processIdLine);
-                                    if (similarityList.size() > 0) { 
+                                    if (similarityList.size() > 0) {
                                         errorObject.setProcessErrorCode(new DbimportErrorCode(3));
                                         errorObject.setProcessErrorStatus("P");
                                         if (existingLine) {
@@ -1134,7 +1135,7 @@ public class importHazard_MB implements Serializable {
                     } else {
                         if (dbcontrolRecommendFacade.findByName("controlRecommendId", lineObject.getControlRecommendId().toString()).get(0).getControlJustifyRequired().equals("Y")) {
                             // Only add a new error if the field is blank AND if the recommendation type requires a justification
-                        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control justification is required."));
+                            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "The control justification is required."));
                             errorObject.setProcessErrorCode(new DbimportErrorCode(1));
                             errorObject.setProcessErrorStatus("P");
                             if (existingLine) {
@@ -1179,19 +1180,19 @@ public class importHazard_MB implements Serializable {
                 default:
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Old: " + oldValue + ", New: " + newValue));
                     break;
-                    
+
             }
             dbimportLineFacade.edit(lineObject);
-            
+
         }
         listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importObject(i, dbimportLineErrorFacade.listErrorsByLine(i.getDbimportLinePK().getProcessId(), i.getDbimportLinePK().getProcessIdLine()))).collect(Collectors.toList());
     }
-    
+
     public Date todaysDate() {
         Calendar c = Calendar.getInstance();
         return c.getTime();
     }
-    
+
     public String convertFrequencyIdToString(int id) {
         try {
             return listRF.stream().filter(f -> f.getRiskFrequencyId().equals(id)).findFirst().get().getFrequencyScore();
@@ -1199,7 +1200,7 @@ public class importHazard_MB implements Serializable {
             return "";
         }
     }
-    
+
     public String convertSeverityIdToString(int id) {
         try {
             return listRS.stream().filter(f -> f.getRiskSeverityId().equals(id)).findFirst().get().getSeverityScore();
@@ -1207,19 +1208,19 @@ public class importHazard_MB implements Serializable {
             return "";
         }
     }
-    
+
     public List<String> listCauses(String query) {
         return dbCauseFacade.findAll().stream().filter(i -> i.getCauseDescription().contains(query.toLowerCase())).map(i -> i.getCauseDescription()).collect(Collectors.toList());
     }
-    
+
     public List<String> listConsequences(String query) {
         return dbConsequenceFacade.findAll().stream().filter(i -> i.getConsequenceDescription().contains(query.toLowerCase())).map(i -> i.getConsequenceDescription()).collect(Collectors.toList());
     }
-    
+
     public List<String> listControls(String query) {
         return dbControlFacade.findAll().stream().filter(i -> i.getControlDescription().contains(query.toLowerCase())).map(i -> i.getControlDescription()).collect(Collectors.toList());
     }
-    
+
     public DbHazard createHazard(DbimportLine lineObject) {
         DbHazard hazardObject = new DbHazard();
         hazardObject.setHazardDate(lineObject.getHazardDate());
@@ -1259,10 +1260,10 @@ public class importHazard_MB implements Serializable {
 
         // Create the hazard object
         dbHazardFacade.create(hazardObject);
-        
+
         // Add words to indexed table
         wordProcessing_MB.indexDescription(hazardObject.getHazardId(), hazardObject.getHazardDescription(), "hazard");
-        
+
         // Add SBS nodes
         DbHazardSbsPK hazardSbsPKObject = new DbHazardSbsPK();
         DbHazardSbs hazardSbsObject = new DbHazardSbs();
@@ -1273,7 +1274,7 @@ public class importHazard_MB implements Serializable {
         hazardSbsObject.setDbHazard(hazardFKObject);
 
         List<TreeNode> treeNodesList = populateTree(lineObject);
-        
+
         List<treeNodeObject> treeNodeObjectsList = new ArrayList<>();
         DbtreeLevel1 tmpTreeNode = dbtreeLevel1Facade.findByName(root.getChildren().get(0).toString());
         Integer rootId = tmpTreeNode.getTreeLevel1Index();
@@ -1296,23 +1297,23 @@ public class importHazard_MB implements Serializable {
                 treeNodeObjectsList.add(tmpNode);
             }
         }
-        
+
         for (int i = 0; i < treeNodeObjectsList.size(); i++) {
             hazardSbsPKObject.setSbsId(treeNodeObjectsList.get(i).getNodeId());
             hazardSbsObject.setDbHazardSbsPK(hazardSbsPKObject);
             dbHazardSbsFacade.create(hazardSbsObject);
         }
-        
+
         return hazardObject;
     }
-    
+
     public void createRelation(DbimportLine lineObject, DbHazard hazardObject) {
         switch (lineObject.getRelationType()) {
             case "Cause":
                 DbCause tmpCause;
                 if (Optional.ofNullable(lineObject.getRelationId()).orElse(0) > 0) { // The cause is found in the database by ID
                     tmpCause = dbCauseFacade.find(lineObject.getRelationId());
-                } else { 
+                } else {
                     if (dbCauseFacade.findByName("causeDescription", lineObject.getRelationDescription()).size() > 0) { // The cause is found in the database by description
                         tmpCause = dbCauseFacade.findByName("causeDescription", lineObject.getRelationDescription()).get(0);
                     } else { // The cause doesn't exist and needs to be created
@@ -1328,7 +1329,7 @@ public class importHazard_MB implements Serializable {
                 tmpHazardCause.setDbHazard(hazardObject);
                 tmpHazardCause.setDbHazardCauseDummyvar(null);
                 dbHazardCauseFacade.create(tmpHazardCause);
-                
+
                 wordProcessing_MB.indexDescription(tmpCause.getCauseId().toString(), tmpCause.getCauseDescription(), "cause");
                 break;
             case "Consequence":
@@ -1351,7 +1352,7 @@ public class importHazard_MB implements Serializable {
                 tmpHazardConsequence.setDbHazard(hazardObject);
                 tmpHazardConsequence.setDbHazardConsequenceDummyvar(null);
                 dbHazardConsequenceFacade.create(tmpHazardConsequence);
-                
+
                 wordProcessing_MB.indexDescription(tmpConsequence.getConsequenceId().toString(), tmpConsequence.getConsequenceDescription(), "consequence");
                 break;
             case "Control":
@@ -1387,12 +1388,12 @@ public class importHazard_MB implements Serializable {
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Justification: ", "The selected recommendation requires a justification."));
                 }
                 dbControlHazardFacade.create(controlHazardObject);
-                
+
                 wordProcessing_MB.indexDescription(tmpControl.getControlId().toString(), tmpControl.getControlDescription(), "control");
                 break;
         }
     }
-    
+
     public void submitTable() {
         DbHazard currentHazard = new DbHazard();
         for (int i = 0; i < listCheckedLines.size(); i ++) {
@@ -1403,7 +1404,7 @@ public class importHazard_MB implements Serializable {
                 createRelation(lineObject, currentHazard);
                 if (i == listCheckedLines.size() - 1) {
                     triggerWorkflow(currentHazard);
-                
+
                     // Close off the current header
                     DbimportHeader headerObject = dbimportHeaderFacade.find(lineObject.getDbimportHeader().getProcessId());
                     headerObject.setProcessStatus("S");
@@ -1417,7 +1418,7 @@ public class importHazard_MB implements Serializable {
                 }
                 createRelation(lineObject, currentHazard);
                 triggerWorkflow(currentHazard);
-                
+
                 // Close off the current header
                 DbimportHeader headerObject = dbimportHeaderFacade.find(lineObject.getDbimportHeader().getProcessId());
                 headerObject.setProcessStatus("S");
@@ -1434,7 +1435,7 @@ public class importHazard_MB implements Serializable {
                 }
             }
         }
-        
+
         // Return to the main menu?
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/masterMenu.xhtml");
@@ -1444,24 +1445,24 @@ public class importHazard_MB implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazards have been sent for approval by a core user."));
         init();
     }
-    
+
     public boolean sameLineObject(DbimportLine lineObject, DbHazard hazardObject) {
         SimpleDateFormat ft = new SimpleDateFormat("yyyy.MM.dd");
-        if (ft.format(hazardObject.getHazardDate()).equals(ft.format(lineObject.getHazardDate())) && 
-                hazardObject.getHazardDescription().equals(lineObject.getHazardDescription()) &&
-                hazardObject.getHazardComment().equals(lineObject.getHazardComment()) &&
-                hazardObject.getHazardActivity().getActivityId().equals(lineObject.getHazardActivityId()) &&
-                hazardObject.getHazardContextId().getHazardContextId().equals(lineObject.getHazardContextId()) &&
-                hazardObject.getHazardTypeId().getHazardTypeId().equals(lineObject.getHazardTypeId()) &&
-                hazardObject.getHazardStatusId().getHazardStatusId().equals(lineObject.getHazardStatusId()) &&
-                hazardObject.getOwnerId().getOwnerId().equals(lineObject.getHazardOwnerId()) &&
-                hazardObject.getHazardWorkshop().equals(lineObject.getHazardWorkshop()) &&
-                hazardObject.getRiskClassId().getRiskClassId().equals(lineObject.getHazardRiskClassId()) &&
-                hazardObject.getRiskCurrentFrequencyId().getRiskFrequencyId().equals(lineObject.getHazardCurrentFrequencyId()) &&
-                hazardObject.getRiskCurrentSeverityId().getRiskSeverityId().equals(lineObject.getHazardCurrentSeverityId()) &&
-                hazardObject.getRiskTargetFrequencyId().getRiskFrequencyId().equals(lineObject.getHazardTargetFrequencyId()) &&
-                hazardObject.getRiskTargetSeverityId().getRiskSeverityId().equals(lineObject.getHazardTargetSeverityId()) &&
-                hazardObject.getLegacyId().equals(lineObject.getHazardLegacyId())) {
+        if (ft.format(hazardObject.getHazardDate()).equals(ft.format(lineObject.getHazardDate()))
+                && hazardObject.getHazardDescription().equals(lineObject.getHazardDescription())
+                && hazardObject.getHazardComment().equals(lineObject.getHazardComment())
+                && hazardObject.getHazardActivity().getActivityId().equals(lineObject.getHazardActivityId())
+                && hazardObject.getHazardContextId().getHazardContextId().equals(lineObject.getHazardContextId())
+                && hazardObject.getHazardTypeId().getHazardTypeId().equals(lineObject.getHazardTypeId())
+                && hazardObject.getHazardStatusId().getHazardStatusId().equals(lineObject.getHazardStatusId())
+                && hazardObject.getOwnerId().getOwnerId().equals(lineObject.getHazardOwnerId())
+                && hazardObject.getHazardWorkshop().equals(lineObject.getHazardWorkshop())
+                && hazardObject.getRiskClassId().getRiskClassId().equals(lineObject.getHazardRiskClassId())
+                && hazardObject.getRiskCurrentFrequencyId().getRiskFrequencyId().equals(lineObject.getHazardCurrentFrequencyId())
+                && hazardObject.getRiskCurrentSeverityId().getRiskSeverityId().equals(lineObject.getHazardCurrentSeverityId())
+                && hazardObject.getRiskTargetFrequencyId().getRiskFrequencyId().equals(lineObject.getHazardTargetFrequencyId())
+                && hazardObject.getRiskTargetSeverityId().getRiskSeverityId().equals(lineObject.getHazardTargetSeverityId())
+                && hazardObject.getLegacyId().equals(lineObject.getHazardLegacyId())) {
             return true;
         }
         return false;
@@ -1478,7 +1479,7 @@ public class importHazard_MB implements Serializable {
                             "", "There are no users able to approve this workflow."));
         }
     }
-    
+
     private void createNewWf(List<DbUser> listApp, DbHazard hazardObj, String Comment1) {
         DbwfHeader wfObj = new DbwfHeader();
         wfObj.setWfTypeId(new DbwfType("W3"));
@@ -1491,11 +1492,11 @@ public class importHazard_MB implements Serializable {
         wfObj.setWfCompleteMethod("HazardApprovalWF");
         validateIdObject result = dbwfHeaderFacade.newWorkFlow(listApp, wfObj, "WKF-HRD");
     }
-    
+
     public List<String> listSbsCodes(DbimportLine lineObject) {
         return Arrays.asList(lineObject.getHazardSbs().split(",")).stream().map(i -> getNodeNameById(i)).collect(Collectors.toList());
     }
-    
+
     public List<TreeNode> populateTree(DbimportLine lineObject) {
         selectedLine = lineObject;
         List<String> sbsCodes;
@@ -1504,13 +1505,19 @@ public class importHazard_MB implements Serializable {
         } else {
             sbsCodes = Arrays.asList(lineObject.getHazardSbs().replace(" ", "").split(","));
         }
-        
+
         // To account for the lack of dots, add them if the code terminates in a number before a comma
         // This is necessary because the tree tables all have full stops (e.g. 1., 2.1.) but users might
         //  not enter full stops at the end. So the below stream goes through all the codes and adds them
         //  if they're missing to allow for a good comparison
-        sbsCodes = sbsCodes.stream().map(i -> {if (i.endsWith(".")) {return i;} else {return i += ".";}}).collect(Collectors.toList());
-        
+        sbsCodes = sbsCodes.stream().map(i -> {
+            if (i.endsWith(".")) {
+                return i;
+            } else {
+                return i += ".";
+            }
+        }).collect(Collectors.toList());
+
         String sbsId;
         int counterLevel4 = 1;
         int counterLevel5 = 1;
@@ -1521,7 +1528,7 @@ public class importHazard_MB implements Serializable {
         // The tree starts with a 
         DbtreeLevel1 tmpResultObjLevel1 = dbtreeLevel1Facade.find(1);
         root = new DefaultTreeNode("Root", null);
-        
+
         // If there exists a tree
         if (!tmpResultObjLevel1.getTreeLevel1Name().isEmpty()) {
             // Create a root node
@@ -1529,14 +1536,14 @@ public class importHazard_MB implements Serializable {
 
             // Set the temporary SBS id to each node in the tree
             sbsId = "1.";
-            
+
             // If the sbs codes in the list contain the temporary node, or the
             //  temporary node starts with any in the list (i.e. the temporary
             //  node is a child of an sbs code in the list)
             if (sbsCodes.contains(sbsId) || sbsCodes.stream().parallel().anyMatch(sbsId::startsWith)) {
                 // Then the node must be selected
                 nodeLevel1.setSelected(true);
-                
+
                 // And the node is added to the constructed tree
                 listTreeNode.add(nodeLevel1);
             }
@@ -1649,7 +1656,7 @@ public class importHazard_MB implements Serializable {
         currentTree = listTreeNode.toArray(new TreeNode[listTreeNode.size()]);
         return listTreeNode;
     }
-    
+
     public String getNodeNameById(String nodeId) {
         List<treeNodeObject> treeHazardSbsList = new ArrayList<>();
         String nodeName = "";
@@ -1715,7 +1722,7 @@ public class importHazard_MB implements Serializable {
         }
         return nodeName;
     }
-    
+
     public void editTree() {
         List<DbimportLineError> errorList = dbimportLineErrorFacade.findErrorByCell(selectedLine.getDbimportLinePK().getProcessId(), selectedLine.getDbimportLinePK().getProcessIdLine(), "hazardsbs");
         if (currentTree.length > 1) {
@@ -1733,14 +1740,14 @@ public class importHazard_MB implements Serializable {
         listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importObject(i, dbimportLineErrorFacade.listErrorsByLine(i.getDbimportLinePK().getProcessId(), i.getDbimportLinePK().getProcessIdLine()))).collect(Collectors.toList());
         RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable");
     }
-    
+
     public void cancelImport() {
         DbimportHeader headerObject = dbimportHeaderFacade.find(listLoadedLines.get(0).getLineObject().getDbimportHeader().getProcessId());
         headerObject.setProcessStatus("C");
         dbimportHeaderFacade.edit(headerObject);
         init();
     }
-    
+
     private CellStyle styleHeaderGenerator(String style, CellStyle headerCellStyle, Font headerFont) {
         switch (style) {
             case "Blue":
@@ -2379,379 +2386,389 @@ public class importHazard_MB implements Serializable {
         importLineObj tmpObj = null;
         boolean rowContent = false;
 //        try {
-            for (int i = 0; i < 26; i++) {
-                if (!"".equals(row.getCell(i).toString())) {
-                    rowContent = true;
-                    break;
-                }
+        for (int i = 0; i < 26; i++) {
+            if (!"".equals(row.getCell(i).toString())) {
+                rowContent = true;
+                break;
             }
+        }
 
-            if (rowContent) {
-                for (int i = 0; i < 26; i++) {
-                    // tmpObj = processLine(tmpObj, i, row.getCell(i).toString(), processId, lineNo);
-                    if (tmpObj == null) {
-                        tmpObj = new importLineObj();
-                        tmpObj.lineData.setDbimportLinePK(new DbimportLinePK(processId, lineNo));
-                    }
-                    switch (i) {
-                        // Processing hazard context
-                        case 0:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbhazardContext tmpVar = dbhazardContextFacade.findByName("hazardContextName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getHazardContextId() != null) {
-                                    tmpObj.lineData.setHazardContextId(tmpVar.getHazardContextId());
-                                    tmpObj.lineData.setHazardContext(tmpVar.getHazardContextName());
-                                } else {
-                                    createLineError(tmpObj, "hazardContext", 2);
-                                }
+        if (rowContent) {
+            for (int i = 0; i < 26; i++) {
+                // tmpObj = processLine(tmpObj, i, row.getCell(i).toString(), processId, lineNo);
+                if (tmpObj == null) {
+                    tmpObj = new importLineObj();
+                    tmpObj.lineData.setDbimportLinePK(new DbimportLinePK(processId, lineNo));
+                }
+                switch (i) {
+                    // Processing hazard context
+                    case 0:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbhazardContext tmpVar = dbhazardContextFacade.findByName("hazardContextName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getHazardContextId() != null) {
+                                tmpObj.lineData.setHazardContextId(tmpVar.getHazardContextId());
+                                tmpObj.lineData.setHazardContext(tmpVar.getHazardContextName());
                             } else {
-                                createLineError(tmpObj, "hazardContext", 1);
+                                createLineError(tmpObj, "hazardContext", 2);
                             }
-                            break;
-                        // Processing hazard description    
-                        case 1:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setHazardDescription(row.getCell(i).toString());
-                                if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), "Hazard").size() > 0) {
-                                    createLineError(tmpObj, "hazard", 3);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardContext", 1);
+                        }
+                        break;
+                    // Processing hazard description    
+                    case 1:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setHazardDescription(row.getCell(i).toString());
+                            if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), "Hazard").size() > 0) {
+                                createLineError(tmpObj, "hazard", 3);
+                            }
+                        } else {
+                            createLineError(tmpObj, "hazardDescription", 1);
+                        }
+                        break;
+                    // Processing hazard location
+                    case 2:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbLocation tmpVar = dbLocationFacade.findByName("locationName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getLocationName() != null) {
+                                tmpObj.lineData.setHazardLocationId(tmpVar.getLocationId());
+                                tmpObj.lineData.setHazardLocation(tmpVar.getLocationName());
                             } else {
-                                createLineError(tmpObj, "hazardDescription", 1);
+                                createLineError(tmpObj, "hazardLocation", 2);
                             }
-                            break;
-                        // Processing hazard location
-                        case 2:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbLocation tmpVar = dbLocationFacade.findByName("locationName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getLocationName() != null) {
-                                    tmpObj.lineData.setHazardLocationId(tmpVar.getLocationId());
-                                    tmpObj.lineData.setHazardLocation(tmpVar.getLocationName());
-                                } else {
-                                    createLineError(tmpObj, "hazardLocation", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardLocation", 1);
+                        }
+                        break;
+                    // Processing hazard activity
+                    case 3:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbhazardActivity tmpVar = dbhazardActivityFacade.findByName("activityName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getActivityName() != null) {
+                                tmpObj.lineData.setHazardActivityId(tmpVar.getActivityId());
+                                tmpObj.lineData.setHazardActivity(tmpVar.getActivityName());
                             } else {
-                                createLineError(tmpObj, "hazardLocation", 1);
+                                createLineError(tmpObj, "hazardActivity", 2);
                             }
-                            break;
-                        // Processing hazard activity
-                        case 3:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbhazardActivity tmpVar = dbhazardActivityFacade.findByName("activityName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getActivityName() != null) {
-                                    tmpObj.lineData.setHazardActivityId(tmpVar.getActivityId());
-                                    tmpObj.lineData.setHazardActivity(tmpVar.getActivityName());
-                                } else {
-                                    createLineError(tmpObj, "hazardActivity", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardActivity", 1);
+                        }
+                        break;
+                    // Processing hazard owner
+                    case 4:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbOwners tmpVar = dbOwnersFacade.findByName("ownerName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getOwnerName() != null) {
+                                tmpObj.lineData.setHazardOwnerId(tmpVar.getOwnerId());
+                                tmpObj.lineData.setHazardOwner(tmpVar.getOwnerName());
                             } else {
-                                createLineError(tmpObj, "hazardActivity", 1);
+                                createLineError(tmpObj, "hazardOwner", 2);
                             }
-                            break;
-                        // Processing hazard owner
-                        case 4:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbOwners tmpVar = dbOwnersFacade.findByName("ownerName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getOwnerName() != null) {
-                                    tmpObj.lineData.setHazardOwnerId(tmpVar.getOwnerId());
-                                    tmpObj.lineData.setHazardOwner(tmpVar.getOwnerName());
-                                } else {
-                                    createLineError(tmpObj, "hazardOwner", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardOwner", 1);
+                        }
+                        break;
+                    // Processing hazard type
+                    case 5:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbhazardType tmpVar = dbhazardTypeFacade.findByName("hazardTypeName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getHazardTypeName() != null) {
+                                tmpObj.lineData.setHazardTypeId(tmpVar.getHazardTypeId());
+                                tmpObj.lineData.setHazardType(tmpVar.getHazardTypeName());
                             } else {
-                                createLineError(tmpObj, "hazardOwner", 1);
+                                createLineError(tmpObj, "hazardType", 2);
                             }
-                            break;
-                        // Processing hazard type
-                        case 5:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbhazardType tmpVar = dbhazardTypeFacade.findByName("hazardTypeName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getHazardTypeName() != null) {
-                                    tmpObj.lineData.setHazardTypeId(tmpVar.getHazardTypeId());
-                                    tmpObj.lineData.setHazardType(tmpVar.getHazardTypeName());
-                                } else {
-                                    createLineError(tmpObj, "hazardType", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardType", 1);
+                        }
+                        break;
+                    // Processing hazard status
+                    case 6:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbhazardStatus tmpVar = dbhazardStatusFacade.findByName("hazardStatusName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getHazardStatusName() != null) {
+                                tmpObj.lineData.setHazardStatusId(tmpVar.getHazardStatusId());
+                                tmpObj.lineData.setHazardStatus(tmpVar.getHazardStatusName());
                             } else {
-                                createLineError(tmpObj, "hazardType", 1);
+                                createLineError(tmpObj, "hazardStatus", 2);
                             }
-                            break;
-                        // Processing hazard status
-                        case 6:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbhazardStatus tmpVar = dbhazardStatusFacade.findByName("hazardStatusName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getHazardStatusName() != null) {
-                                    tmpObj.lineData.setHazardStatusId(tmpVar.getHazardStatusId());
-                                    tmpObj.lineData.setHazardStatus(tmpVar.getHazardStatusName());
-                                } else {
-                                    createLineError(tmpObj, "hazardStatus", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardStatus", 1);
+                        }
+                        break;
+                    // Processing hazard risk class
+                    case 7:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbriskClass tmpVar = dbriskClassFacade.findByName("riskClassName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getRiskClassName() != null) {
+                                tmpObj.lineData.setHazardRiskClassId(tmpVar.getRiskClassId());
+                                tmpObj.lineData.setHazardRiskClass(tmpVar.getRiskClassName());
                             } else {
-                                createLineError(tmpObj, "hazardStatus", 1);
+                                createLineError(tmpObj, "hazardRiskClass", 2);
                             }
-                            break;
-                        // Processing hazard risk class
-                        case 7:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbriskClass tmpVar = dbriskClassFacade.findByName("riskClassName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getRiskClassName() != null) {
-                                    tmpObj.lineData.setHazardRiskClassId(tmpVar.getRiskClassId());
-                                    tmpObj.lineData.setHazardRiskClass(tmpVar.getRiskClassName());
-                                } else {
-                                    createLineError(tmpObj, "hazardRiskClass", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardRiskClass", 1);
+                        }
+                        break;
+                    // Processing current frequency Id
+                    case 8:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbriskFrequency tmpVar = dbriskFrequencyFacade.findByName("frequencyScore", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getFrequencyScore() != null) {
+                                tmpObj.lineData.setHazardCurrentFrequencyId(tmpVar.getRiskFrequencyId());
                             } else {
-                                createLineError(tmpObj, "hazardRiskClass", 1);
+                                createLineError(tmpObj, "hazardCurrentFreq", 2);
                             }
-                            break;
-                        // Processing current frequency Id
-                        case 8:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbriskFrequency tmpVar = dbriskFrequencyFacade.findByName("frequencyScore", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getFrequencyScore() != null) {
-                                    tmpObj.lineData.setHazardCurrentFrequencyId(tmpVar.getRiskFrequencyId());
-                                } else {
-                                    createLineError(tmpObj, "hazardCurrentFreq", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardCurrentFreq", 1);
+                        }
+                        break;
+                    // Processing current severity Id
+                    case 9:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbriskSeverity tmpVar = dbriskSeverityFacade.findByName("severityScore", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getSeverityScore() != null) {
+                                tmpObj.lineData.setHazardCurrentSeverityId(tmpVar.getRiskSeverityId());
                             } else {
-                                createLineError(tmpObj, "hazardCurrentFreq", 1);
+                                createLineError(tmpObj, "hazardCurrentSev", 2);
                             }
-                            break;
-                        // Processing current severity Id
-                        case 9:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbriskSeverity tmpVar = dbriskSeverityFacade.findByName("severityScore", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getSeverityScore() != null) {
-                                    tmpObj.lineData.setHazardCurrentSeverityId(tmpVar.getRiskSeverityId());
-                                } else {
-                                    createLineError(tmpObj, "hazardCurrentSev", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardCurrentSev", 1);
+                        }
+                        break;
+                    // Processing target frequency Id
+                    case 10:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbriskFrequency tmpVar = dbriskFrequencyFacade.findByName("frequencyScore", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getFrequencyScore() != null) {
+                                tmpObj.lineData.setHazardTargetFrequencyId(tmpVar.getRiskFrequencyId());
                             } else {
-                                createLineError(tmpObj, "hazardCurrentSev", 1);
+                                createLineError(tmpObj, "hazardTargetFreq", 2);
                             }
-                            break;
-                        // Processing target frequency Id
-                        case 10:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbriskFrequency tmpVar = dbriskFrequencyFacade.findByName("frequencyScore", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getFrequencyScore() != null) {
-                                    tmpObj.lineData.setHazardTargetFrequencyId(tmpVar.getRiskFrequencyId());
-                                } else {
-                                    createLineError(tmpObj, "hazardTargetFreq", 2);
-                                }
+                        } else {
+                            createLineError(tmpObj, "hazardTargetFreq", 1);
+                        }
+                        break;
+                    // Processing target severity Id
+                    case 11:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbriskSeverity tmpVar = dbriskSeverityFacade.findByName("severityScore", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getSeverityScore() != null) {
+                                tmpObj.lineData.setHazardTargetSeverityId(tmpVar.getRiskSeverityId());
                             } else {
-                                createLineError(tmpObj, "hazardTargetFreq", 1);
+                                createLineError(tmpObj, "hazardTargetSev", 2);
                             }
-                            break;
-                        // Processing target severity Id
-                        case 11:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbriskSeverity tmpVar = dbriskSeverityFacade.findByName("severityScore", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getSeverityScore() != null) {
-                                    tmpObj.lineData.setHazardTargetSeverityId(tmpVar.getRiskSeverityId());
-                                } else {
-                                    createLineError(tmpObj, "hazardTargetSev", 2);
-                                }
-                            } else {
-                                createLineError(tmpObj, "hazardTargetSev", 1);
+                        } else {
+                            createLineError(tmpObj, "hazardTargetSev", 1);
+                        }
+                        break;
+                    // Processing hazard comment
+                    case 12:
+                        tmpObj.lineData.setHazardComment(row.getCell(i).toString());
+                        break;
+                    // Processing hazard date
+                    case 13:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            try {
+                                tmpObj.lineData.setHazardDate(new SimpleDateFormat("dd-MMM-yyyy").parse(row.getCell(i).toString()));
+                            } catch (ParseException ex) {
+                                createLineError(tmpObj, "hazardDate", 4);
+                                Logger.getLogger(trees_MB.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            break;
-                        // Processing hazard comment
-                        case 12:
-                            tmpObj.lineData.setHazardComment(row.getCell(i).toString());
-                            break;
-                        // Processing hazard date
-                        case 13:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                try {
-                                    tmpObj.lineData.setHazardDate(new SimpleDateFormat("dd-MMM-yyyy").parse(row.getCell(i).toString()));
-                                } catch (ParseException ex) {
-                                    createLineError(tmpObj, "hazardDate", 4);
-                                    Logger.getLogger(trees_MB.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            } else {
-                                createLineError(tmpObj, "hazardDate", 1);
-                            }
-                            break;
-                        // Processing hazard workshop
-                        case 14:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setHazardWorkshop(row.getCell(i).toString());
-                            } else {
-                                createLineError(tmpObj, "hazardWorkshop", 1);
-                            }
-                            break;
-                        // Processing hazard legacy Id    
-                        case 15:
-                            tmpObj.lineData.setHazardLegacyId(row.getCell(i).toString());
-                            break;
-                        // Processing hazard HF Review
-                        case 16:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setHazardHFReview(row.getCell(i).toString());
-                            }
-                            break;
-                        // Processing hazard sbs codes 
-                        case 17:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                String[] sbsValues = row.getCell(i).toString().replaceAll("\\s+", "").split(",");
-                                if (sbsValues.length == 0) {
-                                    createLineError(tmpObj, "hazardSbs", 2);
-                                } else if (sbsValues.length > 0) {
-                                    boolean errorFound = false;
-                                    for (String sbsValue : sbsValues) {
-                                        if (sbsValue.matches("^\\d+(\\.\\d+)*") && !errorFound) {
-                                            String[] sbsCodes = sbsValue.split("\\.");
-                                            int[] sbsInt = Arrays.stream(sbsCodes).mapToInt(Integer::parseInt).toArray();
-                                            switch (sbsCodes.length) {
-                                                case 1:
-                                                    DbtreeLevel1 lvl1 = dbtreeLevel1Facade.findByIndex(sbsInt[0]);
-                                                    if (lvl1.getTreeLevel1Name() == null) {
-                                                        errorFound = true;
-                                                    }
-                                                    break;
-                                                case 2:
-                                                    DbtreeLevel2 lvl2 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1]);
-                                                    if (lvl2.getTreeLevel2Name() == null) {
-                                                        errorFound = true;
-                                                    }
-                                                    break;
-                                                case 3:
-                                                    DbtreeLevel3 lvl3 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2]);
-                                                    if (lvl3.getTreeLevel3Name() == null) {
-                                                        errorFound = true;
-                                                    }
-                                                    break;
-                                                case 4:
-                                                    DbtreeLevel4 lvl4 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3]);
-                                                    if (lvl4.getTreeLevel4Name() == null) {
-                                                        errorFound = true;
-                                                    }
-                                                    break;
-                                                case 5:
-                                                    DbtreeLevel5 lvl5 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4]);
-                                                    if (lvl5.getTreeLevel5Name() == null) {
-                                                        errorFound = true;
-                                                    }
-                                                    break;
-                                                case 6:
-                                                    DbtreeLevel6 lvl6 = dbtreeLevel1Facade.findByIndex(sbsInt[0], sbsInt[1], sbsInt[2], sbsInt[3], sbsInt[4], sbsInt[5]);
-                                                    if (lvl6.getTreeLevel6Name() == null) {
-                                                        errorFound = true;
-                                                    }
-                                                    break;
-                                                default:
-                                                    errorFound = true;
-                                                    break;
+                        } else {
+                            createLineError(tmpObj, "hazardDate", 1);
+                        }
+                        break;
+                    // Processing hazard workshop
+                    case 14:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setHazardWorkshop(row.getCell(i).toString());
+                        } else {
+                            createLineError(tmpObj, "hazardWorkshop", 1);
+                        }
+                        break;
+                    // Processing hazard legacy Id    
+                    case 15:
+                        tmpObj.lineData.setHazardLegacyId(row.getCell(i).toString());
+                        break;
+                    // Processing hazard HF Review
+                    case 16:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setHazardHFReview(row.getCell(i).toString());
+                        }
+                        break;
+                    // Processing hazard sbs codes 
+                    case 17:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            String[] sbsValues = row.getCell(i).toString().replaceAll("\\s+", "").split(",");
+                            if (sbsValues.length == 0) {
+                                createLineError(tmpObj, "hazardSbs", 2);
+                            } else if (sbsValues.length > 0) {
+                                boolean errorFound = false;
+                                for (String sbsValue : sbsValues) {
+                                    if (sbsValue.matches("^\\d+(\\.\\d+)*") && !errorFound) {
+                                        String[] sbsCodes = sbsValue.split("\\.");
+                                        List<Integer> sbsInts = Arrays.stream(sbsCodes).map(s -> Integer.valueOf(s)).collect(Collectors.toList());
+                                        while (true) {
+                                            if (sbsInts.get(sbsInts.size() - 1).equals(0) && sbsInts.get(sbsInts.size() - 2).equals(0)) {
+                                                sbsInts.remove(sbsInts.size() - 1);
+                                                continue;
                                             }
-                                            if (errorFound) {
-                                                createLineError(tmpObj, "hazardSbs", 2);
-                                                break;
+                                            if (sbsInts.get(sbsInts.size() - 1).equals(0)) {
+                                                sbsInts.remove(sbsInts.size() - 1);
                                             }
-                                        } else {
-                                            createLineError(tmpObj, "hazardSbs", 2);
-                                            errorFound = true;
                                             break;
                                         }
-                                    }
-                                    if (!errorFound) {
-                                        tmpObj.lineData.setHazardSbs(row.getCell(i).toString().replaceAll("\\s+", ""));
+                                        switch (sbsInts.size()) {
+                                            case 1:
+                                                DbtreeLevel1 lvl1 = dbtreeLevel1Facade.findByIndex(sbsInts.get(0));
+                                                if (lvl1.getTreeLevel1Name() == null) {
+                                                    errorFound = true;
+                                                }
+                                                break;
+                                            case 2:
+                                                DbtreeLevel2 lvl2 = dbtreeLevel1Facade.findByIndex(sbsInts.get(0), sbsInts.get(1));
+                                                if (lvl2.getTreeLevel2Name() == null) {
+                                                    errorFound = true;
+                                                }
+                                                break;
+                                            case 3:
+                                                DbtreeLevel3 lvl3 = dbtreeLevel1Facade.findByIndex(sbsInts.get(0), sbsInts.get(1), sbsInts.get(2));
+                                                if (lvl3.getTreeLevel3Name() == null) {
+                                                    errorFound = true;
+                                                }
+                                                break;
+                                            case 4:
+                                                DbtreeLevel4 lvl4 = dbtreeLevel1Facade.findByIndex(sbsInts.get(0), sbsInts.get(1), sbsInts.get(2), sbsInts.get(3));
+                                                if (lvl4.getTreeLevel4Name() == null) {
+                                                    errorFound = true;
+                                                }
+                                                break;
+                                            case 5:
+                                                DbtreeLevel5 lvl5 = dbtreeLevel1Facade.findByIndex(sbsInts.get(0), sbsInts.get(1), sbsInts.get(2), sbsInts.get(3), sbsInts.get(4));
+                                                if (lvl5.getTreeLevel5Name() == null) {
+                                                    errorFound = true;
+                                                }
+                                                break;
+                                            case 6:
+                                                DbtreeLevel6 lvl6 = dbtreeLevel1Facade.findByIndex(sbsInts.get(0), sbsInts.get(1), sbsInts.get(2), sbsInts.get(3), sbsInts.get(4), sbsInts.get(5));
+                                                if (lvl6.getTreeLevel6Name() == null) {
+                                                    errorFound = true;
+                                                }
+                                                break;
+                                            default:
+                                                errorFound = true;
+                                                break;
+                                        }
+                                        if (errorFound) {
+                                            createLineError(tmpObj, "hazardSbs", 2);
+                                            break;
+                                        }
+                                    } else {
+                                        createLineError(tmpObj, "hazardSbs", 2);
+                                        errorFound = true;
+                                        break;
                                     }
                                 }
+                                if (!errorFound) {
+                                    tmpObj.lineData.setHazardSbs(row.getCell(i).toString().replaceAll("\\s+", ""));
+                                }
+                            }
+                        } else {
+                            createLineError(tmpObj, "hazardSbs", 1);
+                        }
+                        break;
+                    // Processing relation type
+                    case 18:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setRelationType(row.getCell(i).toString());
+                        }
+                        break;
+                    // Processing relation description
+                    case 19:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setRelationDescription(row.getCell(i).toString());
+                            if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), row.getCell(18).toString()).size() > 0) {
+                                createLineError(tmpObj, row.getCell(18).toString(), 3);
+                            }
+                        } else if (!"".equals(row.getCell(18).toString())) {
+                            createLineError(tmpObj, "relationDescription", 1);
+                        }
+                        break;
+                    // Processing control owner
+                    case 20:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbOwners tmpVar = dbOwnersFacade.findByName("ownerName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getOwnerName() != null) {
+                                tmpObj.lineData.setControlOwnerId(tmpVar.getOwnerId());
+                                tmpObj.lineData.setControlOwner(tmpVar.getOwnerName());
                             } else {
-                                createLineError(tmpObj, "hazardSbs", 1);
+                                createLineError(tmpObj, "controlOwner", 2);
                             }
-                            break;
-                        // Processing relation type
-                        case 18:
+                        } else if (row.getCell(18).toString().equals("Control")) {
+                            createLineError(tmpObj, "controlOwner", 1);
+                        }
+                        break;
+                    // Processing control hierarchy
+                    case 21:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbcontrolHierarchy tmpVar = dbcontrolHierarchyFacade.findByName("controlHierarchyName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getControlHierarchyName() != null) {
+                                tmpObj.lineData.setControlHierarchyId(tmpVar.getControlHierarchyId());
+                                tmpObj.lineData.setControlHierarchy(tmpVar.getControlHierarchyName());
+                            } else {
+                                createLineError(tmpObj, "controlHierarchy", 2);
+                            }
+                        } else if (row.getCell(18).toString().equals("Control")) {
+                            createLineError(tmpObj, "controlHierarchy", 1);
+                        }
+                        break;
+                    // Processing control type
+                    case 22:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setControlType(row.getCell(i).toString());
+                        } else if (row.getCell(18).toString().equals("Control")) {
+                            createLineError(tmpObj, "controlType", 1);
+                        }
+                        break;
+                    // Processing control recommendation
+                    case 23:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            DbcontrolRecommend tmpVar = dbcontrolRecommendFacade.findByName("controlRecommendName", row.getCell(i).toString()).get(0);
+                            if (tmpVar.getControlRecommendName() != null) {
+                                tmpObj.lineData.setControlRecommendId(tmpVar.getControlRecommendId());
+                                tmpObj.lineData.setControlRecommend(tmpVar.getControlRecommendName());
+                            } else {
+                                createLineError(tmpObj, "controlRecommend", 2);
+                            }
+                        } else if (row.getCell(18).toString().equals("Control")) {
+                            createLineError(tmpObj, "controlRecommend", 1);
+                        }
+                        break;
+                    // Processing control Status
+                    case 25:
+                        if (!"".equals(row.getCell(i).toString())) {
+                            tmpObj.lineData.setControlExistingOrProposed(row.getCell(i).toString().substring(0, 1));
+                        } else if (row.getCell(18).toString().equals("Control")) {
+                            createLineError(tmpObj, "controlStatus", 1);
+                        }
+                        break;
+                    // Processing control justify
+                    case 24:
+                        if (row.getCell(18).toString().equals("Control") && dbcontrolRecommendFacade.findByName("controlRecommendName", row.getCell(23).toString()).get(0).getControlJustifyRequired().equals("Y")) {
                             if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setRelationType(row.getCell(i).toString());
+                                tmpObj.lineData.setControlJustify(row.getCell(i).toString());
+                            } else {
+                                createLineError(tmpObj, "controlJustify", 1);
                             }
-                            break;
-                        // Processing relation description
-                        case 19:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setRelationDescription(row.getCell(i).toString());
-                                if (dbindexedWordFacade.findPotentialDuplicates(row.getCell(i).toString(), row.getCell(18).toString()).size() > 0) {
-                                    createLineError(tmpObj, row.getCell(18).toString(), 3);
-                                }
-                            } else if (!"".equals(row.getCell(18).toString())) {
-                                createLineError(tmpObj, "relationDescription", 1);
-                            }
-                            break;
-                        // Processing control owner
-                        case 20:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbOwners tmpVar = dbOwnersFacade.findByName("ownerName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getOwnerName() != null) {
-                                    tmpObj.lineData.setControlOwnerId(tmpVar.getOwnerId());
-                                    tmpObj.lineData.setControlOwner(tmpVar.getOwnerName());
-                                } else {
-                                    createLineError(tmpObj, "controlOwner", 2);
-                                }
-                            } else if (row.getCell(18).toString().equals("Control")) {
-                                createLineError(tmpObj, "controlOwner", 1);
-                            }
-                            break;
-                        // Processing control hierarchy
-                        case 21:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbcontrolHierarchy tmpVar = dbcontrolHierarchyFacade.findByName("controlHierarchyName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getControlHierarchyName() != null) {
-                                    tmpObj.lineData.setControlHierarchyId(tmpVar.getControlHierarchyId());
-                                    tmpObj.lineData.setControlHierarchy(tmpVar.getControlHierarchyName());
-                                } else {
-                                    createLineError(tmpObj, "controlHierarchy", 2);
-                                }
-                            } else if (row.getCell(18).toString().equals("Control")) {
-                                createLineError(tmpObj, "controlHierarchy", 1);
-                            }
-                            break;
-                        // Processing control type
-                        case 22:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setControlType(row.getCell(i).toString());
-                            } else if (row.getCell(18).toString().equals("Control")) {
-                                createLineError(tmpObj, "controlType", 1);
-                            }
-                            break;
-                        // Processing control recommendation
-                        case 23:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                DbcontrolRecommend tmpVar = dbcontrolRecommendFacade.findByName("controlRecommendName", row.getCell(i).toString()).get(0);
-                                if (tmpVar.getControlRecommendName() != null) {
-                                    tmpObj.lineData.setControlRecommendId(tmpVar.getControlRecommendId());
-                                    tmpObj.lineData.setControlRecommend(tmpVar.getControlRecommendName());
-                                } else {
-                                    createLineError(tmpObj, "controlRecommend", 2);
-                                }
-                            } else if (row.getCell(18).toString().equals("Control")) {
-                                createLineError(tmpObj, "controlRecommend", 1);
-                            }
-                            break;
-                        // Processing control Status
-                        case 25:
-                            if (!"".equals(row.getCell(i).toString())) {
-                                tmpObj.lineData.setControlExistingOrProposed(row.getCell(i).toString().substring(0, 1));
-                            } else if (row.getCell(18).toString().equals("Control")) {
-                                createLineError(tmpObj, "controlStatus", 1);
-                            }
-                            break;
-                        // Processing control justify
-                        case 24:
-                            if (row.getCell(18).toString().equals("Control") && dbcontrolRecommendFacade.findByName("controlRecommendName", row.getCell(23).toString()).get(0).getControlJustifyRequired().equals("Y")){
-                                if (!"".equals(row.getCell(i).toString())) {
-                                    tmpObj.lineData.setControlJustify(row.getCell(i).toString());
-                                } else {
-                                    createLineError(tmpObj, "controlJustify", 1);
-                                }
-                            }
-                            break;
-                        default:
-                            System.out.println("The value does not match with the expected columns. Value: " + row.getCell(i).toString() + " column index: " + i);
-                            break;
-                    }
+                        }
+                        break;
+                    default:
+                        System.out.println("The value does not match with the expected columns. Value: " + row.getCell(i).toString() + " column index: " + i);
+                        break;
                 }
             }
+        }
 
 //        } catch (Exception e) {
 //            System.err.println(e);
