@@ -5,6 +5,7 @@
  */
 package managedBeans;
 
+import customObjects.importObject;
 import customObjects.similarityObject;
 import customObjects.treeNodeObject;
 import customObjects.validateIdObject;
@@ -27,7 +28,6 @@ import ejb.DbhazardActivityFacadeLocal;
 import ejb.DbhazardContextFacadeLocal;
 import ejb.DbhazardStatusFacadeLocal;
 import ejb.DbhazardTypeFacadeLocal;
-import ejb.DbimportErrorCodeFacadeLocal;
 import ejb.DbimportHeaderFacadeLocal;
 import ejb.DbimportLineErrorFacadeLocal;
 import ejb.DbimportLineFacadeLocal;
@@ -70,7 +70,7 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
+//import javax.faces.el.ValueBinding;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -123,9 +123,6 @@ public class importHazard_MB implements Serializable {
 
     @EJB
     private DbimportLineErrorFacadeLocal dbimportLineErrorFacade;
-
-    @EJB
-    private DbimportErrorCodeFacadeLocal dbimportErrorCodeFacade;
 
     @EJB
     private DbwfHeaderFacadeLocal dbwfHeaderFacade;
@@ -219,8 +216,8 @@ public class importHazard_MB implements Serializable {
     
     private DbUser activeUser;
     
-    private List<importWrapperObject> listLoadedLines;
-    private List<importWrapperObject> listCheckedLines;
+    private List<importObject> listLoadedLines;
+    private List<importObject> listCheckedLines;
     
     private DbimportLine selectedLine;
     
@@ -248,19 +245,19 @@ public class importHazard_MB implements Serializable {
     
     }
 
-    public List<importWrapperObject> getListLoadedLines() {
+    public List<importObject> getListLoadedLines() {
         return listLoadedLines;
     }
 
-    public void setListLoadedLines(List<importWrapperObject> listLoadedLines) {
+    public void setListLoadedLines(List<importObject> listLoadedLines) {
         this.listLoadedLines = listLoadedLines;
     }
 
-    public List<importWrapperObject> getListCheckedLines() {
+    public List<importObject> getListCheckedLines() {
         return listCheckedLines;
     }
 
-    public void setListCheckedLines(List<importWrapperObject> listCheckedLines) {
+    public void setListCheckedLines(List<importObject> listCheckedLines) {
         this.listCheckedLines = listCheckedLines;
     }
 
@@ -396,7 +393,8 @@ public class importHazard_MB implements Serializable {
     public void init() {
         activeUser = (DbUser) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("activeUser");
         
-        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
+        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importObject(i, dbimportLineErrorFacade.listErrorsByLine(i.getDbimportLinePK().getProcessId(), i.getDbimportLinePK().getProcessIdLine()))).collect(Collectors.toList());
+        listCheckedLines = new ArrayList<>();
         
         if (listLoadedLines.size() > 0) {
             setShowUpload(false);
@@ -1186,8 +1184,7 @@ public class importHazard_MB implements Serializable {
             dbimportLineFacade.edit(lineObject);
             
         }
-        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
-        RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable");
+        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importObject(i, dbimportLineErrorFacade.listErrorsByLine(i.getDbimportLinePK().getProcessId(), i.getDbimportLinePK().getProcessIdLine()))).collect(Collectors.toList());
     }
     
     public Date todaysDate() {
@@ -1399,7 +1396,7 @@ public class importHazard_MB implements Serializable {
     public void submitTable() {
         DbHazard currentHazard = new DbHazard();
         for (int i = 0; i < listCheckedLines.size(); i ++) {
-            DbimportLine lineObject = listCheckedLines.get(i).lineObject;
+            DbimportLine lineObject = listCheckedLines.get(i).getLineObject();
             if (i == 0) {
                 // Start of the submission - can't use sameLineObject since currentHazard is null
                 currentHazard = createHazard(lineObject);
@@ -1733,358 +1730,15 @@ public class importHazard_MB implements Serializable {
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "The SBS tree must not be empty!"));
         }
-        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
+        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importObject(i, dbimportLineErrorFacade.listErrorsByLine(i.getDbimportLinePK().getProcessId(), i.getDbimportLinePK().getProcessIdLine()))).collect(Collectors.toList());
         RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable");
     }
     
     public void cancelImport() {
-        DbimportHeader headerObject = dbimportHeaderFacade.find(listLoadedLines.get(0).lineObject.getDbimportHeader().getProcessId());
+        DbimportHeader headerObject = dbimportHeaderFacade.find(listLoadedLines.get(0).getLineObject().getDbimportHeader().getProcessId());
         headerObject.setProcessStatus("C");
         dbimportHeaderFacade.edit(headerObject);
-        listLoadedLines = dbimportLineFacade.findNextLinesByUser(activeUser.getUserId()).stream().map(i -> new importWrapperObject(i)).collect(Collectors.toList());
         init();
-    }
-    
-    public class importWrapperObject {
-        public DbimportLine lineObject;
-        public List<DbimportLineError> listErrorObjects;
-        public List<DbimportLineError> listWarningObjects;
-        public String errorMessage = "";
-        public String warningMessage = "";
-        
-        public boolean DAError;
-        public boolean HDError;
-        public boolean HMError;
-        public boolean HWError;
-        public boolean HCError;
-        public boolean HLError;
-        public boolean HAError;
-        public boolean HTError;
-        public boolean HSError;
-        public boolean HOError;
-        public boolean HFError;
-        public boolean RCError;
-        public boolean CFError;
-        public boolean CSError;
-        public boolean TFError;
-        public boolean TSError;
-        public boolean SBSError;
-        public boolean RTError;
-        public boolean RDError;
-        public boolean COError;
-        public boolean CHError;
-        public boolean CTError;
-        public boolean CRError;
-        public boolean CJError;
-        public boolean CUError;
-        public boolean SCError;
-        public boolean HDWarning;
-        public boolean RDWarning;
-
-        public DbimportLine getLineObject() {
-            return lineObject;
-        }
-
-        public void setLineObject(DbimportLine lineObject) {
-            this.lineObject = lineObject;
-        }
-
-        public List<DbimportLineError> getListErrorObjects() {
-            return listErrorObjects;
-        }
-
-        public void setListErrorObjects(List<DbimportLineError> listErrorObjects) {
-            this.listErrorObjects = listErrorObjects;
-        }
-
-        public List<DbimportLineError> getListWarningObjects() {
-            return listWarningObjects;
-        }
-
-        public void setListWarningObjects(List<DbimportLineError> listWarningObjects) {
-            this.listWarningObjects = listWarningObjects;
-        }
-
-        public String getErrorMessage() {
-            return errorMessage;
-        }
-
-        public void setErrorMessage(String errorMessage) {
-            this.errorMessage = errorMessage;
-        }
-
-        public String getWarningMessage() {
-            return warningMessage;
-        }
-
-        public void setWarningMessage(String warningMessage) {
-            this.warningMessage = warningMessage;
-        }
-
-        public boolean isDAError() {
-            return DAError;
-        }
-
-        public void setDAError(boolean DAError) {
-            this.DAError = DAError;
-        }
-
-        public boolean isHDError() {
-            return HDError;
-        }
-
-        public void setHDError(boolean HDError) {
-            this.HDError = HDError;
-        }
-
-        public boolean isHMError() {
-            return HMError;
-        }
-
-        public void setHMError(boolean HMError) {
-            this.HMError = HMError;
-        }
-
-        public boolean isHWError() {
-            return HWError;
-        }
-
-        public void setHWError(boolean HWError) {
-            this.HWError = HWError;
-        }
-
-        public boolean isHCError() {
-            return HCError;
-        }
-
-        public void setHCError(boolean HCError) {
-            this.HCError = HCError;
-        }
-
-        public boolean isHLError() {
-            return HLError;
-        }
-
-        public void setHLError(boolean HLError) {
-            this.HLError = HLError;
-        }
-
-        public boolean isHAError() {
-            return HAError;
-        }
-
-        public void setHAError(boolean HAError) {
-            this.HAError = HAError;
-        }
-
-        public boolean isHTError() {
-            return HTError;
-        }
-
-        public void setHTError(boolean HTError) {
-            this.HTError = HTError;
-        }
-
-        public boolean isHSError() {
-            return HSError;
-        }
-
-        public void setHSError(boolean HSError) {
-            this.HSError = HSError;
-        }
-
-        public boolean isHOError() {
-            return HOError;
-        }
-
-        public void setHOError(boolean HOError) {
-            this.HOError = HOError;
-        }
-
-        public boolean isRCError() {
-            return RCError;
-        }
-
-        public void setRCError(boolean RCError) {
-            this.RCError = RCError;
-        }
-
-        public boolean isCFError() {
-            return CFError;
-        }
-
-        public void setCFError(boolean CFError) {
-            this.CFError = CFError;
-        }
-
-        public boolean isCSError() {
-            return CSError;
-        }
-
-        public void setCSError(boolean CSError) {
-            this.CSError = CSError;
-        }
-
-        public boolean isTFError() {
-            return TFError;
-        }
-
-        public void setTFError(boolean TFError) {
-            this.TFError = TFError;
-        }
-
-        public boolean isTSError() {
-            return TSError;
-        }
-
-        public void setTSError(boolean TSError) {
-            this.TSError = TSError;
-        }
-
-        public boolean isSBSError() {
-            return SBSError;
-        }
-
-        public void setSBSError(boolean SBSError) {
-            this.SBSError = SBSError;
-        }
-
-        public boolean isRTError() {
-            return RTError;
-        }
-
-        public void setRTError(boolean RTError) {
-            this.RTError = RTError;
-        }
-
-        public boolean isRDError() {
-            return RDError;
-        }
-
-        public void setRDError(boolean RDError) {
-            this.RDError = RDError;
-        }
-
-        public boolean isCTError() {
-            return CTError;
-        }
-
-        public void setCTError(boolean CTError) {
-            this.CTError = CTError;
-        }
-
-        public boolean isCRError() {
-            return CRError;
-        }
-
-        public void setCRError(boolean CRError) {
-            this.CRError = CRError;
-        }
-
-        public boolean isCJError() {
-            return CJError;
-        }
-
-        public void setCJError(boolean CJError) {
-            this.CJError = CJError;
-        }
-
-        public boolean isCUError() {
-            return CUError;
-        }
-
-        public void setCUError(boolean CUError) {
-            this.CUError = CUError;
-        }
-
-        public boolean isHDWarning() {
-            return HDWarning;
-        }
-
-        public void setHDWarning(boolean HDWarning) {
-            this.HDWarning = HDWarning;
-        }
-
-        public boolean isRDWarning() {
-            return RDWarning;
-        }
-
-        public void setRDWarning(boolean RDWarning) {
-            this.RDWarning = RDWarning;
-        }
-
-        public boolean isCOError() {
-            return COError;
-        }
-
-        public void setCOError(boolean COError) {
-            this.COError = COError;
-        }
-
-        public boolean isCHError() {
-            return CHError;
-        }
-
-        public void setCHError(boolean CHError) {
-            this.CHError = CHError;
-        }
-
-        public boolean isSCError() {
-            return SCError;
-        }
-
-        public void setSCError(boolean SCError) {
-            this.SCError = SCError;
-        }
-        
-        public importWrapperObject(DbimportLine lineObject) {
-            this.lineObject = lineObject;
-            
-            List<DbimportLineError> listRawObjects = dbimportLineErrorFacade.listErrorsByLine(lineObject.getDbimportLinePK().getProcessId(), lineObject.getDbimportLinePK().getProcessIdLine());
-            this.listErrorObjects = listRawObjects.stream().filter(i -> i.getProcessErrorCode().getErrorAction().equals("E")).collect(Collectors.toList());
-            this.listWarningObjects = listRawObjects.stream().filter(i -> i.getProcessErrorCode().getErrorAction().equals("W")).collect(Collectors.toList());
-            
-            for (DbimportLineError errorObject : listErrorObjects) {
-                errorMessage += errorObject.getProcessErrorCode().getErrorName().concat(" error in the ").concat(errorObject.getProcessErrorLocation().toLowerCase()).concat(" field. ");
-            }
-            
-            for (DbimportLineError warningObject : listWarningObjects) {
-                warningMessage += warningObject.getProcessErrorCode().getErrorName().concat(" warning in the ").concat(warningObject.getProcessErrorLocation().toLowerCase()).concat(" field. ");
-            }
-            
-            this.DAError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardDate"));
-            this.HDError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardDescription"));
-            this.HMError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardComment"));
-            this.HCError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardContext"));
-            this.HWError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardWorkshop"));
-            this.HLError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardLocation"));
-            this.HAError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardActivity"));
-            this.HTError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardType"));
-            this.HSError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardStatus"));
-            this.HOError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardOwner"));
-            this.HFError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardHFReview"));
-            this.RCError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardRiskClass"));
-            this.CFError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardCurrentFreq"));
-            this.CSError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardCurrentSev"));
-            this.TFError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardTargetFreq"));
-            this.TSError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardTargetSev"));
-            this.RDError = listErrorObjects.stream().anyMatch(i -> (i.getProcessErrorLocation().equalsIgnoreCase("relationDescription") 
-                    || i.getProcessErrorLocation().equalsIgnoreCase("Cause")
-                    || i.getProcessErrorLocation().equalsIgnoreCase("Consequence")
-                    || i.getProcessErrorLocation().equalsIgnoreCase("Control")));
-            this.COError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlOwner"));
-            this.CHError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlHierarchy"));
-            this.CRError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlRecommend"));
-            this.CJError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlJustify"));
-            this.CTError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlType"));
-            this.CUError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("controlStatus"));
-            this.SCError = listErrorObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazardSbs"));
-            this.HDWarning = listWarningObjects.stream().anyMatch(i -> i.getProcessErrorLocation().equalsIgnoreCase("hazard"));
-            this.RDWarning = listWarningObjects.stream().anyMatch(i -> (i.getProcessErrorLocation().equalsIgnoreCase("relationDescription") 
-                    || i.getProcessErrorLocation().equalsIgnoreCase("Cause")
-                    || i.getProcessErrorLocation().equalsIgnoreCase("Consequence")
-                    || i.getProcessErrorLocation().equalsIgnoreCase("Control")));
-        }
     }
     
     private CellStyle styleHeaderGenerator(String style, CellStyle headerCellStyle, Font headerFont) {
@@ -2134,6 +1788,25 @@ public class importHazard_MB implements Serializable {
 
         return headerCellStyle;
     }
+
+    class sbsNodes {
+
+        public String levelTwo;
+        public int columnSize;
+        public List<String> levelThreeList;
+
+        public sbsNodes() {
+            levelTwo = "";
+            columnSize = 0;
+            levelThreeList = new ArrayList<>();
+        }
+
+        public sbsNodes(String levelTwo, int columnSize, List<String> levelThreeList) {
+            this.levelTwo = levelTwo;
+            this.columnSize = columnSize;
+            this.levelThreeList = levelThreeList;
+        }
+    }
     
     public void generateLayout() {
         //The produced excel will be on xslx format.
@@ -2141,6 +1814,7 @@ public class importHazard_MB implements Serializable {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Format");
         XSSFSheet hidden = workbook.createSheet("hidden");
+        XSSFSheet sbs = workbook.createSheet("Sbs_Codes");
         sheet.setZoom(90);
 
         // ---------------------------> Creating the spreadsheet headers <--------------------------------------
@@ -2424,6 +2098,101 @@ public class importHazard_MB implements Serializable {
             }
         }
 
+        // ---------------------------> Creating the sbs sheet content <--------------------------------------
+        // Creating headers from the row number 0
+        sbs.setZoom(90);
+        Row headerSbsRow = sbs.createRow(0);
+
+        // Creating the Initial headers
+        Cell cellSbs = headerSbsRow.createCell(0);
+        cellSbs.setCellValue("1. Rail");
+        cellSbs.setCellStyle(styleHeaderGenerator("Teal", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sbs.addMergedRegion(CellRangeAddress.valueOf("A1:H1"));
+
+        cellSbs = headerSbsRow.createCell(8);
+        cellSbs.setCellValue("2. Non-Rail");
+        cellSbs.setCellStyle(styleHeaderGenerator("Green", workbook.createCellStyle(), getHeaderFont(workbook.createFont())));
+        sbs.addMergedRegion(CellRangeAddress.valueOf("I1:N1"));
+
+        //Creating the levels 2 and 3 data structure
+        List<importHazard_MB.sbsNodes> sbsList = new ArrayList<>();
+        sbsList.add(new importHazard_MB.sbsNodes("1.1 Civil Infrastructure", 20, Arrays.asList(new String[]{"1.1.1 Corridor - civil elements", "1.1.2 Embankments", "1.1.3 Retaining walls / Ramps",
+            "1.1.4 Bridges", "1.1.5 Culverts", "1.1.6 Utilities", "1.1.7 Drainage", "1.1.8 Access roads", "1.1.9 Walkways", "1.1.10 Fencing"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.2 Track", 18, Arrays.asList(new String[]{"1.2.1 Formation", "1.2.2 Trackbed (ballast or slab)", "1.2.3 Sleepers", "1.2.4 Rail",
+            "1.2.5 Fixings", "1.2.6 Monuments & Signage"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.3 Station", 18, Arrays.asList(new String[]{"1.3.1 Station buildings (architecture & urban design), access stairs & ramps",
+            "1.3.2 Platforms, platform extensions", "1.3.3 Carparks, drainage, landscaping, etc", "1.3.4 Vertical Transport", "1.3.5 Services"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.4 ICT/OCS", 16, Arrays.asList(new String[]{"1.4.1 OCS", "1.4.2 ICT System (ROMS, ORS, etc.)", "1.4.3 Intranet"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.5 Communications", 18, Arrays.asList(new String[]{"1.5.1 Radio Frequency", "1.5.2 Backbone cabling ", "1.5.3 VicTrack Managed Services",
+            "1.5.4 Communication Equipment Room (CER)"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.6 Traction Power", 18, Arrays.asList(new String[]{"1.6.1 Traction Substation", "1.6.2 OHLE & cabling", "1.6.3 Electrolysis"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.7 Signalling", 18, Arrays.asList(new String[]{"1.7.1 Centralised Train Control System (incl SCC (Signal Control Centre))",
+            "1.7.2 Local Train Control System", "1.7.3 Interlocking", "1.7.4 Wayside (conventional)", "1.7.5 CBTC Wayside"})));
+        sbsList.add(new importHazard_MB.sbsNodes("1.8 CSR - Civil", 18, Arrays.asList(new String[]{"1.8.1 CSR Above ground", "1.8.2 CSR Underground"})));
+        sbsList.add(new importHazard_MB.sbsNodes("2.1 Buses", 14, Arrays.asList(new String[]{"2.1.1 Bus PIDS", "2.1.2 Signage"})));
+        sbsList.add(new importHazard_MB.sbsNodes("2.2 Trams", 18, Arrays.asList(new String[]{"2.2.1 Tram civil works", "2.2.2 Tram PIDS", "2.2.3 Tram Signage"})));
+        sbsList.add(new importHazard_MB.sbsNodes("2.3 Roads", 18, Arrays.asList(new String[]{"2.3.1 Road civil works",
+            "2.3.2 Other (furniture, bus interchange, bus shelter, bike lane, fencing signage, etc)"})));
+        sbsList.add(new importHazard_MB.sbsNodes("2.4 Pedestrians/Bicycles", 22, Arrays.asList(new String[]{"2.4.1 Pedestrian Structures", "2.4.2 Shared user path (SUP)", "2.4.3 Cycle path"})));
+        sbsList.add(new importHazard_MB.sbsNodes("2.5 IDOs", 18, Arrays.asList(new String[]{"2.5.1 Enabling Works for IDO"})));
+        sbsList.add(new importHazard_MB.sbsNodes("2.6 Others", 18, Arrays.asList(new String[]{"2.6.1 Linear Park", "2.6.2 Landscaping"})));
+
+        // Setting up the columns width
+        for (int i = 0; i < sbsList.size(); i++) {
+            int width = ((int) (sbsList.get(i).columnSize * 1.14388 * 256));
+            sbs.setColumnWidth(i, width);
+        }
+
+        //Creating the first level
+        Row BodySbsRow = sbs.createRow(1);
+        for (int i = 0; i < sbsList.size(); i++) {
+            Cell lvl1SbsCell = BodySbsRow.createCell(i);
+            lvl1SbsCell.setCellValue(sbsList.get(i).levelTwo);
+            CellStyle cellStyle = workbook.createCellStyle();
+            if (sbsList.get(i).levelTwo.startsWith("1")) {
+                cellStyle.setFont(getBodySbsFont(workbook.createFont(), ""));
+                cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.AQUA.getIndex());
+            } else if (sbsList.get(i).levelTwo.startsWith("2")) {
+                cellStyle.setFont(getBodySbsFont(workbook.createFont(), "White"));
+                cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.SEA_GREEN.getIndex());
+            }
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            cellStyle.setWrapText(true);
+            lvl1SbsCell.setCellStyle(cellStyle);
+        }
+
+        // Getting the maximum rows number
+        Integer maxSbs = sbsList
+                .stream()
+                .map(i -> i.columnSize)
+                .collect(Collectors.toList())
+                .stream()
+                .mapToInt(v -> v)
+                .max().orElseThrow(NoSuchElementException::new);
+
+        //Creating the second level
+        for (int row = 0; row < max; row++) {
+            BodySbsRow = sbs.createRow(row + 2);
+            for (int col = 0; col < sbsList.size(); col++) {
+                if (row < sbsList.get(col).levelThreeList.size()) {
+                    Cell lvl2SbsCell = BodySbsRow.createCell(col);
+                    lvl2SbsCell.setCellValue(sbsList.get(col).levelThreeList.get(row));
+                    CellStyle cellStyle = workbook.createCellStyle();
+                    if (sbsList.get(col).levelThreeList.get(row).startsWith("1")) {
+                        cellStyle.setFont(getBodySbsFont(workbook.createFont(), ""));
+                        cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_TURQUOISE.getIndex());
+                    } else if (sbsList.get(col).levelThreeList.get(row).startsWith("2")) {
+                        cellStyle.setFont(getBodySbsFont(workbook.createFont(), ""));
+                        cellStyle.setFillForegroundColor(HSSFColor.HSSFColorPredefined.LIGHT_GREEN.getIndex());
+                    }
+                    cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                    cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+                    cellStyle.setWrapText(true);
+                    lvl2SbsCell.setCellStyle(cellStyle);
+                }
+            }
+        }
+        
         // Additional sheet configurations
         sheet.lockDeleteColumns(true);
         sheet.lockDeleteRows(true);
@@ -2461,6 +2230,15 @@ public class importHazard_MB implements Serializable {
         headerFont.setFontHeightInPoints((short) 11);
         headerFont.setFontName("Arial");
         return headerFont;
+    }
+
+    private Font getBodySbsFont(Font bodyFont, String color) {
+        bodyFont.setFontHeightInPoints((short) 11);
+        bodyFont.setFontName("Arial");
+        if (color.equals("White")) {
+            bodyFont.setColor(HSSFColor.HSSFColorPredefined.WHITE.getIndex());
+        }
+        return bodyFont;
     }
 
     private DataValidation generateDropDownList(XSSFSheet sheet, CellRangeAddressList cellRange, String hiddenReference) {
@@ -2568,18 +2346,23 @@ public class importHazard_MB implements Serializable {
             importHeader.setTotalLines(listOfImportedLines.size());
 
             // Saving entites in the database
-            dbimportHeaderFacade.create(importHeader);
-            if (listOfImportedLines.size() > 0) {
-                listOfImportedLines.forEach((line) -> {
-                    dbimportLineFacade.create(line);
-                });
-            }
-            if (listOfErrors.size() > 0) {
-                listOfErrors.forEach((sublist) -> {
-                    sublist.forEach((errorLine) -> {
-                        dbimportLineErrorFacade.create(errorLine);
+            if (listOfImportedLines.size() < 1) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "No hazards were found in the file. Please populate the template and reupload."));
+            } else {
+                dbimportHeaderFacade.create(importHeader);
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Hazards have been read from the file. Please fix any identified errors and submit to send them to approvals."));
+                if (listOfImportedLines.size() > 0) {
+                    listOfImportedLines.forEach((line) -> {
+                        dbimportLineFacade.create(line);
                     });
-                });
+                }
+                if (listOfErrors.size() > 0) {
+                    listOfErrors.forEach((sublist) -> {
+                        sublist.forEach((errorLine) -> {
+                            dbimportLineErrorFacade.create(errorLine);
+                        });
+                    });
+                }
             }
 
         } catch (IOException ex) {
@@ -2589,7 +2372,6 @@ public class importHazard_MB implements Serializable {
             return;
         }
         init();
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Hazards have been uploaded successfully. Fix any identified errors and submit."));
     }
 
     // Checking the file has some content and proccessing lines

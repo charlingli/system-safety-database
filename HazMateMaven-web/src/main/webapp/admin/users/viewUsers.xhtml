@@ -132,7 +132,9 @@
                     <div class="panelButtons">
                         <c:choose>
                             <c:when test="#{users_MB.addFlag}">
-                                <p:commandButton value="Save" update=":usersForm modifyTable"/>   
+                                <p:commandButton value="Save">
+                                    <f:ajax listener="#{users_MB.add()}" execute="usersForm" render="usersForm"/>
+                                </p:commandButton>
                                 <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
                                     <p:resetInput target=":usersForm"/>
                                 </p:commandButton>
@@ -149,7 +151,7 @@
                                 <p:commandButton value="Save">
                                     <f:ajax listener="#{users_MB.change()}" execute="usersForm" render="usersForm"/>
                                 </p:commandButton>
-                                <p:commandButton value="Cancel" process="@this" update=":usersForm" actionListener="#{users_MB.cancel()}">
+                                <p:commandButton value="Cancel" update=":usersForm" actionListener="#{users_MB.cancel()}">
                                     <p:resetInput target=":usersForm"/>
                                 </p:commandButton>
                             </c:when>

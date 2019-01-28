@@ -231,6 +231,19 @@ public class users_MB implements Serializable {
         changeFlag = false;
         
         user = new DbUser();
+        
+        // TODO: (23 JAN 2019)
+        // Possible fix for input fields not resetting after a failed validation:
+        //  1. Traverse the rendered view through getViewRoot starting from the collection of rendered IDs
+        //  2. Save all the rendered but not submitted fields to a collection
+        //  3. For each field in the collection, reset their values
+        // Alternatively, move ALL validations to the bean. This problem comes up because validators, primefaces components, etc 
+        //  all muddy the view and the bean (which is purely backend, remember) can't keep track of all the clientside actions; by
+        //  default, JSF will still display its local value as it was during the validation failure and keep them in an invalidated state.
+        // The reason this is left unfixed is because it's not a groundbreaking issue and we just want to go home.
+//        Collection<String> renderIds = FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds();
+//        FacesContext.getCurrentInstance().getViewRoot().visitTree(createVisitContext(FacesContext.getCurrentInstance(), renderIds, VISIT_HINTS), VISIT_CALLBACK);
+        
         init();
     }
 
@@ -311,4 +324,22 @@ public class users_MB implements Serializable {
                 return (short) 0;
         }
     }
+    
+//    private static final Set<VisitHint> VISIT_HINTS = EnumSet.of(SKIP_TRANSIENT, SKIP_UNRENDERED);
+//    private static final VisitCallback VISIT_CALLBACK = (context, target) -> {
+//        FacesContext facesContext = context.getFacesContext();
+//
+//        if (facesContext.getPartialViewContext().getExecuteIds().contains(target.getClientId(facesContext))) {
+//            return REJECT;
+//        }
+//
+//        if (target instanceof EditableValueHolder) {
+//            ((EditableValueHolder) target).resetValue();
+//        } else if (!ALL_IDS.equals(context.getIdsToVisit())) {
+//            // Render ID didn't specifically point an EditableValueHolder. Visit all children as well.
+//            target.visitTree(createVisitContext(facesContext), users_MB.VISIT_CALLBACK);
+//        }
+//        
+//        return ACCEPT;
+//    };
 }

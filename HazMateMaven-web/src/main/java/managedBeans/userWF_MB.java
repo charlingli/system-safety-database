@@ -381,8 +381,12 @@ public class userWF_MB implements Serializable {
     
     public String getLatestComment(DbwfHeader wfHeader) {
         if (wfHeader.getWfStatus().equals("I")) {
-            DbwfLine wfLine = dbwfLineFacade.findLatestCommentById(wfHeader.getWfId());
-            return wfLine.getWfUserIdApprover().getFirstName() + " " + wfLine.getWfUserIdApprover().getLastName() + ": " + wfLine.getWfApprovalComment();
+            List<DbwfLine> wfLine = dbwfLineFacade.findLatestCommentById(wfHeader.getWfId());
+            if (wfLine.size() > 0) {
+                return wfLine.get(0).getWfUserIdApprover().getFirstName() + " " + wfLine.get(0).getWfUserIdApprover().getLastName() + ": " + wfLine.get(0).getWfApprovalComment();
+            } else {
+                return "Admin: " + wfHeader.getWfComment3();
+            }
         }
         return "";
     }

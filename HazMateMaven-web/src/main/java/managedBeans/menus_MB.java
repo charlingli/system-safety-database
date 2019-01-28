@@ -195,6 +195,7 @@ public class menus_MB implements Serializable {
         if (menuParent.isEmpty() || "".equals(menuParent) || menuObjectVariable.getMenuType().equals("M")) {
             menuObjectVariable.setParentMenu(0);
         } else {
+            menuObjectVariable.setMenuType("S");
             menuObjectVariable.setParentMenu(Integer.parseInt(menuParent));
         }
         menuObjectVariable.setIndexMenu(Integer.parseInt(menuIndex));

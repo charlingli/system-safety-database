@@ -466,7 +466,7 @@ public class managementWF_MB implements Serializable {
     }
     
     public void sendDecisions() {
-        if (approvalComment.length() < 1) {
+        if (multipleComment.length() < 1) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "You must leave a comment justifying your decision."));
         } else {
             boolean validRequest = true;

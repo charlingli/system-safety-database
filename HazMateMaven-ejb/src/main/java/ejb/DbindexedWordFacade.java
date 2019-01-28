@@ -25,7 +25,11 @@ import javax.persistence.Query;
 public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implements DbindexedWordFacadeLocal {
 
     @EJB
+    private DbsystemParametersFacadeLocal dbsystemParametersFacade;
+
+    @EJB
     private DbcommonWordFacadeLocal dbcommonWordFacade;
+    
 
     @PersistenceContext(unitName = "HazMate-ejbPU")
     private EntityManager em;
@@ -195,7 +199,7 @@ public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implement
             //System.out.println(tmp[0].toString() + " " + tmp[1].toString() + " " + tmp[2].toString() + " " + tmp[3].toString() + " " + averageDistance);
             //System.out.println("percentageFromIndexed -> ( " + tmp[1].toString() + " / " + tmp[2].toString() + " * 100 ) = " + percentageFromIndexed);
             //System.out.println("percentageFromNew -> ( " + tmp[1].toString() + " / " + listOfValues.size() + " * 100 ) = " + percentageFromNew);
-            if (averageDistance > 75) {
+            if (averageDistance > dbsystemParametersFacade.find(1).getSimilarityThreshold()) {
                 listPotentialDuplicates.add(new similarityObject(tmp[0].toString(), averageDistance, tmp[3].toString().split(",")));
             }
         }

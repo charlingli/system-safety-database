@@ -43,6 +43,6 @@ public interface DbwfLineFacadeLocal {
     
     boolean validateFirstApprover(DbwfHeader wfObj, String decisionType);
     
-    DbwfLine findLatestCommentById(String wfId);
+    List<DbwfLine> findLatestCommentById(String wfId);
 
 }

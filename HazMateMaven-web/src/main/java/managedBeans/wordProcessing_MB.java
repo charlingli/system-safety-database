@@ -153,7 +153,7 @@ public class wordProcessing_MB {
             newWord.setCommonWord(commonWord.toLowerCase());
             dbcommonWordFacade.create(newWord);
             dbindexedWordFacade.removeWord(commonWord.toLowerCase());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The word has been successfully added. Remember to clear and reindex the database for this to take effect."));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The word has been successfully added."));
         } else {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error:", "The word is already in the common words table."));
         }
