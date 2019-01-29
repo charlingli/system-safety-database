@@ -93,14 +93,12 @@ public class wordProcessing_MB {
     }
     
     public void indexDescription(String id, String description, String objectType) {
-        System.out.println(id + description + objectType);
         dbindexedWordFacade.removeObject(id, objectType);
         List<temporalObj> listObjects = new ArrayList<>();
         listObjects.add(new temporalObj(id, description));
         if (!processList(listObjects, objectType)) {
             System.err.println("There was an error processing the " + objectType + " table.");
         }
-        System.out.println(listObjects.size());
     }
 
     private boolean processList(List<temporalObj> processingList, String entityName) {
@@ -121,7 +119,7 @@ public class wordProcessing_MB {
             });
             dbindexedWordFacade.createBatch(listIndexedWords);
         } catch (Exception e) {
-            System.out.println(e);
+            System.err.println(e);
             return false;
         }
         return true;

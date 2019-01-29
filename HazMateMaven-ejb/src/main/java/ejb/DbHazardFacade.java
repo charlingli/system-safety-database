@@ -213,8 +213,6 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                                 break;
                             default:
                                 flagParameters = false;
-                                System.out.println("ejb.DbHazardFacade.findHazardsByFields(): "
-                                        + "The fieldType is not allowed.");
                                 break;
                         }
                     }
@@ -231,10 +229,7 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                     resultantList = query.getResultList();
                 }
             } catch (NumberFormatException e) {
-                System.out.println("ejb.DbHazardFacade.findHazards()" + e);
             }
-        } else {
-            System.out.println(queryString.getAnswerString());
         }
         return resultantList;
     }
@@ -474,7 +469,6 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                         + "OR NOT EXISTS (SELECT 'X' FROM DbControlHazard HCtl WHERE Haz_1.hazardId = HCtl.dbControlHazardPK.hazardId)) "
                         + "AND Haz_1.hazardId = Haz.hazardId) ";
             default:
-                System.out.println("The requested type is not valid! -> " + rqstType);
                 return null;
         }
     }
@@ -497,7 +491,7 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                 this.edit(tmpHazard);
             }
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.err.println(ex);
         }
     }
 
@@ -511,7 +505,7 @@ public class DbHazardFacade extends AbstractFacade<DbHazard> implements DbHazard
                 this.edit(tmpHazard);
             }
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.err.println(ex);
         }
     }
 

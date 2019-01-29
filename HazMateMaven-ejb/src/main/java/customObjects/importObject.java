@@ -391,9 +391,9 @@ public class importObject {
                     case "hazard":
                         this.HDWarning = true;
                         break;
-                    case "cause":
-                    case "consequence":
-                    case "control":
+                    case "Cause":
+                    case "Consequence":
+                    case "Control":
                         this.RDWarning = true;
                         break;
                     default:

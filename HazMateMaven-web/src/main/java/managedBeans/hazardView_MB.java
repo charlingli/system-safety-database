@@ -1235,7 +1235,7 @@ public class hazardView_MB implements Serializable {
                 return "0.00";
             }
         } catch (NumberFormatException e) {
-            System.out.println(e);
+            System.err.println(e);
             return null;
         }
     }
@@ -1755,7 +1755,6 @@ public class hazardView_MB implements Serializable {
                 // We move i to the next hazard, we reduce it on -1 because in the next for cycle will increased it on 1
                 i = i + numberOfRows - 1;
             } else {
-                System.out.println("managedBeans.trees_MB.exportExcel() -> There is an error calculating the number of rows based on the existing and proposed controls.");
                 break;
             }
         }

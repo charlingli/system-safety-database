@@ -196,9 +196,6 @@ public class DbindexedWordFacade extends AbstractFacade<DbindexedWord> implement
             int percentageFromIndexed = (Integer.parseInt(tmp[1].toString()) * 100) / Integer.parseInt(tmp[2].toString());
             int percentageFromNew = (Integer.parseInt(tmp[1].toString()) * 100) / listOfValues.size();
             int averageDistance = (percentageFromIndexed + percentageFromNew) / 2;
-            //System.out.println(tmp[0].toString() + " " + tmp[1].toString() + " " + tmp[2].toString() + " " + tmp[3].toString() + " " + averageDistance);
-            //System.out.println("percentageFromIndexed -> ( " + tmp[1].toString() + " / " + tmp[2].toString() + " * 100 ) = " + percentageFromIndexed);
-            //System.out.println("percentageFromNew -> ( " + tmp[1].toString() + " / " + listOfValues.size() + " * 100 ) = " + percentageFromNew);
             if (averageDistance > dbsystemParametersFacade.find(1).getSimilarityThreshold()) {
                 listPotentialDuplicates.add(new similarityObject(tmp[0].toString(), averageDistance, tmp[3].toString().split(",")));
             }

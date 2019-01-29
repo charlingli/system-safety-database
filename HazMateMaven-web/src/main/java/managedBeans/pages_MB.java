@@ -212,7 +212,6 @@ public class pages_MB implements Serializable {
             } else if (tempMenu.getMenuType().equals("S")) {
                 int tempMenuMin = tempMenu.getIndexMenu();
                 int tempMenuMax = tempMenu.getIndexMenu() + 99;
-                System.out.println(tempMenuMin);
                 if (tempMenuMin > tempIndex || tempIndex > tempMenuMax) {
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "The page index should be between " + tempMenuMin + " and " + tempMenuMax));

@@ -2766,7 +2766,6 @@ public class importHazard_MB implements Serializable {
                         }
                         break;
                     default:
-                        System.out.println("The value does not match with the expected columns. Value: " + row.getCell(i).toString() + " column index: " + i);
                         break;
                 }
             }

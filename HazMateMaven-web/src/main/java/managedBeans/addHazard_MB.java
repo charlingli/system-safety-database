@@ -421,14 +421,14 @@ public class addHazard_MB implements Serializable {
                     displaySelectedMultiple1(selectedNodes);
                     addFiles();
                     if (hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
-                        //System.out.println("The content of both is the SAME");
+                        //The content of both is the SAME
                         if (filesChanged) {
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "Files have been linked to the hazard."));
                         } else {
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "No changes have been made."));
                         }
                     } else if (!hazardObject.equalsContent(savedHazardObject) && compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
-                        //System.out.println("The content of the object CHANGED but the tree is still the SAME.");
+                        //The content of the object CHANGED but the tree is still the SAME
                         dbHazardFacade.edit(hazardObject);
                         saveHazardObject(hazardObject);
                         if (filesChanged) {
@@ -437,7 +437,7 @@ public class addHazard_MB implements Serializable {
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The hazard has been edited successfully."));
                         }
                     } else if (hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
-                        //System.out.println("The content of the object is the SAME but the tree CHANGED.");
+                        //The content of the object is the SAME but the tree CHANGED
                         dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
                         addSBS();
                         savedCheckedNodesList = treeCheckedNodesList;
@@ -447,7 +447,7 @@ public class addHazard_MB implements Serializable {
                             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Info:", "The sbs tree has been edited successfully."));
                         }
                     } else if (!hazardObject.equalsContent(savedHazardObject) && !compareLists(treeCheckedNodesList, savedCheckedNodesList)) {
-                        //System.out.println("Both Changed.");
+                        //Both Changed
                         dbHazardFacade.edit(hazardObject);
                         dbHazardSbsFacade.removeHazardSbs(hazardObject.getHazardId());
                         addSBS();

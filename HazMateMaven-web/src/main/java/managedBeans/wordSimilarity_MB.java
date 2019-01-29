@@ -92,7 +92,6 @@ public class wordSimilarity_MB implements Serializable {
     public void constructSimilarityObject(List<similarityObject> listObjects, String objectType, String objectId) {
         listSimilarityObjects = new ArrayList<>();
         for (similarityObject object : listObjects) {
-            System.out.println(object.getObjectId());
             if (!object.getObjectId().equals(objectId)) {
                 listSimilarityObjects.add(new similarityWrapperObject(object.getObjectId(), object.getAverageDistance(), object.getCoincidentWords(), objectType));
             }

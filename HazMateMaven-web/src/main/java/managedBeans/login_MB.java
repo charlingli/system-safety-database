@@ -111,7 +111,6 @@ public class login_MB implements Serializable {
                 if (!FacesContext.getCurrentInstance().isPostback()) {
                     String[] ctx = FacesContext.getCurrentInstance().getViewRoot().getViewId().split("\\.");
                     if (ctx.length > 0 && !dbUserFacade.getPageAccessForUser(activeUser.getUserId(), ctx[0]) && !ctx[0].equals("/admin/masterMenu")) {
-                        System.out.println("Validation Security, user does not have permission to -> Page: " + ctx[0]);
                         FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/privileges.xhtml");
                     }
                 }
@@ -119,7 +118,7 @@ public class login_MB implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("./../../admin/timeout.xhtml");
             }
         } catch (IOException e) {
-            System.out.println("managedBeans.login_MB.validateSession() -> " + e);
+            System.err.println("managedBeans.login_MB.validateSession() -> " + e);
         }
     }
 

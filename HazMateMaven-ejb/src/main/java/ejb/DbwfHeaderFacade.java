@@ -210,7 +210,6 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
             case "First to approve":
                 return true;
             default:
-                System.out.println("ejb.DbwfHeaderFacade.wfTypesValidation() -> The required type " + wfTypeName + " is not implemented!");
                 break;
         }
         return false;
@@ -265,8 +264,6 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                     }
                     break;
                 default:
-                    System.out.println("ejb.DbwfHeaderFacade.validateWfConditions() -> The business logic for "
-                            + "the required type " + wfObj.getWfTypeId().getWfTypeName() + " is not implemented!");
                     break;
             }
         }
@@ -291,8 +288,6 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                     }
                     break;
                 default:
-                    System.out.println("ejb.DbwfHeaderFacade.validateWfRejectionConditions() -> The business logic for "
-                            + "the required type " + wfObj.getWfTypeId().getWfTypeName() + "is not implemented!");
                     break;
             }
         }
@@ -435,26 +430,18 @@ public class DbwfHeaderFacade extends AbstractFacade<DbwfHeader> implements Dbwf
                             break;
                         default:
                             flagParameters = false;
-                            System.out.println("ejb.DbwfHeaderFacade.findWorkflowsByFieldsOnly(): "
-                                    + "The fieldType is not allowed.");
                             break;
                     }
                 }
 
                 if (flagParameters) {
                     resultantList = query.getResultList();
-                } else {
-                    System.out.println("ejb.DbwfHeaderFacade.findWorkflowsByFieldsOnly(): "
-                            + "The function could not find a string separed by commas in a filed marked as IN relationype.");
                 }
 
             } catch (Exception e) {
                 throw e;
             }
 
-        } else {
-            System.out.println("ejb.DbwfHeaderFacade.findWorkflowsByFieldsOnly(): "
-                    + "Some entites could not be matched with the managed by this function.");
         }
 
         return resultantList;
