@@ -8,7 +8,7 @@
     <body>
         <ui:composition template="./../../templates/masterTemplate.xhtml">
             <ui:define name="content">
-                <h:form id="hazardsForm" onclick="closeRating()">
+                <h:form id="hazardsForm">
                     <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()"/>
                     <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}"/>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
