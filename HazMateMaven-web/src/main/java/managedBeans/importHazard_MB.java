@@ -58,8 +58,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -2601,14 +2603,14 @@ public class importHazard_MB implements Serializable {
                     case 17:
                         if (!"".equals(row.getCell(i).toString())) {
                             String[] sbsValues = row.getCell(i).toString().replaceAll("\\s+", "").split(",");
+                            List<Integer> sbsInts = new ArrayList<>();
                             if (sbsValues.length == 0) {
                                 createLineError(tmpObj, "hazardSbs", 2);
                             } else if (sbsValues.length > 0) {
                                 boolean errorFound = false;
                                 for (String sbsValue : sbsValues) {
                                     if (sbsValue.matches("^\\d+(\\.\\d+)*") && !errorFound) {
-                                        String[] sbsCodes = sbsValue.split("\\.");
-                                        List<Integer> sbsInts = Arrays.stream(sbsCodes).map(s -> Integer.valueOf(s)).collect(Collectors.toList());
+                                        sbsInts = Arrays.stream(sbsValue.split("\\.")).map(s -> Integer.valueOf(s)).collect(Collectors.toList());
                                         while (true) {
                                             if (sbsInts.get(sbsInts.size() - 1).equals(0) && sbsInts.get(sbsInts.size() - 2).equals(0)) {
                                                 sbsInts.remove(sbsInts.size() - 1);
@@ -2671,7 +2673,7 @@ public class importHazard_MB implements Serializable {
                                     }
                                 }
                                 if (!errorFound) {
-                                    tmpObj.lineData.setHazardSbs(row.getCell(i).toString().replaceAll("\\s+", ""));
+                                    tmpObj.lineData.setHazardSbs(sbsInts.stream().map(n -> n.toString()).collect(Collectors.joining(".")));
                                 }
                             }
                         } else {
