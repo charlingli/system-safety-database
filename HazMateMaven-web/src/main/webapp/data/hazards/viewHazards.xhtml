@@ -11,6 +11,7 @@
                 <h:form id="hazardsForm">
                     <p:hotkey bind="esc" handler="PF('ratingOverlay').hide()"/>
                     <p:hotkey bind="esc" actionListener="#{hazardView_MB.refreshRating()}"/>
+                    <p:remoteCommand name="refreshRatings" action="#{hazardView_MB.refreshRating()}"/>
                     <div class="pagePath"><h:outputText value="#{pagePath_MB.pageHtmlPath}" escape="false"/></div>
                     <ui:include src="../../templates/detailDialog.xhtml"/>
                     <ui:include src="../../templates/spinnerDialog.xhtml"/>

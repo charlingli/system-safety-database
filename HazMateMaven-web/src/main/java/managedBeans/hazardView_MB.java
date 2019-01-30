@@ -55,6 +55,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.model.TreeNode;
 
@@ -1199,12 +1200,11 @@ public class hazardView_MB implements Serializable {
     public void refreshRating() {
         if (ratingId != null) {
             qualityRating = (int) getHazardRating(ratingId);
-            RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable:" + ratingRow + ":averageRating");
-            RequestContext.getCurrentInstance().update("hazardsForm:hazardsTable:" + ratingRow + ":ratedIcon");
+            PrimeFaces.current().ajax().update("hazardsForm:hazardsTable:" + ratingRow + ":averageRating");
         }
-        RequestContext.getCurrentInstance().update("hazardsForm:averageRating");
-        RequestContext.getCurrentInstance().update("hazardsForm:countRating");
-        RequestContext.getCurrentInstance().update("hazardsForm:userRating");
+        PrimeFaces.current().ajax().update("hazardsForm:averageRating");
+        PrimeFaces.current().ajax().update("hazardsForm:countRating");
+        PrimeFaces.current().ajax().update("hazardsForm:userRating");
     }
 
     public double getHazardRating(String hazardId) {
