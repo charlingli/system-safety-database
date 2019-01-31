@@ -154,5 +154,9 @@ public class login_MB implements Serializable {
     public void onIdle8() {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Session timeout", "Your session will end in 2 minutes. Take action to refresh the session."));
     }
+    
+    public String getLicensePage() {
+        return "/license/ssdLicense.xhtml";
+    }
 
 }
